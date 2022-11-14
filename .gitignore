@@ -1,0 +1,13 @@
+# Gradle
+.gradle
+build
+
+# IntelliJ
+.idea
+*.iml
+
+# Emacs
+*~
+
+# checker-qual
+templatefora-checker-qual/src
