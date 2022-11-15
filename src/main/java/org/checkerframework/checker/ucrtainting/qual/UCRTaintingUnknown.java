@@ -1,4 +1,4 @@
-package org.checkerframework.checker.templatefora.qual;
+package edu.ucr.cs.riple.taint.ucrtainting.qual;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,4 +16,4 @@ import org.checkerframework.framework.qual.SubtypeOf;
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @DefaultQualifierInHierarchy
 @SubtypeOf({})
-public @interface TemplateforaUnknown {}
+public @interface UCRTaintingUnknown {}

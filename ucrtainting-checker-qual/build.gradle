@@ -20,7 +20,7 @@ task copySources(type: Copy) {
 
     from files('../src/main/java')
     // Replace the path below with your actual path.
-    include '**/org/checkerframework/checker/templatefora/qual/**'
+    include '**/edu/ucr/cs/riple/taint/ucrtainting/qual/**'
 
     // Make files read only.
     fileMode(0444)
