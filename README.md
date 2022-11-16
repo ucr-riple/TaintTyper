@@ -15,18 +15,9 @@ repositories {
     mavenCentral()
 }
 
-checkerFramework {
-    checkers = [
-            'edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker',
-    ]
-    extraJavacArgs = [
-            '-Astubs=' + projectDir + '/stubs'
-    ]
-}
-
 dependencies {
-    checkerFramework 'edu.ucr.cs.riple.taint:ucrtainting-checker:0.1'
-    implementation 'edu.ucr.cs.riple.taint:ucrtainting-qual:0.1'
+    annotationProcessor 'edu.ucr.cs.riple.taint:ucrtainting-checker:0.1'
+    implementation 'edu.ucr.cs.riple.taint:ucrtainting-checker:0.1'
 }
 ```
 
@@ -54,11 +45,6 @@ Run these commands from the top-level directory.
 
 `./gradlew publishToMavenLocal`: publish the checker to your local Maven repository.
 This is useful for testing before you publish it elsewhere, such as to Maven Central.
-
-You will need to uncomment _publishing_ task for _ucrtainting-checker-qual/build.gradle_
-to build and publish the qual jar. TODO: it's a bit odd to publish this 
-separately. There should be another way to do this.
-## More information
 
 The UCR Tainting Checker is built upon the Checker Framework.  Please see
 the [Checker Framework Manual](https://checkerframework.org/manual/) for
