@@ -51,9 +51,9 @@ tasks.withType(JavaCompile).all {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = 'org.checkerframework'
+            groupId = 'edu.ucr.cs.riple.taint'
             artifactId = 'ucrtainting-checker'
-            version = '0.1-SNAPSHOT'
+            version = '0.1'
 
             from components.java
         }

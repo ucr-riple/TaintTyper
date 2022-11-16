@@ -39,6 +39,18 @@ compileJava {
     dependsOn copySources
 }
 
+// Uncomment publishing when quals are updated and need to published.
+// There should be a better way to do this alongside the checker publishing.
+//publishing {
+//    publications {
+//        maven(MavenPublication) {
+//            groupId = 'edu.ucr.cs.riple.taint'
+//            artifactId = 'ucrtainting-qual'
+//            version = '0.1'
+//        }
+//    }
+//}
+
 clean {
     delete file('src/')
 }
