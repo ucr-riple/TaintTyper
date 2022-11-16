@@ -37,13 +37,13 @@ informing you of any potential errors related to TODO.
 ## How to specify your code
 
 
-`@Tainted`:
+`@RTainted`:
 TODO
 
-`@Untainted`:
+`@RUntainted`:
 TODO
 
-`@Polytainted`:
+`@RPolytainted`:
 TODO
 
 ## How to build the checker
