@@ -1,6 +1,6 @@
-package org.apache.commons.lang3;
-
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+
+package org.apache.commons.lang3;
 public class ClassUtils {
 	/**
 	 * Returns the class represented by {@code className} using the current thread's context class loader. This
@@ -128,9 +128,8 @@ public class ClassUtils {
 	}
 
 }
-package org.apache.commons.lang3.reflect;
 
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+package org.apache.commons.lang3.reflect;
 public class MethodUtils {
 	/**
 	 * Finds an accessible method that matches the given name and has compatible parameters.

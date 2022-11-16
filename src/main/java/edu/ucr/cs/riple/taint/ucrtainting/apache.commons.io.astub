@@ -1,6 +1,6 @@
-package org.apache.commons.io.output;
-
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+
+package org.apache.commons.io.output;
 public class FileWriterWithEncoding {
 	/**
 	 * Constructs a FileWriterWithEncoding with a file encoding.
@@ -160,8 +160,6 @@ public class FileWriterWithEncoding {
 
 }
 package org.apache.commons.io.output;
-
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 public class DeferredFileOutputStream {
 	/**
 	 * Constructs an instance of this class which will trigger an event at the specified threshold, and save data to a
@@ -251,9 +249,8 @@ public class DeferredFileOutputStream {
 	}
 
 }
-package org.apache.commons.io.output;
 
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+package org.apache.commons.io.output;
 public class LockableFileWriter {
 	/**
 	 * Constructs a LockableFileWriter.
@@ -411,9 +408,8 @@ public class LockableFileWriter {
 	}
 
 }
-package org.apache.commons.io;
 
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+package org.apache.commons.io;
 public class FileUtils {
 	/**
 	 * Copies a file to a directory preserving the file date.
