@@ -75,15 +75,15 @@ public class HttpServletResponse {
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 package java.lang;
 public class Class {
-	public static Class forName(@RUntainted Module module, @RUntainted String name)
+	public static Class forName(@RUntainted Module module, @RUntainted String name);
 	public URL getResource(@RUntainted String name);
 	public Field getField(@RUntainted String name) throws NoSuchFieldException, SecurityException;
 	public Field getDeclaredField(@RUntainted String name) throws NoSuchFieldException, SecurityException;
-	public static Class forName(@RUntainted String className) throws ClassNotFoundException
+	public static Class forName(@RUntainted String className) throws ClassNotFoundException;
 	public Method getDeclaredMethod(@RUntainted String name, @RUntainted Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException;
 	public InputStream getResourceAsStream(@RUntainted String name);
-	public Method getMethod(@RUntainted String name, @RUntainted Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException
-	public static Class forName(@RUntainted String name, boolean initialize, @RUntainted ClassLoader loader) throws ClassNotFoundException
+	public Method getMethod(@RUntainted String name, @RUntainted Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException;
+	public static Class forName(@RUntainted String name, boolean initialize, @RUntainted ClassLoader loader) throws ClassNotFoundException;
 }
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;

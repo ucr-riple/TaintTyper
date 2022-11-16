@@ -8,8 +8,8 @@ import org.checkerframework.framework.qual.StubFiles;
  */
 @StubFiles({
         "Connection.astub",
-        "General.astub",
-        "ApacheCommonsIO.astub",
-        "ApacheCommonsLang.astub"
+        "apache.commons.io.astub",
+        "apache.commons.lang.astub",
+        "general.astub",
 })
 public class UCRTaintingChecker extends BaseTypeChecker {}
