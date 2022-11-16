@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.qual;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -8,12 +9,15 @@ import org.checkerframework.framework.qual.DefaultQualifierInHierarchy;
 import org.checkerframework.framework.qual.SubtypeOf;
 
 /**
- * The value might or might not be TODO. It is not safe to use for TODO.
+ * Denotes a possibly-tainted value: at run time, the value might be tainted or might be untainted.
  *
- * <p>This is the default type, so programmers usually do not need to write it.
+ * @see Untainted
+ * @see edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker
+ * @checker_framework.manual #tainting-checker Tainting Checker
  */
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @DefaultQualifierInHierarchy
 @SubtypeOf({})
-public @interface UCRTaintingUnknown {}
+public @interface Tainted {}
