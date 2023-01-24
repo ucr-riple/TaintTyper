@@ -22,6 +22,8 @@ public class UCRTaintingTest extends CheckerFrameworkPerDirectoryTest {
         "ucrtainting",
         "-Anomsgtext",
         "-Astubs=stubs/",
+        "-AannotatedPackages=foo.bar",
+        "-AenableCustomCheck=true",
         "-nowarn");
   }
 

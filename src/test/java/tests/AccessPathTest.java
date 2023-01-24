@@ -22,6 +22,8 @@ public class AccessPathTest extends CheckerFrameworkPerDirectoryTest {
         "ucrtainting",
         "-Anomsgtext",
         "-Astubs=stubs/",
+        "-AannotatedPackages=\"\"",
+        "-AenableCustomCheck=false",
         "-nowarn");
   }
 
