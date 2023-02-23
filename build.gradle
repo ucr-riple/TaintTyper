@@ -1,13 +1,20 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id 'com.github.sherter.google-java-format' version '0.9'
+    id 'com.diffplug.spotless' version '6.14.0'
 }
 
 repositories {
     // Use Maven Central for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
+}
+
+spotless {
+    java {
+        target '**/*.java'
+        googleJavaFormat()
+    }
 }
 
 configurations {
@@ -115,7 +122,3 @@ sourceSets {
         }
     }
 }
-
-
-// Force the build to fail if the code is not formatted correctly.
-compileJava.mustRunAfter verifyGoogleJavaFormat
