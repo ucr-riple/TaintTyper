@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'com.github.sherter.google-java-format' version '0.9'
 }
 
 repositories {
@@ -114,3 +115,7 @@ sourceSets {
         }
     }
 }
+
+
+// Force the build to fail if the code is not formatted correctly.
+compileJava.mustRunAfter verifyGoogleJavaFormat
