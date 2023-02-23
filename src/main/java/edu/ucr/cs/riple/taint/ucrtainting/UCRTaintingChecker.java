@@ -23,12 +23,12 @@ public class UCRTaintingChecker extends BaseTypeChecker {
   @Override
   public void reportWarning(Object source, @CompilerMessageKey String messageKey, Object... args) {
     super.reportWarning(source, messageKey, args);
-    serializer.serializeError(source, messageKey, args);
+    serializer.serializeError(source, messageKey, args, visitor);
   }
 
   @Override
   public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
     super.reportError(source, messageKey, args);
-    serializer.serializeError(source, messageKey, args);
+    serializer.serializeError(source, messageKey, args, visitor);
   }
 }

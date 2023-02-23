@@ -1,6 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import com.sun.source.tree.Tree;
+import org.checkerframework.framework.source.SourceVisitor;
 
 /** This class is used to serialize the errors and the fixes for the errors. */
 public class Serializer {
@@ -29,6 +30,10 @@ public class Serializer {
    * @param source the source of the error
    * @param messageKey the key of the error message
    * @param args the arguments of the error message
+   * @param visitor
    */
-  public void serializeError(Object source, String messageKey, Object[] args) {}
+  public void serializeError(
+      Object source, String messageKey, Object[] args, SourceVisitor<?, ?> visitor) {
+    generateFixesForExpression((Tree) source, tree -> true);
+  }
 }

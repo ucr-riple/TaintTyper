@@ -21,6 +21,8 @@ class Foo {
       c = x;
       // :: error: assignment
       c = localVar;
+      // :: error: assignment
+      c = bar.baz.field;
     }
     // :: error: assignment
     c = bar.staticF;
