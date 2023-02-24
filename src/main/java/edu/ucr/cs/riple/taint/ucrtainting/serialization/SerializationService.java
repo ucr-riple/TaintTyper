@@ -34,6 +34,9 @@ public class SerializationService {
    */
   public void serializeError(
       Object source, String messageKey, Object[] args, SourceVisitor<?, ?> visitor) {
+    // TODO: for TreeChecker instance below, use the actual API which checks if the tree is
+    // @Tainted. For now, we pass tree -> true, to serialize a fix for all expressions on the right
+    // hand side of the assignment.
     Set<Fix> resolvingFixes =
         generateFixesForExpression((Tree) source, tree -> true, visitor.getCurrentPath());
     // TODO: serialize the error and the fixes, will be implemented in the next PR, once the format
