@@ -117,6 +117,14 @@ public class SymbolUtil {
     return (Symbol.MethodSymbol) sym;
   }
 
+  /**
+   * Locates the variable declaration tree for a given identifier tree which is a local variable in
+   * a block. The identifier is assumed to not be a field or a method parameter.
+   *
+   * @param localVariable the identifier tree.
+   * @param path the path to the identifier tree and the scope of the local variable.
+   * @return the variable declaration tree or null if the variable declaration cannot be found.
+   */
   @Nullable
   public static VariableTree locateLocalVariableDeclaration(
       IdentifierTree localVariable, TreePath path) {

@@ -10,6 +10,7 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.PrimitiveTypeTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.UnaryTree;
+import com.sun.source.tree.VariableTree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.source.util.TreePath;
 import java.util.Set;
@@ -109,8 +110,9 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
         System.out.println("PARAMETER: " + element);
         break;
       case LOCAL_VARIABLE:
-        System.out.println("LOCAL_VARIABLE: " + element);
-        SymbolUtil.locateLocalVariableDeclaration((IdentifierTree) tree, path);
+        VariableTree variableTree =
+            SymbolUtil.locateLocalVariableDeclaration((IdentifierTree) tree, path);
+        System.out.println("LOCAL_VARIABLE: " + variableTree);
         break;
       case METHOD:
         System.out.println("METHOD: " + element);
