@@ -16,6 +16,8 @@ class Foo {
     c = b ? x : y;
     // :: error: assignment
     c = x + y;
+    // :: error: assignment
+    c = b ? x + y : localVar;
     if (b) {
       // :: error: assignment
       c = bar.getField();
@@ -47,5 +49,9 @@ class Foo {
     }
     // :: error: assignment
     c = bar.staticF;
+  }
+
+  public Object inherit(Object param){
+    return param;
   }
 }
