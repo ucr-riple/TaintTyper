@@ -38,6 +38,11 @@ class Foo {
         field = finalLocalVar;
         // :: error: assignment
         field = f2;
+        String localVar = f2;
+        class LocalInnerClass {
+          // :: error: assignment
+          @RUntainted String baz = localVar;
+        }
       }
     }
     // :: error: assignment
