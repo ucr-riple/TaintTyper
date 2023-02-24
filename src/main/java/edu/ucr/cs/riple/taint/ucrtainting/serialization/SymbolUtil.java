@@ -149,6 +149,7 @@ public class SymbolUtil {
           public VariableTree visitVariable(VariableTree tree, Name name) {
             if (Objects.equal(tree.getName(), name)) {
               Symbol treeSym = getSymbol(tree);
+              // Check the scope here.
               if (symbol.owner.equals(treeSym.owner)) {
                 return tree;
               }
