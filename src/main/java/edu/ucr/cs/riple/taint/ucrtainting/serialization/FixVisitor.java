@@ -22,6 +22,7 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
   /** The tree checker to check if a tree requires a fix. */
   private final TreeChecker checker;
 
+  /** The starting point of visitor. */
   private final TreePath path;
 
   public FixVisitor(TreeChecker checker, TreePath path) {
