@@ -51,7 +51,7 @@ class Foo {
     c = bar.staticF;
   }
 
-  public Object inherit(Object param){
+  public Object inherit(Object param) {
     return param;
   }
 }
