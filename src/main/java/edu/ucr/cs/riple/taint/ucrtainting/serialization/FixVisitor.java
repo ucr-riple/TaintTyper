@@ -124,5 +124,6 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
         System.out.println("METHOD: " + element);
         break;
     }
+    // TODO: make the actual fix instance here once the format is finalized.
   }
 }

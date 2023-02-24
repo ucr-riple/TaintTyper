@@ -36,5 +36,7 @@ public class SerializationService {
       Object source, String messageKey, Object[] args, SourceVisitor<?, ?> visitor) {
     Set<Fix> resolvingFixes =
         generateFixesForExpression((Tree) source, tree -> true, visitor.getCurrentPath());
+    // TODO: serialize the error and the fixes, will be implemented in the next PR, once the format
+    // is finalized.
   }
 }
