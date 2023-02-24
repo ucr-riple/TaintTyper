@@ -14,6 +14,8 @@ class Foo {
     c = x;
     // :: error: assignment
     c = b ? x : y;
+    // :: error: assignment
+    c = x + y;
     if (b) {
       // :: error: assignment
       c = bar.getField();
