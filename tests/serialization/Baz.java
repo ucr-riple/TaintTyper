@@ -1,11 +1,11 @@
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 
 class Baz {
-  public Object field = new Object();
+  public String field = "";
 
-  public static Object staticF = new Object();
+  public static String staticF = "";
 
-  Object getField() {
+  String getField() {
     return field;
   }
 }

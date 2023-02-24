@@ -4,12 +4,12 @@ import com.sun.source.tree.Tree;
 import org.checkerframework.framework.source.SourceVisitor;
 
 /** This class is used to serialize the errors and the fixes for the errors. */
-public class Serializer {
+public class SerializationService {
 
   /** The serializer visitor. */
   private final SerializerVisitor serializerVisitor;
 
-  public Serializer() {
+  public SerializationService() {
     serializerVisitor = new SerializerVisitor();
   }
 

@@ -2,14 +2,14 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 
 class Foo {
 
-  Object field = new Object();
+  String field = "";
   Bar bar = new Bar();
 
-  void bar(Object x, @RUntainted Object y, boolean b) {
-    Object localVar = x;
-    final Object finalLocalVar = x;
+  void bar(String x, @RUntainted String y, boolean b) {
+    String localVar = x;
+    final String finalLocalVar = x;
     // :: error: assignment
-    @RUntainted Object c = field;
+    @RUntainted String c = field;
     // :: error: assignment
     c = x;
     // :: error: assignment
@@ -28,8 +28,8 @@ class Foo {
       c = bar.baz.field;
     }
     class LocalClass {
-      @RUntainted Object field;
-      Object f2;
+      @RUntainted String field;
+      String f2;
 
       void foo() {
         // :: error: assignment

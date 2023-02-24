@@ -1,6 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.SerializationService;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.qual.StubFiles;
@@ -14,21 +14,21 @@ import org.checkerframework.framework.qual.StubFiles;
 })
 public class UCRTaintingChecker extends BaseTypeChecker {
 
-  private final Serializer serializer;
+  private final SerializationService serializationService;
 
   public UCRTaintingChecker() {
-    serializer = new Serializer();
+    serializationService = new SerializationService();
   }
 
   @Override
   public void reportWarning(Object source, @CompilerMessageKey String messageKey, Object... args) {
     super.reportWarning(source, messageKey, args);
-    serializer.serializeError(source, messageKey, args, visitor);
+    serializationService.serializeError(source, messageKey, args, visitor);
   }
 
   @Override
   public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
     super.reportError(source, messageKey, args);
-    serializer.serializeError(source, messageKey, args, visitor);
+    serializationService.serializeError(source, messageKey, args, visitor);
   }
 }
