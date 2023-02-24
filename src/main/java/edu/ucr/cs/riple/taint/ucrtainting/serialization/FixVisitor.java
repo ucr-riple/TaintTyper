@@ -97,7 +97,13 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
     return null;
   }
 
+  /**
+   * Builds the fix for the given element.
+   *
+   * @param tree The given tree.
+   */
   public void buildFixForElement(Tree tree) {
+    //TODO: make the actual fix instance here once the format is finalized.
     Element element = TreeUtils.elementFromTree(tree);
     if (element == null) {
       return;
