@@ -9,20 +9,20 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutab
 /** Visitor for the {@link UCRTaintingChecker}. */
 public class UCRTaintingVisitor extends BaseTypeVisitor<BaseAnnotatedTypeFactory> {
 
-    /**
-     * Creates a {@link UCRTaintingVisitor}.
-     *
-     * @param checker the checker that uses this visitor
-     */
-    public UCRTaintingVisitor(BaseTypeChecker checker) {
-        super(checker);
-    }
+  /**
+   * Creates a {@link UCRTaintingVisitor}.
+   *
+   * @param checker the checker that uses this visitor
+   */
+  public UCRTaintingVisitor(BaseTypeChecker checker) {
+    super(checker);
+  }
 
-    /**
-     * Don't check that the constructor result is top. Checking that the super() or this() call is a
-     * subtype of the constructor result is sufficient.
-     */
-    @Override
-    protected void checkConstructorResult(
-            AnnotatedExecutableType constructorType, ExecutableElement constructorElement) {}
+  /**
+   * Don't check that the constructor result is top. Checking that the super() or this() call is a
+   * subtype of the constructor result is sufficient.
+   */
+  @Override
+  protected void checkConstructorResult(
+      AnnotatedExecutableType constructorType, ExecutableElement constructorElement) {}
 }

@@ -1,6 +1,6 @@
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import java.io.File;
 import java.util.List;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
 import org.junit.runners.Parameterized.Parameters;
 
@@ -13,18 +13,18 @@ import org.junit.runners.Parameterized.Parameters;
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
 public class UCRTaintingTest extends CheckerFrameworkPerDirectoryTest {
-    public UCRTaintingTest(List<File> testFiles) {
-        super(
-                testFiles,
-                UCRTaintingChecker.class,
-                "ucrtainting",
-                "-Anomsgtext",
-                "-Astubs=stubs/",
-                "-nowarn");
-    }
+  public UCRTaintingTest(List<File> testFiles) {
+    super(
+        testFiles,
+        UCRTaintingChecker.class,
+        "ucrtainting",
+        "-Anomsgtext",
+        "-Astubs=stubs/",
+        "-nowarn");
+  }
 
-    @Parameters
-    public static String[] getTestDirs() {
-        return new String[] {"ucrtainting"};
-    }
+  @Parameters
+  public static String[] getTestDirs() {
+    return new String[] {"ucrtainting"};
+  }
 }
