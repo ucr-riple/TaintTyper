@@ -7,8 +7,11 @@ class Foo {
 
   void bar(Object x, @RUntainted Object y, boolean b) {
     Object localVar = x;
+    final Object finalLocalVar = x;
     // :: error: assignment
-    @RUntainted Object c = x;
+    @RUntainted Object c = field;
+    // :: error: assignment
+    c = x;
     // :: error: assignment
     c = b ? x : y;
     if (b) {
@@ -23,6 +26,17 @@ class Foo {
       c = localVar;
       // :: error: assignment
       c = bar.baz.field;
+    }
+    class LocalClass {
+      @RUntainted Object field;
+      Object f2;
+
+      void foo() {
+        // :: error: assignment
+        field = finalLocalVar;
+        // :: error: assignment
+        field = f2;
+      }
     }
     // :: error: assignment
     c = bar.staticF;
