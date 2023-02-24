@@ -1,20 +1,23 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
+import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.ConditionalExpressionTree;
 import com.sun.source.tree.ExpressionStatementTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.PrimitiveTypeTree;
+import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
+import javax.lang.model.element.Element;
+import org.checkerframework.javacutil.TreeUtils;
 
 /** This class is used to serialize the fixes for trees and subtrees if they require a fix. */
 public class SerializerVisitor extends SimpleTreeVisitor<Void, TreeChecker> {
 
   @Override
   public Void visitIdentifier(IdentifierTree node, TreeChecker checker) {
-    super.visitIdentifier(node, checker);
-    //    identifierToVariableTree(node);
+    identifierToVariableTree(node);
     return null;
   }
 
@@ -49,22 +52,34 @@ public class SerializerVisitor extends SimpleTreeVisitor<Void, TreeChecker> {
     return null;
   }
 
-  //  public static VariableTree identifierToVariableTree(IdentifierTree identifierTree) {
-  //    Element element = TreeUtils.elementFromTree(identifierTree);
-  //    if (element == null) {
-  //      return null;
-  //    }
-  //    switch (element.getKind()) {
-  //      case FIELD:
-  //        System.out.println("FIELD: " + element);
-  //        break;
-  //      case PARAMETER:
-  //        System.out.println("PARAMETER: " + element);
-  //        break;
-  //      case LOCAL_VARIABLE:
-  //        System.out.println("LOCAL_VARIABLE: " + element);
-  //        break;
-  //    }
-  //    return null;
-  //  }
+  @Override
+  public Void visitBinary(BinaryTree node, TreeChecker treeChecker) {
+    node.getLeftOperand().accept(this, treeChecker);
+    node.getRightOperand().accept(this, treeChecker);
+    return null;
+  }
+
+  @Override
+  public Void visitUnary(UnaryTree node, TreeChecker treeChecker) {
+    node.getExpression().accept(this, treeChecker);
+    return null;
+  }
+
+  public static void identifierToVariableTree(IdentifierTree identifierTree) {
+    Element element = TreeUtils.elementFromTree(identifierTree);
+    if (element == null) {
+      return;
+    }
+    switch (element.getKind()) {
+      case FIELD:
+        System.out.println("FIELD: " + element);
+        break;
+      case PARAMETER:
+        System.out.println("PARAMETER: " + element);
+        break;
+      case LOCAL_VARIABLE:
+        System.out.println("LOCAL_VARIABLE: " + element);
+        break;
+    }
+  }
 }
