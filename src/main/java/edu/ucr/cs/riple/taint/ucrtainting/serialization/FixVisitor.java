@@ -117,7 +117,7 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
         break;
       case LOCAL_VARIABLE:
         VariableTree variableTree =
-            SymbolUtil.locateLocalVariableDeclaration((IdentifierTree) tree, path);
+            Utility.locateLocalVariableDeclaration((IdentifierTree) tree, path);
         System.out.println("LOCAL_VARIABLE: " + variableTree);
         break;
       case METHOD:
