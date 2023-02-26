@@ -72,18 +72,20 @@ public class SerializationService {
       if (treeElement == null) {
         return ImmutableSet.of();
       }
-      Symbol.MethodSymbol executableElement =
+      Symbol.MethodSymbol overridingMethod =
           (Symbol.MethodSymbol)
-              (isParamOverrideError ? treeElement.getEnclosingElement() : TreeUtils.elementFromTree(path.getLeaf()));
-      if(executableElement == null) {
+              (isParamOverrideError
+                  ? treeElement.getEnclosingElement()
+                  : TreeUtils.elementFromTree(path.getLeaf()));
+      if (overridingMethod == null) {
         return ImmutableSet.of();
       }
-      Symbol.MethodSymbol overriddenMethod =
-          Utility.getClosestOverriddenMethod(executableElement, types);
       if (!isParamOverrideError) {
-        // TODO: make the fix here from the overridden method.
+        // TODO: make the fix here from the overridingMethod method.
       } else {
-        int paramIndex = executableElement.getParameters().indexOf((Symbol.VarSymbol) treeElement);
+        Symbol.MethodSymbol overriddenMethod =
+            Utility.getClosestOverriddenMethod(overridingMethod, types);
+        int paramIndex = overridingMethod.getParameters().indexOf((Symbol.VarSymbol) treeElement);
         // TODO: make the fix here from the overridden method and its parameter index.
         Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
       }
