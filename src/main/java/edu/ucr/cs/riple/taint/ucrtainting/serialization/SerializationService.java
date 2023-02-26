@@ -139,14 +139,4 @@ public class SerializationService {
         return false;
     }
   }
-
-  /**
-   * Checks if the error is an inheritance violation error.
-   *
-   * @param messageKey The key of the error message.
-   * @return True, if the error is an inheritance violation error, false otherwise.
-   */
-  private static boolean isInheritanceViolationError(String messageKey) {
-    return messageKey.equals("override.param") || messageKey.equals("override.return");
-  }
 }
