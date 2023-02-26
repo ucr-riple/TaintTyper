@@ -12,20 +12,6 @@ import org.checkerframework.framework.source.SourceVisitor;
 public class SerializationService {
 
   /**
-   * Generates the fixes for the given tree if exists.
-   *
-   * @param tree The given tree.
-   * @param treeChecker The tree checker to check if a tree requires a fix.
-   * @param path The path of the tree.
-   */
-  public Set<Fix> generateFixesForExpression(Tree tree, TreeChecker treeChecker, TreePath path) {
-    FixVisitor fixVisitor = new FixVisitor(treeChecker, path);
-    Set<Fix> resolvingFixes = new HashSet<>();
-    fixVisitor.visit(tree, resolvingFixes);
-    return resolvingFixes;
-  }
-
-  /**
    * This method is called when a warning or error is reported by the checker and serialized the
    * error along the set of required fixes to resolve the error if exists.
    *
@@ -47,6 +33,20 @@ public class SerializationService {
     Error error = new Error(messageKey, String.format(messageKey, args), resolvingFixes);
     // TODO: serialize the error, will be implemented in the next PR, once the format
     // is finalized.
+  }
+
+  /**
+   * Generates the fixes for the given tree if exists.
+   *
+   * @param tree The given tree.
+   * @param treeChecker The tree checker to check if a tree requires a fix.
+   * @param path The path of the tree.
+   */
+  public Set<Fix> generateFixesForExpression(Tree tree, TreeChecker treeChecker, TreePath path) {
+    FixVisitor fixVisitor = new FixVisitor(treeChecker, path);
+    Set<Fix> resolvingFixes = new HashSet<>();
+    fixVisitor.visit(tree, resolvingFixes);
+    return resolvingFixes;
   }
 
   /**
