@@ -8,6 +8,7 @@ import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import java.util.HashSet;
 import java.util.Set;
 import javax.lang.model.element.Element;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.com.google.common.collect.ImmutableSet;
 import org.checkerframework.framework.source.SourceVisitor;
 import org.checkerframework.javacutil.TreeUtils;
@@ -63,37 +64,54 @@ public class SerializationService {
       TreeChecker treeChecker,
       TreePath path,
       JavacProcessingEnvironment processingEnvironment) {
-    if (isInheritanceViolationError(messageKey)) {
-      boolean isParamOverrideError = messageKey.equals("override.param");
-      // if the error is an inheritance violation error, we can generate the fix directly from the
-      // symbol and does not require a visitor.
-      Element treeElement = TreeUtils.elementFromTree(tree);
-      if (treeElement == null) {
-        return ImmutableSet.of();
-      }
-      Symbol.MethodSymbol overridingMethod =
-          (Symbol.MethodSymbol)
-              (isParamOverrideError
-                  ? treeElement.getEnclosingElement()
-                  : TreeUtils.elementFromTree(path.getLeaf()));
-      if (overridingMethod == null) {
-        return ImmutableSet.of();
-      }
-      if (!isParamOverrideError) {
-        // TODO: make the fix here from the overridingMethod method.
-      } else {
-        Symbol.MethodSymbol overriddenMethod =
-            Utility.getClosestOverriddenMethod(
-                overridingMethod, Types.instance(processingEnvironment.getContext()));
-        int paramIndex = overridingMethod.getParameters().indexOf((Symbol.VarSymbol) treeElement);
-        // TODO: make the fix here from the overridden method and its parameter index.
-        Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
-      }
+    switch (messageKey) {
+      case "override.param":
+        return handleParamOverrideError(tree, Types.instance(processingEnvironment.getContext()));
+      case "override.return":
+        return handleReturnOverrideError(path.getLeaf());
+      default:
+        FixVisitor fixVisitor = new FixVisitor(treeChecker, path);
+        Set<Fix> resolvingFixes = new HashSet<>();
+        fixVisitor.visit(tree, resolvingFixes);
+        return resolvingFixes;
     }
-    FixVisitor fixVisitor = new FixVisitor(treeChecker, path);
-    Set<Fix> resolvingFixes = new HashSet<>();
-    fixVisitor.visit(tree, resolvingFixes);
-    return resolvingFixes;
+  }
+
+  /**
+   * Computes the required fixes for wrong parameter override errors (type="override.param").
+   *
+   * @param paramTree the parameter tree.
+   * @param types the types instance.
+   * @return the set of required fixes to resolve errors of type="override.param".
+   */
+  private ImmutableSet<@NonNull Fix> handleParamOverrideError(Tree paramTree, Types types) {
+    Element treeElement = TreeUtils.elementFromTree(paramTree);
+    if (treeElement == null) {
+      return ImmutableSet.of();
+    }
+    Symbol.MethodSymbol overridingMethod = (Symbol.MethodSymbol) treeElement.getEnclosingElement();
+    if (overridingMethod == null) {
+      return ImmutableSet.of();
+    }
+    Symbol.MethodSymbol overriddenMethod =
+        Utility.getClosestOverriddenMethod(overridingMethod, types);
+    int paramIndex = overridingMethod.getParameters().indexOf((Symbol.VarSymbol) treeElement);
+    Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
+    // TODO: make the fix here from the overridden method and its parameter index.
+    return ImmutableSet.of();
+  }
+
+  /**
+   * Computes the required fixes for wrong return override errors (type="override.return").
+   *
+   * @param overridingMethodTree the overriding method tree.
+   * @return the set of required fixes to resolve errors of type="override.return".
+   */
+  private ImmutableSet<@NonNull Fix> handleReturnOverrideError(Tree overridingMethodTree) {
+    Symbol.MethodSymbol overridingMethod =
+        (Symbol.MethodSymbol) TreeUtils.elementFromTree(overridingMethodTree);
+    // TODO: make the fix here from the overridingMethod method.
+    return ImmutableSet.of();
   }
 
   /**
