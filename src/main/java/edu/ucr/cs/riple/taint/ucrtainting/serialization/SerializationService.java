@@ -74,7 +74,10 @@ public class SerializationService {
       }
       Symbol.MethodSymbol executableElement =
           (Symbol.MethodSymbol)
-              (isParamOverrideError ? treeElement.getEnclosingElement() : treeElement);
+              (isParamOverrideError ? treeElement.getEnclosingElement() : TreeUtils.elementFromTree(path.getLeaf()));
+      if(executableElement == null) {
+        return ImmutableSet.of();
+      }
       Symbol.MethodSymbol overriddenMethod =
           Utility.getClosestOverriddenMethod(executableElement, types);
       if (!isParamOverrideError) {
