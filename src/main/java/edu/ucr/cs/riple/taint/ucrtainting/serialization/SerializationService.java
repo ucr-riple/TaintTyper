@@ -44,16 +44,19 @@ public class SerializationService {
    */
   public Set<Fix> generateFixesForError(
       Tree tree, String messageKey, TreeChecker treeChecker, TreePath path) {
-    if (isInheritanceViolationError(messageKey)) {
-      // For inheritance violation errors, we can generate the fix directly from the symbol and does
-      // not require a visitor.
-      // TODO: this will be implemented in the next PR.
-      return ImmutableSet.of();
+    switch (messageKey) {
+      case "override.param":
+      case "override.return":
+        // For these two errors, we can directly compute the fix with symbols, we do not need a
+        // visitor.
+        // TODO: implement this in the next PR.
+        return ImmutableSet.of();
+      default:
+        FixVisitor fixVisitor = new FixVisitor(treeChecker, path);
+        Set<Fix> resolvingFixes = new HashSet<>();
+        fixVisitor.visit(tree, resolvingFixes);
+        return resolvingFixes;
     }
-    FixVisitor fixVisitor = new FixVisitor(treeChecker, path);
-    Set<Fix> resolvingFixes = new HashSet<>();
-    fixVisitor.visit(tree, resolvingFixes);
-    return resolvingFixes;
   }
 
   /**
@@ -80,15 +83,5 @@ public class SerializationService {
         // For all other cases, return false.
         return false;
     }
-  }
-
-  /**
-   * Checks if the error is an inheritance violation error.
-   *
-   * @param messageKey The key of the error message.
-   * @return True, if the error is an inheritance violation error, false otherwise.
-   */
-  private static boolean isInheritanceViolationError(String messageKey) {
-    return messageKey.equals("override.param") || messageKey.equals("override.return");
   }
 }
