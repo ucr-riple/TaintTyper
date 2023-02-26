@@ -5,6 +5,7 @@ import com.sun.source.util.TreePath;
 import java.util.HashSet;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.com.google.common.collect.ImmutableSet;
 import org.checkerframework.framework.source.SourceVisitor;
 
 /** This class is used to serialize the errors and the fixes for the errors. */
@@ -39,11 +40,10 @@ public class SerializationService {
     // @Tainted. For now, we pass tree -> true, to serialize a fix for all expressions on the right
     // hand side of the assignment.
     Tree sourceForFix = getSourceForFix(source, messageKey);
-    if (sourceForFix == null) {
-      return;
-    }
     Set<Fix> resolvingFixes =
-        generateFixesForExpression(sourceForFix, tree -> true, visitor.getCurrentPath());
+        sourceForFix == null
+            ? ImmutableSet.of()
+            : generateFixesForExpression(sourceForFix, tree -> true, visitor.getCurrentPath());
     Error error = new Error(messageKey, String.format(messageKey, args), resolvingFixes);
     // TODO: serialize the error, will be implemented in the next PR, once the format
     // is finalized.
