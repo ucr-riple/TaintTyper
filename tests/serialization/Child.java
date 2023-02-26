@@ -2,8 +2,13 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 
 public class Child extends Foo {
 
+  @Override
   // :: error: (override.param)
-  public Object inherit(@RUntainted Object paramInChild) {
-    return paramInChild;
+  public void inheritParam(@RUntainted Object paramInChild) {}
+
+  @Override
+  // :: error: (override.return)
+  public Object inheritReturn() {
+    return new Object();
   }
 }
