@@ -27,7 +27,11 @@ public class SerializationService {
     Set<Fix> resolvingFixes =
         checkErrorIsFixable(source, messageKey)
             ? generateFixesForError(
-                (Tree) source, messageKey, tree -> true, visitor.getCurrentPath())
+                (Tree) source,
+                visitor.getCurrentPath(),
+                messageKey,
+                tree -> true,
+                visitor.getCurrentPath())
             : ImmutableSet.of();
     Error error = new Error(messageKey, String.format(messageKey, args), resolvingFixes);
     // TODO: serialize the error, will be implemented in the next PR, once the format
@@ -38,12 +42,13 @@ public class SerializationService {
    * Generates the fixes for the given tree if exists.
    *
    * @param tree The given tree.
+   * @param visitorPath The path of the visitor.
    * @param messageKey The key of the error message.
    * @param treeChecker The tree checker to check if a tree requires a fix.
    * @param path The path of the tree.
    */
   public Set<Fix> generateFixesForError(
-      Tree tree, String messageKey, TreeChecker treeChecker, TreePath path) {
+      Tree tree, TreePath visitorPath, String messageKey, TreeChecker treeChecker, TreePath path) {
     if (isInheritanceViolationError(messageKey)) {
       // For inheritance violation errors, we can generate the fix directly from the symbol and does
       // not require a visitor.
