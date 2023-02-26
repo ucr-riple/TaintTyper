@@ -44,7 +44,8 @@ public class SerializationService {
     }
     Set<Fix> resolvingFixes =
         generateFixesForExpression(sourceForFix, tree -> true, visitor.getCurrentPath());
-    // TODO: serialize the error and the fixes, will be implemented in the next PR, once the format
+    Error error = new Error(messageKey, String.format(messageKey, args), resolvingFixes);
+    // TODO: serialize the error, will be implemented in the next PR, once the format
     // is finalized.
   }
 
