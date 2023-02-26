@@ -67,7 +67,6 @@ public class SerializationService {
       boolean isParamOverrideError = messageKey.equals("override.param");
       // if the error is an inheritance violation error, we can generate the fix directly from the
       // symbol and does not require a visitor.
-      Types types = Types.instance(processingEnvironment.getContext());
       Element treeElement = TreeUtils.elementFromTree(tree);
       if (treeElement == null) {
         return ImmutableSet.of();
@@ -84,7 +83,8 @@ public class SerializationService {
         // TODO: make the fix here from the overridingMethod method.
       } else {
         Symbol.MethodSymbol overriddenMethod =
-            Utility.getClosestOverriddenMethod(overridingMethod, types);
+            Utility.getClosestOverriddenMethod(
+                overridingMethod, Types.instance(processingEnvironment.getContext()));
         int paramIndex = overridingMethod.getParameters().indexOf((Symbol.VarSymbol) treeElement);
         // TODO: make the fix here from the overridden method and its parameter index.
         Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
