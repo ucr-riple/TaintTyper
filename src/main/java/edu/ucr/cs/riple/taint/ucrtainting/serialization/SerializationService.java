@@ -4,8 +4,10 @@ import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
 import java.util.HashSet;
 import java.util.Set;
+import javax.lang.model.element.Element;
 import org.checkerframework.com.google.common.collect.ImmutableSet;
 import org.checkerframework.framework.source.SourceVisitor;
+import org.checkerframework.javacutil.TreeUtils;
 
 /** This class is used to serialize the errors and the fixes for the errors. */
 public class SerializationService {
@@ -45,10 +47,12 @@ public class SerializationService {
   public Set<Fix> generateFixesForError(
       Tree tree, String messageKey, TreeChecker treeChecker, TreePath path) {
     if (isInheritanceViolationError(messageKey)) {
-      // For inheritance violation errors, we can generate the fix directly from the symbol and does
-      // not require a visitor.
-      // TODO: this will be implemented in the next PR.
-      return ImmutableSet.of();
+      Element treeElement = TreeUtils.elementFromTree(tree);
+      if (treeElement == null) {
+        return ImmutableSet.of();
+      }
+      Element executableElement =
+          messageKey.equals("override.param") ? treeElement.getEnclosingElement() : treeElement;
     }
     FixVisitor fixVisitor = new FixVisitor(treeChecker, path);
     Set<Fix> resolvingFixes = new HashSet<>();

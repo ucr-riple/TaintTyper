@@ -6,6 +6,8 @@ import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreeScanner;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.code.Types;
 import javax.lang.model.element.Name;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.com.google.common.base.Objects;
@@ -69,5 +71,37 @@ public class Utility {
           }
         };
     return treeScanner.scan(owner, localVariable.getName());
+  }
+
+  /**
+   * find the closest ancestor method in a superclass or superinterface that method overrides
+   *
+   * @param method the subclass method
+   * @param types the types data structure from javac
+   * @return closest overridden ancestor method, or <code>null</code> if method does not override
+   *     anything
+   */
+  public static Symbol.MethodSymbol getClosestOverriddenMethod(
+      Symbol.MethodSymbol method, Types types) {
+    // taken from Error Prone MethodOverrides check
+    Symbol.ClassSymbol owner = method.enclClass();
+    for (Type s : types.closure(owner.type)) {
+      if (types.isSameType(s, owner.type)) {
+        continue;
+      }
+      for (Symbol m : s.tsym.members().getSymbolsByName(method.name)) {
+        if (!(m instanceof Symbol.MethodSymbol)) {
+          continue;
+        }
+        Symbol.MethodSymbol memberSymbol = (Symbol.MethodSymbol) m;
+        if (memberSymbol.isStatic()) {
+          continue;
+        }
+        if (method.overrides(memberSymbol, owner, types, /*checkReturn*/ false)) {
+          return memberSymbol;
+        }
+      }
+    }
+    return null;
   }
 }
