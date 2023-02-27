@@ -65,7 +65,9 @@ class Foo {
 
   void requireUntainted(@RUntainted Object param) {}
 
-  public Object inherit(Object param) {
-    return param;
+  public void inheritParam(Object param) {}
+
+  public @RUntainted Object inheritReturn() {
+    return null;
   }
 }
