@@ -25,13 +25,21 @@ public class UCRTaintingChecker extends BaseTypeChecker {
   public void reportWarning(Object source, @CompilerMessageKey String messageKey, Object... args) {
     super.reportWarning(source, messageKey, args);
     serializationService.serializeError(
-        source, messageKey, args, visitor, (JavacProcessingEnvironment) getProcessingEnvironment());
+        source,
+        messageKey,
+        args,
+        visitor,
+        ((JavacProcessingEnvironment) getProcessingEnvironment()).getContext());
   }
 
   @Override
   public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
     super.reportError(source, messageKey, args);
     serializationService.serializeError(
-        source, messageKey, args, visitor, (JavacProcessingEnvironment) getProcessingEnvironment());
+        source,
+        messageKey,
+        args,
+        visitor,
+        ((JavacProcessingEnvironment) getProcessingEnvironment()).getContext());
   }
 }
