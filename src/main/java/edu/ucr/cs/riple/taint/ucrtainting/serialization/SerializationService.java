@@ -70,7 +70,7 @@ public class SerializationService {
       case "override.return":
         return handleReturnOverrideError(path.getLeaf());
       default:
-        FixVisitor fixVisitor = new FixVisitor(treeChecker, path);
+        FixVisitor fixVisitor = new FixVisitor(treeChecker, processingEnvironment);
         Set<Fix> resolvingFixes = new HashSet<>();
         fixVisitor.visit(tree, resolvingFixes);
         return resolvingFixes;

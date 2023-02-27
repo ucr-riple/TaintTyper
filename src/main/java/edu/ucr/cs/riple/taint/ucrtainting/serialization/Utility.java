@@ -1,16 +1,16 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import com.sun.source.tree.IdentifierTree;
-import com.sun.source.tree.Tree;
-import com.sun.source.tree.VariableTree;
-import com.sun.source.util.TreePath;
-import com.sun.source.util.TreeScanner;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
-import javax.lang.model.element.Name;
+import com.sun.tools.javac.comp.AttrContext;
+import com.sun.tools.javac.comp.Enter;
+import com.sun.tools.javac.comp.Env;
+import com.sun.tools.javac.processing.JavacProcessingEnvironment;
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeInfo;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.com.google.common.base.Objects;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Utility methods for the serialization service. */
@@ -25,52 +25,22 @@ public class Utility {
    * a block. The identifier is assumed to not be a field or a method parameter.
    *
    * @param localVariable the identifier tree.
-   * @param path the path to the identifier tree and the scope of the local variable.
+   * @param processingEnvironment the processing environment.
    * @return the variable declaration tree or null if the variable declaration cannot be found.
    */
   @Nullable
-  public static VariableTree locateLocalVariableDeclaration(
-      IdentifierTree localVariable, TreePath path) {
-    Symbol.VarSymbol symbol = (Symbol.VarSymbol) TreeUtils.elementFromTree(localVariable);
-    if (symbol == null) {
+  public static JCTree locateLocalVariableDeclaration(
+      IdentifierTree localVariable, JavacProcessingEnvironment processingEnvironment) {
+    Symbol sym = (Symbol) TreeUtils.elementFromTree(localVariable);
+    if (sym == null) {
       return null;
     }
-    Tree owner = null;
-    while (path != null) {
-      if (Objects.equal(TreeUtils.elementFromTree(path.getLeaf()), symbol.owner)) {
-        owner = path.getLeaf();
-        break;
-      }
-      path = path.getParentPath();
-    }
-    if (owner == null) {
+    Env<AttrContext> enterEnv =
+        Enter.instance(processingEnvironment.getContext()).getEnv(sym.enclClass());
+    if (enterEnv == null) {
       return null;
     }
-    TreeScanner<VariableTree, Name> treeScanner =
-        new TreeScanner<VariableTree, Name>() {
-          @Override
-          public VariableTree visitVariable(VariableTree tree, Name name) {
-            if (Objects.equal(tree.getName(), name)) {
-              Symbol treeSym = (Symbol) TreeUtils.elementFromDeclaration(tree);
-              // Check the scope here.
-              if (treeSym != null && symbol.owner.equals(treeSym.owner)) {
-                return tree;
-              }
-            }
-            return super.visitVariable(tree, name);
-          }
-
-          @Override
-          public VariableTree reduce(VariableTree r1, VariableTree r2) {
-            // to keep the found variable tree alive in the scanner reduce method.
-            if (r1 == null) {
-              return r2;
-            } else {
-              return r1;
-            }
-          }
-        };
-    return treeScanner.scan(owner, localVariable.getName());
+    return TreeInfo.declarationFor(sym, enterEnv.tree);
   }
 
   /**
