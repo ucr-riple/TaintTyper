@@ -34,27 +34,10 @@ public class Utility {
       return null;
     }
     Enter enter = Enter.instance(processingEnvironment.getContext());
-    Env<AttrContext> enterEnv = getEnterEnv(sym, enter);
+    Env<AttrContext> enterEnv = enter.getEnv(sym.enclClass());
     if (enterEnv == null) {
       return null;
     }
     return TreeInfo.declarationFor(sym, enterEnv.tree);
-  }
-
-  private static Env<AttrContext> getEnterEnv(Symbol sym, Enter enter) {
-    // Get enclosing class of sym, or sym itself if it is a class
-    // package, or module.
-    Symbol.TypeSymbol ts = null;
-    switch (sym.kind) {
-      case PCK:
-        ts = (Symbol.PackageSymbol) sym;
-        break;
-      case MDL:
-        ts = (Symbol.ModuleSymbol) sym;
-        break;
-      default:
-        ts = sym.enclClass();
-    }
-    return (ts != null) ? enter.getEnv(ts) : null;
   }
 }
