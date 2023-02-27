@@ -29,7 +29,7 @@ public class Utility {
   @Nullable
   public static JCTree locateLocalVariableDeclaration(
       IdentifierTree localVariable, JavacProcessingEnvironment processingEnvironment) {
-    Symbol.VarSymbol sym = (Symbol.VarSymbol) TreeUtils.elementFromTree(localVariable);
+    Symbol sym = (Symbol) TreeUtils.elementFromTree(localVariable);
     if (sym == null) {
       return null;
     }
