@@ -41,9 +41,10 @@ class Foo {
         // :: error: assignment
         field = f2;
         String localVar = f2;
+        String[] argsArray = new String[10];
         class LocalInnerClass {
           // :: error: assignment
-          @RUntainted String baz = localVar;
+          @RUntainted String baz = localVar + argsArray[2];
         }
       }
     }
