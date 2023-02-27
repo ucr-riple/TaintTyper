@@ -52,6 +52,20 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
     return null;
   }
 
+  /**
+   * Visitor for method invocations. For method invocations:
+   *
+   * <ol>
+   *   <li>If return type is not type variable, we annotate the called method.
+   *   <li>If return type is type variable and defined in source code, we annotate the called
+   *       method.
+   *   <li>If return type is type variable and defined in library, we annotate the receiver.
+   * </ol>
+   *
+   * @param node The given tree.
+   * @param fixes The set of fixes to add the fix to.
+   * @return Void null.
+   */
   @Override
   public Void visitMethodInvocation(MethodInvocationTree node, Set<Fix> fixes) {
     if (checker.check(node.getMethodSelect())) {
@@ -62,6 +76,12 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
       Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) element;
       // check for type variable in return type.
       if (methodSymbol.type.getReturnType().tsym instanceof Symbol.TypeVariableSymbol) {
+        // Check if class is defined in source code.
+        if (Serializer.pathToSourceFileFromURI(methodSymbol.enclClass().sourcefile.toUri())
+            != null) {
+          // Build a fix for the called method return type.
+          buildFixForElement(node.getMethodSelect());
+        }
         // Build the fix for the receiver.
         ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, fixes);
       } else {

@@ -36,7 +36,7 @@ class Foo {
       @RUntainted String field;
       String f2;
 
-      void foo() {
+      void foo(TypeArgument<String> ta) {
         // :: error: assignment
         field = finalLocalVar;
         // :: error: assignment
@@ -46,7 +46,7 @@ class Foo {
         String[] argsArray = new String[10];
         class LocalInnerClass {
           // :: error: assignment
-          @RUntainted String baz = localVar + argsList.get(0) + argsArray[0];
+          @RUntainted String baz = localVar + argsList.get(0) + argsArray[0] + ta.bar();
         }
       }
     }
