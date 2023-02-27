@@ -1,7 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import com.sun.source.tree.Tree;
-import com.sun.tools.javac.processing.JavacProcessingEnvironment;
+import com.sun.tools.javac.util.Context;
 import java.util.HashSet;
 import java.util.Set;
 import org.checkerframework.com.google.common.collect.ImmutableSet;
@@ -18,20 +18,20 @@ public class SerializationService {
    * @param messageKey the key of the error message
    * @param args the arguments of the error message
    * @param visitor the visitor that is visiting the source
-   * @param processingEnvironment the processing environment
+   * @param context javac context.
    */
   public void serializeError(
       Object source,
       String messageKey,
       Object[] args,
       SourceVisitor<?, ?> visitor,
-      JavacProcessingEnvironment processingEnvironment) {
+      Context context) {
     // TODO: for TreeChecker instance below, use the actual API which checks if the tree is
     // @Tainted. For now, we pass tree -> true, to serialize a fix for all expressions on the right
     // hand side of the assignment.
     Set<Fix> resolvingFixes =
         checkErrorIsFixable(source, messageKey)
-            ? generateFixesForError((Tree) source, messageKey, tree -> true, processingEnvironment)
+            ? generateFixesForError((Tree) source, messageKey, tree -> true, context)
             : ImmutableSet.of();
     Error error = new Error(messageKey, String.format(messageKey, args), resolvingFixes);
     // TODO: serialize the error, will be implemented in the next PR, once the format
@@ -47,10 +47,7 @@ public class SerializationService {
    * @param processingEnvironment The processing environment.
    */
   public Set<Fix> generateFixesForError(
-      Tree tree,
-      String messageKey,
-      TreeChecker treeChecker,
-      JavacProcessingEnvironment processingEnvironment) {
+      Tree tree, String messageKey, TreeChecker treeChecker, Context context) {
     switch (messageKey) {
       case "override.param":
       case "override.return":
@@ -59,7 +56,7 @@ public class SerializationService {
         // TODO: implement this in the next PR.
         return ImmutableSet.of();
       default:
-        FixVisitor fixVisitor = new FixVisitor(treeChecker, processingEnvironment);
+        FixVisitor fixVisitor = new FixVisitor(treeChecker, context);
         Set<Fix> resolvingFixes = new HashSet<>();
         fixVisitor.visit(tree, resolvingFixes);
         return resolvingFixes;
