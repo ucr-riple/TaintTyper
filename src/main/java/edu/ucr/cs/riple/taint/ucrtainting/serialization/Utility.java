@@ -33,8 +33,8 @@ public class Utility {
     if (sym == null) {
       return null;
     }
-    Enter enter = Enter.instance(processingEnvironment.getContext());
-    Env<AttrContext> enterEnv = enter.getEnv(sym.enclClass());
+    Env<AttrContext> enterEnv =
+        Enter.instance(processingEnvironment.getContext()).getEnv(sym.enclClass());
     if (enterEnv == null) {
       return null;
     }
