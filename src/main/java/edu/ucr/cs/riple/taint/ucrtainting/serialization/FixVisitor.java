@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
+import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.ConditionalExpressionTree;
 import com.sun.source.tree.ExpressionStatementTree;
@@ -80,6 +81,12 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
   public Void visitBinary(BinaryTree node, Set<Fix> fixes) {
     node.getLeftOperand().accept(this, fixes);
     node.getRightOperand().accept(this, fixes);
+    return null;
+  }
+
+  public Void visitArrayAccess(ArrayAccessTree node, Set<Fix> fixes) {
+    node.getExpression().accept(this, fixes);
+    // only the expression is enough, we do not need to annotate the index.
     return null;
   }
 
