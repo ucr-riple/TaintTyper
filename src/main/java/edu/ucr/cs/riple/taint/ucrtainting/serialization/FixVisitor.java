@@ -14,6 +14,7 @@ import com.sun.source.tree.UnaryTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.source.util.TreePath;
+import com.sun.tools.javac.code.Symbol;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
@@ -54,7 +55,19 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
   @Override
   public Void visitMethodInvocation(MethodInvocationTree node, Set<Fix> fixes) {
     if (checker.check(node.getMethodSelect())) {
-      buildFixForElement(node.getMethodSelect());
+      Element element = TreeUtils.elementFromUse(node);
+      if (element == null) {
+        return null;
+      }
+      Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) element;
+      // check for type variable in return type.
+      if (methodSymbol.type.getReturnType().tsym instanceof Symbol.TypeVariableSymbol) {
+        // Build the fix for the receiver.
+        ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, fixes);
+      } else {
+        // Build a fix for the called method return type.
+        buildFixForElement(node.getMethodSelect());
+      }
     }
     return null;
   }
