@@ -81,6 +81,7 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
             != null) {
           // Build a fix for the called method return type.
           buildFixForElement(node.getMethodSelect());
+          return null;
         }
         // Build the fix for the receiver.
         ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, fixes);
