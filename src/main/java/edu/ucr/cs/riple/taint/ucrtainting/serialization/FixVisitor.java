@@ -12,8 +12,8 @@ import com.sun.source.tree.PrimitiveTypeTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
-import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.Context;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
@@ -24,12 +24,12 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
   /** The tree checker to check if a tree requires a fix. */
   private final TreeChecker checker;
 
-  /** The processing environment. */
-  private final JavacProcessingEnvironment processingEnvironment;
+  /** The javac context. */
+  private final Context context;
 
-  public FixVisitor(TreeChecker checker, JavacProcessingEnvironment processingEnvironment) {
+  public FixVisitor(TreeChecker checker, Context context) {
     this.checker = checker;
-    this.processingEnvironment = processingEnvironment;
+    this.context = context;
   }
 
   @Override
@@ -124,7 +124,7 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
         break;
       case LOCAL_VARIABLE:
         JCTree variableTree =
-            Utility.locateLocalVariableDeclaration((IdentifierTree) tree, processingEnvironment);
+            Utility.locateLocalVariableDeclaration((IdentifierTree) tree, context);
         System.out.println("LOCAL_VARIABLE: " + variableTree);
         break;
       case METHOD:
