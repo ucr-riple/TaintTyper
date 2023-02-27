@@ -1,4 +1,5 @@
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.util.*;
 
 class Foo {
 
@@ -41,9 +42,11 @@ class Foo {
         // :: error: assignment
         field = f2;
         String localVar = f2;
+        List<String> argsList = new ArrayList<>();
+        String[] argsArray = new String[10];
         class LocalInnerClass {
           // :: error: assignment
-          @RUntainted String baz = localVar;
+          @RUntainted String baz = localVar + argsList.get(0) + argsArray[0];
         }
       }
     }
