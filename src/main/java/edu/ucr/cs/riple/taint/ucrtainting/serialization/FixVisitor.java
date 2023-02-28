@@ -76,13 +76,6 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
       Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) element;
       // check for type variable in return type.
       if (methodSymbol.type.getReturnType().tsym instanceof Symbol.TypeVariableSymbol) {
-        // Check if class is defined in source code.
-        if (Serializer.pathToSourceFileFromURI(methodSymbol.enclClass().sourcefile.toUri())
-            != null) {
-          // Build a fix for the called method return type.
-          buildFixForElement(node.getMethodSelect());
-          return null;
-        }
         // Build the fix for the receiver.
         ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, fixes);
       } else {
