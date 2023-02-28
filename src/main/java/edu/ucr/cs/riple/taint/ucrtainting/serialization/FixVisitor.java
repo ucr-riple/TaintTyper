@@ -21,7 +21,7 @@ import org.checkerframework.javacutil.TreeUtils;
 /** Generates the fixes for the given tree involved in the reporting error if such fixes exists. */
 public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
 
-  /** The tree checker to check if a tree requires a fix. */
+  /** The tree checker to check if the type of the given tree is {@code @RTainted}. */
   private final TreeChecker checker;
 
   /** The javac context. */
