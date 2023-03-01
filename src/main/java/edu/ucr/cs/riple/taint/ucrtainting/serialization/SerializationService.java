@@ -1,11 +1,17 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import com.sun.source.tree.Tree;
+import com.sun.source.util.TreePath;
+import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.util.Context;
 import java.util.HashSet;
 import java.util.Set;
+import javax.lang.model.element.Element;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.com.google.common.collect.ImmutableSet;
 import org.checkerframework.framework.source.SourceVisitor;
+import org.checkerframework.javacutil.TreeUtils;
 
 /** This class is used to serialize the errors and the fixes for the errors. */
 public class SerializationService {
@@ -31,7 +37,8 @@ public class SerializationService {
     // hand side of the assignment.
     Set<Fix> resolvingFixes =
         checkErrorIsFixable(source, messageKey)
-            ? generateFixesForError((Tree) source, messageKey, tree -> true, context)
+            ? generateFixesForError(
+                (Tree) source, messageKey, visitor.getCurrentPath(), tree -> true, context)
             : ImmutableSet.of();
     Error error = new Error(messageKey, String.format(messageKey, args), resolvingFixes);
     // TODO: serialize the error, will be implemented in the next PR, once the format
@@ -44,23 +51,59 @@ public class SerializationService {
    * @param tree The given tree.
    * @param messageKey The key of the error message.
    * @param treeChecker The tree checker to check if a tree requires a fix.
-   * @param processingEnvironment The processing environment.
+   * @param path The path of the tree.
+   * @param context The javac context.
    */
   public Set<Fix> generateFixesForError(
-      Tree tree, String messageKey, TreeChecker treeChecker, Context context) {
+      Tree tree, String messageKey, TreePath path, TreeChecker treeChecker, Context context) {
     switch (messageKey) {
       case "override.param":
+        return handleParamOverrideError(tree, Types.instance(context));
       case "override.return":
-        // For these two errors, we can directly compute the fix with symbols, we do not need a
-        // visitor.
-        // TODO: implement this in the next PR.
-        return ImmutableSet.of();
+        return handleReturnOverrideError(path.getLeaf());
       default:
         FixVisitor fixVisitor = new FixVisitor(treeChecker, context);
         Set<Fix> resolvingFixes = new HashSet<>();
         fixVisitor.visit(tree, resolvingFixes);
         return resolvingFixes;
     }
+  }
+
+  /**
+   * Computes the required fixes for wrong parameter override errors (type="override.param").
+   *
+   * @param paramTree the parameter tree.
+   * @param types the types instance.
+   * @return the set of required fixes to resolve errors of type="override.param".
+   */
+  private ImmutableSet<@NonNull Fix> handleParamOverrideError(Tree paramTree, Types types) {
+    Element treeElement = TreeUtils.elementFromTree(paramTree);
+    if (treeElement == null) {
+      return ImmutableSet.of();
+    }
+    Symbol.MethodSymbol overridingMethod = (Symbol.MethodSymbol) treeElement.getEnclosingElement();
+    if (overridingMethod == null) {
+      return ImmutableSet.of();
+    }
+    Symbol.MethodSymbol overriddenMethod =
+        Utility.getClosestOverriddenMethod(overridingMethod, types);
+    int paramIndex = overridingMethod.getParameters().indexOf((Symbol.VarSymbol) treeElement);
+    Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
+    // TODO: make the fix here from the overridden method and its parameter index.
+    return ImmutableSet.of();
+  }
+
+  /**
+   * Computes the required fixes for wrong return override errors (type="override.return").
+   *
+   * @param overridingMethodTree the overriding method tree.
+   * @return the set of required fixes to resolve errors of type="override.return".
+   */
+  private ImmutableSet<@NonNull Fix> handleReturnOverrideError(Tree overridingMethodTree) {
+    Symbol.MethodSymbol overridingMethod =
+        (Symbol.MethodSymbol) TreeUtils.elementFromTree(overridingMethodTree);
+    // TODO: make the fix here from the overridingMethod method.
+    return ImmutableSet.of();
   }
 
   /**
