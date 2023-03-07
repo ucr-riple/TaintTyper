@@ -10,6 +10,8 @@ import com.sun.tools.javac.comp.Env;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.util.Context;
+import java.util.ArrayList;
+import java.util.List;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.javacutil.TreeUtils;
 
@@ -71,6 +73,37 @@ public class Utility {
         }
       }
     }
+    return null;
+  }
+
+  public static List<Type.TypeVar> getTypeParametersInOrder(Type type) {
+    Type.Visitor<Void, List<Type.TypeVar>> visitor =
+        new Types.DefaultTypeVisitor<Void, List<Type.TypeVar>>() {
+
+          @Override
+          public Void visitClassType(Type.ClassType type, List<Type.TypeVar> typeVariableSymbols) {
+            type.typarams_field.forEach(t -> t.accept(this, typeVariableSymbols));
+            return null;
+          }
+
+          @Override
+          public Void visitTypeVar(Type.TypeVar t, List<Type.TypeVar> typeVariableSymbols) {
+            Type upperBound = t.getUpperBound();
+            if (upperBound.toString().equals("java.lang.Object")) {
+              typeVariableSymbols.add(t);
+            } else {
+              upperBound.accept(this, typeVariableSymbols);
+            }
+            return null;
+          }
+
+          @Override
+          public Void visitType(Type type, List<Type.TypeVar> typeVariableSymbols) {
+            return null;
+          }
+        };
+    List<Type.TypeVar> vars = new ArrayList<>();
+    type.tsym.type.accept(visitor, vars);
     return null;
   }
 }

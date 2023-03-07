@@ -13,8 +13,10 @@ import com.sun.source.tree.Tree;
 import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
@@ -75,9 +77,17 @@ public class FixVisitor extends SimpleTreeVisitor<Void, Set<Fix>> {
       }
       Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) element;
       // check for type variable in return type.
-      if (methodSymbol.type.getReturnType().tsym instanceof Symbol.TypeVariableSymbol) {
+      if (methodSymbol.getReturnType().tsym instanceof Symbol.TypeVariableSymbol) {
         // Build the fix for the receiver.
         ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, fixes);
+        JCTree variableTree =
+            Utility.locateLocalVariableDeclaration(
+                (IdentifierTree) ((MemberSelectTree) node.getMethodSelect()).getExpression(),
+                context);
+        if (variableTree == null) {
+          return null;
+        }
+        List<Type.TypeVar> vars = Utility.getTypeParametersInOrder(variableTree.type);
       } else {
         // Build a fix for the called method return type.
         buildFixForElement(node.getMethodSelect());

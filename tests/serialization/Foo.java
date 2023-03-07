@@ -36,7 +36,14 @@ class Foo {
       @RUntainted String field;
       String f2;
 
-      void foo(TypeArgument<String> ta) {
+      void foo(
+          TypeArgument<
+                  String,
+                  String,
+                  Map<String, String>,
+                  HashMap<String, String>,
+                  HashMap<HashMap<String, String>, Map<?, String>>>
+              ta) {
         // :: error: assignment
         field = finalLocalVar;
         // :: error: assignment
@@ -45,13 +52,29 @@ class Foo {
         List<String> argsList = new ArrayList<>();
         String[] argsArray = new String[10];
         class LocalInnerClass {
+
           // :: error: assignment
-          @RUntainted String baz = localVar + argsList.get(0) + argsArray[0] + ta.bar();
+          @RUntainted String baz = localVar + argsList.get(0) + argsArray[0] + ta.getT();
+
+          void run() {
+            // :: error: assignment
+            baz = ta.getT();
+            // :: error: assignment
+            baz = ta.getE();
+            // :: error: assignment
+            baz = ta.getJ().toString();
+            // :: error: assignment
+            baz = ta.getJ().keySet().iterator().next();
+            // :: error: assignment
+            baz = ta.getJ().values().iterator().next();
+          }
         }
       }
     }
     // :: error: assignment
     c = bar.staticF;
+    // :: error: argument
+    requireMap(getTypeArgument().getJ());
   }
 
   @RUntainted
@@ -70,4 +93,16 @@ class Foo {
   public @RUntainted Object inheritReturn() {
     return null;
   }
+
+  public TypeArgument<
+          String,
+          String,
+          Map<String, String>,
+          HashMap<String, String>,
+          HashMap<HashMap<String, String>, Map<?, String>>>
+      getTypeArgument() {
+    return null;
+  }
+
+  public void requireMap(@RUntainted Map<?, ?> map) {}
 }
