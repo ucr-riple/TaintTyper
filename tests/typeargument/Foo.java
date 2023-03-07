@@ -34,8 +34,11 @@ class Foo {
 
     MapTypeArgument<String, String, HashMap<String, String>> mapTypeArgument =
         new MapTypeArgument<>();
+    @RUntainted Map<?, ?> map;
     // :: error: assignment
-    @RUntainted Map<?, ?> map = mapTypeArgument.c;
+    map = mapTypeArgument.c;
+    // :: error: assignment
+    map = other.inner.innerField.getJ();
     // :: error: assignment
     map = b ? other.inner.innerField.getJ() : mapTypeArgument.c;
     // :: error: assignment
