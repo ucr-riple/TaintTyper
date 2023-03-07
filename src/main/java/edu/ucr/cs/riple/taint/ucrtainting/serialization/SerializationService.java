@@ -2,7 +2,6 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.util.Context;
-import java.util.HashSet;
 import java.util.Set;
 import org.checkerframework.com.google.common.collect.ImmutableSet;
 import org.checkerframework.framework.source.SourceVisitor;
@@ -33,6 +32,7 @@ public class SerializationService {
         checkErrorIsFixable(source, messageKey)
             ? generateFixesForError((Tree) source, messageKey, tree -> true, context)
             : ImmutableSet.of();
+    System.out.println("FOUND FIXES SIZE: " + resolvingFixes.size());
     Error error = new Error(messageKey, String.format(messageKey, args), resolvingFixes);
     // TODO: serialize the error, will be implemented in the next PR, once the format
     // is finalized.
@@ -56,10 +56,7 @@ public class SerializationService {
         // TODO: implement this in the next PR.
         return ImmutableSet.of();
       default:
-        FixVisitor fixVisitor = new FixVisitor(treeChecker, context);
-        Set<Fix> resolvingFixes = new HashSet<>();
-        fixVisitor.visit(tree, resolvingFixes);
-        return resolvingFixes;
+        return new FixVisitor(treeChecker, context).visit(tree, null);
     }
   }
 
