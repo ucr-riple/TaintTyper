@@ -16,7 +16,6 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
-import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 import javax.lang.model.element.Element;
@@ -80,7 +79,9 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type.TypeVar> {
       // check for type variable in return type.
       if (methodSymbol.getReturnType() instanceof Type.TypeVar) {
         // Build the fix for the receiver.
-        return ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, (Type.TypeVar) methodSymbol.getReturnType());
+        return ((MemberSelectTree) node.getMethodSelect())
+            .getExpression()
+            .accept(this, (Type.TypeVar) methodSymbol.getReturnType());
       } else {
         // Build a fix for the called method return type.
         return Set.of(buildFixForElement(node.getMethodSelect(), null));
@@ -154,7 +155,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type.TypeVar> {
         break;
       case LOCAL_VARIABLE:
         JCTree variableTree =
-                Utility.locateLocalVariableDeclaration((IdentifierTree) tree, context);
+            Utility.locateLocalVariableDeclaration((IdentifierTree) tree, context);
         System.out.println("LOCAL_VARIABLE: " + variableTree);
         break;
       case METHOD:
