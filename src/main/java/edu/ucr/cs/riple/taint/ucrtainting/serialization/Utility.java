@@ -10,13 +10,15 @@ import com.sun.tools.javac.comp.Env;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.util.Context;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Utility methods for the serialization service. */
 public class Utility {
+
+  public static final TypeArgumentVisitor TYPE_ARGUMENT_VISITOR = new TypeArgumentVisitor();
 
   private Utility() {
     // This class is mainly a collection of static methods and should not be instantiated.
@@ -77,33 +79,31 @@ public class Utility {
   }
 
   public static List<Type.TypeVar> getTypeParametersInOrder(Type type) {
-    Type.Visitor<Void, List<Type.TypeVar>> visitor =
-        new Types.DefaultTypeVisitor<Void, List<Type.TypeVar>>() {
+    return type.tsym.type.accept(TYPE_ARGUMENT_VISITOR, null);
+  }
 
-          @Override
-          public Void visitClassType(Type.ClassType type, List<Type.TypeVar> typeVariableSymbols) {
-            type.typarams_field.forEach(t -> t.accept(this, typeVariableSymbols));
-            return null;
-          }
+  static class TypeArgumentVisitor extends Types.DefaultTypeVisitor<List<Type.TypeVar>, Void> {
 
-          @Override
-          public Void visitTypeVar(Type.TypeVar t, List<Type.TypeVar> typeVariableSymbols) {
-            Type upperBound = t.getUpperBound();
-            if (upperBound.toString().equals("java.lang.Object")) {
-              typeVariableSymbols.add(t);
-            } else {
-              upperBound.accept(this, typeVariableSymbols);
-            }
-            return null;
-          }
+    @Override
+    public List<Type.TypeVar> visitClassType(Type.ClassType type, Void unused) {
+      return type.typarams_field.stream()
+          .flatMap(t -> t.accept(this, null).stream())
+          .collect(Collectors.toList());
+    }
 
-          @Override
-          public Void visitType(Type type, List<Type.TypeVar> typeVariableSymbols) {
-            return null;
-          }
-        };
-    List<Type.TypeVar> vars = new ArrayList<>();
-    type.tsym.type.accept(visitor, vars);
-    return null;
+    @Override
+    public List<Type.TypeVar> visitTypeVar(Type.TypeVar t, Void unused) {
+      Type upperBound = t.getUpperBound();
+      if (upperBound.toString().equals("java.lang.Object")) {
+        return List.of(t);
+      } else {
+        return upperBound.accept(this, null);
+      }
+    }
+
+    @Override
+    public List<Type.TypeVar> visitType(Type type, Void unused) {
+      return List.of();
+    }
   }
 }

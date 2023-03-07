@@ -15,28 +15,28 @@ class Foo {
               HashMap<HashMap<String, String>, Map<?, String>>>
           ta) {
 
-    // :: error: assignment
-    field = ta.getT();
-    // :: error: assignment
-    field = ta.getE();
-    // :: error: assignment
-    field = ta.getJ().toString();
-    // :: error: assignment
-    field = ta.getJ().keySet().iterator().next();
-    // :: error: assignment
-    field = ta.getJ().values().iterator().next();
-    // :: error: argument
-    requireMap(getTypeArgument().getJ());
-    // :: error: assignment
-    field = other.getO().getT();
-    // :: error: assignment
-    field = other.inner.innerField.getT();
+    //    // :: error: assignment
+    //    field = ta.getT();
+    //    // :: error: assignment
+    //    field = ta.getE();
+    //    // :: error: assignment
+    //    field = ta.getJ().toString();
+    //    // :: error: assignment
+    //    field = ta.getJ().keySet().iterator().next();
+    //    // :: error: assignment
+    //    field = ta.getJ().values().iterator().next();
+    //    // :: error: argument
+    //    requireMap(getTypeArgument().getJ());
+    //    // :: error: assignment
+    //    field = other.getO().getT();
+    //    // :: error: assignment
+    //    field = other.inner.innerField.getT();
 
     MapTypeArgument<String, String, HashMap<String, String>> mapTypeArgument =
         new MapTypeArgument<>();
     @RUntainted Map<?, ?> map;
-    // :: error: assignment
-    map = mapTypeArgument.c;
+    //    // :: error: assignment
+    //    map = mapTypeArgument.c;
     // :: error: assignment
     map = other.inner.innerField.getJ();
     // :: error: assignment

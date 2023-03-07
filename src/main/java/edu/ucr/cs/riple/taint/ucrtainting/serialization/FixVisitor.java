@@ -17,6 +17,7 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
@@ -161,6 +162,10 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type.TypeVar> {
       case METHOD:
         System.out.println("METHOD: " + element);
         break;
+    }
+    if (typeVar != null) {
+      List<Type.TypeVar> vars = Utility.getTypeParametersInOrder(((Symbol) element).type);
+      System.out.println(vars);
     }
     // TODO: make the actual fix instance here once the format is finalized.
     return new Fix();
