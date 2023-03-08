@@ -35,17 +35,17 @@ public class Foo<E> {
 
   public void testOnParameter(Foo<String> param) {
     // :: error: argument
-    requireOnTypeParameter(this.getWithType());
+    requireOnParameter(this.getWithType());
     // :: error: argument
-    requireOnTypeParameter(this.getWithString());
+    requireOnParameter(this.getWithString());
     // :: error: argument
-    requireOnTypeParameter(getWithType());
+    requireOnParameter(getWithType());
     // :: error: argument
-    requireOnTypeParameter(getWithString());
+    requireOnParameter(getWithString());
     // :: error: argument
-    requireOnTypeParameter(param.getWithType());
+    requireOnParameter(param.getWithType());
     // :: error: argument
-    requireOnTypeParameter(param.getWithString());
+    requireOnParameter(param.getWithString());
   }
 
   public @RUntainted Foo<String> testOnParamReturn() {
