@@ -14,53 +14,53 @@ public class Foo<E, D> {
     return withString;
   }
 
-  public void requireOnTypeParameter1(Foo<@RUntainted ?, ?> p) {}
+  public void onTypeParameter1(Foo<@RUntainted ?, ?> p) {}
 
-  public void requireOnTypeParameter2(Foo<?, @RUntainted ?> p) {}
+  public void onTypeParameter2(Foo<?, @RUntainted ?> p) {}
 
-  public void requireOnTypeParameterAll(Foo<@RUntainted ?, @RUntainted ?> p) {}
+  public void onTypeParameterAll(Foo<@RUntainted ?, @RUntainted ?> p) {}
 
-  public void requireOnParameter(@RUntainted Foo<?, ?> p) {}
+  public void onParameter(@RUntainted Foo<?, ?> p) {}
 
   public void coreTest() {
     // :: error: argument
-    requireOnTypeParameter1(getWithType());
+    onTypeParameter1(getWithType());
     // :: error: argument
-    requireOnTypeParameter2(getWithType());
+    onTypeParameter2(getWithType());
     // :: error: argument
-    requireOnTypeParameterAll(getWithType());
+    onTypeParameterAll(getWithType());
     // :: error: argument
-    requireOnParameter(getWithType());
+    onParameter(getWithType());
   }
 
   public void testOnTypeParameter(Foo<String, String> param) {
     // :: error: argument
-    requireOnTypeParameter1(this.getWithType());
+    onTypeParameter1(this.getWithType());
     // :: error: argument
-    requireOnTypeParameter1(this.getWithString());
+    onTypeParameter1(this.getWithString());
     // :: error: argument
-    requireOnTypeParameter1(getWithType());
+    onTypeParameter1(getWithType());
     // :: error: argument
-    requireOnTypeParameter1(getWithString());
+    onTypeParameter1(getWithString());
     // :: error: argument
-    requireOnTypeParameter1(param.getWithType());
+    onTypeParameter1(param.getWithType());
     // :: error: argument
-    requireOnTypeParameter1(param.getWithString());
+    onTypeParameter1(param.getWithString());
   }
 
   public void testOnParameter(Foo<String, String> param) {
     // :: error: argument
-    requireOnParameter(this.getWithType());
+    onParameter(this.getWithType());
     // :: error: argument
-    requireOnParameter(this.getWithString());
+    onParameter(this.getWithString());
     // :: error: argument
-    requireOnParameter(getWithType());
+    onParameter(getWithType());
     // :: error: argument
-    requireOnParameter(getWithString());
+    onParameter(getWithString());
     // :: error: argument
-    requireOnParameter(param.getWithType());
+    onParameter(param.getWithType());
     // :: error: argument
-    requireOnParameter(param.getWithString());
+    onParameter(param.getWithString());
   }
 
   public @RUntainted Foo<String, String> testOnParamReturn() {
