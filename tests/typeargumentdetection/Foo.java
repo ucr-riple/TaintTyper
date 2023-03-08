@@ -1,46 +1,59 @@
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.util.*;
 
-public class Foo<E> {
+public class Foo<E, D> {
 
-  private final Foo<String> withString = null;
-  private final Foo<E> withType = null;
+  private final Foo<String, String> withString = null;
+  private final Foo<E, D> withType = null;
 
-  public Foo<E> getWithType() {
+  public Foo<E, D> getWithType() {
     return withType;
   }
 
-  public Foo<String> getWithString() {
+  public Foo<String, String> getWithString() {
     return withString;
   }
 
-  public void requireOnTypeParameter(Foo<@RUntainted ?> p) {}
+  public void requireOnTypeParameter1(Foo<@RUntainted ?, ?> p) {}
 
-  public void requireOnParameter(@RUntainted Foo<?> p) {}
+  public void requireOnTypeParameter2(Foo<?, @RUntainted ?> p) {}
+
+  public void requireOnTypeParameterAll(Foo<@RUntainted ?, @RUntainted ?> p) {}
+
+  public void requireOnParameter(@RUntainted Foo<?, ?> p) {}
 
   public void coreTest() {
     // :: error: argument
-    requireOnTypeParameter(getWithType());
+    requireOnTypeParameter1(getWithType());
     // :: error: argument
     requireOnParameter(getWithType());
   }
 
-  public void testOnTypeParameter(Foo<String> param) {
+  public void paramIndexDetection() {
     // :: error: argument
-    requireOnTypeParameter(this.getWithType());
+    requireOnTypeParameter1(getWithType());
     // :: error: argument
-    requireOnTypeParameter(this.getWithString());
+    requireOnTypeParameter2(getWithType());
     // :: error: argument
-    requireOnTypeParameter(getWithType());
-    // :: error: argument
-    requireOnTypeParameter(getWithString());
-    // :: error: argument
-    requireOnTypeParameter(param.getWithType());
-    // :: error: argument
-    requireOnTypeParameter(param.getWithString());
+    requireOnTypeParameterAll(getWithType());
   }
 
-  public void testOnParameter(Foo<String> param) {
+  public void testOnTypeParameter(Foo<String, String> param) {
+    // :: error: argument
+    requireOnTypeParameter1(this.getWithType());
+    // :: error: argument
+    requireOnTypeParameter1(this.getWithString());
+    // :: error: argument
+    requireOnTypeParameter1(getWithType());
+    // :: error: argument
+    requireOnTypeParameter1(getWithString());
+    // :: error: argument
+    requireOnTypeParameter1(param.getWithType());
+    // :: error: argument
+    requireOnTypeParameter1(param.getWithString());
+  }
+
+  public void testOnParameter(Foo<String, String> param) {
     // :: error: argument
     requireOnParameter(this.getWithType());
     // :: error: argument
@@ -55,12 +68,12 @@ public class Foo<E> {
     requireOnParameter(param.getWithString());
   }
 
-  public @RUntainted Foo<String> testOnParamReturn() {
+  public @RUntainted Foo<String, String> testOnParamReturn() {
     // :: error: return
     return withString;
   }
 
-  public Foo<@RUntainted String> testOnTypeParamReturn() {
+  public Foo<@RUntainted String, String> testOnTypeParamReturn() {
     // :: error: return
     return withString;
   }
