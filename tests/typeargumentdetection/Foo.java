@@ -26,16 +26,11 @@ public class Foo<E, D> {
     // :: error: argument
     requireOnTypeParameter1(getWithType());
     // :: error: argument
-    requireOnParameter(getWithType());
-  }
-
-  public void paramIndexDetection() {
-    // :: error: argument
-    requireOnTypeParameter1(getWithType());
-    // :: error: argument
     requireOnTypeParameter2(getWithType());
     // :: error: argument
     requireOnTypeParameterAll(getWithType());
+    // :: error: argument
+    requireOnParameter(getWithType());
   }
 
   public void testOnTypeParameter(Foo<String, String> param) {
