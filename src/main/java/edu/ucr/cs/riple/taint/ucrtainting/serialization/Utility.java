@@ -106,4 +106,35 @@ public class Utility {
       return List.of();
     }
   }
+
+  /**
+   * Checks if a type contains a parameter type.
+   *
+   * @param type the type to check
+   * @return true if the type contains a parameter type, false otherwise
+   */
+  public static boolean containsParameterType(Type type) {
+    if (isTypeVar(type)) {
+      return true;
+    }
+    if (type instanceof Type.ClassType) {
+      Type.ClassType classType = (Type.ClassType) type;
+      for (Type t : classType.getTypeArguments()) {
+        if (containsParameterType(t)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if a type is a parameter type.
+   *
+   * @param type the type to check
+   * @return true if the type is a parameter type, false otherwise
+   */
+  public static boolean isTypeVar(Type type) {
+    return type instanceof Type.TypeVar;
+  }
 }

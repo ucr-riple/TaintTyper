@@ -1,3 +1,5 @@
+package tests;
+
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import java.io.File;
 import java.util.List;

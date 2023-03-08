@@ -20,7 +20,6 @@ public class TypeArgument<T, E, J extends Map<E, T>, D extends J, F extends Map<
   }
 
   public J getJ() {
-    J o = null;
-    return o;
+    return null;
   }
 }

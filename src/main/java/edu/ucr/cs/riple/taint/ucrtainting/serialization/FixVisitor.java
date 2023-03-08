@@ -23,7 +23,7 @@ import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Generates the fixes for the given tree involved in the reporting error if such fixes exists. */
-public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type.TypeVar> {
+public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
 
   /** The tree checker to check if the type of the given tree is {@code @RTainted}. */
   private final TreeChecker checker;
@@ -37,7 +37,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type.TypeVar> {
   }
 
   @Override
-  public Set<Fix> visitIdentifier(IdentifierTree node, Type.TypeVar typeVar) {
+  public Set<Fix> visitIdentifier(IdentifierTree node, Type typeVar) {
     if (checker.check(node)) {
       return Set.of(buildFixForElement(node, typeVar));
     }
@@ -45,7 +45,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type.TypeVar> {
   }
 
   @Override
-  public Set<Fix> visitConditionalExpression(ConditionalExpressionTree node, Type.TypeVar typeVar) {
+  public Set<Fix> visitConditionalExpression(ConditionalExpressionTree node, Type typeVar) {
     Set<Fix> fixes = new HashSet<>();
     if (checker.check(node.getTrueExpression())) {
       fixes.addAll(node.getTrueExpression().accept(this, typeVar));
@@ -70,7 +70,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type.TypeVar> {
    * @return Void null.
    */
   @Override
-  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Type.TypeVar typeVar) {
+  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Type type) {
     if (checker.check(node.getMethodSelect())) {
       Element element = TreeUtils.elementFromUse(node);
       if (element == null) {
@@ -78,11 +78,13 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type.TypeVar> {
       }
       Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) element;
       // check for type variable in return type.
-      if (methodSymbol.getReturnType() instanceof Type.TypeVar) {
+      if (Utility.containsParameterType(methodSymbol.getReturnType())) {
+        // set type, if not set.
+        type = type == null ? methodSymbol.getReturnType() : type;
         // Build the fix for the receiver.
         return ((MemberSelectTree) node.getMethodSelect())
             .getExpression()
-            .accept(this, (Type.TypeVar) methodSymbol.getReturnType());
+            .accept(this, type);
       } else {
         // Build a fix for the called method return type.
         return Set.of(buildFixForElement(node.getMethodSelect(), null));
@@ -92,56 +94,56 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type.TypeVar> {
   }
 
   @Override
-  public Set<Fix> visitLiteral(LiteralTree node, Type.TypeVar typeVar) {
+  public Set<Fix> visitLiteral(LiteralTree node, Type type) {
     // We do not generate fix for primitive types.
     return Set.of();
   }
 
   @Override
-  public Set<Fix> visitPrimitiveType(PrimitiveTypeTree node, Type.TypeVar typeVar) {
+  public Set<Fix> visitPrimitiveType(PrimitiveTypeTree node, Type type) {
     // We do not generate fix for primitive types.
     return Set.of();
   }
 
   @Override
-  public Set<Fix> visitExpressionStatement(ExpressionStatementTree node, Type.TypeVar typeVar) {
-    return node.getExpression().accept(this, typeVar);
+  public Set<Fix> visitExpressionStatement(ExpressionStatementTree node, Type type) {
+    return node.getExpression().accept(this, type);
   }
 
   @Override
-  public Set<Fix> visitBinary(BinaryTree node, Type.TypeVar typeVar) {
+  public Set<Fix> visitBinary(BinaryTree node, Type type) {
     Set<Fix> fixes = new HashSet<>();
-    fixes.addAll(node.getLeftOperand().accept(this, typeVar));
-    fixes.addAll(node.getRightOperand().accept(this, typeVar));
+    fixes.addAll(node.getLeftOperand().accept(this, type));
+    fixes.addAll(node.getRightOperand().accept(this, type));
     return fixes;
   }
 
-  public Set<Fix> visitArrayAccess(ArrayAccessTree node, Type.TypeVar typeVar) {
+  public Set<Fix> visitArrayAccess(ArrayAccessTree node, Type type) {
     // only the expression is enough, we do not need to annotate the index.
-    return node.getExpression().accept(this, typeVar);
+    return node.getExpression().accept(this, type);
   }
 
   @Override
-  public Set<Fix> visitMemberSelect(MemberSelectTree node, Type.TypeVar typeVar) {
+  public Set<Fix> visitMemberSelect(MemberSelectTree node, Type type) {
     if (checker.check(node.getExpression())) {
-      return Set.of(buildFixForElement(node, typeVar));
+      return Set.of(buildFixForElement(node, type));
     }
     return Set.of();
   }
 
   @Override
-  public Set<Fix> visitUnary(UnaryTree node, Type.TypeVar typeVar) {
-    return node.getExpression().accept(this, typeVar);
+  public Set<Fix> visitUnary(UnaryTree node, Type type) {
+    return node.getExpression().accept(this, type);
   }
 
   /**
    * Builds the fix for the given element.
    *
    * @param tree The given tree.
-   * @param typeVar The type variable.
+   * @param type The type variable.
    * @return The fix for the given element.
    */
-  public Fix buildFixForElement(Tree tree, Type.TypeVar typeVar) {
+  public Fix buildFixForElement(Tree tree, Type type) {
     // TODO: make the actual fix instance here once the format is finalized.
     Element element = TreeUtils.elementFromTree(tree);
     if (element == null) {
@@ -163,7 +165,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type.TypeVar> {
         System.out.println("METHOD: " + element);
         break;
     }
-    if (typeVar != null) {
+    if (type != null) {
       List<Type.TypeVar> vars = Utility.getTypeParametersInOrder(((Symbol) element).type);
       System.out.println(vars);
     }
