@@ -20,10 +20,18 @@ public class SimpleTypeArgument<E> {
 
   public void require(SimpleTypeArgument<@RUntainted ?> s) {}
 
-  public void test() {
+  public void test(SimpleTypeArgument<String> param) {
+    // :: error: argument
+    require(this.getWithType());
+    // :: error: argument
+    require(this.getWithString());
     // :: error: argument
     require(getWithType());
     // :: error: argument
     require(getWithString());
+    // :: error: argument
+    require(param.getWithType());
+    // :: error: argument
+    require(param.getWithString());
   }
 }
