@@ -81,10 +81,10 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       if (Utility.containsParameterType(methodSymbol.getReturnType())) {
         // set type, if not set.
         type = type == null ? methodSymbol.getReturnType() : type;
-        // Build the fix for the receiver.
-        return ((MemberSelectTree) node.getMethodSelect())
-            .getExpression()
-            .accept(this, type);
+        if (node.getMethodSelect() instanceof MemberSelectTree) {
+          // Build the fix for the receiver.
+          return ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type);
+        }
       } else {
         // Build a fix for the called method return type.
         return Set.of(buildFixForElement(node.getMethodSelect(), null));
