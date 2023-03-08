@@ -18,6 +18,13 @@ public class Foo<E> {
 
   public void requireOnParameter(@RUntainted Foo<?> p) {}
 
+  public void coreTest() {
+    // :: error: argument
+    requireOnTypeParameter(getWithType());
+    // :: error: argument
+    requireOnParameter(getWithType());
+  }
+
   public void testOnTypeParameter(Foo<String> param) {
     // :: error: argument
     requireOnTypeParameter(this.getWithType());
