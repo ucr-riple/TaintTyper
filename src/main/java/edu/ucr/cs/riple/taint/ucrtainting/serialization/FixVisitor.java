@@ -145,7 +145,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
    */
   public Fix buildFixForElement(Tree tree, Type type) {
     Element element = TreeUtils.elementFromTree(tree);
-    SymbolLocation location = null;
+    SymbolLocation location;
     if (element == null) {
       return null;
     }
