@@ -29,6 +29,7 @@ public class Serializer {
   /** Config object used to configure the serializer. */
   private final Config config;
 
+  /** Path to write errors. */
   private final Path errorOutputPath;
 
   public Serializer(Config config) {
