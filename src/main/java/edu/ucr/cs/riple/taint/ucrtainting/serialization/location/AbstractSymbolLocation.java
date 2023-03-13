@@ -6,6 +6,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import javax.lang.model.element.ElementKind;
 import org.checkerframework.com.google.common.base.Preconditions;
+import org.json.JSONObject;
 
 /** abstract base class for {@link SymbolLocation}. */
 public abstract class AbstractSymbolLocation implements SymbolLocation {
@@ -32,5 +33,13 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
             ? enclosingClass.sourcefile.toUri()
             : (enclosingClass.classfile != null ? enclosingClass.classfile.toUri() : null);
     this.path = Serializer.pathToSourceFileFromURI(pathInURI);
+  }
+
+  @Override
+  public JSONObject toJSON() {
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("type", type.name());
+    jsonObject.put("class", Serializer.serializeSymbol(this.enclosingClass));
+    return jsonObject;
   }
 }

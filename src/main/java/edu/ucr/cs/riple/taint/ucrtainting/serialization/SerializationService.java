@@ -6,14 +6,22 @@ import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.Config;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.Set;
 import javax.lang.model.element.Element;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.framework.source.SourceVisitor;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** This class is used to serialize the errors and the fixes for the errors. */
 public class SerializationService {
+
+  /** Serializer for the checker. */
+  private final Serializer serializer;
+
+  public SerializationService(Config config) {
+    this.serializer = new Serializer(config);
+  }
 
   /**
    * This method is called when a warning or error is reported by the checker and serialized the
@@ -39,10 +47,10 @@ public class SerializationService {
             ? generateFixesForError(
                 (Tree) source, messageKey, visitor.getCurrentPath(), tree -> true, context)
             : ImmutableSet.of();
-    System.out.println("FOUND FIXES SIZE: " + resolvingFixes.size());
-    Error error = new Error(messageKey, String.format(messageKey, args), resolvingFixes);
-    // TODO: serialize the error, will be implemented in the next PR, once the format
-    // is finalized.
+    Error error =
+        new Error(
+            messageKey, String.format(messageKey, args), resolvingFixes, visitor.getCurrentPath());
+    serializer.serializeError(error);
   }
 
   /**
@@ -58,9 +66,9 @@ public class SerializationService {
       Tree tree, String messageKey, TreePath path, TreeChecker treeChecker, Context context) {
     switch (messageKey) {
       case "override.param":
-        return handleParamOverrideError(tree, Types.instance(context));
+        return handleParamOverrideError(tree, context);
       case "override.return":
-        return handleReturnOverrideError(path.getLeaf());
+        return handleReturnOverrideError(path.getLeaf(), context);
       default:
         return new FixVisitor(treeChecker, context).visit(tree, null);
     }
@@ -70,10 +78,10 @@ public class SerializationService {
    * Computes the required fixes for wrong parameter override errors (type="override.param").
    *
    * @param paramTree the parameter tree.
-   * @param types the types instance.
+   * @param context the javac context.
    * @return the set of required fixes to resolve errors of type="override.param".
    */
-  private ImmutableSet<@NonNull Fix> handleParamOverrideError(Tree paramTree, Types types) {
+  private ImmutableSet<Fix> handleParamOverrideError(Tree paramTree, Context context) {
     Element treeElement = TreeUtils.elementFromTree(paramTree);
     if (treeElement == null) {
       return ImmutableSet.of();
@@ -82,25 +90,30 @@ public class SerializationService {
     if (overridingMethod == null) {
       return ImmutableSet.of();
     }
+    Types types = Types.instance(context);
     Symbol.MethodSymbol overriddenMethod =
         Utility.getClosestOverriddenMethod(overridingMethod, types);
+    if (overriddenMethod == null) {
+      return ImmutableSet.of();
+    }
     int paramIndex = overridingMethod.getParameters().indexOf((Symbol.VarSymbol) treeElement);
     Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
-    // TODO: make the fix here from the overridden method and its parameter index.
-    return ImmutableSet.of();
+    return ImmutableSet.of(
+        new Fix("untainted", SymbolLocation.createLocationFromSymbol(toBeAnnotated, context)));
   }
 
   /**
    * Computes the required fixes for wrong return override errors (type="override.return").
    *
    * @param overridingMethodTree the overriding method tree.
+   * @param context the javac context.
    * @return the set of required fixes to resolve errors of type="override.return".
    */
-  private ImmutableSet<@NonNull Fix> handleReturnOverrideError(Tree overridingMethodTree) {
+  private ImmutableSet<Fix> handleReturnOverrideError(Tree overridingMethodTree, Context context) {
     Symbol.MethodSymbol overridingMethod =
         (Symbol.MethodSymbol) TreeUtils.elementFromTree(overridingMethodTree);
-    // TODO: make the fix here from the overridingMethod method.
-    return ImmutableSet.of();
+    return ImmutableSet.of(
+        new Fix("untainted", SymbolLocation.createLocationFromSymbol(overridingMethod, context)));
   }
 
   /**

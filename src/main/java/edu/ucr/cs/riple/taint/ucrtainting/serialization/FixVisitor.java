@@ -14,10 +14,9 @@ import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
@@ -144,32 +143,12 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
    * @return The fix for the given element.
    */
   public Fix buildFixForElement(Tree tree, Type type) {
-    // TODO: make the actual fix instance here once the format is finalized.
     Element element = TreeUtils.elementFromTree(tree);
+    SymbolLocation location;
     if (element == null) {
       return null;
     }
-    switch (element.getKind()) {
-      case FIELD:
-        System.out.println("FIELD: " + element);
-        break;
-      case PARAMETER:
-        System.out.println("PARAMETER: " + element);
-        break;
-      case LOCAL_VARIABLE:
-        JCTree variableTree =
-            Utility.locateLocalVariableDeclaration((IdentifierTree) tree, context);
-        System.out.println("LOCAL_VARIABLE: " + variableTree);
-        break;
-      case METHOD:
-        System.out.println("METHOD: " + element);
-        break;
-    }
-    if (type != null) {
-      List<Type.TypeVar> vars = Utility.getTypeParametersInOrder(((Symbol) element).type);
-      System.out.println(vars);
-    }
-    // TODO: make the actual fix instance here once the format is finalized.
-    return new Fix();
+    location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+    return new Fix("untainted", location);
   }
 }
