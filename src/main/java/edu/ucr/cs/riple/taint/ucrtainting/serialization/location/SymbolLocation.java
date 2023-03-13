@@ -4,6 +4,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import org.json.JSONObject;
 
 /** Provides method for symbol locations. */
 public interface SymbolLocation {
@@ -30,4 +31,6 @@ public interface SymbolLocation {
         throw new IllegalArgumentException("Cannot locate node: " + target);
     }
   }
+
+  JSONObject toJSON();
 }

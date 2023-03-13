@@ -2,7 +2,9 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
 import com.google.common.base.Preconditions;
 import com.sun.tools.javac.code.Symbol;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import javax.lang.model.element.ElementKind;
+import org.json.JSONObject;
 
 /** subtype of {@link AbstractSymbolLocation} targeting a method parameter. */
 public class MethodParameterLocation extends AbstractSymbolLocation {
@@ -33,5 +35,14 @@ public class MethodParameterLocation extends AbstractSymbolLocation {
       }
     }
     index = i;
+  }
+
+  @Override
+  public JSONObject toJSON() {
+    JSONObject ans = super.toJSON();
+    ans.put("method", Serializer.serializeSymbol(this.enclosingMethod));
+    ans.put("index", index);
+    ans.put("name", Serializer.serializeSymbol(paramSymbol));
+    return ans;
   }
 }
