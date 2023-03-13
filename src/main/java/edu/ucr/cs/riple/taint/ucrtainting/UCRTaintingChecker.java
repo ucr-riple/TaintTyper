@@ -15,10 +15,14 @@ import org.checkerframework.framework.qual.StubFiles;
 })
 public class UCRTaintingChecker extends BaseTypeChecker {
 
+  /** Serialization service for the checker. */
   private final SerializationService serializationService;
+  /** Configuration for the checker. */
+  private final Config config;
 
   public UCRTaintingChecker() {
-    serializationService = new SerializationService();
+    config = new Config();
+    serializationService = new SerializationService(config);
   }
 
   @Override

@@ -6,6 +6,7 @@ import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.Config;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.Set;
 import javax.lang.model.element.Element;
@@ -14,6 +15,13 @@ import org.checkerframework.javacutil.TreeUtils;
 
 /** This class is used to serialize the errors and the fixes for the errors. */
 public class SerializationService {
+
+  /** Serializer for the checker. */
+  private final Serializer serializer;
+
+  public SerializationService(Config config) {
+    this.serializer = new Serializer(config);
+  }
 
   /**
    * This method is called when a warning or error is reported by the checker and serialized the
@@ -43,8 +51,7 @@ public class SerializationService {
     Error error =
         new Error(
             messageKey, String.format(messageKey, args), resolvingFixes, visitor.getCurrentPath());
-    // TODO: serialize the error, will be implemented in the next PR, once the format
-    // is finalized.
+    serializer.serializeError(error);
   }
 
   /**

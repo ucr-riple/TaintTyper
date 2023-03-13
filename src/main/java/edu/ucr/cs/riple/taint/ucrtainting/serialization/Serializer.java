@@ -23,13 +23,24 @@ import org.json.JSONObject;
  */
 public class Serializer {
 
+  /** File name to write errors. */
   public static final String ERROR_OUTPUT = "errors.json";
 
+  /** Config object used to configure the serializer. */
   private final Config config;
 
   public Serializer(Config config) {
     this.config = config;
     initializeOutputFiles();
+  }
+
+  /**
+   * Serializes the given error to the output file.
+   *
+   * @param error The error to serialize.
+   */
+  public void serializeError(Error error) {
+    appendToFile(error.toJSON(), Paths.get(ERROR_OUTPUT));
   }
 
   /** Initializes every file which will be re-generated in the new run of checker. */
