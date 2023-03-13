@@ -157,14 +157,13 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
         System.out.println("PARAMETER: " + element);
         break;
       case LOCAL_VARIABLE:
-        JCTree variableTree =
-            Utility.locateLocalVariableDeclaration((IdentifierTree) tree, context);
-        System.out.println("LOCAL_VARIABLE: " + variableTree);
+        System.out.println("LOCAL_VARIABLE: " + element);
         break;
       case METHOD:
         System.out.println("METHOD: " + element);
         break;
     }
+    JCTree declarationTree = Utility.locateDeclaration((Symbol) element, context);
     location = SymbolLocation.createLocationFromSymbol((Symbol) element);
     return new Fix("untainted", location);
   }

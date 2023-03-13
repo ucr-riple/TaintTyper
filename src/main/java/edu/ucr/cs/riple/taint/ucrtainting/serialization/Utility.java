@@ -1,7 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import com.sun.source.tree.ClassTree;
-import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
@@ -29,17 +28,14 @@ public class Utility {
   }
 
   /**
-   * Locates the variable declaration tree for a given identifier tree which is a local variable in
-   * a block. The identifier is assumed to not be a field or a method parameter.
+   * Locates the declaration tree for a given symbol.
    *
-   * @param localVariable the identifier tree.
+   * @param sym the symbol to locate.
    * @param context the javac context.
-   * @return the variable declaration tree or null if the variable declaration cannot be found.
+   * @return the declaration tree or null if the declaration cannot be found.
    */
   @Nullable
-  public static JCTree locateLocalVariableDeclaration(
-      IdentifierTree localVariable, Context context) {
-    Symbol sym = (Symbol) TreeUtils.elementFromTree(localVariable);
+  public static JCTree locateDeclaration(Symbol sym, Context context) {
     if (sym == null) {
       return null;
     }
