@@ -4,7 +4,6 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import javax.lang.model.element.ElementKind;
-import org.json.JSONObject;
 
 /** subtype of {@link AbstractSymbolLocation} targeting local variables. */
 public class LocalVariableLocation extends AbstractSymbolLocation {
@@ -13,14 +12,7 @@ public class LocalVariableLocation extends AbstractSymbolLocation {
   public final int pos;
 
   public LocalVariableLocation(Symbol target, JCTree declarationTree, Type type) {
-    super(ElementKind.LOCAL_VARIABLE, target);
+    super(ElementKind.LOCAL_VARIABLE, target, declarationTree, type);
     this.pos = declarationTree != null ? declarationTree.getStartPosition() : -1;
-  }
-
-  @Override
-  public JSONObject toJSON() {
-    JSONObject ans = super.toJSON();
-    ans.put("pos", pos);
-    return ans;
   }
 }

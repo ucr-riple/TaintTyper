@@ -14,7 +14,7 @@ public class FieldLocation extends AbstractSymbolLocation {
   protected final Symbol.VarSymbol variableSymbol;
 
   public FieldLocation(Symbol target, JCTree declarationTree, Type type) {
-    super(ElementKind.FIELD, target);
+    super(ElementKind.FIELD, target, declarationTree, type);
     variableSymbol = (Symbol.VarSymbol) target;
   }
 

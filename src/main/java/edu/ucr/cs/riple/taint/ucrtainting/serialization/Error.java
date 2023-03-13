@@ -45,8 +45,8 @@ public class Error implements JSONSerializable {
     ans.put("messageKey", messageKey);
     ans.put("message", message);
     JSONObject region = new JSONObject();
-    region.put("class", regionClass);
-    region.put("symbol", regionSymbol);
+    region.put("class", Serializer.serializeSymbol(regionClass));
+    region.put("symbol", Serializer.serializeSymbol(regionSymbol));
     ans.put("region", region);
     ans.put("fixes", new JSONArray(this.resolvingFixes.stream().map(Fix::toJSON).toArray()));
     return ans;

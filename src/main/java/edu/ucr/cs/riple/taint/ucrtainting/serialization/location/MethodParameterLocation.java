@@ -19,7 +19,7 @@ public class MethodParameterLocation extends AbstractSymbolLocation {
   private final int index;
 
   public MethodParameterLocation(Symbol target, JCTree declarationTree, Type type) {
-    super(ElementKind.PARAMETER, target);
+    super(ElementKind.PARAMETER, target, declarationTree, type);
     this.paramSymbol = (Symbol.VarSymbol) target;
     Symbol cursor = target;
     // Look for the enclosing method.
