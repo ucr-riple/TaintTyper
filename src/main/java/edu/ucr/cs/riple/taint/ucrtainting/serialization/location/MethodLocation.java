@@ -21,9 +21,7 @@ public class MethodLocation extends AbstractSymbolLocation {
 
   @Override
   protected List<Type> getTypeVariables() {
-    return declarationTree != null
-        ? ((JCTree.JCMethodDecl) declarationTree).getReturnType().type.tsym.type.getTypeArguments()
-        : List.of();
+    return ((Symbol.MethodSymbol) target).getReturnType().tsym.type.getTypeArguments();
   }
 
   @Override
