@@ -2,6 +2,8 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
 import com.google.common.base.Preconditions;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import javax.lang.model.element.ElementKind;
 import org.json.JSONObject;
@@ -16,7 +18,7 @@ public class MethodParameterLocation extends AbstractSymbolLocation {
   /** Index of the method parameter in the containing method's argument list. */
   private final int index;
 
-  public MethodParameterLocation(Symbol target) {
+  public MethodParameterLocation(Symbol target, JCTree declarationTree, Type type) {
     super(ElementKind.PARAMETER, target);
     this.paramSymbol = (Symbol.VarSymbol) target;
     Symbol cursor = target;

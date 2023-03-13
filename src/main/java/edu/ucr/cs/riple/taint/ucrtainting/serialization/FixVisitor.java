@@ -148,7 +148,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
     if (element == null) {
       return null;
     }
-    location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+    location = SymbolLocation.createLocationFromSymbol((Symbol) element, context, type);
     return new Fix("untainted", location);
   }
 }

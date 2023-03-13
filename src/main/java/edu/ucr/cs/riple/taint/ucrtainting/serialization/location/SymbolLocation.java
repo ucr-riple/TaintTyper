@@ -1,6 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.JSONSerializable;
@@ -16,18 +17,17 @@ public interface SymbolLocation extends JSONSerializable {
    * @param context Context.
    * @return subtype of {@link SymbolLocation} matching target's type.
    */
-  static SymbolLocation createLocationFromSymbol(Symbol target, Context context) {
+  static SymbolLocation createLocationFromSymbol(Symbol target, Context context, Type type) {
     JCTree declarationTree = Utility.locateDeclaration(target, context);
-    int pos = declarationTree != null ? declarationTree.getStartPosition() : -1;
     switch (target.getKind()) {
       case PARAMETER:
-        return new MethodParameterLocation(target);
+        return new MethodParameterLocation(target, declarationTree, type);
       case METHOD:
-        return new MethodLocation(target);
+        return new MethodLocation(target, declarationTree, type);
       case FIELD:
-        return new FieldLocation(target);
+        return new FieldLocation(target, declarationTree, type);
       case LOCAL_VARIABLE:
-        return new LocalVariableLocation(target, pos);
+        return new LocalVariableLocation(target, declarationTree, type);
       default:
         throw new IllegalArgumentException("Cannot locate node: " + target);
     }
