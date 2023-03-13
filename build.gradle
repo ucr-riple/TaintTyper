@@ -43,6 +43,10 @@ dependencies {
 
     compileOnly "com.google.errorprone:javac:9+181-r4173-1"
 
+    // Guava
+    implementation 'com.google.guava:guava:31.1.1-jre'
+    testImplementation 'com.google.guava:guava:31.1.1-jre'
+
     // Testing
     testImplementation 'junit:junit:4.13.2'
     testImplementation "org.checkerframework:framework-test:${versions.checkerFramework}"
