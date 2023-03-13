@@ -2,6 +2,8 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.IdentifierTree;
+import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
@@ -14,7 +16,7 @@ import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.util.Context;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import javax.annotation.Nullable;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Utility methods for the serialization service. */
@@ -163,6 +165,7 @@ public class Utility {
     return type instanceof Type.TypeVar;
   }
 
+  @Nullable
   public static Symbol.ClassSymbol findRegionClassSymbol(TreePath path) {
     // If path is on a class, that class itself is the region class. Otherwise, use the enclosing
     // class.
@@ -175,7 +178,59 @@ public class Utility {
         : null;
   }
 
-  public static Symbol findRegionMemberSymbol(Symbol.ClassSymbol regionClass, TreePath path) {
-    return null;
+  @Nullable
+  public static Symbol findRegionMemberSymbol(
+      @Nullable Symbol.ClassSymbol regionClass, TreePath path) {
+    if (regionClass == null) {
+      return null;
+    }
+    Symbol ans = null;
+    MethodTree enclosingMethod;
+    // If the error is reported on a method, that method itself is the relevant program point.
+    // Otherwise, use the enclosing method (if present).
+    enclosingMethod =
+        path.getLeaf() instanceof MethodTree
+            ? (MethodTree) path.getLeaf()
+            : findEnclosingNode(path, MethodTree.class);
+    if (enclosingMethod != null) {
+      // It is possible that the computed method is not enclosed by the computed class, e.g., for
+      // the following case:
+      //  class C {
+      //    void foo() {
+      //      class Local {
+      //        Object f = null; // error
+      //      }
+      //    }
+      //  }
+      // Here the above code will compute clazz to be Local and method as foo().  In such cases,
+      // set method to null, we always want the corresponding method to be nested in the
+      // corresponding class.
+      Symbol.MethodSymbol methodSymbol =
+          (Symbol.MethodSymbol) TreeUtils.elementFromDeclaration(enclosingMethod);
+      if (methodSymbol != null && !methodSymbol.isEnclosedBy(regionClass)) {
+        enclosingMethod = null;
+      }
+    }
+    if (enclosingMethod != null) {
+      ans = (Symbol) TreeUtils.elementFromDeclaration(enclosingMethod);
+    } else {
+      // Node is not enclosed by any method, can be a field declaration or enclosed by it.
+      Symbol sym = (Symbol) TreeUtils.elementFromTree(path.getLeaf());
+      Symbol.VarSymbol fieldSymbol = null;
+      if (sym != null && sym.getKind().isField() && sym.isEnclosedBy(regionClass)) {
+        // Directly on a field declaration.
+        fieldSymbol = (Symbol.VarSymbol) sym;
+      } else {
+        // Can be enclosed by a field declaration tree.
+        VariableTree fieldDeclTree = findEnclosingNode(path, VariableTree.class);
+        if (fieldDeclTree != null) {
+          fieldSymbol = (Symbol.VarSymbol) TreeUtils.elementFromDeclaration(fieldDeclTree);
+        }
+      }
+      if (fieldSymbol != null && fieldSymbol.isEnclosedBy(regionClass)) {
+        ans = fieldSymbol;
+      }
+    }
+    return ans;
   }
 }
