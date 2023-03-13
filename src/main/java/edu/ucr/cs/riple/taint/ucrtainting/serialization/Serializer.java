@@ -32,7 +32,7 @@ public class Serializer {
     initializeOutputFiles();
   }
 
-  /** Initializes every file which will be re-generated in the new run of NullAway. */
+  /** Initializes every file which will be re-generated in the new run of checker. */
   private void initializeOutputFiles() {
     final Path errorOutputPath = config.outputDir.resolve(ERROR_OUTPUT);
     try {
@@ -47,8 +47,13 @@ public class Serializer {
     }
   }
 
+  /**
+   * Appends the string representation of a json object.
+   *
+   * @param json The json object to append.
+   */
   private void appendToFile(JSONObject json, Path path) {
-    // Since there is no method available in API of either javac or errorprone to inform NullAway
+    // Since there is no method available in API of either javac to inform checker
     // that the analysis is finished, we cannot open a single stream and flush it within a finalize
     // method. Must open and close a new stream everytime we are appending a new line to a file.
     if (json == null) {
