@@ -3,11 +3,11 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.JSONSerializable;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import org.json.JSONObject;
 
 /** Provides method for symbol locations. */
-public interface SymbolLocation {
+public interface SymbolLocation extends JSONSerializable {
   /**
    * returns the appropriate subtype of {@link SymbolLocation} based on the target kind.
    *
@@ -31,11 +31,4 @@ public interface SymbolLocation {
         throw new IllegalArgumentException("Cannot locate node: " + target);
     }
   }
-
-  /**
-   * Returns the target element representation in json format.
-   *
-   * @return Target element as json.
-   */
-  JSONObject toJSON();
 }
