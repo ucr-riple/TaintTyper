@@ -125,6 +125,12 @@ public class Serializer {
     }
   }
 
+  /**
+   * Serializes the given method signature to a string.
+   *
+   * @param methodSymbol The method symbol to serialize.
+   * @return The serialized method signature.
+   */
   public static String serializeMethodSignature(Symbol.MethodSymbol methodSymbol) {
     StringBuilder sb = new StringBuilder();
     if (methodSymbol.isConstructor()) {
