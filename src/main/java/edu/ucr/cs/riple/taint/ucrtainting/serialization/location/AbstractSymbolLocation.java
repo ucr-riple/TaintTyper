@@ -26,7 +26,6 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   protected final JCTree declarationTree;
   /** Target symbol. */
   protected final Symbol target;
-
   /** Target type of the symbol. */
   protected Type targetType;
 
