@@ -1,7 +1,10 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
+import java.util.List;
 import javax.lang.model.element.ElementKind;
 import org.json.JSONObject;
 
@@ -11,9 +14,14 @@ public class MethodLocation extends AbstractSymbolLocation {
   /** Symbol of the targeted method. */
   protected final Symbol.MethodSymbol enclosingMethod;
 
-  public MethodLocation(Symbol target) {
-    super(ElementKind.METHOD, target);
+  public MethodLocation(Symbol target, JCTree declarationTree, Type type) {
+    super(ElementKind.METHOD, target, declarationTree, type);
     enclosingMethod = (Symbol.MethodSymbol) target;
+  }
+
+  @Override
+  protected List<Type> getTypeVariables() {
+    return ((Symbol.MethodSymbol) target).getReturnType().tsym.type.getTypeArguments();
   }
 
   @Override

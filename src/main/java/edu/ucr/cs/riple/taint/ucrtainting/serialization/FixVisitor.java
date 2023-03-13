@@ -4,12 +4,12 @@ import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.ConditionalExpressionTree;
 import com.sun.source.tree.ExpressionStatementTree;
+import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.PrimitiveTypeTree;
-import com.sun.source.tree.Tree;
 import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
@@ -38,7 +38,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   @Override
   public Set<Fix> visitIdentifier(IdentifierTree node, Type typeVar) {
     if (checker.check(node)) {
-      return Set.of(buildFixForElement(node, typeVar));
+      return Set.of(buildFixForElement(TreeUtils.elementFromTree(node), typeVar));
     }
     return Set.of();
   }
@@ -81,12 +81,19 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
         // set type, if not set.
         type = type == null ? methodSymbol.getReturnType() : type;
         if (node.getMethodSelect() instanceof MemberSelectTree) {
-          // Build the fix for the receiver.
-          return ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type);
+          ExpressionTree receiver = ((MemberSelectTree) node.getMethodSelect()).getExpression();
+          if (!(receiver instanceof IdentifierTree
+              && ((IdentifierTree) receiver).getName().contentEquals("this"))) {
+            // Build the fix for the receiver.
+            return ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type);
+          }
         }
+        // Build the fix directly on the method symbol.
+        return Set.of(buildFixForElement(element, type));
+
       } else {
         // Build a fix for the called method return type.
-        return Set.of(buildFixForElement(node.getMethodSelect(), null));
+        return Set.of(buildFixForElement(TreeUtils.elementFromTree(node.getMethodSelect()), null));
       }
     }
     return Set.of();
@@ -125,7 +132,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   @Override
   public Set<Fix> visitMemberSelect(MemberSelectTree node, Type type) {
     if (checker.check(node.getExpression())) {
-      return Set.of(buildFixForElement(node, type));
+      return Set.of(buildFixForElement(TreeUtils.elementFromUse(node), type));
     }
     return Set.of();
   }
@@ -138,17 +145,16 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   /**
    * Builds the fix for the given element.
    *
-   * @param tree The given tree.
+   * @param element The element to build the fix for.
    * @param type The type variable.
    * @return The fix for the given element.
    */
-  public Fix buildFixForElement(Tree tree, Type type) {
-    Element element = TreeUtils.elementFromTree(tree);
+  public Fix buildFixForElement(Element element, Type type) {
     SymbolLocation location;
     if (element == null) {
       return null;
     }
-    location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+    location = SymbolLocation.createLocationFromSymbol((Symbol) element, context, type);
     return new Fix("untainted", location);
   }
 }

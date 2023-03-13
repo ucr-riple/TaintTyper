@@ -99,7 +99,8 @@ public class SerializationService {
     int paramIndex = overridingMethod.getParameters().indexOf((Symbol.VarSymbol) treeElement);
     Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
     return ImmutableSet.of(
-        new Fix("untainted", SymbolLocation.createLocationFromSymbol(toBeAnnotated, context)));
+        new Fix(
+            "untainted", SymbolLocation.createLocationFromSymbol(toBeAnnotated, context, null)));
   }
 
   /**
@@ -113,7 +114,8 @@ public class SerializationService {
     Symbol.MethodSymbol overridingMethod =
         (Symbol.MethodSymbol) TreeUtils.elementFromTree(overridingMethodTree);
     return ImmutableSet.of(
-        new Fix("untainted", SymbolLocation.createLocationFromSymbol(overridingMethod, context)));
+        new Fix(
+            "untainted", SymbolLocation.createLocationFromSymbol(overridingMethod, context, null)));
   }
 
   /**
