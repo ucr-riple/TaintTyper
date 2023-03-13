@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
+
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Generates the fixes for the given tree involved in the reporting error if such fixes exists. */
@@ -146,6 +148,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   public Fix buildFixForElement(Tree tree, Type type) {
     // TODO: make the actual fix instance here once the format is finalized.
     Element element = TreeUtils.elementFromTree(tree);
+    SymbolLocation location = null;
     if (element == null) {
       return null;
     }
@@ -165,11 +168,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
         System.out.println("METHOD: " + element);
         break;
     }
-    if (type != null) {
-      List<Type.TypeVar> vars = Utility.getTypeParametersInOrder(((Symbol) element).type);
-      System.out.println(vars);
-    }
-    // TODO: make the actual fix instance here once the format is finalized.
-    return new Fix("untainted", null);
+    location = SymbolLocation.createLocationFromSymbol((Symbol) element);
+    return new Fix("untainted", location);
   }
 }
