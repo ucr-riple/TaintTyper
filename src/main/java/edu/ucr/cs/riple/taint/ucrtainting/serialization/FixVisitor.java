@@ -170,6 +170,6 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       System.out.println(vars);
     }
     // TODO: make the actual fix instance here once the format is finalized.
-    return new Fix();
+    return new Fix("untainted", null);
   }
 }
