@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 /** Represents the reporting error from the checker. */
 public class Error implements JSONSerializable {
+
   /** Message key for the error. */
   public final String messageKey;
   /** Message for the error. */
