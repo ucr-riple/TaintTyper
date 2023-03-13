@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
+import com.google.common.base.Preconditions;
 import com.sun.tools.javac.code.Symbol;
 import javax.lang.model.element.ElementKind;
 
@@ -23,6 +24,7 @@ public class MethodParameterLocation extends AbstractSymbolLocation {
         && cursor.getKind() != ElementKind.METHOD) {
       cursor = cursor.owner;
     }
+    Preconditions.checkArgument(cursor instanceof Symbol.MethodSymbol);
     this.enclosingMethod = (Symbol.MethodSymbol) cursor;
     int i;
     for (i = 0; i < this.enclosingMethod.getParameters().size(); i++) {
