@@ -148,20 +148,6 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
     if (element == null) {
       return null;
     }
-    switch (element.getKind()) {
-      case FIELD:
-        System.out.println("FIELD: " + element);
-        break;
-      case PARAMETER:
-        System.out.println("PARAMETER: " + element);
-        break;
-      case LOCAL_VARIABLE:
-        System.out.println("LOCAL_VARIABLE: " + element);
-        break;
-      case METHOD:
-        System.out.println("METHOD: " + element);
-        break;
-    }
     location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
     return new Fix("untainted", location);
   }
