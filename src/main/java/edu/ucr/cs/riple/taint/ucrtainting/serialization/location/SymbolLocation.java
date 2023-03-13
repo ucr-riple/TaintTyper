@@ -32,5 +32,10 @@ public interface SymbolLocation {
     }
   }
 
+  /**
+   * Returns the target element representation in json format.
+   *
+   * @return Target element as json.
+   */
   JSONObject toJSON();
 }
