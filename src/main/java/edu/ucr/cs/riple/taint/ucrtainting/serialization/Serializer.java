@@ -29,8 +29,11 @@ public class Serializer {
   /** Config object used to configure the serializer. */
   private final Config config;
 
+  private final Path errorOutputPath;
+
   public Serializer(Config config) {
     this.config = config;
+    this.errorOutputPath = config.outputDir.resolve(ERROR_OUTPUT);
     initializeOutputFiles();
   }
 
@@ -40,12 +43,11 @@ public class Serializer {
    * @param error The error to serialize.
    */
   public void serializeError(Error error) {
-    appendToFile(error.toJSON(), Paths.get(ERROR_OUTPUT));
+    appendToFile(error.toJSON(), errorOutputPath);
   }
 
   /** Initializes every file which will be re-generated in the new run of checker. */
   private void initializeOutputFiles() {
-    final Path errorOutputPath = config.outputDir.resolve(ERROR_OUTPUT);
     try {
       Files.createDirectories(config.outputDir);
       try {
@@ -70,7 +72,7 @@ public class Serializer {
     if (json == null) {
       return;
     }
-    String entry = json + "\n";
+    String entry = json + ",\n";
     try (OutputStream os = new FileOutputStream(path.toFile(), true)) {
       os.write(entry.getBytes(Charset.defaultCharset()), 0, entry.length());
       os.flush();

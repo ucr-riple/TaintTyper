@@ -20,7 +20,7 @@ public class Fix implements JSONSerializable {
   public JSONObject toJSON() {
     JSONObject ans = new JSONObject();
     ans.put("annotation", annotation);
-    ans.put("location", location);
+    ans.put("location", location.toJSON());
     return ans;
   }
 }
