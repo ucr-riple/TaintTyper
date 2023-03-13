@@ -163,7 +163,7 @@ public class Utility {
     return type instanceof Type.TypeVar;
   }
 
-  public static Symbol.ClassSymbol findRegionSymbol(TreePath path) {
+  public static Symbol.ClassSymbol findRegionClassSymbol(TreePath path) {
     // If path is on a class, that class itself is the region class. Otherwise, use the enclosing
     // class.
     ClassTree classTree =
@@ -173,5 +173,9 @@ public class Utility {
     return classTree != null
         ? (Symbol.ClassSymbol) TreeUtils.elementFromDeclaration(classTree)
         : null;
+  }
+
+  public static Symbol findRegionMemberSymbol(Symbol.ClassSymbol regionClass, TreePath path) {
+    return null;
   }
 }
