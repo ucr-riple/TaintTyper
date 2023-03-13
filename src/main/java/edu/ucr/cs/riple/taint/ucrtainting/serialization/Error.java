@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /** Represents the reporting error from the checker. */
-// todo: contents of this class will be finalized once the final format is determined.
 public class Error {
   /** Message key for the error. */
   public final String messageKey;
