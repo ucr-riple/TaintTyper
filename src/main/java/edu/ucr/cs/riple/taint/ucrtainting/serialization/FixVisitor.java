@@ -16,12 +16,10 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
-
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Generates the fixes for the given tree involved in the reporting error if such fixes exists. */
@@ -146,7 +144,6 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
    * @return The fix for the given element.
    */
   public Fix buildFixForElement(Tree tree, Type type) {
-    // TODO: make the actual fix instance here once the format is finalized.
     Element element = TreeUtils.elementFromTree(tree);
     SymbolLocation location = null;
     if (element == null) {
