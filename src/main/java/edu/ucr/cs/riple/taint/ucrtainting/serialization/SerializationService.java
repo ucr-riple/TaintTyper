@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
+import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
@@ -8,7 +9,6 @@ import com.sun.tools.javac.util.Context;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.com.google.common.collect.ImmutableSet;
 import org.checkerframework.framework.source.SourceVisitor;
 import org.checkerframework.javacutil.TreeUtils;
 
