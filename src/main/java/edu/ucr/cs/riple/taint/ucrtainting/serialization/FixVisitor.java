@@ -14,7 +14,6 @@ import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.HashSet;
@@ -163,8 +162,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
         System.out.println("METHOD: " + element);
         break;
     }
-    JCTree declarationTree = Utility.locateDeclaration((Symbol) element, context);
-    location = SymbolLocation.createLocationFromSymbol((Symbol) element);
+    location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
     return new Fix("untainted", location);
   }
 }
