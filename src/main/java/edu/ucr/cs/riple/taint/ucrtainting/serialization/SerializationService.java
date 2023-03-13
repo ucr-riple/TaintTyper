@@ -87,6 +87,9 @@ public class SerializationService {
     Types types = Types.instance(context);
     Symbol.MethodSymbol overriddenMethod =
         Utility.getClosestOverriddenMethod(overridingMethod, types);
+    if (overriddenMethod == null) {
+      return ImmutableSet.of();
+    }
     int paramIndex = overridingMethod.getParameters().indexOf((Symbol.VarSymbol) treeElement);
     Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
     return ImmutableSet.of(
