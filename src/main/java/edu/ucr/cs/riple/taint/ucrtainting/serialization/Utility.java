@@ -1,6 +1,8 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
+import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.IdentifierTree;
+import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
@@ -129,6 +131,29 @@ public class Utility {
   }
 
   /**
+   * Given a TreePath, finds the first enclosing node of the given type and returns the path from
+   * the enclosing node to the top-level {@code CompilationUnitTree}.
+   */
+  public static <T> TreePath findPathFromEnclosingNodeToTopLevel(TreePath path, Class<T> klass) {
+    if (path != null) {
+      do {
+        path = path.getParentPath();
+      } while (path != null && !klass.isInstance(path.getLeaf()));
+    }
+    return path;
+  }
+
+  /**
+   * Given a TreePath, walks up the tree until it finds a node of the given type. Returns null if no
+   * such node is found.
+   */
+  @Nullable
+  public static <T> T findEnclosingNode(TreePath path, Class<T> klass) {
+    path = findPathFromEnclosingNodeToTopLevel(path, klass);
+    return (path == null) ? null : klass.cast(path.getLeaf());
+  }
+
+  /**
    * Checks if a type is a parameter type.
    *
    * @param type the type to check
@@ -136,5 +161,17 @@ public class Utility {
    */
   public static boolean isTypeVar(Type type) {
     return type instanceof Type.TypeVar;
+  }
+
+  public static Symbol.ClassSymbol findRegionSymbol(TreePath path) {
+    // If path is on a class, that class itself is the region class. Otherwise, use the enclosing
+    // class.
+    ClassTree classTree =
+        path.getLeaf() instanceof ClassTree
+            ? (ClassTree) path.getLeaf()
+            : findEnclosingNode(path, ClassTree.class);
+    return classTree != null
+        ? (Symbol.ClassSymbol) TreeUtils.elementFromDeclaration(classTree)
+        : null;
   }
 }

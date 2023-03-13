@@ -40,7 +40,9 @@ public class SerializationService {
                 (Tree) source, messageKey, visitor.getCurrentPath(), tree -> true, context)
             : ImmutableSet.of();
     System.out.println("FOUND FIXES SIZE: " + resolvingFixes.size());
-    Error error = new Error(messageKey, String.format(messageKey, args), resolvingFixes);
+    Error error =
+        new Error(
+            messageKey, String.format(messageKey, args), resolvingFixes, visitor.getCurrentPath());
     // TODO: serialize the error, will be implemented in the next PR, once the format
     // is finalized.
   }

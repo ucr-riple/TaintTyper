@@ -1,6 +1,8 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import com.google.common.collect.ImmutableSet;
+import com.sun.source.util.TreePath;
+import com.sun.tools.javac.code.Symbol;
 import java.util.Set;
 
 /** Represents the reporting error from the checker. */
@@ -15,7 +17,10 @@ public class Error {
    */
   public final ImmutableSet<Fix> resolvingFixes;
 
-  public Error(String messageKey, String message, Set<Fix> resolvingFixes) {
+  public final Symbol.ClassSymbol regionClass;
+  public final Symbol regionSymbol;
+
+  public Error(String messageKey, String message, Set<Fix> resolvingFixes, TreePath path) {
     this.messageKey = messageKey;
     this.message = message;
     this.resolvingFixes = ImmutableSet.copyOf(resolvingFixes);
