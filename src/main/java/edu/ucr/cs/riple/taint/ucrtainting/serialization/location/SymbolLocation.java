@@ -8,6 +8,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 
 /** Provides method for symbol locations. */
 public interface SymbolLocation extends JSONSerializable {
+
   /**
    * returns the appropriate subtype of {@link SymbolLocation} based on the target kind.
    *
