@@ -5,7 +5,6 @@ import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.util.Context;
-import java.util.HashSet;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -40,6 +39,7 @@ public class SerializationService {
             ? generateFixesForError(
                 (Tree) source, messageKey, visitor.getCurrentPath(), tree -> true, context)
             : ImmutableSet.of();
+    System.out.println("FOUND FIXES SIZE: " + resolvingFixes.size());
     Error error = new Error(messageKey, String.format(messageKey, args), resolvingFixes);
     // TODO: serialize the error, will be implemented in the next PR, once the format
     // is finalized.
@@ -62,10 +62,7 @@ public class SerializationService {
       case "override.return":
         return handleReturnOverrideError(path.getLeaf());
       default:
-        FixVisitor fixVisitor = new FixVisitor(treeChecker, context);
-        Set<Fix> resolvingFixes = new HashSet<>();
-        fixVisitor.visit(tree, resolvingFixes);
-        return resolvingFixes;
+        return new FixVisitor(treeChecker, context).visit(tree, null);
     }
   }
 

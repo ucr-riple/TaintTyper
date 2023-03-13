@@ -4,7 +4,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import java.io.File;
 import java.util.List;
 import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.Parameterized;
 
 /**
  * Test runner for tests of the UCR Tainting Checker.
@@ -14,8 +14,8 @@ import org.junit.runners.Parameterized.Parameters;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class UCRTaintingTest extends CheckerFrameworkPerDirectoryTest {
-  public UCRTaintingTest(List<File> testFiles) {
+public class TypeArgumentsTest extends CheckerFrameworkPerDirectoryTest {
+  public TypeArgumentsTest(List<File> testFiles) {
     super(
         testFiles,
         UCRTaintingChecker.class,
@@ -25,8 +25,8 @@ public class UCRTaintingTest extends CheckerFrameworkPerDirectoryTest {
         "-nowarn");
   }
 
-  @Parameters
+  @Parameterized.Parameters
   public static String[] getTestDirs() {
-    return new String[] {"ucrtainting"};
+    return new String[] {"typeargument"};
   }
 }

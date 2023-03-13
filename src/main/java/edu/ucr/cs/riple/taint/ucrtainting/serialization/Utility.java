@@ -10,11 +10,15 @@ import com.sun.tools.javac.comp.Env;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.util.Context;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Utility methods for the serialization service. */
 public class Utility {
+
+  public static final TypeArgumentVisitor TYPE_ARGUMENT_VISITOR = new TypeArgumentVisitor();
 
   private Utility() {
     // This class is mainly a collection of static methods and should not be instantiated.
@@ -72,5 +76,65 @@ public class Utility {
       }
     }
     return null;
+  }
+
+  public static List<Type.TypeVar> getTypeParametersInOrder(Type type) {
+    return type.tsym.type.accept(TYPE_ARGUMENT_VISITOR, null);
+  }
+
+  static class TypeArgumentVisitor extends Types.DefaultTypeVisitor<List<Type.TypeVar>, Void> {
+
+    @Override
+    public List<Type.TypeVar> visitClassType(Type.ClassType type, Void unused) {
+      return type.typarams_field.stream()
+          .flatMap(t -> t.accept(this, null).stream())
+          .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Type.TypeVar> visitTypeVar(Type.TypeVar t, Void unused) {
+      Type upperBound = t.getUpperBound();
+      if (upperBound.toString().equals("java.lang.Object")) {
+        return List.of(t);
+      } else {
+        return upperBound.accept(this, null);
+      }
+    }
+
+    @Override
+    public List<Type.TypeVar> visitType(Type type, Void unused) {
+      return List.of();
+    }
+  }
+
+  /**
+   * Checks if a type contains a parameter type.
+   *
+   * @param type the type to check
+   * @return true if the type contains a parameter type, false otherwise
+   */
+  public static boolean containsParameterType(Type type) {
+    if (isTypeVar(type)) {
+      return true;
+    }
+    if (type instanceof Type.ClassType) {
+      Type.ClassType classType = (Type.ClassType) type;
+      for (Type t : classType.getTypeArguments()) {
+        if (containsParameterType(t)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if a type is a parameter type.
+   *
+   * @param type the type to check
+   * @return true if the type is a parameter type, false otherwise
+   */
+  public static boolean isTypeVar(Type type) {
+    return type instanceof Type.TypeVar;
   }
 }
