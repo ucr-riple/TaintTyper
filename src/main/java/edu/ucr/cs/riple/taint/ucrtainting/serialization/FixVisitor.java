@@ -75,11 +75,11 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       if (element == null) {
         return null;
       }
-      Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) element;
+      Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
       // check for type variable in return type.
-      if (Utility.containsParameterType(methodSymbol.getReturnType())) {
+      if (Utility.containsParameterType(calledMethod.getReturnType())) {
         // set type, if not set.
-        type = type == null ? methodSymbol.getReturnType() : type;
+        type = type == null ? calledMethod.getReturnType() : type;
         if (node.getMethodSelect() instanceof MemberSelectTree) {
           ExpressionTree receiver = ((MemberSelectTree) node.getMethodSelect()).getExpression();
           if (!Utility.isThisIdentifier(receiver)) {
