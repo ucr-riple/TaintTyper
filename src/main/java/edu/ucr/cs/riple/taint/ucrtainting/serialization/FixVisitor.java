@@ -14,6 +14,7 @@ import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.HashSet;
@@ -89,7 +90,6 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
         }
         // Build the fix directly on the method symbol.
         return Set.of(buildFixForElement(element, type));
-
       } else {
         // Build a fix for the called method return type.
         return Set.of(buildFixForElement(TreeUtils.elementFromTree(node.getMethodSelect()), null));
@@ -131,7 +131,16 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   @Override
   public Set<Fix> visitMemberSelect(MemberSelectTree node, Type type) {
     if (checker.check(node.getExpression())) {
-      return Set.of(buildFixForElement(TreeUtils.elementFromUse(node), type));
+      Element member = TreeUtils.elementFromUse(node);
+      if (type != null && member instanceof Symbol) {
+        // Need to check if member affects the target type.
+        if (!Utility.typeParameterDeterminedFromEncClass(((Symbol) member).enclClass(), type)) {
+          return Set.of(buildFixForElement(TreeUtils.elementFromUse(node), type));
+        } else if (node instanceof JCTree.JCFieldAccess) {
+          JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) node;
+          return fieldAccess.selected.accept(this, type);
+        }
+      }
     }
     return Set.of();
   }

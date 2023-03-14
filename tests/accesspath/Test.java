@@ -5,21 +5,51 @@ public class Test {
 
   HashMap<String, String> foo;
   Inner inner;
+  Baz<String> baz;
 
   void bar() {
     // :: error: assignment
-    @RUntainted String a = foo.keySet().iterator().next();
+    @RUntainted String untaintedVar = foo.keySet().iterator().next();
     // :: error: assignment
-    @RUntainted String b = inner.bar.keySet().iterator().next();
+    untaintedVar = inner.bar.keySet().iterator().next();
     // :: error: assignment
-    @RUntainted String c = inner.test.foo.keySet().iterator().next();
+    untaintedVar = inner.test.foo.keySet().iterator().next();
     // :: error: assignment
-    @RUntainted String d = inner.test.inner.bar.keySet().iterator().next();
+    untaintedVar = baz.foo.getE();
+    // :: error: assignment
+    untaintedVar = baz.foo.getString();
+    // :: error: assignment
+    untaintedVar = baz.innerBaz.b.innerBaz.getE();
+    // :: error: assignment
+    untaintedVar = baz.innerBaz.getOther().getInnerBaz().getE();
   }
 
   class Inner {
 
     HashMap<String, String> bar;
     Test test;
+  }
+
+  class Baz<E> {
+    Foo<E> foo;
+    InnerBaz<String> innerBaz;
+
+    class InnerBaz<R> {
+      Baz<E> b;
+
+      E getE() {
+        return null;
+      }
+
+      InnerBaz<R> getInnerBaz() {
+        // :: error: assignment
+        @RUntainted E e = getE();
+        return this;
+      }
+
+      InnerBaz<R> getOther() {
+        return this;
+      }
+    }
   }
 }

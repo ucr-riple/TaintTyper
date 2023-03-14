@@ -236,10 +236,51 @@ public class Utility {
    * Returns true if the passed tree is the {@code this} identifier.
    *
    * @param tree Tree to check.
-   * @return true, it the tree is {@link this} identifier.
+   * @return true, it the tree is {@code this} identifier.
    */
   public static boolean isThisIdentifier(Tree tree) {
     return tree instanceof IdentifierTree
         && ((IdentifierTree) tree).getName().contentEquals("this");
+  }
+
+  /**
+   * Returns true if the passed symbol's type is determined from the type parameters declared in the
+   * enclosing class.
+   *
+   * @param classSymbol the enclosing class symbol.
+   * @param type the type to check.
+   * @return true if the type parameters of the enclosing class are used to determine the type of
+   *     the symbol.
+   */
+  public static boolean typeParameterDeterminedFromEncClass(
+      Symbol.ClassSymbol classSymbol, Type type) {
+    if (type == null || classSymbol == null) {
+      return false;
+    }
+    return containsTypeParameter(classSymbol.type, type);
+  }
+
+  /**
+   * Returns true if the passed type contains the specified type parameter.
+   *
+   * @param type the type to check.
+   * @param target the type parameter to look for.
+   * @return true if the type contains the type parameter.
+   */
+  public static boolean containsTypeParameter(Type type, Type target) {
+    if (type.equals(target)) {
+      return true;
+    }
+    if (type instanceof Type.ClassType) {
+      Type.ClassType classType = (Type.ClassType) type;
+      // Should only check the type arguments of the direct enclosing class, not all the type
+      // arguments from enclosing classes.
+      for (Type t : classType.getTypeArguments()) {
+        if (containsTypeParameter(t)) {
+          return containsTypeParameter(t, target);
+        }
+      }
+    }
+    return false;
   }
 }
