@@ -77,7 +77,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       }
       Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
       // check for type variable in return type.
-      if (Utility.containsParameterType(calledMethod.getReturnType())) {
+      if (Utility.containsTypeParameter(calledMethod.getReturnType())) {
         // set type, if not set.
         type = type == null ? calledMethod.getReturnType() : type;
         if (node.getMethodSelect() instanceof MemberSelectTree) {

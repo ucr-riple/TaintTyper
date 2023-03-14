@@ -110,19 +110,19 @@ public class Utility {
   }
 
   /**
-   * Checks if a type contains a parameter type.
+   * Checks if a type contains a typ parameter.
    *
    * @param type the type to check
-   * @return true if the type contains a parameter type, false otherwise
+   * @return true if the type contains a typ parameter, false otherwise
    */
-  public static boolean containsParameterType(Type type) {
+  public static boolean containsTypeParameter(Type type) {
     if (isTypeVar(type)) {
       return true;
     }
     if (type instanceof Type.ClassType) {
       Type.ClassType classType = (Type.ClassType) type;
       for (Type t : classType.getTypeArguments()) {
-        if (containsParameterType(t)) {
+        if (containsTypeParameter(t)) {
           return true;
         }
       }
