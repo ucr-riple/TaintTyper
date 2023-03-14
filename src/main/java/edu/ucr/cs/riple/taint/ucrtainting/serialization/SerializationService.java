@@ -47,9 +47,7 @@ public class SerializationService {
             ? generateFixesForError(
                 (Tree) source, messageKey, visitor.getCurrentPath(), tree -> true, context)
             : ImmutableSet.of();
-    Error error =
-        new Error(
-            messageKey, args, resolvingFixes, visitor.getCurrentPath());
+    Error error = new Error(messageKey, args, resolvingFixes, visitor.getCurrentPath());
     serializer.serializeError(error);
   }
 

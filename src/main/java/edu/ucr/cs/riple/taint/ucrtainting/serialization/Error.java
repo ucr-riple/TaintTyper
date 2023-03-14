@@ -3,7 +3,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 import com.google.common.collect.ImmutableSet;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
-
+import com.sun.tools.javac.tree.JCTree;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
@@ -34,12 +34,16 @@ public class Error implements JSONSerializable {
    */
   @Nullable public final Symbol regionSymbol;
 
+  /** Offset of program point where this error is reported. */
+  public final int offset;
+
   public Error(String messageKey, Object[] args, Set<Fix> resolvingFixes, TreePath path) {
     this.messageKey = messageKey;
     this.args = args;
     this.resolvingFixes = ImmutableSet.copyOf(resolvingFixes);
     this.regionClass = Utility.findRegionClassSymbol(path);
     this.regionSymbol = Utility.findRegionMemberSymbol(this.regionClass, path);
+    this.offset = ((JCTree) path.getLeaf()).getStartPosition();
   }
 
   @Override
@@ -52,6 +56,7 @@ public class Error implements JSONSerializable {
     region.put("symbol", Serializer.serializeSymbol(regionSymbol));
     ans.put("region", region);
     ans.put("fixes", new JSONArray(this.resolvingFixes.stream().map(Fix::toJSON).toArray()));
+    ans.put("offset", offset);
     return ans;
   }
 }
