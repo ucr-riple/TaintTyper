@@ -49,7 +49,7 @@ public class SerializationService {
             : ImmutableSet.of();
     Error error =
         new Error(
-            messageKey, String.format(messageKey, args), resolvingFixes, visitor.getCurrentPath());
+            messageKey, args, resolvingFixes, visitor.getCurrentPath());
     serializer.serializeError(error);
   }
 
