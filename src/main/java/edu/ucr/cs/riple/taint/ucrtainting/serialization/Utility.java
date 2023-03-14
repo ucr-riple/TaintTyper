@@ -1,7 +1,9 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
@@ -228,5 +230,16 @@ public class Utility {
       }
     }
     return ans;
+  }
+
+  /**
+   * Returns true if the passed tree is the {@code this} identifier.
+   *
+   * @param tree Tree to check.
+   * @return true, it the tree is {@link this} identifier.
+   */
+  public static boolean isThisIdentifier(Tree tree) {
+    return tree instanceof IdentifierTree
+        && ((IdentifierTree) tree).getName().contentEquals("this");
   }
 }

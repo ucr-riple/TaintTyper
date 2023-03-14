@@ -82,8 +82,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
         type = type == null ? methodSymbol.getReturnType() : type;
         if (node.getMethodSelect() instanceof MemberSelectTree) {
           ExpressionTree receiver = ((MemberSelectTree) node.getMethodSelect()).getExpression();
-          if (!(receiver instanceof IdentifierTree
-              && ((IdentifierTree) receiver).getName().contentEquals("this"))) {
+          if (!Utility.isThisIdentifier(receiver)) {
             // Build the fix for the receiver.
             return ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type);
           }

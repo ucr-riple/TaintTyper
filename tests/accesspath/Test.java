@@ -13,6 +13,8 @@ public class Test {
     @RUntainted String b = inner.bar.keySet().iterator().next();
     // :: error: assignment
     @RUntainted String c = inner.test.foo.keySet().iterator().next();
+    // :: error: assignment
+    @RUntainted String d = inner.test.inner.bar.keySet().iterator().next();
   }
 
   class Inner {
