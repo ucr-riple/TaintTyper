@@ -17,7 +17,7 @@ import org.json.JSONObject;
 public abstract class AbstractSymbolLocation implements SymbolLocation {
 
   /** Element kind of the targeted symbol */
-  protected final ElementKind type;
+  protected final ElementKind kind;
   /** Path of the file containing the symbol, if available. */
   protected final Path path;
   /** Enclosing class of the symbol. */
@@ -29,15 +29,15 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   /** Target type of the symbol. */
   protected Type targetType;
 
-  public AbstractSymbolLocation(ElementKind type, Symbol target, JCTree tree, Type targetType) {
+  public AbstractSymbolLocation(ElementKind kind, Symbol target, JCTree tree, Type targetType) {
     Preconditions.checkArgument(
-        type.equals(target.getKind()),
-        "Cannot instantiate element of type: "
+        kind.equals(target.getKind()),
+        "Cannot instantiate element of kind: "
             + target.getKind()
-            + " with location type of: "
-            + type
+            + " with location kind of: "
+            + kind
             + ".");
-    this.type = type;
+    this.kind = kind;
     this.enclosingClass = target.enclClass();
     URI pathInURI =
         enclosingClass.sourcefile != null
@@ -59,7 +59,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   @Override
   public JSONObject toJSON() {
     JSONObject jsonObject = new JSONObject();
-    jsonObject.put("type", type.name());
+    jsonObject.put("kind", kind.name());
     jsonObject.put("class", Serializer.serializeSymbol(this.enclosingClass));
     jsonObject.put("pos", declarationTree != null ? declarationTree.getStartPosition() : -1);
     jsonObject.put(
