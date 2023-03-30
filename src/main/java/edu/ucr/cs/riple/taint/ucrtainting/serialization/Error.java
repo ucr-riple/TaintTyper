@@ -22,7 +22,6 @@ public class Error implements JSONSerializable {
    * Set of fixes that can resolve the error. If the error is not fixable, this set will be empty.
    */
   public final ImmutableSet<Fix> resolvingFixes;
-
   /**
    * The class symbol of the region that contains the error. If the error is not in a region, this
    * will be null.
@@ -33,14 +32,14 @@ public class Error implements JSONSerializable {
    * inside a static initializer block, this will be null.
    */
   @Nullable public final Symbol regionSymbol;
-
   /** Offset of program point where this error is reported. */
   public final int offset;
 
   public Error(String messageKey, Object[] args, Set<Fix> resolvingFixes, TreePath path) {
     this.messageKey = messageKey;
     this.args = args;
-    this.resolvingFixes = ImmutableSet.copyOf(resolvingFixes);
+    this.resolvingFixes =
+        resolvingFixes == null ? ImmutableSet.of() : ImmutableSet.copyOf(resolvingFixes);
     this.regionClass = Utility.findRegionClassSymbol(path);
     this.regionSymbol = Utility.findRegionMemberSymbol(this.regionClass, path);
     this.offset = ((JCTree) path.getLeaf()).getStartPosition();
