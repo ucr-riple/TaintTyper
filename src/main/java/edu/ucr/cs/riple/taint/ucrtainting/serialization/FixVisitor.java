@@ -132,7 +132,10 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   public Set<Fix> visitMemberSelect(MemberSelectTree node, Type type) {
     if (checker.check(node.getExpression())) {
       Element member = TreeUtils.elementFromUse(node);
-      if (type != null && member instanceof Symbol) {
+      if (!(member instanceof Symbol)) {
+        return Set.of();
+      }
+      if (type != null) {
         // Need to check if member affects the target type.
         if (!Utility.typeParameterDeterminedFromEncClass(((Symbol) member).enclClass(), type)) {
           return Set.of(buildFixForElement(TreeUtils.elementFromUse(node), type));
@@ -140,6 +143,8 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
           JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) node;
           return fieldAccess.selected.accept(this, type);
         }
+      } else {
+        return Set.of(buildFixForElement(TreeUtils.elementFromUse(node), null));
       }
     }
     return Set.of();

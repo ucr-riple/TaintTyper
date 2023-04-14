@@ -6,6 +6,8 @@ class Foo {
   String field = "";
   Bar bar = new Bar();
 
+  static final String staticField = "";
+
   void bar(String x, @RUntainted String y, boolean b) {
     String localVar = x;
     final String finalLocalVar = x;
