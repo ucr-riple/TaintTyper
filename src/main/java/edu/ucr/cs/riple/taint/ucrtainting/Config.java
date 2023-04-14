@@ -11,4 +11,8 @@ public class Config {
   public Config() {
     this.outputDir = Paths.get("/tmp/ucr-tainting/0");
   }
+
+  public boolean serializationEnabled() {
+    return true;
+  }
 }
