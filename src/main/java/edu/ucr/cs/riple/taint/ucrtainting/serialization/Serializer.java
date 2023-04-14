@@ -25,10 +25,8 @@ public class Serializer {
 
   /** File name to write errors. */
   public static final String ERROR_OUTPUT = "errors.json";
-
   /** Config object used to configure the serializer. */
   private final Config config;
-
   /** Path to write errors. */
   private final Path errorOutputPath;
 
