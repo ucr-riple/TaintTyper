@@ -59,6 +59,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   @Override
   public JSONObject toJSON() {
     JSONObject jsonObject = new JSONObject();
+    jsonObject.put("path", path.toString());
     jsonObject.put("kind", kind.name());
     jsonObject.put("class", Serializer.serializeSymbol(this.enclosingClass));
     jsonObject.put("pos", declarationTree != null ? declarationTree.getStartPosition() : -1);

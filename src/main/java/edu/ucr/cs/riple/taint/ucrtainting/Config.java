@@ -9,6 +9,6 @@ public class Config {
   public final Path outputDir;
 
   public Config() {
-    this.outputDir = Paths.get("/tmp/ucr-tainting/");
+    this.outputDir = Paths.get("/tmp/ucr-tainting/0");
   }
 }
