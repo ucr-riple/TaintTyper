@@ -20,6 +20,5 @@ import org.checkerframework.framework.qual.TypeUseLocation;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(RTainted.class)
-@QualifierForLiterals(LiteralKind.STRING)
 @DefaultFor(TypeUseLocation.LOWER_BOUND)
 public @interface RUntainted {}
