@@ -1,6 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationToJsonVisitor;
 import org.json.JSONObject;
 
 /** This class represents an annotation to be added on an element to resolve an error. */
@@ -20,7 +21,7 @@ public class Fix implements JSONSerializable {
   public JSONObject toJSON() {
     JSONObject ans = new JSONObject();
     ans.put("annotation", annotation);
-    ans.put("location", location.toJSON());
+    ans.put("location", location.accept(new LocationToJsonVisitor(), null));
     return ans;
   }
 }

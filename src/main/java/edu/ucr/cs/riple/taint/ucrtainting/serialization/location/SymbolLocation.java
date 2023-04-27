@@ -4,11 +4,11 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.JSONSerializable;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
 
 /** Provides method for symbol locations. */
-public interface SymbolLocation extends JSONSerializable {
+public interface SymbolLocation {
 
   /**
    * returns the appropriate subtype of {@link SymbolLocation} based on the target kind.
@@ -32,4 +32,15 @@ public interface SymbolLocation extends JSONSerializable {
         throw new IllegalArgumentException("Cannot locate node: " + target);
     }
   }
+
+  /**
+   * Applies a visitor to this location.
+   *
+   * @param <R> the return type of the visitor's methods
+   * @param <P> the type of the additional parameter to the visitor's methods
+   * @param v the visitor operating on this type
+   * @param p additional parameter to the visitor
+   * @return a visitor-specified result
+   */
+  <R, P> R accept(LocationVisitor<R, P> v, P p);
 }

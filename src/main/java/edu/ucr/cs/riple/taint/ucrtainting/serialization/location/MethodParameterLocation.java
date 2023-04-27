@@ -4,19 +4,19 @@ import com.google.common.base.Preconditions;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
 import javax.lang.model.element.ElementKind;
-import org.json.JSONObject;
 
 /** subtype of {@link AbstractSymbolLocation} targeting a method parameter. */
 public class MethodParameterLocation extends AbstractSymbolLocation {
 
   /** Symbol of the targeted method. */
-  private final Symbol.MethodSymbol enclosingMethod;
+  public final Symbol.MethodSymbol enclosingMethod;
   /** Symbol of the targeted method parameter. */
-  private final Symbol.VarSymbol paramSymbol;
+  public final Symbol.VarSymbol paramSymbol;
+
   /** Index of the method parameter in the containing method's argument list. */
-  private final int index;
+  public final int index;
 
   public MethodParameterLocation(Symbol target, JCTree declarationTree, Type type) {
     super(ElementKind.PARAMETER, target, declarationTree, type);
@@ -40,11 +40,7 @@ public class MethodParameterLocation extends AbstractSymbolLocation {
   }
 
   @Override
-  public JSONObject toJSON() {
-    JSONObject ans = super.toJSON();
-    ans.put("method", Serializer.serializeSymbol(this.enclosingMethod));
-    ans.put("index", index);
-    ans.put("name", Serializer.serializeSymbol(paramSymbol));
-    return ans;
+  public <R, P> R accept(LocationVisitor<R, P> v, P p) {
+    return v.visitParameter(this, p);
   }
 }
