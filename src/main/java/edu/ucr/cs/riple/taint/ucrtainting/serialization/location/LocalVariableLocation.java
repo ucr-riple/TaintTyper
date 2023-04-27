@@ -4,9 +4,8 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
-import org.json.JSONObject;
-
 import javax.lang.model.element.ElementKind;
+import org.json.JSONObject;
 
 /** subtype of {@link AbstractSymbolLocation} targeting local variables. */
 public class LocalVariableLocation extends AbstractSymbolLocation {
