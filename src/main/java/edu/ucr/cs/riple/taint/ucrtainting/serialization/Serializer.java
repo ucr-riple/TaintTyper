@@ -51,7 +51,7 @@ public class Serializer {
       Files.createDirectories(config.outputDir);
       try {
         Files.deleteIfExists(errorOutputPath);
-        Files.write(config.outputDir.resolve("serializaton_version.txt"), "0".getBytes());
+        Files.write(config.outputDir.resolve("serialization_version.txt"), "0".getBytes());
       } catch (IOException e) {
         throw new RuntimeException("Could not clear file at: " + errorOutputPath, e);
       }
