@@ -54,7 +54,7 @@ public class LocationToJsonVisitor implements LocationVisitor<JSONObject, Void> 
   public JSONObject visitLocalVariable(LocalVariableLocation localVariable, Void unused) {
     JSONObject ans = defaultAction(localVariable);
     ans.put("varName", Serializer.serializeSymbol(localVariable.target));
-    ans.put("encMethod", Serializer.serializeSymbol(localVariable.enclosingMethod));
+    ans.put("method", Serializer.serializeSymbol(localVariable.enclosingMethod));
     return ans;
   }
 }
