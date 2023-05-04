@@ -1,0 +1,28 @@
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
+
+package javax.servlet;
+
+public class HttpServletRequest {
+	public @RTainted String getHeader(String arg0);
+	public @RTainted String getMethod();
+	public @RTainted String getPathInfo();
+	public @RTainted String getPathTranslated();
+	public @RTainted String getContextPath();
+	public @RTainted String getQueryString();
+	public @RTainted String getRemoteUser();
+}
+
+public class HttpServletResponse {
+    public @RTainted String getCharacterEncoding();
+    public @RTainted String getContentType();
+    public @RTainted javax.servlet.ServletOutputStream getOutputStream();
+
+}
+
+public class Cookie {
+	public @RTainted String getComment();
+	public @RTainted String getValue();
+	public @RTainted String getName();
+    public @RTainted String getDomain();
+    public @RTainted String getPath();
+}

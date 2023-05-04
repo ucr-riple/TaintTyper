@@ -21,6 +21,8 @@ public class SerializationTest extends CheckerFrameworkPerDirectoryTest {
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
+            "-AannotatedPackages=\"\"",
+            "-AenableCustomCheck=false",
         "-Astubs=stubs/",
         "-nowarn");
   }
