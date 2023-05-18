@@ -21,8 +21,8 @@ public class TypeArgumentDetectionTest extends CheckerFrameworkPerDirectoryTest 
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
-            "-AannotatedPackages=\"\"",
-            "-AenableCustomCheck=false",
+        "-AannotatedPackages=\"\"",
+        "-AenableCustomCheck=false",
         "-Astubs=stubs/",
         "-nowarn");
   }

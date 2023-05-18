@@ -8,12 +8,8 @@ public class Main {
 
   public static final String PATH = "/";
 
-  public void foo() throws Exception {
+  public void foo(String param) throws Exception {
     String[] testDirs = new String[0];
-    Files.copy(
-        // :: error: argument
-        this.getClass().getResourceAsStream(testDirs[0] + "run.tcl"),
-        Paths.get(Main.PATH + "run.tcl"),
-        StandardCopyOption.REPLACE_EXISTING);
+    Files.copy(Paths.get(param), Paths.get(param), StandardCopyOption.REPLACE_EXISTING);
   }
 }

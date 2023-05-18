@@ -21,6 +21,7 @@ public class LocalVariableSerializationTest extends CheckerFrameworkPerDirectory
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
+        "-AannotatedPackages=\"\"",
         "-Astubs=stubs/",
         "-nowarn");
   }

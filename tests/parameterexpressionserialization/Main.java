@@ -13,7 +13,6 @@ class Foo {
 
   public void run() throws Exception {
     Files.copy(
-        // :: error: argument
         this.getClass().getResourceAsStream(Main.PATH + "run.tcl"),
         Paths.get(Main.PATH + "run.tcl"),
         StandardCopyOption.REPLACE_EXISTING);
