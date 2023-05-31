@@ -16,6 +16,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,9 +32,12 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   /** The javac context. */
   private final Context context;
 
-  public FixVisitor(TreeChecker checker, Context context) {
+  private final UCRTaintingAnnotatedTypeFactory typeFactory;
+
+  public FixVisitor(TreeChecker checker, Context context, UCRTaintingAnnotatedTypeFactory factory) {
     this.checker = checker;
     this.context = context;
+    this.typeFactory = factory;
   }
 
   @Override
@@ -77,6 +81,11 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
         return null;
       }
       Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
+      // check if the call is to a method defined in third party library.
+      if(calledMethod.enclClass().sourcefile == null || !Utility.isInAnnotatedPackage(calledMethod, typeFactory)) {
+        // Build the fix for the receiver.
+        return ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type);
+      }
       // check for type variable in return type.
       if (Utility.containsTypeParameter(calledMethod.getReturnType())) {
         // set type, if not set.

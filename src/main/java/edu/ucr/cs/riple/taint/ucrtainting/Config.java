@@ -13,6 +13,6 @@ public class Config {
   }
 
   public boolean serializationEnabled() {
-    return false;
+    return true;
   }
 }

@@ -18,6 +18,10 @@ import com.sun.tools.javac.util.Context;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import javax.lang.model.element.Element;
+
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Utility methods for the serialization service. */
@@ -282,5 +286,13 @@ public class Utility {
       }
     }
     return false;
+  }
+
+  public static boolean isInAnnotatedPackage(Element element, UCRTaintingAnnotatedTypeFactory typeFactory){
+    String packageName = ElementUtils.getType(element).toString();
+    if (!packageName.equals("")) {
+      packageName = packageName.substring(0, packageName.lastIndexOf("."));
+    }
+    return typeFactory.isAnnotatedPackage(packageName);
   }
 }

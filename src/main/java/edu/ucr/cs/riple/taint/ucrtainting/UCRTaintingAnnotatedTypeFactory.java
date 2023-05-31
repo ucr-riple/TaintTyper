@@ -58,6 +58,21 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     postInit();
   }
 
+  /**
+   * Checks if the package name matches any of the annotated packages
+   *
+   * @param packageName to check for
+   * @return true if matches, false otherwise
+   */
+  public boolean isAnnotatedPackage(String packageName) {
+    for (String annotatedPackageName : ANNOTATED_PACKAGE_NAMES_LIST) {
+      if (packageName.startsWith(annotatedPackageName)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @Override
   protected TreeAnnotator createTreeAnnotator() {
     return new ListTreeAnnotator(super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this));
@@ -197,21 +212,6 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
           if (isAnnotatedPackage(packageName)) {
             return true;
           }
-        }
-      }
-      return false;
-    }
-
-    /**
-     * Checks if the package name matches any of the annotated packages
-     *
-     * @param packageName to check for
-     * @return true if matches, false otherwise
-     */
-    private boolean isAnnotatedPackage(String packageName) {
-      for (String annotatedPackageName : ANNOTATED_PACKAGE_NAMES_LIST) {
-        if (packageName.startsWith(annotatedPackageName)) {
-          return true;
         }
       }
       return false;
