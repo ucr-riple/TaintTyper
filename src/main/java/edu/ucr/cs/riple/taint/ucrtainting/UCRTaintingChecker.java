@@ -41,7 +41,7 @@ public class UCRTaintingChecker extends BaseTypeChecker {
         messageKey,
         args,
         visitor,
-            getTypeFactory(),
+        getTypeFactory(),
         ((JavacProcessingEnvironment) getProcessingEnvironment()).getContext());
   }
 

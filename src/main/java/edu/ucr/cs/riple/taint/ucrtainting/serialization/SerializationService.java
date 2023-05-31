@@ -32,19 +32,20 @@ public class SerializationService {
    * This method is called when a warning or error is reported by the checker and serialized the
    * error along the set of required fixes to resolve the error if exists.
    *
-   * @param source      the source of the error
-   * @param messageKey  the key of the error message
-   * @param args        the arguments of the error message
-   * @param visitor     the visitor that is visiting the source
-   * @param tf          the type factory of the checker
-   * @param context     javac context.
+   * @param source the source of the error
+   * @param messageKey the key of the error message
+   * @param args the arguments of the error message
+   * @param visitor the visitor that is visiting the source
+   * @param tf the type factory of the checker
+   * @param context javac context.
    */
   public void serializeError(
-          Object source,
-          String messageKey,
-          Object[] args,
-          SourceVisitor<?, ?> visitor,
-          GenericAnnotatedTypeFactory<?, ?, ?, ?> tf, Context context) {
+      Object source,
+      String messageKey,
+      Object[] args,
+      SourceVisitor<?, ?> visitor,
+      GenericAnnotatedTypeFactory<?, ?, ?, ?> tf,
+      Context context) {
     if (!config.serializationEnabled()) {
       return;
     }
@@ -55,7 +56,12 @@ public class SerializationService {
     Set<Fix> resolvingFixes =
         checkErrorIsFixable(source, messageKey)
             ? generateFixesForError(
-                (Tree) source, messageKey, visitor.getCurrentPath(), tree -> true, typeFactory, context)
+                (Tree) source,
+                messageKey,
+                visitor.getCurrentPath(),
+                tree -> true,
+                typeFactory,
+                context)
             : ImmutableSet.of();
     Error error = new Error(messageKey, args, resolvingFixes, visitor.getCurrentPath());
     serializer.serializeError(error);
@@ -71,7 +77,12 @@ public class SerializationService {
    * @param context The javac context.
    */
   public Set<Fix> generateFixesForError(
-      Tree tree, String messageKey, TreePath path, TreeChecker treeChecker, UCRTaintingAnnotatedTypeFactory typeFactory, Context context) {
+      Tree tree,
+      String messageKey,
+      TreePath path,
+      TreeChecker treeChecker,
+      UCRTaintingAnnotatedTypeFactory typeFactory,
+      Context context) {
     switch (messageKey) {
       case "override.param":
         return handleParamOverrideError(tree, context);

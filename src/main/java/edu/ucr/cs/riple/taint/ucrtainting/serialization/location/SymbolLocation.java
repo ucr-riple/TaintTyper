@@ -29,7 +29,8 @@ public interface SymbolLocation {
       case LOCAL_VARIABLE:
         return new LocalVariableLocation(target, declarationTree, type);
       default:
-        throw new IllegalArgumentException("Cannot locate node: " + target);
+        throw new IllegalArgumentException(
+            "Cannot locate node: " + target + ", kind: " + target.getKind());
     }
   }
 

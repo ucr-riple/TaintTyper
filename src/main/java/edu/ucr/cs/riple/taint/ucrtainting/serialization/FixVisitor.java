@@ -94,7 +94,8 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       }
       Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
       // check if the call is to a method defined in third party library.
-      if(calledMethod.enclClass().sourcefile == null || !Utility.isInAnnotatedPackage(calledMethod, typeFactory)) {
+      if (calledMethod.enclClass().sourcefile == null
+          || !Utility.isInAnnotatedPackage(calledMethod, typeFactory) && !calledMethod.isStatic()) {
         // Build the fix for the receiver.
         return ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type);
       }
