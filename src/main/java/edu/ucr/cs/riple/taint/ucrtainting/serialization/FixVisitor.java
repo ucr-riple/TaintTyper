@@ -60,6 +60,18 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
     return fixes;
   }
 
+  @Override
+  public Set<Fix> visitNewClass(com.sun.source.tree.NewClassTree node, Type typeVar) {
+    Set<Fix> fixes = new HashSet<>();
+    // Add a fix for each argument.
+    for (ExpressionTree arg : node.getArguments()) {
+      if (checker.check(arg)) {
+        fixes.addAll(arg.accept(this, typeVar));
+      }
+    }
+    return fixes;
+  }
+
   /**
    * Visitor for method invocations. For method invocations:
    *
