@@ -10,6 +10,7 @@ import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.PrimitiveTypeTree;
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
@@ -17,6 +18,7 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,23 +28,19 @@ import org.checkerframework.javacutil.TreeUtils;
 /** Generates the fixes for the given tree involved in the reporting error if such fixes exists. */
 public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
 
-  /** The tree checker to check if the type of the given tree is {@code @RTainted}. */
-  private final TreeChecker checker;
-
   /** The javac context. */
   private final Context context;
 
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
 
-  public FixVisitor(TreeChecker checker, Context context, UCRTaintingAnnotatedTypeFactory factory) {
-    this.checker = checker;
+  public FixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
     this.context = context;
     this.typeFactory = factory;
   }
 
   @Override
   public Set<Fix> visitIdentifier(IdentifierTree node, Type typeVar) {
-    if (checker.check(node)) {
+    if (isTainted(node)) {
       return Set.of(buildFixForElement(TreeUtils.elementFromTree(node), typeVar));
     }
     return Set.of();
@@ -51,10 +49,10 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   @Override
   public Set<Fix> visitConditionalExpression(ConditionalExpressionTree node, Type typeVar) {
     Set<Fix> fixes = new HashSet<>();
-    if (checker.check(node.getTrueExpression())) {
+    if (isTainted(node.getTrueExpression())) {
       fixes.addAll(node.getTrueExpression().accept(this, typeVar));
     }
-    if (checker.check(node.getFalseExpression())) {
+    if (isTainted(node.getFalseExpression())) {
       fixes.addAll(node.getFalseExpression().accept(this, typeVar));
     }
     return fixes;
@@ -65,7 +63,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
     for (ExpressionTree arg : node.getArguments()) {
-      if (checker.check(arg)) {
+      if (isTainted(arg)) {
         fixes.addAll(arg.accept(this, typeVar));
       }
     }
@@ -87,7 +85,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
    */
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Type type) {
-    if (checker.check(node.getMethodSelect())) {
+    if (isTainted(node.getMethodSelect())) {
       Element element = TreeUtils.elementFromUse(node);
       if (element == null) {
         return null;
@@ -152,7 +150,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
 
   @Override
   public Set<Fix> visitMemberSelect(MemberSelectTree node, Type type) {
-    if (checker.check(node.getExpression())) {
+    if (isTainted(node.getExpression())) {
       Element member = TreeUtils.elementFromUse(node);
       if (!(member instanceof Symbol)) {
         return Set.of();
@@ -191,5 +189,15 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
     }
     location = SymbolLocation.createLocationFromSymbol((Symbol) element, context, type);
     return new Fix("untainted", location);
+  }
+
+  /**
+   * Checks if the given tree is tainted.
+   *
+   * @param tree The given tree.
+   * @return True if the given tree is tainted, false otherwise.
+   */
+  private boolean isTainted(Tree tree) {
+    return typeFactory.getAnnotatedType(tree).hasAnnotation(RTainted.class);
   }
 }

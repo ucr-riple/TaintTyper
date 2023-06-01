@@ -50,18 +50,10 @@ public class SerializationService {
       return;
     }
     UCRTaintingAnnotatedTypeFactory typeFactory = (UCRTaintingAnnotatedTypeFactory) tf;
-    // TODO: for TreeChecker instance below, use the actual API which checks if the tree is
-    // @Tainted. For now, we pass tree -> true, to serialize a fix for all expressions on the right
-    // hand side of the assignment.
     Set<Fix> resolvingFixes =
         checkErrorIsFixable(source, messageKey)
             ? generateFixesForError(
-                (Tree) source,
-                messageKey,
-                visitor.getCurrentPath(),
-                tree -> true,
-                typeFactory,
-                context)
+                (Tree) source, messageKey, visitor.getCurrentPath(), typeFactory, context)
             : ImmutableSet.of();
     Error error = new Error(messageKey, args, resolvingFixes, visitor.getCurrentPath());
     serializer.serializeError(error);
@@ -72,7 +64,6 @@ public class SerializationService {
    *
    * @param tree The given tree.
    * @param messageKey The key of the error message.
-   * @param treeChecker The tree checker to check if a tree requires a fix.
    * @param path The path of the tree.
    * @param context The javac context.
    */
@@ -80,7 +71,6 @@ public class SerializationService {
       Tree tree,
       String messageKey,
       TreePath path,
-      TreeChecker treeChecker,
       UCRTaintingAnnotatedTypeFactory typeFactory,
       Context context) {
     switch (messageKey) {
@@ -89,7 +79,7 @@ public class SerializationService {
       case "override.return":
         return handleReturnOverrideError(path.getLeaf(), context);
       default:
-        return new FixVisitor(treeChecker, context, typeFactory).visit(tree, null);
+        return new FixVisitor(context, typeFactory).visit(tree, null);
     }
   }
 
