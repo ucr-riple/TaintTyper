@@ -65,6 +65,8 @@ public class SerializationService {
    * @param tree The given tree.
    * @param messageKey The key of the error message.
    * @param path The path of the tree.
+   * @param typeFactory The type factory of the checker. Used to get the type of the tree and
+   *     generate a fix only if the tree is {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}
    * @param context The javac context.
    */
   public Set<Fix> generateFixesForError(
