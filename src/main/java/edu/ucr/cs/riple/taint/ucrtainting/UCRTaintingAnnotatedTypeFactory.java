@@ -149,7 +149,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @param node to check for
    * @return true if annotated, false otherwise
    */
-  private boolean isPresentInStub(ExpressionTree node) {
+  public boolean isPresentInStub(ExpressionTree node) {
     if (node != null) {
       Element elem = TreeUtils.elementFromTree(node);
       if (elem != null && isFromStubFile(elem)) {
