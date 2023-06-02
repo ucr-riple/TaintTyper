@@ -79,14 +79,15 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   }
 
   /**
-   * Checks if the given tree is tainted.
+   * Checks if the given tree may be tainted.
    *
    * @param tree The given tree.
    * @return True if the given tree is tainted, false otherwise.
    */
-  public boolean isTainted(Tree tree) {
+  public boolean mayBeTainted(Tree tree) {
     AnnotatedTypeMirror type = getAnnotatedType(tree);
-    return type != null && type.hasAnnotation(RTAINTED);
+    // If type is null, we should be conservative and assume it may be tainted.
+    return type == null || type.hasAnnotation(RTAINTED);
   }
 
   private class UCRTaintingTreeAnnotator extends TreeAnnotator {

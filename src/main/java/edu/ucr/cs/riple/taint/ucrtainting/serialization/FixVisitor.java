@@ -38,7 +38,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
 
   @Override
   public Set<Fix> visitIdentifier(IdentifierTree node, Type typeVar) {
-    if (typeFactory.isTainted(node)) {
+    if (typeFactory.mayBeTainted(node)) {
       return Set.of(buildFixForElement(TreeUtils.elementFromTree(node), typeVar));
     }
     return Set.of();
@@ -47,10 +47,10 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   @Override
   public Set<Fix> visitConditionalExpression(ConditionalExpressionTree node, Type typeVar) {
     Set<Fix> fixes = new HashSet<>();
-    if (typeFactory.isTainted(node.getTrueExpression())) {
+    if (typeFactory.mayBeTainted(node.getTrueExpression())) {
       fixes.addAll(node.getTrueExpression().accept(this, typeVar));
     }
-    if (typeFactory.isTainted(node.getFalseExpression())) {
+    if (typeFactory.mayBeTainted(node.getFalseExpression())) {
       fixes.addAll(node.getFalseExpression().accept(this, typeVar));
     }
     return fixes;
@@ -61,7 +61,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
     for (ExpressionTree arg : node.getArguments()) {
-      if (typeFactory.isTainted(arg)) {
+      if (typeFactory.mayBeTainted(arg)) {
         fixes.addAll(arg.accept(this, typeVar));
       }
     }
@@ -83,7 +83,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
    */
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Type type) {
-    if (typeFactory.isTainted(node.getMethodSelect())) {
+    if (typeFactory.mayBeTainted(node.getMethodSelect())) {
       Element element = TreeUtils.elementFromUse(node);
       if (element == null) {
         return null;
@@ -148,7 +148,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
 
   @Override
   public Set<Fix> visitMemberSelect(MemberSelectTree node, Type type) {
-    if (typeFactory.isTainted(node.getExpression())) {
+    if (typeFactory.mayBeTainted(node.getExpression())) {
       Element member = TreeUtils.elementFromUse(node);
       if (!(member instanceof Symbol)) {
         return Set.of();
