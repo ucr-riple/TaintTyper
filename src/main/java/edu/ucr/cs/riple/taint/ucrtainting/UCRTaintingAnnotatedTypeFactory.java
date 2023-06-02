@@ -78,6 +78,16 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     return new ListTreeAnnotator(super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this));
   }
 
+  /**
+   * Checks if the given tree is tainted.
+   *
+   * @param tree The given tree.
+   * @return True if the given tree is tainted, false otherwise.
+   */
+  public boolean isTainted(Tree tree) {
+    return getAnnotatedType(tree).hasAnnotation(RTAINTED);
+  }
+
   private class UCRTaintingTreeAnnotator extends TreeAnnotator {
 
     /**
