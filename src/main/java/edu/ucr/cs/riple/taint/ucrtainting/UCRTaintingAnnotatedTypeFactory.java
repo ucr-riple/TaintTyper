@@ -18,6 +18,7 @@ import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.*;
 
 public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
+
   /**
    * This option enables custom handling of third party code. By default, such handling is enabled.
    */
@@ -58,6 +59,106 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     postInit();
   }
 
+  @Override
+  protected TreeAnnotator createTreeAnnotator() {
+    return new ListTreeAnnotator(super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this));
+  }
+
+  /**
+   * Checks if any of the arguments of the node has been annotated with {@link RTainted}
+   *
+   * @param node to check for
+   * @return true if any argument is annotated with {@link RTainted}, false otherwise
+   */
+  private boolean hasTaintedArgument(ExpressionTree node) {
+    List<? extends ExpressionTree> argumentsList = null;
+    if (node instanceof MethodInvocationTree) {
+      argumentsList = ((MethodInvocationTree) node).getArguments();
+    } else if (node instanceof NewClassTree) {
+      argumentsList = ((NewClassTree) node).getArguments();
+    }
+    if (argumentsList != null) {
+      for (ExpressionTree eTree : argumentsList) {
+        try {
+          if (getAnnotatedType(eTree).hasAnnotation(RTAINTED)) {
+            return true;
+          }
+        } catch (BugInCF bug) {
+          // TODO:: take care of errors
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if the receiver tree has been annotated with {@link RTainted}
+   *
+   * @param node to check for
+   * @return true if annotated with {@link RTainted}, false otherwise
+   */
+  private boolean hasTaintedReceiver(ExpressionTree node) {
+    if (node != null) {
+      ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
+      if (receiverTree != null) {
+        Element element = TreeUtils.elementFromTree(node);
+        if (element != null) {
+          Set<Modifier> modifiers = element.getModifiers();
+          if (modifiers != null
+              && !modifiers.contains(Modifier.STATIC)
+              && getAnnotatedType(receiverTree).hasAnnotation(RTAINTED)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if the package for the node is present in already annotated according to provided
+   * option.
+   *
+   * @param node to check for
+   * @return true if present, false otherwise
+   */
+  private boolean hasAnnotatedPackage(ExpressionTree node) {
+    if (node != null) {
+      ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
+      if (receiverTree != null) {
+        String packageName = "";
+        try {
+          packageName = ElementUtils.getType(TreeUtils.elementFromTree(receiverTree)).toString();
+          if (!packageName.equals("")) {
+            packageName = packageName.substring(0, packageName.lastIndexOf("."));
+          }
+        } catch (Exception | Error e) {
+          // TODO:: take care of exceptions or errors
+        }
+        if (isAnnotatedPackage(packageName)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if the tree is annotated in the stub files
+   *
+   * @param node to check for
+   * @return true if annotated, false otherwise
+   */
+  private boolean isPresentInStub(ExpressionTree node) {
+    if (node != null) {
+      Element elem = TreeUtils.elementFromTree(node);
+      if (elem != null && isFromStubFile(elem)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * Checks if the package name matches any of the annotated packages
    *
@@ -71,11 +172,6 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       }
     }
     return false;
-  }
-
-  @Override
-  protected TreeAnnotator createTreeAnnotator() {
-    return new ListTreeAnnotator(super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this));
   }
 
   /**
@@ -148,101 +244,6 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
       }
       return super.visitNewClass(node, annotatedTypeMirror);
-    }
-
-    /**
-     * Checks if any of the arguments of the node has been annotated with {@link RTainted}
-     *
-     * @param node to check for
-     * @return true if any argument is annotated with {@link RTainted}, false otherwise
-     */
-    private boolean hasTaintedArgument(ExpressionTree node) {
-      List<? extends ExpressionTree> argumentsList = null;
-      if (node instanceof MethodInvocationTree) {
-        argumentsList = ((MethodInvocationTree) node).getArguments();
-      } else if (node instanceof NewClassTree) {
-        argumentsList = ((NewClassTree) node).getArguments();
-      }
-      if (argumentsList != null) {
-        for (ExpressionTree eTree : argumentsList) {
-          try {
-            if (getAnnotatedType(eTree).hasAnnotation(RTAINTED)) {
-              return true;
-            }
-          } catch (BugInCF bug) {
-            // TODO:: take care of errors
-          }
-        }
-      }
-      return false;
-    }
-
-    /**
-     * Checks if the receiver tree has been annotated with {@link RTainted}
-     *
-     * @param node to check for
-     * @return true if annotated with {@link RTainted}, false otherwise
-     */
-    private boolean hasTaintedReceiver(ExpressionTree node) {
-      if (node != null) {
-        ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
-        if (receiverTree != null) {
-          Element element = TreeUtils.elementFromTree(node);
-          if (element != null) {
-            Set<Modifier> modifiers = element.getModifiers();
-            if (modifiers != null
-                && !modifiers.contains(Modifier.STATIC)
-                && getAnnotatedType(receiverTree).hasAnnotation(RTAINTED)) {
-              return true;
-            }
-          }
-        }
-      }
-      return false;
-    }
-
-    /**
-     * Checks if the package for the node is present in already annotated according to provided
-     * option.
-     *
-     * @param node to check for
-     * @return true if present, false otherwise
-     */
-    private boolean hasAnnotatedPackage(ExpressionTree node) {
-      if (node != null) {
-        ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
-        if (receiverTree != null) {
-          String packageName = "";
-          try {
-            packageName = ElementUtils.getType(TreeUtils.elementFromTree(receiverTree)).toString();
-            if (!packageName.equals("")) {
-              packageName = packageName.substring(0, packageName.lastIndexOf("."));
-            }
-          } catch (Exception | Error e) {
-            // TODO:: take care of exceptions or errors
-          }
-          if (isAnnotatedPackage(packageName)) {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-
-    /**
-     * Checks if the tree is annotated in the stub files
-     *
-     * @param node to check for
-     * @return true if annotated, false otherwise
-     */
-    private boolean isPresentInStub(ExpressionTree node) {
-      if (node != null) {
-        Element elem = TreeUtils.elementFromTree(node);
-        if (elem != null && isFromStubFile(elem)) {
-          return true;
-        }
-      }
-      return false;
     }
   }
 }

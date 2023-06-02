@@ -18,6 +18,7 @@ import org.checkerframework.framework.source.SupportedOptions;
 })
 @SupportedOptions({UCRTaintingChecker.ANNOTATED_PACKAGES, UCRTaintingChecker.ENABLE_CUSTOM_CHECKER})
 public class UCRTaintingChecker extends BaseTypeChecker {
+
   /** Annotated packages config option for the checker. */
   public static final String ANNOTATED_PACKAGES = "annotatedPackages";
   /** Custom Library handling config option for the checker. */
@@ -29,7 +30,7 @@ public class UCRTaintingChecker extends BaseTypeChecker {
   private final Config config;
 
   public UCRTaintingChecker() {
-    config = new Config();
+    this.config = new Config();
     serializationService = new SerializationService(config);
   }
 
