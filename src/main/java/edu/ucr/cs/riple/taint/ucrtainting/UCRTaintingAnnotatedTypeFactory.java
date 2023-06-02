@@ -85,7 +85,8 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @return True if the given tree is tainted, false otherwise.
    */
   public boolean isTainted(Tree tree) {
-    return getAnnotatedType(tree).hasAnnotation(RTAINTED);
+    AnnotatedTypeMirror type = getAnnotatedType(tree);
+    return type != null && type.hasAnnotation(RTAINTED);
   }
 
   private class UCRTaintingTreeAnnotator extends TreeAnnotator {
