@@ -291,9 +291,6 @@ public class Utility {
     if (packageName.equals("unnamed package")) {
       packageName = "";
     }
-    if (!packageName.equals("") && packageName.contains(".")) {
-      packageName = packageName.substring(0, packageName.lastIndexOf("."));
-    }
     return typeFactory.isAnnotatedPackage(packageName);
   }
 }
