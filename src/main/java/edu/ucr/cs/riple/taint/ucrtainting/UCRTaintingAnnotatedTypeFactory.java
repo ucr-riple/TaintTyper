@@ -38,10 +38,9 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker);
     ENABLE_CUSTOM_CHECK = checker.getBooleanOption(UCRTaintingChecker.ENABLE_CUSTOM_CHECKER, true);
-
-    ANNOTATED_PACKAGE_NAMES = checker.getOption(UCRTaintingChecker.ANNOTATED_PACKAGES);
+    String givenAnnotatedPackages = checker.getOption(UCRTaintingChecker.ANNOTATED_PACKAGES);
     // make sure that annotated package names are always provided and issue error otherwise
-    if (ANNOTATED_PACKAGE_NAMES == null) {
+    if (givenAnnotatedPackages == null) {
       if (checker.hasOption(UCRTaintingChecker.ANNOTATED_PACKAGES)) {
         throw new UserError(
             "The value for the argument -AannotatedPackages"
@@ -51,9 +50,9 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             "Cannot find this argument -AannotatedPackages"
                 + " Please pass this argument in the checker config, refer checker manual");
       }
-    } else {
-      ANNOTATED_PACKAGE_NAMES_LIST = Arrays.asList(ANNOTATED_PACKAGE_NAMES.split(","));
     }
+    ANNOTATED_PACKAGE_NAMES = givenAnnotatedPackages.equals("\"\"") ? "" : givenAnnotatedPackages;
+    ANNOTATED_PACKAGE_NAMES_LIST = Arrays.asList(ANNOTATED_PACKAGE_NAMES.split(","));
     RUNTAINTED = AnnotationBuilder.fromClass(elements, RUntainted.class);
     RTAINTED = AnnotationBuilder.fromClass(elements, RTainted.class);
     postInit();

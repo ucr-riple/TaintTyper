@@ -89,12 +89,19 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
         return null;
       }
       Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
-      // check if the call is to a method defined in third party library.
+      // check if the call is to a method defined in a third party library.
       if (calledMethod.enclClass().sourcefile == null
-          || !Utility.isInAnnotatedPackage(calledMethod, typeFactory)
-              && !calledMethod.isStatic()
-              // If from stub file, it is a source, and we should not annotate the receiver.
-              && !typeFactory.isFromStubFile(calledMethod)) {
+          || !Utility.isInAnnotatedPackage(calledMethod.enclClass(), typeFactory)) {
+        // Check if the method is source defined in stubs.
+        if (typeFactory.isFromStubFile(calledMethod)) {
+          // We cannot do any fix here
+          return null;
+        }
+        // Build the fix for the receiver if not static.
+        if (calledMethod.isStatic()) {
+          // No receiver for static method calls.
+          return null;
+        }
         // Build the fix for the receiver.
         return ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type);
       }

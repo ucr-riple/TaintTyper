@@ -1,6 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import com.google.common.collect.ImmutableSet;
+import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
@@ -81,6 +82,15 @@ public class SerializationService {
       case "override.return":
         return handleReturnOverrideError(path.getLeaf(), context);
       default:
+        ClassTree classTree = Utility.findEnclosingNode(path, ClassTree.class);
+        if (classTree == null) {
+          return ImmutableSet.of();
+        }
+        Symbol.ClassSymbol encClass =
+            (Symbol.ClassSymbol) TreeUtils.elementFromDeclaration(classTree);
+        if (encClass == null || !Utility.isInAnnotatedPackage(encClass, typeFactory)) {
+          return ImmutableSet.of();
+        }
         return new FixVisitor(context, typeFactory).visit(tree, null);
     }
   }

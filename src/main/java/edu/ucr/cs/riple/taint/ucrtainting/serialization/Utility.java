@@ -19,8 +19,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
-import javax.lang.model.element.Element;
-import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Utility methods for the serialization service. */
@@ -288,8 +286,11 @@ public class Utility {
   }
 
   public static boolean isInAnnotatedPackage(
-      Element element, UCRTaintingAnnotatedTypeFactory typeFactory) {
-    String packageName = ElementUtils.getType(element).toString();
+      Symbol.ClassSymbol encClass, UCRTaintingAnnotatedTypeFactory typeFactory) {
+    String packageName = encClass.packge().toString();
+    if (packageName.equals("unnamed package")) {
+      packageName = "";
+    }
     if (!packageName.equals("") && packageName.contains(".")) {
       packageName = packageName.substring(0, packageName.lastIndexOf("."));
     }
