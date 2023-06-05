@@ -14,8 +14,8 @@ import org.junit.runners.Parameterized.Parameters;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class ThirdPartyParameterTest extends CheckerFrameworkPerDirectoryTest {
-  public ThirdPartyParameterTest(List<File> testFiles) {
+public class ThirdPartyHandlingSerializationTest extends CheckerFrameworkPerDirectoryTest {
+  public ThirdPartyHandlingSerializationTest(List<File> testFiles) {
     super(
         testFiles,
         UCRTaintingChecker.class,
@@ -28,6 +28,6 @@ public class ThirdPartyParameterTest extends CheckerFrameworkPerDirectoryTest {
 
   @Parameters
   public static String[] getTestDirs() {
-    return new String[] {"thirdpartyparameter"};
+    return new String[] {"thirdpartyhandlingserialization"};
   }
 }
