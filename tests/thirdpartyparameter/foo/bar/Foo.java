@@ -1,9 +1,9 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.io.*;
 import java.util.*;
 import javax.servlet.http.*;
-import java.io.*;
 
 class Foo {
 

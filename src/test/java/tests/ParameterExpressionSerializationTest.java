@@ -22,7 +22,6 @@ public class ParameterExpressionSerializationTest extends CheckerFrameworkPerDir
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
-        "-Astubs=stubs/",
         "-nowarn");
   }
 

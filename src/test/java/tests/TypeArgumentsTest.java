@@ -23,7 +23,6 @@ public class TypeArgumentsTest extends CheckerFrameworkPerDirectoryTest {
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
         "-AenableCustomCheck=false",
-        "-Astubs=stubs/",
         "-nowarn");
   }
 

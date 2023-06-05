@@ -28,7 +28,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * through this option.
    */
   private final String ANNOTATED_PACKAGE_NAMES;
-
+  /** List of annotated packages. Classes in these packages are considered to be annotated. */
   private final List<String> ANNOTATED_PACKAGE_NAMES_LIST;
   /** AnnotationMirror for {@link RUntainted}. */
   protected final AnnotationMirror RUNTAINTED;
@@ -183,7 +183,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   public boolean mayBeTainted(Tree tree) {
     AnnotatedTypeMirror type = getAnnotatedType(tree);
     // If type is null, we should be conservative and assume it may be tainted.
-    return type == null || type.hasAnnotation(RTAINTED);
+    return type == null || !type.hasAnnotation(RUNTAINTED);
   }
 
   private class UCRTaintingTreeAnnotator extends TreeAnnotator {

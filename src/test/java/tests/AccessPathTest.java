@@ -21,7 +21,6 @@ public class AccessPathTest extends CheckerFrameworkPerDirectoryTest {
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
-        "-Astubs=stubs/",
         "-AannotatedPackages=\"\"",
         "-AenableCustomCheck=false",
         "-nowarn");

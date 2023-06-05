@@ -23,7 +23,6 @@ public class SerializationTest extends CheckerFrameworkPerDirectoryTest {
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
         "-AenableCustomCheck=false",
-        "-Astubs=stubs/",
         "-nowarn");
   }
 

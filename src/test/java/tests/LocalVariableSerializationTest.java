@@ -22,7 +22,6 @@ public class LocalVariableSerializationTest extends CheckerFrameworkPerDirectory
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
-        "-Astubs=stubs/",
         "-nowarn");
   }
 

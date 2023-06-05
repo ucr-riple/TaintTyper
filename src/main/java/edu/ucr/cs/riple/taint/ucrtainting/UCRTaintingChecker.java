@@ -9,12 +9,12 @@ import org.checkerframework.framework.source.SupportedOptions;
 
 /** This is the entry point for pluggable type-checking. */
 @StubFiles({
-  "Connection.astub",
-  "apache.commons.io.astub",
-  "apache.commons.lang.astub",
-  "general.astub",
-  "Files.astub",
-  "taintedMethods.astub",
+  "stubs/Connection.astub",
+  "stubs/apache.commons.io.astub",
+  "stubs/apache.commons.lang.astub",
+  "stubs/general.astub",
+  "stubs/Files.astub",
+  "stubs/taintedMethods.astub",
 })
 @SupportedOptions({UCRTaintingChecker.ANNOTATED_PACKAGES, UCRTaintingChecker.ENABLE_CUSTOM_CHECKER})
 public class UCRTaintingChecker extends BaseTypeChecker {
