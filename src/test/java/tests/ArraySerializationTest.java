@@ -15,18 +15,18 @@ import org.junit.runners.Parameterized;
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
 public class ArraySerializationTest extends CheckerFrameworkPerDirectoryTest {
-    public ArraySerializationTest(List<File> testFiles) {
-        super(
-                testFiles,
-                UCRTaintingChecker.class,
-                "ucrtainting",
-                "-Anomsgtext",
-                "-AannotatedPackages=\"\"",
-                "-nowarn");
-    }
+  public ArraySerializationTest(List<File> testFiles) {
+    super(
+        testFiles,
+        UCRTaintingChecker.class,
+        "ucrtainting",
+        "-Anomsgtext",
+        "-AannotatedPackages=\"\"",
+        "-nowarn");
+  }
 
-    @Parameterized.Parameters
-    public static String[] getTestDirs() {
-        return new String[] {"arrayserialization"};
-    }
+  @Parameterized.Parameters
+  public static String[] getTestDirs() {
+    return new String[] {"arrayserialization"};
+  }
 }

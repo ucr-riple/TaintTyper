@@ -98,7 +98,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
     if (typeFactory.mayBeTainted(node.getMethodSelect())) {
       Element element = TreeUtils.elementFromUse(node);
       if (element == null) {
-        return null;
+        return Set.of();
       }
       Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
       // check if the call is to a method defined in a third party library.
@@ -107,12 +107,12 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
         // Check if the method is source defined in stubs.
         if (typeFactory.isFromStubFile(calledMethod)) {
           // We cannot do any fix here
-          return null;
+          return Set.of();
         }
         // Build the fix for the receiver if not static.
         if (calledMethod.isStatic()) {
           // No receiver for static method calls.
-          return null;
+          return Set.of();
         }
         // Build the fix for the receiver.
         return ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type);
