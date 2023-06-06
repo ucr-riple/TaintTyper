@@ -10,6 +10,7 @@ public class HttpServletRequest {
 	public @RTainted String getContextPath();
 	public @RTainted String getQueryString();
 	public @RTainted String getRemoteUser();
+	public @RTainted StringBuffer getRequestURL();
 }
 
 public class HttpServletResponse {
