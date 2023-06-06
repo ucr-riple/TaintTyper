@@ -9,6 +9,7 @@ import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.PrimitiveTypeTree;
 import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
@@ -61,6 +62,17 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
     for (ExpressionTree arg : node.getArguments()) {
+      if (typeFactory.mayBeTainted(arg)) {
+        fixes.addAll(arg.accept(this, typeVar));
+      }
+    }
+    return fixes;
+  }
+
+  public @Override Set<Fix> visitNewArray(NewArrayTree node, Type typeVar) {
+    Set<Fix> fixes = new HashSet<>();
+    // Add a fix for each argument.
+    for (ExpressionTree arg : node.getInitializers()) {
       if (typeFactory.mayBeTainted(arg)) {
         fixes.addAll(arg.accept(this, typeVar));
       }
