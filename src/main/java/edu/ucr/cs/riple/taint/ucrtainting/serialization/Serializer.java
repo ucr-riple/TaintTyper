@@ -6,6 +6,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Name;
 import edu.ucr.cs.riple.taint.ucrtainting.Config;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,8 +31,8 @@ public class Serializer {
   /** Path to write errors. */
   private final Path errorOutputPath;
 
-  public Serializer(Config config) {
-    this.config = config;
+  public Serializer(UCRTaintingChecker checker) {
+    this.config = new Config(checker);
     this.errorOutputPath = config.outputDir.resolve(ERROR_OUTPUT);
     initializeOutputFiles();
   }
@@ -163,5 +164,9 @@ public class Serializer {
                         : parameter.type.tsym.toString())
             .collect(joining(",", "(", ")")));
     return sb.toString();
+  }
+
+  public boolean isActive() {
+    return config.serializationEnabled();
   }
 }
