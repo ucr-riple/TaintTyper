@@ -23,11 +23,16 @@ public class Config {
 
   public Config(UCRTaintingChecker checker) {
     this.serializationActivation = checker.hasOption(SERIALIZATION_ACTIVATION_FLAG);
-    if (checker.hasOption(OUTPUT_DIR_FLAG)) {
-      this.outputDir = Paths.get(checker.getOption(OUTPUT_DIR_FLAG));
-    } else {
-      this.outputDir = Paths.get("/tmp/ucr-tainting/0");
+    if (serializationActivation && !checker.hasOption(OUTPUT_DIR_FLAG)) {
+      throw new RuntimeException(
+          "Please specify the output directory using the flag: "
+              + OUTPUT_DIR_FLAG
+              + " when enabling serialization.");
     }
+    this.outputDir =
+        serializationActivation
+            ? Paths.get(checker.getOption(OUTPUT_DIR_FLAG))
+            : Paths.get("/tmp/ucr-tainting/0");
   }
 
   /**
