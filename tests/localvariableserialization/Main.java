@@ -12,4 +12,13 @@ public class Main {
     String[] testDirs = new String[0];
     Files.copy(Paths.get(param), Paths.get(param), StandardCopyOption.REPLACE_EXISTING);
   }
+
+  public void bar() {
+    try {
+      // some code
+    } catch (Exception e) {
+      // :: error: assignment
+      @RUntainted Exception dup = e;
+    }
+  }
 }

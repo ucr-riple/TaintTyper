@@ -21,6 +21,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.HashSet;
 import java.util.Set;
+import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
 
@@ -40,7 +41,8 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   @Override
   public Set<Fix> visitIdentifier(IdentifierTree node, Type typeVar) {
     if (typeFactory.mayBeTainted(node)) {
-      return Set.of(buildFixForElement(TreeUtils.elementFromTree(node), typeVar));
+      Fix fix = buildFixForElement(TreeUtils.elementFromTree(node), typeVar);
+      return fix == null ? Set.of() : Set.of(fix);
     }
     return Set.of();
   }
@@ -178,13 +180,15 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       if (type != null) {
         // Need to check if member affects the target type.
         if (!Utility.typeParameterDeterminedFromEncClass(((Symbol) member).enclClass(), type)) {
-          return Set.of(buildFixForElement(TreeUtils.elementFromUse(node), type));
+          Fix fix = buildFixForElement(TreeUtils.elementFromUse(node), type);
+          return fix == null ? Set.of() : Set.of(fix);
         } else if (node instanceof JCTree.JCFieldAccess) {
           JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) node;
           return fieldAccess.selected.accept(this, type);
         }
       } else {
-        return Set.of(buildFixForElement(TreeUtils.elementFromUse(node), null));
+        Fix fix = buildFixForElement(TreeUtils.elementFromUse(node), null);
+        return fix == null ? Set.of() : Set.of(fix);
       }
     }
     return Set.of();
@@ -202,12 +206,16 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
    * @param type The type variable.
    * @return The fix for the given element.
    */
+  @Nullable
   public Fix buildFixForElement(Element element, Type type) {
     SymbolLocation location;
     if (element == null) {
       return null;
     }
     location = SymbolLocation.createLocationFromSymbol((Symbol) element, context, type);
+    if (location == null) {
+      return null;
+    }
     return new Fix("untainted", location);
   }
 }

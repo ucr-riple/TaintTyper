@@ -6,6 +6,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
+import javax.annotation.Nullable;
 
 /** Provides method for symbol locations. */
 public interface SymbolLocation {
@@ -17,6 +18,7 @@ public interface SymbolLocation {
    * @param context Context.
    * @return subtype of {@link SymbolLocation} matching target's type.
    */
+  @Nullable
   static SymbolLocation createLocationFromSymbol(Symbol target, Context context, Type type) {
     JCTree declarationTree = Utility.locateDeclaration(target, context);
     switch (target.getKind()) {
@@ -28,6 +30,9 @@ public interface SymbolLocation {
         return new FieldLocation(target, declarationTree, type);
       case LOCAL_VARIABLE:
         return new LocalVariableLocation(target, declarationTree, type);
+      case EXCEPTION_PARAMETER:
+        // currently not supported / desired.
+        return null;
       default:
         throw new IllegalArgumentException(
             "Cannot locate node: " + target + ", kind: " + target.getKind());
