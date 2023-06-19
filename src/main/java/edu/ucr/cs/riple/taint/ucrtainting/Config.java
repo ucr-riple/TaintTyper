@@ -22,6 +22,6 @@ public class Config {
   }
 
   public boolean serializationEnabled() {
-    return true;
+    return serializationActivation;
   }
 }
