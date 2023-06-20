@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import static java.util.stream.Collectors.joining;
 
+import com.google.common.base.Preconditions;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Name;
@@ -29,11 +30,12 @@ public class Serializer {
   /** Config object used to configure the serializer. */
   private final Config config;
   /** Path to write errors. */
-  private final Path errorOutputPath;
+  @Nullable private final Path errorOutputPath;
 
   public Serializer(UCRTaintingChecker checker) {
     this.config = new Config(checker);
-    this.errorOutputPath = config.outputDir.resolve(ERROR_OUTPUT);
+    this.errorOutputPath =
+        config.serializationActivation ? config.outputDir.resolve(ERROR_OUTPUT) : null;
     initializeOutputFiles();
   }
 
@@ -48,6 +50,10 @@ public class Serializer {
 
   /** Initializes every file which will be re-generated in the new run of checker. */
   private void initializeOutputFiles() {
+    if (!isActive()) {
+      return;
+    }
+    Preconditions.checkArgument(errorOutputPath != null, "Unexpected null errorOutputPath");
     try {
       Files.createDirectories(config.outputDir);
       try {

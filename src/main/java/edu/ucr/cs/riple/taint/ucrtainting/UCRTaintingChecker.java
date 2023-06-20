@@ -22,23 +22,26 @@ public class UCRTaintingChecker extends BaseTypeChecker {
   public static final String ANNOTATED_PACKAGES = "annotatedPackages";
   /** Custom Library handling config option for the checker. */
   public static final String ENABLE_CUSTOM_CHECKER = "enableCustomCheck";
-
   /** Serialization service for the checker. */
-  private final SerializationService serializationService;
+  private SerializationService serializationService;
 
-  public UCRTaintingChecker() {
-    serializationService = new SerializationService(this);
+  public UCRTaintingChecker() {}
+
+  @Override
+  public void initChecker() {
+    super.initChecker();
+    this.serializationService = new SerializationService(this);
   }
 
   @Override
   public void reportWarning(Object source, @CompilerMessageKey String messageKey, Object... args) {
     super.reportWarning(source, messageKey, args);
-    //    serializationService.serializeError(source, messageKey, args);
+    this.serializationService.serializeError(source, messageKey, args);
   }
 
   @Override
   public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
     super.reportError(source, messageKey, args);
-    //    serializationService.serializeError(source, messageKey, args);
+    this.serializationService.serializeError(source, messageKey, args);
   }
 }

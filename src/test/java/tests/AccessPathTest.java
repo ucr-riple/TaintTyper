@@ -23,6 +23,8 @@ public class AccessPathTest extends CheckerFrameworkPerDirectoryTest {
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
         "-AenableCustomCheck=false",
+        "-AenableSerialization",
+        "-AoutputDir=/tmp/ucr-tainting/0",
         "-nowarn");
   }
 

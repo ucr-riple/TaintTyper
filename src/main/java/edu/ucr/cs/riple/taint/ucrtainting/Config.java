@@ -31,7 +31,8 @@ public class Config {
     }
     this.outputDir =
         serializationActivation
-            ? Paths.get(checker.getOption(OUTPUT_DIR_FLAG))
+            // Cannot call checker.getOption(OUTPUT_DIR_FLAG), it throws an exception. Fix later.
+            ? Paths.get(checker.getOptions().get(OUTPUT_DIR_FLAG))
             : Paths.get("/tmp/ucr-tainting/0");
   }
 
