@@ -22,6 +22,8 @@ public class ParameterExpressionSerializationTest extends CheckerFrameworkPerDir
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
+        "-AenableSerialization",
+        "-AoutputDir=/tmp/ucr-tainting/0",
         "-nowarn");
   }
 

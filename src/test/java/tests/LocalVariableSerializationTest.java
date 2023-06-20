@@ -22,6 +22,8 @@ public class LocalVariableSerializationTest extends CheckerFrameworkPerDirectory
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
+        "-AenableSerialization",
+        "-AoutputDir=/tmp/ucr-tainting/0",
         "-nowarn");
   }
 

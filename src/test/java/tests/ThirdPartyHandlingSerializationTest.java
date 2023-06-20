@@ -23,6 +23,8 @@ public class ThirdPartyHandlingSerializationTest extends CheckerFrameworkPerDire
         "-Anomsgtext",
         "-AannotatedPackages=foo.bar",
         "-AenableCustomCheck=true",
+        "-AenableSerialization",
+        "-AoutputDir=/tmp/ucr-tainting/0",
         "-nowarn");
   }
 

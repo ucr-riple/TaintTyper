@@ -22,6 +22,8 @@ public class ArraySerializationTest extends CheckerFrameworkPerDirectoryTest {
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
+        "-AenableSerialization",
+        "-AoutputDir=/tmp/ucr-tainting/0",
         "-nowarn");
   }
 
