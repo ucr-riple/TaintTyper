@@ -23,8 +23,6 @@ public class UCRTaintingTest extends CheckerFrameworkPerDirectoryTest {
         "-Anomsgtext",
         "-AannotatedPackages=foo.bar",
         "-AenableCustomCheck=true",
-        "-AenableSerialization",
-        "-AoutputDir=/tmp/ucr-tainting/0",
         "-nowarn");
   }
 
