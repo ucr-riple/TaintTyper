@@ -1,6 +1,7 @@
 package thirdPartyTests;
 
-import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import thirdPartyTests.com.test.thirdparty.LibraryCodeTestSupport;
 
 // Test taint passing through custom library method invocation

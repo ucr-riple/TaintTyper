@@ -1,5 +1,7 @@
 package thirdPartyTests.com.test.thirdparty;
 
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
+
 public class LibraryCodeTestSupport {
   private String str;
 
@@ -9,5 +11,9 @@ public class LibraryCodeTestSupport {
 
   public String getVal() {
     return this.str;
+  }
+
+  public void setVal(@RTainted String y) {
+    this.str = y;
   }
 }

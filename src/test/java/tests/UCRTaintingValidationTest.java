@@ -1,8 +1,6 @@
-package tests;
-
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
-import org.junit.runners.Parameterized;
-import tests.tools.SerializationTestHelper;
+import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
+import org.junit.runners.Parameterized.Parameters;
 
 import java.io.File;
 import java.util.List;
@@ -15,21 +13,22 @@ import java.util.List;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class TypeArgumentSelectionTest extends SerializationTestHelper {
-  public TypeArgumentSelectionTest(List<File> testFiles) {
+public class UCRTaintingValidationTest extends CheckerFrameworkPerDirectoryTest {
+  public UCRTaintingValidationTest(List<File> testFiles) {
     super(
         testFiles,
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
-        "-AannotatedPackages=\"\"",
-        "-AenableLibraryCheck=true",
-        "-AenableValidationCheck=false",
+        "-AannotatedPackages=foo.bar",
+        "-AenableLibraryCheck=false",
+        "-AenableValidationCheck=true",
+        "-AenableSanitizationCheck=false",
         "-nowarn");
   }
 
-  @Parameterized.Parameters
+  @Parameters
   public static String[] getTestDirs() {
-    return new String[] {"typeargumentselection"};
+    return new String[] {"ucrtainting/validatorTests"};
   }
 }

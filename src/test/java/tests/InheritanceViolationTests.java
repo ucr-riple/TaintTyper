@@ -1,10 +1,11 @@
 package tests;
 
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
-import java.io.File;
-import java.util.List;
 import org.junit.runners.Parameterized.Parameters;
 import tests.tools.SerializationTestHelper;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Test runner for tests of the UCR Tainting Checker.
@@ -21,8 +22,9 @@ public class InheritanceViolationTests extends SerializationTestHelper {
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
-        "-AannotatedPackages=foo.bar",
-        "-AenableCustomCheck=true",
+        "-AannotatedPackages=\"\"",
+        "-AenableLibraryCheck=true",
+        "-AenableValidationCheck=false",
         "-nowarn");
   }
 

@@ -55,7 +55,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   @Override
   public Void visitMethodInvocation(
       MethodInvocationTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customCheckIsEnabled()) {
+    if (typeFactory.customLibraryCheckIsEnabled()) {
       handlers.forEach(handler -> handler.visitMethodInvocation(node, annotatedTypeMirror));
     }
     return super.visitMethodInvocation(node, annotatedTypeMirror);
@@ -63,7 +63,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
 
   @Override
   public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customCheckIsEnabled()) {
+    if (typeFactory.customLibraryCheckIsEnabled()) {
       handlers.forEach(handler -> handler.visitVariable(node, annotatedTypeMirror));
     }
     return super.visitVariable(node, annotatedTypeMirror);
@@ -71,7 +71,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
 
   @Override
   public Void visitLiteral(LiteralTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customCheckIsEnabled()) {
+    if (typeFactory.customLibraryCheckIsEnabled()) {
       typeFactory.makeUntainted(annotatedTypeMirror);
     }
     return super.visitLiteral(node, annotatedTypeMirror);
@@ -79,7 +79,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
 
   @Override
   public Void visitMemberSelect(MemberSelectTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customCheckIsEnabled()) {
+    if (typeFactory.customLibraryCheckIsEnabled()) {
       Symbol symbol = (Symbol) TreeUtils.elementFromUse(node);
       Tree selected =
           symbolToDeclarationMap.containsKey(symbol)
@@ -103,7 +103,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
    */
   @Override
   public Void visitNewClass(NewClassTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customCheckIsEnabled()) {
+    if (typeFactory.customLibraryCheckIsEnabled()) {
       // if the code is part of provided annotated packages or is present
       // in the stub files, then we don't need any custom handling for it.
       if (typeFactory.isInThirdPartyCode(node) && !typeFactory.isPresentInStub(node)) {

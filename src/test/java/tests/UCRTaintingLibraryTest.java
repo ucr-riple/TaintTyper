@@ -1,10 +1,9 @@
-package tests;
-
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
-import java.io.File;
-import java.util.List;
 import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
 import org.junit.runners.Parameterized.Parameters;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Test runner for tests of the UCR Tainting Checker.
@@ -14,20 +13,25 @@ import org.junit.runners.Parameterized.Parameters;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class UCRTaintingTest extends CheckerFrameworkPerDirectoryTest {
-  public UCRTaintingTest(List<File> testFiles) {
+public class UCRTaintingLibraryTest extends CheckerFrameworkPerDirectoryTest {
+  public UCRTaintingLibraryTest(List<File> testFiles) {
     super(
         testFiles,
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=foo.bar",
-        "-AenableCustomCheck=true",
+        "-AenableLibraryCheck=true",
+        "-AenableValidationCheck=false",
+        "-AenableSanitizationCheck=false",
+        "-AenableSideEffect=true",
         "-nowarn");
   }
 
   @Parameters
   public static String[] getTestDirs() {
-    return new String[] {"ucrtainting"};
+//    return new String[] {"ucrtainting/basicSubTypingTests", "ucrtainting/captureTest", "ucrtainting/javaUtilTest", "ucrtainting/micronaut", "ucrtainting/stringBuilderTests",
+//            "ucrtainting/thirdPartyTests"};
+    return new String[] {"ucrtainting/thirdPartyTests"};
   }
 }

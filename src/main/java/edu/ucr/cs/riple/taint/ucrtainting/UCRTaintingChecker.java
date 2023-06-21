@@ -1,14 +1,14 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import static edu.ucr.cs.riple.taint.ucrtainting.Log.print;
-
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.SerializationService;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
-import org.checkerframework.common.basetype.BaseTypeChecker;
+import org.checkerframework.common.accumulation.AccumulationChecker;
 import org.checkerframework.framework.qual.StubFiles;
 import org.checkerframework.framework.source.SupportedOptions;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+
+import static edu.ucr.cs.riple.taint.ucrtainting.Log.print;
 
 /** This is the entry point for pluggable type-checking. */
 @StubFiles({
@@ -18,21 +18,27 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
   "stubs/general.astub",
   "stubs/Files.astub",
   "stubs/taintedMethods.astub",
+  "stubs/find-sec-bugs-sanitizers.astub",
+  "stubs/StringBuffer.astub"
 })
 @SupportedOptions({
   UCRTaintingChecker.ANNOTATED_PACKAGES,
-  UCRTaintingChecker.ENABLE_CUSTOM_CHECKER,
+  UCRTaintingChecker.ENABLE_LIBRARY_CHECKER,
+  UCRTaintingChecker.ENABLE_VALIDATION_CHECKER,
+  UCRTaintingChecker.ENABLE_SIDE_EFFECT,
   Config.SERIALIZATION_CONFIG_PATH,
-  Config.SERIALIZATION_ACTIVATION_FLAG
+  Config.SERIALIZATION_ACTIVATION_FLAG,
 })
-public class UCRTaintingChecker extends BaseTypeChecker {
+public class UCRTaintingChecker extends AccumulationChecker {
 
   public static int index = 0;
 
-  /** Annotated packages config option for the checker. */
+  public static final String ENABLE_VALIDATION_CHECKER = "enableValidationCheck";
+
+  public static final String ENABLE_LIBRARY_CHECKER = "enableLibraryCheck";
   public static final String ANNOTATED_PACKAGES = "annotatedPackages";
-  /** Custom Library handling config option for the checker. */
-  public static final String ENABLE_CUSTOM_CHECKER = "enableCustomCheck";
+
+  public static final String ENABLE_SIDE_EFFECT = "enableSideEffect";
   /** Serialization service for the checker. */
   private SerializationService serializationService;
 

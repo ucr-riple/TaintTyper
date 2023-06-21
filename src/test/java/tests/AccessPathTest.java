@@ -1,10 +1,11 @@
 package tests;
 
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
-import java.io.File;
-import java.util.List;
 import org.junit.runners.Parameterized;
 import tests.tools.SerializationTestHelper;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Test runner for tests of the UCR Tainting Checker.
@@ -22,7 +23,8 @@ public class AccessPathTest extends SerializationTestHelper {
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
-        "-AenableCustomCheck=true",
+        "-AenableLibraryCheck=true",
+        "-AenableValidationCheck=false",
         "-nowarn");
   }
 

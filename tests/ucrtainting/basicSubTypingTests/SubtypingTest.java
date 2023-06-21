@@ -1,3 +1,5 @@
+package basicSubTypingTests;
+
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 
 // Test basic subtyping relationships for the UCR Tainting Checker.
