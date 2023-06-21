@@ -15,6 +15,7 @@ import org.checkerframework.framework.source.SupportedOptions;
   "stubs/general.astub",
   "stubs/Files.astub",
   "stubs/taintedMethods.astub",
+  "stubs/find-sec-bugs-sanitizers.astub"
 })
 @SupportedOptions({UCRTaintingChecker.ANNOTATED_PACKAGES, UCRTaintingChecker.ENABLE_CUSTOM_CHECKER})
 public class UCRTaintingChecker extends BaseTypeChecker {
