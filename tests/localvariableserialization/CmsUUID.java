@@ -17,11 +17,17 @@ public class CmsUUID {
   private CmsUUID(UUID uuid) {
     m_uuid = uuid;
   }
-  protected @RUntainted Object bar(){
+  @RUntainted Object castTest(){
     if (this == NULL_UUID) {
       return NULL_UUID;
     }
     // :: error: return
     return new CmsUUID((UUID)m_uuid.clone());
   }
+
+  void binaryExpressionTest(){
+    // :: error: assignment
+    @RUntainted boolean isDefault = (m_uuid != null) && Boolean.valueOf(m_uuid.toString());
+  }
+
 }
