@@ -6,6 +6,8 @@ import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.qual.StubFiles;
 import org.checkerframework.framework.source.SupportedOptions;
 
+import java.util.UUID;
+
 /** This is the entry point for pluggable type-checking. */
 @StubFiles({
   "stubs/Connection.astub",
@@ -25,7 +27,8 @@ public class UCRTaintingChecker extends BaseTypeChecker {
   /** Serialization service for the checker. */
   private SerializationService serializationService;
 
-  public UCRTaintingChecker() {}
+  public UCRTaintingChecker() {
+  }
 
   @Override
   public void initChecker() {

@@ -9,6 +9,9 @@ repositories {
     // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
     mavenLocal()
+
+    // for dependencies used in tests
+
 }
 
 spotless {
@@ -60,6 +63,7 @@ dependencies {
     testImplementation "org.checkerframework:framework-test:${versions.checkerFramework}"
     testImplementation 'org.apache.commons:commons-text:1.9'
     testImplementation 'javax.servlet:servlet-api:2.5'
+
 
     errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
 }
