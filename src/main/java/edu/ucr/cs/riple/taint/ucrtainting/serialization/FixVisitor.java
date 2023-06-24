@@ -11,6 +11,7 @@ import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.PrimitiveTypeTree;
+import com.sun.source.tree.TypeCastTree;
 import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
@@ -67,6 +68,15 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       if (typeFactory.mayBeTainted(arg)) {
         fixes.addAll(arg.accept(this, typeVar));
       }
+    }
+    return fixes;
+  }
+
+  @Override
+  public Set<Fix> visitTypeCast(TypeCastTree node, Type typeVar) {
+    Set<Fix> fixes = new HashSet<>();
+    if (typeFactory.mayBeTainted(node.getExpression())) {
+      fixes.addAll(node.getExpression().accept(this, typeVar));
     }
     return fixes;
   }

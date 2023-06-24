@@ -21,7 +21,7 @@ public class LocalVariableSerializationTest extends SerializationTestHelper {
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
-        "-AannotatedPackages=\"\"",
+        "-AannotatedPackages=test",
         "-AenableSerialization",
         "-AserializationConfigPath=/tmp/ucr-tainting/0",
         "-nowarn");

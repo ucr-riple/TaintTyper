@@ -63,6 +63,8 @@ dependencies {
     testImplementation "org.checkerframework:framework-test:${versions.checkerFramework}"
     testImplementation 'org.apache.commons:commons-text:1.9'
     testImplementation 'javax.servlet:servlet-api:2.5'
+    testImplementation group: 'org.safehaus.jug', name: 'jug', version: '2.0.0', classifier: 'lgpl'
+
 
 
     errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"
