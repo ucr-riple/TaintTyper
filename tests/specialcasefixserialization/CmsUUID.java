@@ -107,4 +107,21 @@ public class CmsUUID {
   }
 
   public void sink(@RUntainted boolean b) {}
+
+  public void multipleAdditionTest() {
+    class XMLPage {
+      public String getRootPath() {
+        return "";
+      }
+    }
+    @RUntainted String path = "some path";
+    String[] tokens = path.split("/");
+    // :: error: assignment
+    @RUntainted String name = tokens[1];
+    XMLPage xmlPage = new XMLPage();
+    @RUntainted
+    String fullPath =
+        // :: error: assignment
+        xmlPage.getRootPath() + "/" + tokens[0] + "/" + name + "." + BAZ;
+  }
 }
