@@ -1,9 +1,6 @@
 package test;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import org.safehaus.uuid.UUID;
 
@@ -17,17 +14,18 @@ public class CmsUUID {
   private CmsUUID(UUID uuid) {
     m_uuid = uuid;
   }
-  @RUntainted Object castTest(){
+
+  @RUntainted
+  Object castTest() {
     if (this == NULL_UUID) {
       return NULL_UUID;
     }
     // :: error: return
-    return new CmsUUID((UUID)m_uuid.clone());
+    return new CmsUUID((UUID) m_uuid.clone());
   }
 
-  void binaryExpressionTest(){
+  void binaryExpressionTest() {
     // :: error: assignment
     @RUntainted boolean isDefault = (m_uuid != null) && Boolean.valueOf(m_uuid.toString());
   }
-
 }

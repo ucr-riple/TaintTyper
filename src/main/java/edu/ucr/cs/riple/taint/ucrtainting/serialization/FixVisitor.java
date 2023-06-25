@@ -10,6 +10,7 @@ import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewArrayTree;
+import com.sun.source.tree.ParenthesizedTree;
 import com.sun.source.tree.PrimitiveTypeTree;
 import com.sun.source.tree.TypeCastTree;
 import com.sun.source.tree.UnaryTree;
@@ -21,6 +22,7 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
@@ -141,10 +143,12 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
           }
         }
         // Build the fix directly on the method symbol.
-        return Set.of(buildFixForElement(element, type));
+        return Set.of(Objects.requireNonNull(buildFixForElement(element, type)));
       } else {
         // Build a fix for the called method return type.
-        return Set.of(buildFixForElement(TreeUtils.elementFromTree(node.getMethodSelect()), null));
+        return Set.of(
+            Objects.requireNonNull(
+                buildFixForElement(TreeUtils.elementFromTree(node.getMethodSelect()), null)));
       }
     }
     return Set.of();
@@ -202,6 +206,11 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       }
     }
     return Set.of();
+  }
+
+  @Override
+  public Set<Fix> visitParenthesized(ParenthesizedTree node, Type type) {
+    return node.getExpression().accept(this, type);
   }
 
   @Override

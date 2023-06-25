@@ -25,8 +25,7 @@ public class UCRTaintingChecker extends BaseTypeChecker {
   /** Serialization service for the checker. */
   private SerializationService serializationService;
 
-  public UCRTaintingChecker() {
-  }
+  public UCRTaintingChecker() {}
 
   @Override
   public void initChecker() {
