@@ -1,6 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.*;
+import com.sun.tools.javac.code.Symbol;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
@@ -215,7 +216,10 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
           if (hasTaintedArgument(node) || hasTaintedReceiver(node)) {
             //              annotatedTypeMirror.replaceAnnotation(RTAINTED);
           } else {
-            annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+            Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
+            if(!Utility.containsTypeParameter(calledMethod.getReturnType())){
+              annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+            }
           }
         }
       }
@@ -244,7 +248,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     @Override
     public Void visitLiteral(LiteralTree node, AnnotatedTypeMirror annotatedTypeMirror) {
       if (ENABLE_CUSTOM_CHECK) {
-        // annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+         annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
       }
       return super.visitLiteral(node, annotatedTypeMirror);
     }
