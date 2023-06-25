@@ -18,7 +18,7 @@ public class CmsUUID {
     m_uuid = uuid;
   }
 
-  public static CmsUUID create(UUID uid){
+  public static CmsUUID create(UUID uid) {
     return new CmsUUID(uid);
   }
 
@@ -42,16 +42,16 @@ public class CmsUUID {
   }
 
   @RUntainted
-  CmsUUID staticCallTest(UUID uid){
+  CmsUUID staticCallTest(UUID uid) {
     // :: error: return
     return CmsUUID.create(uid);
   }
 
-  protected @RUntainted CmsPair<@RUntainted String, @RUntainted String> decode(String content, String encoding) {
+  protected @RUntainted CmsPair<@RUntainted String, @RUntainted String> decode(
+      String content, String encoding) {
     // :: error: return
     return CmsPair.create(content, encoding);
   }
-
 
   public enum BundleType {
     // :: error: assignment
