@@ -14,8 +14,8 @@ import tests.tools.SerializationTestHelper;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class LocalVariableSerializationTest extends SerializationTestHelper {
-  public LocalVariableSerializationTest(List<File> testFiles) {
+public class SpecialCaseFixSerializationTest extends SerializationTestHelper {
+  public SpecialCaseFixSerializationTest(List<File> testFiles) {
     super(
         testFiles,
         UCRTaintingChecker.class,
@@ -29,6 +29,6 @@ public class LocalVariableSerializationTest extends SerializationTestHelper {
 
   @Parameterized.Parameters
   public static String[] getTestDirs() {
-    return new String[] {"localvariableserialization"};
+    return new String[] {"specialcasefixserialization"};
   }
 }

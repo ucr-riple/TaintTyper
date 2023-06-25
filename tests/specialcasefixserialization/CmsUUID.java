@@ -16,6 +16,7 @@ public class CmsUUID {
   private static CmsUUID cms;
 
   private static final String BAZ = "property";
+  private static final String PATH = "/";
 
   // Should not be error here.
   static final int CONCURRENCY_LEVEL = 8;
@@ -93,6 +94,16 @@ public class CmsUUID {
 
   public void testMemberSelectOfFinalStatic(HttpServletResponse response) {
     sink(Boolean.TRUE);
+  }
+
+  public void bar() {
+    try {
+      // some code
+    } catch (Exception e) {
+      // Should not try to annotate "e" here.
+      // :: error: assignment
+      @RUntainted Exception dup = e;
+    }
   }
 
   public void sink(@RUntainted boolean b) {}
