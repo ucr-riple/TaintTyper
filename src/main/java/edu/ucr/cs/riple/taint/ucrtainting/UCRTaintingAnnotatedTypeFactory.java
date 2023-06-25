@@ -217,7 +217,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             //              annotatedTypeMirror.replaceAnnotation(RTAINTED);
           } else {
             Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
-            if(!Utility.containsTypeParameter(calledMethod.getReturnType())){
+            if (!Utility.containsTypeParameter(calledMethod.getReturnType())) {
               annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
             }
           }
@@ -248,7 +248,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     @Override
     public Void visitLiteral(LiteralTree node, AnnotatedTypeMirror annotatedTypeMirror) {
       if (ENABLE_CUSTOM_CHECK) {
-         annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+        annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
       }
       return super.visitLiteral(node, annotatedTypeMirror);
     }
