@@ -22,7 +22,7 @@ public class LocalVariableSerializationTest extends SerializationTestHelper {
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=test",
-        //        "-AenableSerialization",
+        "-AenableSerialization",
         "-AserializationConfigPath=/tmp/ucr-tainting/0",
         "-nowarn");
   }

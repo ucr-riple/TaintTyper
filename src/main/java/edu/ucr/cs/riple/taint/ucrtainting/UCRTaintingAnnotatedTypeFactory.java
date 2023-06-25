@@ -232,6 +232,16 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       return super.visitVariable(node, annotatedTypeMirror);
     }
 
+    @Override
+    public Void visitMemberSelect(MemberSelectTree node, AnnotatedTypeMirror annotatedTypeMirror) {
+      if (ENABLE_CUSTOM_CHECK) {
+        if (Utility.isEnumConstant(node)) {
+          annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+        }
+      }
+      return super.visitMemberSelect(node, annotatedTypeMirror);
+    }
+
     /**
      * Visits all new class creations and updates {@link AnnotatedTypeMirror} according to the
      * argument and receiver annotations. If any of the arguments or the receiver is {@link

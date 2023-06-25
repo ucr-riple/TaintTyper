@@ -301,8 +301,8 @@ public class Utility {
    * @param tree the tree to check.
    * @return true if the tree is an enum constant.
    */
-  public static boolean isEnumConstant(VariableTree tree) {
-    Element element = TreeUtils.elementFromDeclaration(tree);
+  public static boolean isEnumConstant(Tree tree) {
+    Element element = TreeUtils.elementFromTree(tree);
     if (element instanceof Symbol.VarSymbol) {
       return ((Symbol.VarSymbol) element).isEnum();
     }
