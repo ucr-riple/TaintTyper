@@ -16,6 +16,9 @@ public class CmsUUID {
 
   private static final String BAZ = "property";
 
+  // Should not be error here.
+  //  static final int CONCURRENCY_LEVEL = 8;
+
   public CmsUUID(UUID uuid) {
     m_uuid = uuid;
   }
@@ -57,7 +60,9 @@ public class CmsUUID {
 
   public void testFinalStaticString() {
     // should not be error here.
-    @RUntainted String foo = BAZ;
+    @RUntainted String foo1 = BAZ;
+    // should not be error here.
+    @RUntainted String foo2 = CmsUUID.BAZ;
   }
 
   public enum BundleType {
