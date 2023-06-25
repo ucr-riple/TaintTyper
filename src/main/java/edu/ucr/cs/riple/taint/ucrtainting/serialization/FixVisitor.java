@@ -135,7 +135,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       if (Utility.containsTypeParameter(calledMethod.getReturnType())) {
         // set type, if not set.
         type = type == null ? calledMethod.getReturnType() : type;
-        if (node.getMethodSelect() instanceof MemberSelectTree) {
+        if (!calledMethod.isStatic() && node.getMethodSelect() instanceof MemberSelectTree) {
           ExpressionTree receiver = ((MemberSelectTree) node.getMethodSelect()).getExpression();
           if (!Utility.isThisIdentifier(receiver)) {
             // Build the fix for the receiver.
