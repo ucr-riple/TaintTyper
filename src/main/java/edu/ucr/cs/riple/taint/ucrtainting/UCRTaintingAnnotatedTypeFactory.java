@@ -224,8 +224,10 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
     @Override
     public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-      if (Utility.isEnumConstant(node)) {
-        annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+      if (ENABLE_CUSTOM_CHECK) {
+        if (Utility.isEnumConstant(node)) {
+          annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+        }
       }
       return super.visitVariable(node, annotatedTypeMirror);
     }

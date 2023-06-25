@@ -1,9 +1,9 @@
 package test;
 
+import com.vaadin.shared.ui.ContentMode;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.util.*;
 import org.safehaus.uuid.UUID;
-import com.vaadin.shared.ui.ContentMode;
 
 public class CmsUUID {
 
@@ -32,7 +32,7 @@ public class CmsUUID {
     @RUntainted boolean isDefault = (m_uuid != null) && Boolean.valueOf(m_uuid.toString());
   }
 
-  void enumFromThirdPartyTest(){
+  void enumFromThirdPartyTest() {
     // should not be error here.
     @RUntainted ContentMode mode = ContentMode.HTML;
   }
@@ -41,9 +41,7 @@ public class CmsUUID {
     // :: error: assignment
     PROPERTY(cms);
 
-    BundleType(CmsUUID s){
-
-    }
+    BundleType(CmsUUID s) {}
 
     public static @RUntainted BundleType toBundleType(String value) {
 
