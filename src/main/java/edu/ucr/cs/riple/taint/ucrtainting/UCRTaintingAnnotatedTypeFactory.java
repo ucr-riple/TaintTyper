@@ -3,6 +3,7 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 import com.sun.source.tree.*;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -219,6 +220,14 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
       }
       return super.visitMethodInvocation(node, annotatedTypeMirror);
+    }
+
+    @Override
+    public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
+      if (Utility.isEnumConstant(node)) {
+        annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+      }
+      return super.visitVariable(node, annotatedTypeMirror);
     }
 
     /**

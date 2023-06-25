@@ -28,4 +28,20 @@ public class CmsUUID {
     // :: error: assignment
     @RUntainted boolean isDefault = (m_uuid != null) && Boolean.valueOf(m_uuid.toString());
   }
+
+  public enum BundleType {
+    PROPERTY;
+
+    public static @RUntainted BundleType toBundleType(String value) {
+
+      if (null == value) {
+        return null;
+      }
+      if (value.equals(PROPERTY.toString())) {
+        // Should not get error here.
+        return PROPERTY;
+      }
+      return null;
+    }
+  }
 }

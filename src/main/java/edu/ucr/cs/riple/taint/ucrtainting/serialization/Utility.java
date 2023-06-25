@@ -19,6 +19,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Utility methods for the serialization service. */
@@ -292,5 +293,19 @@ public class Utility {
       packageName = "";
     }
     return typeFactory.isAnnotatedPackage(packageName);
+  }
+
+  /**
+   * Returns true if the passed tree is an enum constant.
+   *
+   * @param tree the tree to check.
+   * @return true if the tree is an enum constant.
+   */
+  public static boolean isEnumConstant(VariableTree tree) {
+    Element element = TreeUtils.elementFromDeclaration(tree);
+    if (element instanceof Symbol.VarSymbol) {
+      return ((Symbol.VarSymbol) element).isEnum();
+    }
+    return false;
   }
 }
