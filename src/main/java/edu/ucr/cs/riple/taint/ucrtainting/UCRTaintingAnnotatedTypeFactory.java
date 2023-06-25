@@ -228,6 +228,15 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         if (Utility.isEnumConstant(node)) {
           annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
         }
+        // check if is final and static
+        if (node.getModifiers().getFlags().contains(Modifier.FINAL)
+            && node.getModifiers().getFlags().contains(Modifier.STATIC)) {
+          ExpressionTree initializer = node.getInitializer();
+          // check if initializer is a literal or a primitive
+          if (Utility.isLiteralOrPrimitive(initializer)) {
+            annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+          }
+        }
       }
       return super.visitVariable(node, annotatedTypeMirror);
     }

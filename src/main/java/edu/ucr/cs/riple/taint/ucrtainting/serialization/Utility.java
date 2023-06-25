@@ -308,4 +308,23 @@ public class Utility {
     }
     return false;
   }
+
+  public static boolean isLiteralOrPrimitive(Tree tree) {
+    if (tree == null) {
+      return false;
+    }
+    switch (tree.getKind()) {
+      case INT_LITERAL:
+      case LONG_LITERAL:
+      case FLOAT_LITERAL:
+      case DOUBLE_LITERAL:
+      case CHAR_LITERAL:
+      case BOOLEAN_LITERAL:
+      case NULL_LITERAL:
+      case STRING_LITERAL:
+        return true;
+      default:
+        return false;
+    }
+  }
 }
