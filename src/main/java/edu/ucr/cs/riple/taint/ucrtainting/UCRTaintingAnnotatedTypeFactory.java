@@ -234,8 +234,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
           annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
         }
         // check if is final and static
-        if (node.getModifiers().getFlags().contains(Modifier.FINAL)
-            && node.getModifiers().getFlags().contains(Modifier.STATIC)) {
+        if (Utility.isStaticAndFinal(TreeUtils.elementFromDeclaration(node))) {
           ExpressionTree initializer = node.getInitializer();
           // check if initializer is a literal or a primitive
           if (Utility.isLiteralOrPrimitive(initializer)) {
@@ -260,16 +259,9 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         if (Utility.isEnumConstant(node)) {
           annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
         }
-        // check if node is in third party library
-        if (!hasAnnotatedPackage(node) && !isPresentInStub(node)) {
-          // check if node is a static final field
-          if (node instanceof JCTree.JCFieldAccess) {
-            Element field = TreeUtils.elementFromUse(node);
-            if (field != null
-                && field.getModifiers().contains(Modifier.FINAL)
-                && field.getModifiers().contains(Modifier.STATIC)) {
-              annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
-            }
+        if (node instanceof JCTree.JCFieldAccess) {
+          if (Utility.isStaticAndFinal(TreeUtils.elementFromUse(node))) {
+            annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
           }
         }
       }

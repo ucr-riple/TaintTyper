@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Utility methods for the serialization service. */
@@ -332,5 +334,22 @@ public class Utility {
       default:
         return false;
     }
+  }
+
+  public static boolean isStaticAndFinal(Element element) {
+    if (element == null) {
+      return false;
+    }
+    if (element instanceof Symbol.VarSymbol) {
+      Symbol.VarSymbol varSymbol = (Symbol.VarSymbol) element;
+      if (varSymbol.getKind() == ElementKind.FIELD) {
+        Symbol.ClassSymbol encClass = varSymbol.enclClass();
+        if (encClass != null && encClass.isInterface()) {
+          // All fields in interfaces are implicitly static and final.
+          return true;
+        }
+      }
+    }
+    return ElementUtils.isFinal(element) && ElementUtils.isStatic(element);
   }
 }
