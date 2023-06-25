@@ -3,6 +3,7 @@ package test;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.util.*;
 import org.safehaus.uuid.UUID;
+import com.vaadin.shared.ui.ContentMode;
 
 public class CmsUUID {
 
@@ -11,7 +12,9 @@ public class CmsUUID {
   /** Constant for the null UUID. */
   private static final @RUntainted CmsUUID NULL_UUID = new CmsUUID(UUID.getNullUUID());
 
-  private CmsUUID(UUID uuid) {
+  private static CmsUUID cms;
+
+  public CmsUUID(UUID uuid) {
     m_uuid = uuid;
   }
 
@@ -29,8 +32,18 @@ public class CmsUUID {
     @RUntainted boolean isDefault = (m_uuid != null) && Boolean.valueOf(m_uuid.toString());
   }
 
+  void enumFromThirdPartyTest(){
+    // should not be error here.
+    @RUntainted ContentMode mode = ContentMode.HTML;
+  }
+
   public enum BundleType {
-    PROPERTY;
+    // :: error: assignment
+    PROPERTY(cms);
+
+    BundleType(CmsUUID s){
+
+    }
 
     public static @RUntainted BundleType toBundleType(String value) {
 
