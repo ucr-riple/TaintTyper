@@ -309,6 +309,12 @@ public class Utility {
     return false;
   }
 
+  /**
+   * Returns true if the passed tree is a literal or primitive.
+   *
+   * @param tree the tree to check.
+   * @return true if the tree is a literal or primitive.
+   */
   public static boolean isLiteralOrPrimitive(Tree tree) {
     if (tree == null) {
       return false;
