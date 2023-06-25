@@ -2,6 +2,8 @@ package test;
 
 public class CmsPair<A, B> {
 
+  public static final String HEADER_SERVER = "Server";
+
   private A m_first;
 
   private B m_second;

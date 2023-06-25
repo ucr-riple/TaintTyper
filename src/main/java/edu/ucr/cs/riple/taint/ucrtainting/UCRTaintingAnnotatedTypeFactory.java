@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
@@ -258,6 +259,18 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       if (ENABLE_CUSTOM_CHECK) {
         if (Utility.isEnumConstant(node)) {
           annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+        }
+        // check if node is in third party library
+        if (!hasAnnotatedPackage(node) && !isPresentInStub(node)) {
+          // check if node is a static final field
+          if (node instanceof JCTree.JCFieldAccess) {
+            Element field = TreeUtils.elementFromUse(node);
+            if (field != null
+                && field.getModifiers().contains(Modifier.FINAL)
+                && field.getModifiers().contains(Modifier.STATIC)) {
+              annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+            }
+          }
         }
       }
       return super.visitMemberSelect(node, annotatedTypeMirror);
