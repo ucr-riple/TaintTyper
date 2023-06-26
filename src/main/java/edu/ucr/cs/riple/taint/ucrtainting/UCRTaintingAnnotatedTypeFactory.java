@@ -1,14 +1,11 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import com.sun.source.tree.*;
+import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.NewClassTree;
+import com.sun.source.tree.Tree;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.Modifier;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
@@ -16,6 +13,13 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.*;
+
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
 
@@ -31,9 +35,9 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   /** List of annotated packages. Classes in these packages are considered to be annotated. */
   private final List<String> ANNOTATED_PACKAGE_NAMES_LIST;
   /** AnnotationMirror for {@link RUntainted}. */
-  protected final AnnotationMirror RUNTAINTED;
+  public final AnnotationMirror RUNTAINTED;
   /** AnnotationMirror for {@link RTainted}. */
-  protected final AnnotationMirror RTAINTED;
+  public final AnnotationMirror RTAINTED;
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker);
