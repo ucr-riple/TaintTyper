@@ -18,8 +18,9 @@ public class CmsUUID {
   private static final String BAZ = "property";
   private static final String PATH = "/";
 
-  // Should not be error here.
+  //  // Should not be error here.
   static final int CONCURRENCY_LEVEL = 8;
+  public static final List<String> FOLDERS = Collections.unmodifiableList(Arrays.asList(BAZ));
 
   public CmsUUID(UUID uuid) {
     m_uuid = uuid;
@@ -124,4 +125,16 @@ public class CmsUUID {
         // :: error: assignment
         xmlPage.getRootPath() + "/" + tokens[0] + "/" + name + "." + BAZ;
   }
+
+  //  public void testUntaintedForAnyFinalStaticWithInitializer(){
+  //    for(@RUntainted String folder: FOLDERS){
+  //      // Should not be an error here.
+  //      @RUntainted String f = folder;
+  //    }
+  //
+  //    for(@RUntainted String folder: CmsUUID.FOLDERS){
+  //      // Should not be an error here.
+  //      @RUntainted String f = folder;
+  //    }
+  //  }
 }

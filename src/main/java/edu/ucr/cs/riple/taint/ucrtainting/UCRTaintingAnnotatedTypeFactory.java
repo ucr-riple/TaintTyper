@@ -227,11 +227,10 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         // if the code is part of provided annotated packages or is present
         // in the stub files, then we don't need any custom handling for it.
         if (!hasAnnotatedPackage(node) && !isPresentInStub(node)) {
-          if (hasTaintedArgument(node) || hasTaintedReceiver(node)) {
-            //              annotatedTypeMirror.replaceAnnotation(RTAINTED);
-          } else {
+          if (!hasTaintedArgument(node) && !hasTaintedReceiver(node)) {
             Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
-            if (!Utility.containsTypeParameter(calledMethod.getReturnType())) {
+            if (calledMethod.isStatic()
+                || !Utility.containsTypeParameter(calledMethod.getReturnType())) {
               annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
             }
           }
@@ -246,12 +245,20 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         if (Utility.isEnumConstant(node)) {
           annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
         }
+        Element element = TreeUtils.elementFromDeclaration(node);
         // check if is final and static
-        if (Utility.isStaticAndFinal(TreeUtils.elementFromDeclaration(node))) {
+        if (Utility.isStaticAndFinal(element)) {
           ExpressionTree initializer = node.getInitializer();
           // check if initializer is a literal or a primitive
-          if (Utility.isLiteralOrPrimitive(initializer)) {
+          if (initializer != null) {
             annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+            if (annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+              AnnotatedTypeMirror.AnnotatedDeclaredType annotatedDeclaredType =
+                  (AnnotatedTypeMirror.AnnotatedDeclaredType) annotatedTypeMirror;
+              annotatedDeclaredType
+                  .getTypeArguments()
+                  .forEach(type -> type.replaceAnnotation(RUNTAINTED));
+            }
           }
         }
       }
@@ -272,8 +279,10 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         if (Utility.isEnumConstant(node)) {
           annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
         }
-        if (node instanceof JCTree.JCFieldAccess) {
-          if (Utility.isStaticAndFinal(TreeUtils.elementFromUse(node))) {
+        Element element = TreeUtils.elementFromUse(node);
+        // check if is final and static
+        if (Utility.isStaticAndFinal(element)) {
+          if (node instanceof JCTree.JCFieldAccess) {
             annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
           }
         }
