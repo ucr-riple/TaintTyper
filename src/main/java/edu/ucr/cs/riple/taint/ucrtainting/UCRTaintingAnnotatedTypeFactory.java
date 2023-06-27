@@ -1,9 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.tree.NewClassTree;
-import com.sun.source.tree.Tree;
+import com.sun.source.tree.*;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
@@ -119,6 +116,22 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   }
 
   /**
+   * Checks if the receiver tree is available
+   *
+   * @param node to check for
+   * @return true if available, false otherwise
+   */
+  private boolean hasReceiver(ExpressionTree node) {
+    if (node != null) {
+      ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
+      if (receiverTree != null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Checks if the package for the node is present in already annotated according to provided
    * option.
    *
@@ -215,10 +228,14 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         // if the code is part of provided annotated packages or is present
         // in the stub files, then we don't need any custom handling for it.
         if (!hasAnnotatedPackage(node) && !isPresentInStub(node)) {
-          if (hasTaintedArgument(node) || hasTaintedReceiver(node)) {
-            //              annotatedTypeMirror.replaceAnnotation(RTAINTED);
-          } else {
+          if (!hasReceiver(node) && node.getArguments().size() == 1) {
             annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+          } else {
+            if (hasTaintedArgument(node) || hasTaintedReceiver(node)) {
+              //            annotatedTypeMirror.replaceAnnotation(RTAINTED);
+            } else {
+              annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+            }
           }
         }
       }
@@ -239,14 +256,23 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         // if the code is part of provided annotated packages or is present
         // in the stub files, then we don't need any custom handling for it.
         if (!hasAnnotatedPackage(node) && !isPresentInStub(node)) {
-          if (hasTaintedArgument(node) || hasTaintedReceiver(node)) {
-            //            annotatedTypeMirror.replaceAnnotation(RTAINTED);
-          } else {
+          if (!hasReceiver(node) && node.getArguments().size() == 1) {
             annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+          } else {
+            if (hasTaintedArgument(node) || hasTaintedReceiver(node)) {
+              //            annotatedTypeMirror.replaceAnnotation(RTAINTED);
+            } else {
+              annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+            }
           }
         }
       }
       return super.visitNewClass(node, annotatedTypeMirror);
+    }
+
+    @Override
+    public Void visitIf(IfTree node, AnnotatedTypeMirror annotatedTypeMirror) {
+      return super.visitIf(node, annotatedTypeMirror);
     }
   }
 }
