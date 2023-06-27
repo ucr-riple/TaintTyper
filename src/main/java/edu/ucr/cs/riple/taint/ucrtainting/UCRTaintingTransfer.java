@@ -34,7 +34,9 @@ public class UCRTaintingTransfer extends CFTransfer {
         }
 
         Node receiver = n.getTarget().getReceiver();
-        if (receiver != null && !(receiver instanceof ImplicitThisNode)) {
+        if (receiver != null
+            && !(receiver instanceof ImplicitThisNode)
+            && receiver.getTree() != null) {
           updateStore(result, receiver);
         }
       }
