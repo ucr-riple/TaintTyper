@@ -2,13 +2,17 @@ package sanitizerTests;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
-import org.apache.commons.text.StringEscapeUtils;
 
 // Test basic subtyping relationships for the UCR Tainting Checker.
 class SubtypeTest {
   void allSubtypingRelationships(@RTainted String y) {
-    sink(StringEscapeUtils.escapeEcmaScript(y));
-    if(validator(y)) {
+    if (y.contains("ss")) {
+      return;
+    }
+    sink(y);
+    y = sanitizer(y);
+    sink(y);
+    if (validator(y)) {
       sink(y);
     }
     sink(y);
@@ -18,5 +22,9 @@ class SubtypeTest {
 
   boolean validator(@RTainted String a) {
     return false;
+  }
+
+  String sanitizer(@RTainted String a) {
+    return a;
   }
 }
