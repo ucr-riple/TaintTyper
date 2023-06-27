@@ -9,9 +9,6 @@ repositories {
     // You can declare any Maven/Ivy/file repository here.
     mavenCentral()
     mavenLocal()
-
-    // for dependencies used in tests
-
 }
 
 spotless {
@@ -27,7 +24,6 @@ configurations {
 }
 
 ext.versions = [
-
     checkerFramework: "3.31.0",
 ]
 
@@ -81,7 +77,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'edu.ucr.cs.riple.taint'
             artifactId = 'ucrtainting-checker'
-            version = '0.1'
+            version = '0.2'
 
             from components.java
         }

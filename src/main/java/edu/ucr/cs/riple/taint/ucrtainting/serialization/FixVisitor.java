@@ -123,13 +123,18 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
           // We cannot do any fix here
           return Set.of();
         }
+        Set<Fix> fixes = new HashSet<>();
+        Type finalType = type;
+        node.getArguments().forEach(arg -> fixes.addAll(arg.accept(this, finalType)));
         // Build the fix for the receiver if not static.
         if (calledMethod.isStatic()) {
           // No receiver for static method calls.
-          return Set.of();
+          return fixes;
         }
         // Build the fix for the receiver.
-        return ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type);
+        fixes.addAll(
+            ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type));
+        return fixes;
       }
       // check for type variable in return type.
       if (Utility.containsTypeParameter(calledMethod.getReturnType())) {

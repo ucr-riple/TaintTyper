@@ -250,15 +250,8 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         if (Utility.isStaticAndFinal(element)) {
           ExpressionTree initializer = node.getInitializer();
           // check if initializer is a literal or a primitive
-          if (initializer != null) {
+          if (Utility.isLiteralOrPrimitive(initializer)) {
             annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
-            if (annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-              AnnotatedTypeMirror.AnnotatedDeclaredType annotatedDeclaredType =
-                  (AnnotatedTypeMirror.AnnotatedDeclaredType) annotatedTypeMirror;
-              annotatedDeclaredType
-                  .getTypeArguments()
-                  .forEach(type -> type.replaceAnnotation(RUNTAINTED));
-            }
           }
         }
       }
