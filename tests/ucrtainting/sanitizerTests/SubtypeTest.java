@@ -5,16 +5,22 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 
 // Test basic subtyping relationships for the UCR Tainting Checker.
 class SubtypeTest {
-  void allSubtypingRelationships(@RTainted String y) {
+  void validationArg(@RTainted String y) {
+    if (validator(y)) {
+      sink(y);
+    }
+    sink(y);
+  }
+
+  void validationReceiver(@RTainted String y) {
     if (y.contains("ss")) {
       return;
     }
     sink(y);
+  }
+
+  void sanitization(@RTainted String y) {;
     y = sanitizer(y);
-    sink(y);
-    if (validator(y)) {
-      sink(y);
-    }
     sink(y);
   }
 
