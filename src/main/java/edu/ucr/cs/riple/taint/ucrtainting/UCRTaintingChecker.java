@@ -17,13 +17,21 @@ import org.checkerframework.framework.source.SupportedOptions;
   "stubs/taintedMethods.astub",
   "stubs/find-sec-bugs-sanitizers.astub"
 })
-@SupportedOptions({UCRTaintingChecker.ANNOTATED_PACKAGES, UCRTaintingChecker.ENABLE_CUSTOM_CHECKER})
+@SupportedOptions({
+  UCRTaintingChecker.ANNOTATED_PACKAGES,
+  UCRTaintingChecker.ENABLE_LIBRARY_CHECKER,
+  UCRTaintingChecker.ENABLE_VALIDATION_CHECKER,
+  UCRTaintingChecker.ENABLE_SANITIZATION_CHECKER
+})
 public class UCRTaintingChecker extends BaseTypeChecker {
 
   /** Annotated packages config option for the checker. */
-  public static final String ANNOTATED_PACKAGES = "annotatedPackages";
   /** Custom Library handling config option for the checker. */
-  public static final String ENABLE_CUSTOM_CHECKER = "enableCustomCheck";
+  public static final String ENABLE_VALIDATION_CHECKER = "enableValidationCheck";
+
+  public static final String ENABLE_LIBRARY_CHECKER = "enableLibraryCheck";
+  public static final String ENABLE_SANITIZATION_CHECKER = "enableSanitizationCheck";
+  public static final String ANNOTATED_PACKAGES = "annotatedPackages";
 
   /** Serialization service for the checker. */
   private final SerializationService serializationService;

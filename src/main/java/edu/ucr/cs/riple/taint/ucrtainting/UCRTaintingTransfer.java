@@ -27,7 +27,7 @@ public class UCRTaintingTransfer extends CFTransfer {
     TransferResult<CFValue, CFStore> result = super.visitMethodInvocation(n, in);
 
     // validation
-    if (aTypeFactory.ENABLE_CUSTOM_CHECK) {
+    if (aTypeFactory.ENABLE_VALIDATION_CHECK) {
       if (n.getType().getKind() == TypeKind.BOOLEAN) {
         for (Node arg : n.getArguments()) {
           updateStore(result, arg);
