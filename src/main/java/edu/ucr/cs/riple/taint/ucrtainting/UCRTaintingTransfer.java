@@ -1,9 +1,8 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.type.TypeKind;
 import org.checkerframework.dataflow.analysis.TransferInput;
 import org.checkerframework.dataflow.analysis.TransferResult;
+import org.checkerframework.dataflow.cfg.node.ImplicitThisNode;
 import org.checkerframework.dataflow.cfg.node.MethodInvocationNode;
 import org.checkerframework.dataflow.cfg.node.Node;
 import org.checkerframework.dataflow.expression.JavaExpression;
@@ -13,13 +12,14 @@ import org.checkerframework.framework.flow.CFTransfer;
 import org.checkerframework.framework.flow.CFValue;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
+import javax.lang.model.type.TypeKind;
+
 public class UCRTaintingTransfer extends CFTransfer {
   private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
 
   public UCRTaintingTransfer(CFAnalysis analysis) {
     super(analysis);
     aTypeFactory = (UCRTaintingAnnotatedTypeFactory) analysis.getTypeFactory();
-    ProcessingEnvironment env = aTypeFactory.getChecker().getProcessingEnvironment();
   }
 
   @Override
@@ -31,27 +31,27 @@ public class UCRTaintingTransfer extends CFTransfer {
     if (aTypeFactory.ENABLE_CUSTOM_CHECK) {
       if (n.getType().getKind() == TypeKind.BOOLEAN) {
         for (Node arg : n.getArguments()) {
-          AnnotatedTypeMirror argType = aTypeFactory.getAnnotatedType(arg.getTree());
-          if (argType.hasAnnotation(aTypeFactory.RTAINTED)) {
-            JavaExpression je = JavaExpression.fromNode(arg);
-            CFStore thenStore = result.getThenStore();
-            CFStore elseStore = result.getElseStore();
-            thenStore.insertOrRefine(je, aTypeFactory.RUNTAINTED);
-            elseStore.insertOrRefine(je, aTypeFactory.RUNTAINTED);
-          }
+          updateStore(result, arg);
         }
 
-        AnnotatedTypeMirror receiverType = aTypeFactory.getAnnotatedType(n.getTarget().getTree());
-        if (receiverType.hasAnnotation(aTypeFactory.RTAINTED)) {
-          JavaExpression je = JavaExpression.fromNode(n.getTarget());
-          CFStore thenStore = result.getThenStore();
-          CFStore elseStore = result.getElseStore();
-          thenStore.insertOrRefine(je, aTypeFactory.RUNTAINTED);
-          elseStore.insertOrRefine(je, aTypeFactory.RUNTAINTED);
+        Node receiver = n.getTarget().getReceiver();
+        if(receiver != null && !(receiver instanceof ImplicitThisNode)) {
+          updateStore(result, receiver);
         }
       }
     }
 
     return result;
+  }
+
+  private void updateStore(TransferResult<CFValue, CFStore> result, Node receiver) {
+    AnnotatedTypeMirror receiverType = aTypeFactory.getAnnotatedType(receiver.getTree());
+    if (receiverType.hasAnnotation(aTypeFactory.RTAINTED)) {
+      JavaExpression je = JavaExpression.fromNode(receiver);
+      CFStore thenStore = result.getThenStore();
+      CFStore elseStore = result.getElseStore();
+      thenStore.insertOrRefine(je, aTypeFactory.RUNTAINTED);
+      elseStore.insertOrRefine(je, aTypeFactory.RUNTAINTED);
+    }
   }
 }
