@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import javax.lang.model.type.TypeKind;
 import org.checkerframework.dataflow.analysis.TransferInput;
 import org.checkerframework.dataflow.analysis.TransferResult;
 import org.checkerframework.dataflow.cfg.node.ImplicitThisNode;
@@ -11,8 +12,6 @@ import org.checkerframework.framework.flow.CFStore;
 import org.checkerframework.framework.flow.CFTransfer;
 import org.checkerframework.framework.flow.CFValue;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
-
-import javax.lang.model.type.TypeKind;
 
 public class UCRTaintingTransfer extends CFTransfer {
   private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
@@ -35,7 +34,7 @@ public class UCRTaintingTransfer extends CFTransfer {
         }
 
         Node receiver = n.getTarget().getReceiver();
-        if(receiver != null && !(receiver instanceof ImplicitThisNode)) {
+        if (receiver != null && !(receiver instanceof ImplicitThisNode)) {
           updateStore(result, receiver);
         }
       }
