@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
@@ -229,8 +230,8 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         if (!hasAnnotatedPackage(node) && !isPresentInStub(node)) {
           if (!hasTaintedArgument(node) && !hasTaintedReceiver(node)) {
             Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
-            if (calledMethod.isStatic()
-                || !Utility.containsTypeParameter(calledMethod.getReturnType())) {
+            Type type = calledMethod.getReturnType();
+            if (calledMethod.isStatic() || !(type instanceof Type.TypeVar)) {
               annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
             }
           }
