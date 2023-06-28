@@ -185,11 +185,43 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    */
   public boolean mayBeTainted(Tree tree) {
     AnnotatedTypeMirror type = getAnnotatedType(tree);
+    return mayBeTainted(type);
+  }
+
+  /**
+   * Checks if the given type may be tainted
+   *
+   * @param type The given type
+   * @return True if the given type may be tainted, false otherwise.
+   */
+  public boolean mayBeTainted(AnnotatedTypeMirror type) {
+    // If type is null, we should be conservative and assume it may be tainted.
+    if (type == null) {
+      return true;
+    }
     if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
       return mayBeTainted((AnnotatedTypeMirror.AnnotatedArrayType) type);
     }
-    // If type is null, we should be conservative and assume it may be tainted.
-    return type == null || !type.hasAnnotation(RUNTAINTED);
+    if (type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      return mayBeTainted((AnnotatedTypeMirror.AnnotatedDeclaredType) type);
+    }
+    return !type.hasAnnotation(RUNTAINTED);
+  }
+
+  /**
+   * Checks if the given declared type may be tainted
+   *
+   * @param type The given declared type
+   * @return True if the given declared type may be tainted, false otherwise.
+   */
+  public boolean mayBeTainted(AnnotatedTypeMirror.AnnotatedDeclaredType type) {
+    if (type == null) {
+      return true;
+    }
+    for (AnnotatedTypeMirror typeVariable : type.getTypeArguments()) {
+      return mayBeTainted(typeVariable);
+    }
+    return !type.hasAnnotation(RUNTAINTED);
   }
 
   /**

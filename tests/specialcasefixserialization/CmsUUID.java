@@ -198,4 +198,10 @@ public class CmsUUID {
   public void testValueForStaticFinalMap() {
     @RUntainted String s = IMAGE_MIMETYPES.get("png");
   }
+
+  public void recentCrash() {
+    List<String> params = new LinkedList<String>();
+    // :: error: argument
+    ProcessBuilder pb = new ProcessBuilder(params.toArray(new String[params.size()]));
+  }
 }

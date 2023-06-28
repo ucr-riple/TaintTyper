@@ -79,6 +79,7 @@ public class Serializer {
     if (json == null) {
       return;
     }
+    json.put("INDEX", UCRTaintingChecker.index);
     String entry = json + ",\n";
     try (OutputStream os = new FileOutputStream(path.toFile(), true)) {
       os.write(entry.getBytes(Charset.defaultCharset()), 0, entry.length());

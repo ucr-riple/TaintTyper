@@ -83,10 +83,19 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
     return fixes;
   }
 
-  public @Override Set<Fix> visitNewArray(NewArrayTree node, Type typeVar) {
+  @Override
+  public Set<Fix> visitNewArray(NewArrayTree node, Type typeVar) {
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
-    for (ExpressionTree arg : node.getInitializers()) {
+    if (node.getInitializers() != null) {
+      for (ExpressionTree arg : node.getInitializers()) {
+        if (typeFactory.mayBeTainted(arg)) {
+          fixes.addAll(arg.accept(this, typeVar));
+        }
+      }
+    }
+    // Add a fix for each dimension.
+    for (ExpressionTree arg : node.getDimensions()) {
       if (typeFactory.mayBeTainted(arg)) {
         fixes.addAll(arg.accept(this, typeVar));
       }

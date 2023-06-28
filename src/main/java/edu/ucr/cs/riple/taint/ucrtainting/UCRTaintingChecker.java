@@ -18,6 +18,8 @@ import org.checkerframework.framework.source.SupportedOptions;
 @SupportedOptions({UCRTaintingChecker.ANNOTATED_PACKAGES, UCRTaintingChecker.ENABLE_CUSTOM_CHECKER})
 public class UCRTaintingChecker extends BaseTypeChecker {
 
+  public static int index = 0;
+
   /** Annotated packages config option for the checker. */
   public static final String ANNOTATED_PACKAGES = "annotatedPackages";
   /** Custom Library handling config option for the checker. */
@@ -42,6 +44,7 @@ public class UCRTaintingChecker extends BaseTypeChecker {
   @Override
   public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
     super.reportError(source, messageKey, args);
+    System.out.println("Index " + ++index);
     this.serializationService.serializeError(source, messageKey, args);
   }
 }
