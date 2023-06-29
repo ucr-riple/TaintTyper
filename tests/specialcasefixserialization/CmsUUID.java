@@ -35,7 +35,6 @@ public class CmsUUID {
     return new CmsUUID(uid);
   }
 
-
   @RUntainted
   Object castTest() {
     if (this == NULL_UUID) {

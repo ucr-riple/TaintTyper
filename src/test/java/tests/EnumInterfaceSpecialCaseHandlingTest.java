@@ -14,8 +14,8 @@ import org.junit.runners.Parameterized.Parameters;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class Quick extends CheckerFrameworkPerDirectoryTest {
-  public Quick(List<File> testFiles) {
+public class EnumInterfaceSpecialCaseHandlingTest extends CheckerFrameworkPerDirectoryTest {
+  public EnumInterfaceSpecialCaseHandlingTest(List<File> testFiles) {
     super(
         testFiles,
         UCRTaintingChecker.class,
@@ -28,6 +28,6 @@ public class Quick extends CheckerFrameworkPerDirectoryTest {
 
   @Parameters
   public static String[] getTestDirs() {
-    return new String[] {"quick"};
+    return new String[] {"enuminterfacespecialcasehandling"};
   }
 }
