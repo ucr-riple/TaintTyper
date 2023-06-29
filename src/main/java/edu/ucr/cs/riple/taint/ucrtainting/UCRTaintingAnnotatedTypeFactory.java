@@ -8,6 +8,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
@@ -80,6 +81,9 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     } else if (node instanceof NewClassTree) {
       argumentsList = ((NewClassTree) node).getArguments();
     }
+    if (node instanceof TypeCastTree) {
+      argumentsList = Collections.singletonList(((TypeCastTree) node).getExpression());
+    }
     if (argumentsList != null) {
       for (ExpressionTree eTree : argumentsList) {
         try {
@@ -126,24 +130,12 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @return true if present, false otherwise
    */
   private boolean hasAnnotatedPackage(ExpressionTree node) {
-    if (node != null) {
-      ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
-      if (receiverTree != null) {
-        String packageName = "";
-        try {
-          packageName = ElementUtils.getType(TreeUtils.elementFromTree(receiverTree)).toString();
-          if (!packageName.equals("")) {
-            packageName = packageName.substring(0, packageName.lastIndexOf("."));
-          }
-        } catch (Exception | Error e) {
-          // TODO:: take care of exceptions or errors
-        }
-        if (isAnnotatedPackage(packageName)) {
-          return true;
-        }
-      }
+    Symbol symbol = (Symbol) TreeUtils.elementFromTree(node);
+    if (symbol == null) {
+      return false;
     }
-    return false;
+    Symbol.ClassSymbol encClass = symbol.enclClass();
+    return Utility.isInAnnotatedPackage(encClass, this);
   }
 
   /**
@@ -276,6 +268,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
       if (ENABLE_CUSTOM_CHECK) {
         if (Utility.isEnumConstant(node)) {
+          getAnnotatedType(node.getInitializer());
           annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
         }
         Element element = TreeUtils.elementFromDeclaration(node);
@@ -333,6 +326,10 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
           if (hasTaintedArgument(node) || hasTaintedReceiver(node)) {
             //            annotatedTypeMirror.replaceAnnotation(RTAINTED);
           } else {
+            annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
+          }
+        } else {
+          if (!hasTaintedArgument(node)) {
             annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
           }
         }

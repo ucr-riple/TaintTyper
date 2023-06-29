@@ -204,4 +204,25 @@ public class CmsUUID {
     // :: error: argument
     ProcessBuilder pb = new ProcessBuilder(params.toArray(new String[params.size()]));
   }
+
+  public void zeroArgMethodCall(HttpServletRequest request) {
+
+    @RUntainted CmsUgcSession session = createSession();
+    HttpSession httpSession = request.getSession(true);
+    // :: error: argument
+    httpSession.setAttribute("" + session.getId(), session);
+  }
+
+  public static @RUntainted CmsUgcSession createSession() {
+    return new CmsUgcSession();
+  }
+
+  static class CmsUgcSession {
+
+    String id;
+
+    public String getId() {
+      return id;
+    }
+  }
 }
