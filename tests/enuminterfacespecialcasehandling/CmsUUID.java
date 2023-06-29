@@ -18,6 +18,4 @@ public class CmsUUID {
       m_id = formatId;
     }
   }
-
-  public void sink(@RUntainted boolean b) {}
 }
