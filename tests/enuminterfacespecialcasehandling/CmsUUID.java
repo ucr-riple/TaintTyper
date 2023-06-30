@@ -18,4 +18,9 @@ public class CmsUUID {
       m_id = formatId;
     }
   }
+
+  public void test(String param) {
+    // :: error: assignment
+    @RUntainted String s = param;
+  }
 }
