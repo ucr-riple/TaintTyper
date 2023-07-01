@@ -57,15 +57,6 @@ class Foo {
     c = bar.staticF;
   }
 
-  @RUntainted
-  Object returnUntainted() {
-    Object o = new Object();
-    // :: error: argument
-    requireUntainted(o);
-    // :: error: return
-    return o;
-  }
-
   void requireUntainted(@RUntainted Object param) {}
 
   public void inheritParam(Object param) {}

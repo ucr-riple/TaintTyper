@@ -22,8 +22,7 @@ public class SpecialCaseFixSerializationTest extends SerializationTestHelper {
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=test",
-        "-AenableSerialization",
-        "-AserializationConfigPath=/tmp/ucr-tainting/0",
+        "-AenableCustomCheck=true",
         "-nowarn");
   }
 

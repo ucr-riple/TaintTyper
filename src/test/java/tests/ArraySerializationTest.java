@@ -22,8 +22,7 @@ public class ArraySerializationTest extends SerializationTestHelper {
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
-        "-AenableSerialization",
-        "-AserializationConfigPath=/tmp/ucr-tainting/0",
+        "-AenableCustomCheck=true",
         "-nowarn");
   }
 

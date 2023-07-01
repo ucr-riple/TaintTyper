@@ -20,7 +20,8 @@ public class CmsUUID {
   }
 
   public void test(String param) {
+    Map<String, String> map = new HashMap<>();
     // :: error: assignment
-    @RUntainted String s = param;
+    @RUntainted String s = map.get(param);
   }
 }

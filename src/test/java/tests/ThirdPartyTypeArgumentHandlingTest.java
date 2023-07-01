@@ -23,7 +23,7 @@ public class ThirdPartyTypeArgumentHandlingTest extends SerializationTestHelper 
         "-Anomsgtext",
         "-AannotatedPackages=test",
         "-AenableSerialization",
-        "-AserializationConfigPath=/tmp/ucr-tainting/0",
+        "-AenableCustomCheck=true",
         "-nowarn");
   }
 

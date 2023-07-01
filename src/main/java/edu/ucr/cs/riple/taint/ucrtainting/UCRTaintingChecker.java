@@ -5,6 +5,7 @@ import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.qual.StubFiles;
 import org.checkerframework.framework.source.SupportedOptions;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
 /** This is the entry point for pluggable type-checking. */
 @StubFiles({
@@ -46,5 +47,14 @@ public class UCRTaintingChecker extends BaseTypeChecker {
     super.reportError(source, messageKey, args);
     System.out.println("Index " + ++index);
     this.serializationService.serializeError(source, messageKey, args);
+  }
+
+  public void detailedReportError(
+      Object source,
+      @CompilerMessageKey String messageKey,
+      AnnotatedTypeMirror found,
+      AnnotatedTypeMirror required,
+      Object... args) {
+    reportError(source, messageKey, args);
   }
 }

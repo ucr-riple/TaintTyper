@@ -22,8 +22,7 @@ public class ParameterExpressionSerializationTest extends SerializationTestHelpe
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
-        "-AenableSerialization",
-        "-AserializationConfigPath=/tmp/ucr-tainting/0",
+        "-AenableCustomCheck=true",
         "-nowarn");
   }
 

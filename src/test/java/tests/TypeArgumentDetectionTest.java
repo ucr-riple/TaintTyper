@@ -22,9 +22,7 @@ public class TypeArgumentDetectionTest extends SerializationTestHelper {
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
-        "-AenableCustomCheck=false",
-        "-AenableSerialization",
-        "-AserializationConfigPath=/tmp/ucr-tainting/0",
+        "-AenableCustomCheck=true",
         "-nowarn");
   }
 

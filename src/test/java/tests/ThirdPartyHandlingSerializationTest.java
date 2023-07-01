@@ -23,8 +23,6 @@ public class ThirdPartyHandlingSerializationTest extends SerializationTestHelper
         "-Anomsgtext",
         "-AannotatedPackages=foo.bar",
         "-AenableCustomCheck=true",
-        "-AenableSerialization",
-        "-AserializationConfigPath=/tmp/ucr-tainting/0",
         "-nowarn");
   }
 

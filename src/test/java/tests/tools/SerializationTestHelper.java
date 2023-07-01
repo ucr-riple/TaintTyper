@@ -41,6 +41,7 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
       Path configPath = makeConfig(outDir);
       // update checker options
       checkerOptions.add("-A" + "serializationConfigPath=" + configPath);
+      checkerOptions.add("-A" + "enableSerialization");
       // run checker
       super.run();
     } catch (AssertionError error) {

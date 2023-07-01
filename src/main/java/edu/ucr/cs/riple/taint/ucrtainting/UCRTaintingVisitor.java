@@ -1,7 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.Tree;
-import java.lang.annotation.Annotation;
 import javax.lang.model.element.ExecutableElement;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
 import org.checkerframework.common.basetype.BaseTypeChecker;
@@ -31,6 +30,7 @@ public class UCRTaintingVisitor extends BaseTypeVisitor<UCRTaintingAnnotatedType
   protected void checkConstructorResult(
       AnnotatedExecutableType constructorType, ExecutableElement constructorElement) {}
 
+  @Override
   protected void commonAssignmentCheck(
       AnnotatedTypeMirror varType,
       AnnotatedTypeMirror valueType,
@@ -41,31 +41,18 @@ public class UCRTaintingVisitor extends BaseTypeVisitor<UCRTaintingAnnotatedType
 
     AnnotatedTypeMirror widenedValueType = atypeFactory.getWidenedType(valueType, varType);
     boolean success = atypeFactory.getTypeHierarchy().isSubtype(widenedValueType, varType);
-
-    // TODO: integrate with subtype test.
-    if (success) {
-      for (Class<? extends Annotation> mono : atypeFactory.getSupportedMonotonicTypeQualifiers()) {
-        if (valueType.hasAnnotation(mono) && varType.hasAnnotation(mono)) {
-          checker.reportError(
-              valueTree,
-              "monotonic",
-              mono.getSimpleName(),
-              mono.getSimpleName(),
-              valueType.toString());
-          return;
-        }
-      }
-    }
-
-    commonAssignmentCheckEndDiagnostic(success, null, varType, valueType, valueTree);
-
     // Use an error key only if it's overridden by a checker.
     if (!success) {
       FoundRequired pair = FoundRequired.of(valueType, varType);
       String valueTypeString = pair.found;
       String varTypeString = pair.required;
-      checker.reportError(
-          valueTree, errorKey, ArraysPlume.concatenate(extraArgs, valueTypeString, varTypeString));
+      ((UCRTaintingChecker) checker)
+          .detailedReportError(
+              valueTree,
+              errorKey,
+              valueType,
+              varType,
+              ArraysPlume.concatenate(extraArgs, valueTypeString, varTypeString));
     }
   }
 
