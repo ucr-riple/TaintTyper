@@ -78,7 +78,7 @@ public class SerializationService {
         }
         Symbol.ClassSymbol encClass =
             (Symbol.ClassSymbol) TreeUtils.elementFromDeclaration(classTree);
-        if (encClass == null || !Utility.isInAnnotatedPackage(encClass, typeFactory)) {
+        if (!Utility.isInAnnotatedPackage(encClass, typeFactory)) {
           return ImmutableSet.of();
         }
         return new FixVisitor(context, typeFactory).visit(tree, null);

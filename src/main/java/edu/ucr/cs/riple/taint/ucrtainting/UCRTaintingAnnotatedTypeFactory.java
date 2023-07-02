@@ -28,11 +28,6 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * This option enables custom handling of third party code. By default, such handling is enabled.
    */
   public final boolean ENABLE_CUSTOM_CHECK;
-  /**
-   * To respect existing annotations, leave them alone based on the provided annotated package names
-   * through this option.
-   */
-  private final String ANNOTATED_PACKAGE_NAMES;
   /** List of annotated packages. Classes in these packages are considered to be annotated. */
   private final List<String> ANNOTATED_PACKAGE_NAMES_LIST;
   /** AnnotationMirror for {@link RUntainted}. */
@@ -56,8 +51,13 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 + " Please pass this argument in the checker config, refer checker manual");
       }
     }
-    ANNOTATED_PACKAGE_NAMES = givenAnnotatedPackages.equals("\"\"") ? "" : givenAnnotatedPackages;
-    ANNOTATED_PACKAGE_NAMES_LIST = Arrays.asList(ANNOTATED_PACKAGE_NAMES.split(","));
+    /**
+     * To respect existing annotations, leave them alone based on the provided annotated package
+     * names through this option.
+     */
+    String annotatedPackagesFlagValue =
+        givenAnnotatedPackages.equals("\"\"") ? "" : givenAnnotatedPackages;
+    ANNOTATED_PACKAGE_NAMES_LIST = Arrays.asList(annotatedPackagesFlagValue.split(","));
     RUNTAINTED = AnnotationBuilder.fromClass(elements, RUntainted.class);
     RTAINTED = AnnotationBuilder.fromClass(elements, RTainted.class);
     postInit();
@@ -129,13 +129,12 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @param node to check for
    * @return true if present, false otherwise
    */
-  private boolean hasAnnotatedPackage(ExpressionTree node) {
+  private boolean isInAnnotatedPackage(ExpressionTree node) {
     Symbol symbol = (Symbol) TreeUtils.elementFromTree(node);
     if (symbol == null) {
       return false;
     }
-    Symbol.ClassSymbol encClass = symbol.enclClass();
-    return Utility.isInAnnotatedPackage(encClass, this);
+    return Utility.isInAnnotatedPackage(symbol, this);
   }
 
   /**
@@ -251,7 +250,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       if (ENABLE_CUSTOM_CHECK) {
         // if the code is part of provided annotated packages or is present
         // in the stub files, then we don't need any custom handling for it.
-        if (!hasAnnotatedPackage(node) && !isPresentInStub(node)) {
+        if (!isInAnnotatedPackage(node) && !isPresentInStub(node)) {
           if (!hasTaintedArgument(node) && !hasTaintedReceiver(node)) {
             Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
             Type type = calledMethod.getReturnType();
@@ -322,7 +321,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       if (ENABLE_CUSTOM_CHECK) {
         // if the code is part of provided annotated packages or is present
         // in the stub files, then we don't need any custom handling for it.
-        if (!hasAnnotatedPackage(node) && !isPresentInStub(node)) {
+        if (!isInAnnotatedPackage(node) && !isPresentInStub(node)) {
           if (hasTaintedArgument(node) || hasTaintedReceiver(node)) {
             //            annotatedTypeMirror.replaceAnnotation(RTAINTED);
           } else {

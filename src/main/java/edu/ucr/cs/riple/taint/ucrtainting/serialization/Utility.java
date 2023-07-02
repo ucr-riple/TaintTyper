@@ -288,8 +288,20 @@ public class Utility {
     return false;
   }
 
+  /**
+   * Checks if the passed symbol is in an annotated package.
+   *
+   * @param symbol the symbol to check.
+   * @param typeFactory the type factory, used to retrieve the annotated packages names.
+   * @return true if the symbol is in an annotated package, false otherwise.
+   */
   public static boolean isInAnnotatedPackage(
-      Symbol.ClassSymbol encClass, UCRTaintingAnnotatedTypeFactory typeFactory) {
+      Symbol symbol, UCRTaintingAnnotatedTypeFactory typeFactory) {
+    if (symbol == null) {
+      return false;
+    }
+    Symbol.ClassSymbol encClass =
+        symbol instanceof Symbol.ClassSymbol ? (Symbol.ClassSymbol) symbol : symbol.enclClass();
     String packageName = encClass.packge().toString();
     if (packageName.equals("unnamed package")) {
       packageName = "";

@@ -125,13 +125,15 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       }
       Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
       // check if the call is to a method defined in a third party library.
-      if (calledMethod.enclClass().sourcefile == null
-          || !Utility.isInAnnotatedPackage(calledMethod.enclClass(), typeFactory)) {
+      if (!Utility.isInAnnotatedPackage(calledMethod, typeFactory)) {
         // Check if the method is source defined in stubs.
         if (typeFactory.isFromStubFile(calledMethod)) {
           // We cannot do any fix here
           return Set.of();
         }
+        // Check the return type, if it does not contain type variable, we annotate can annotate the
+        // receiver and all passed arguments.
+
         Set<Fix> fixes = new HashSet<>();
         Type finalType = type;
         node.getArguments().forEach(arg -> fixes.addAll(arg.accept(this, finalType)));
