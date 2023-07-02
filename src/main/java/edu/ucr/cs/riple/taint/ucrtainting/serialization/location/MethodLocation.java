@@ -13,8 +13,8 @@ public class MethodLocation extends AbstractSymbolLocation {
   /** Symbol of the targeted method. */
   public final Symbol.MethodSymbol enclosingMethod;
 
-  public MethodLocation(Symbol target, JCTree declarationTree, Type type) {
-    super(ElementKind.METHOD, target, declarationTree, type);
+  public MethodLocation(Symbol target, JCTree declarationTree) {
+    super(ElementKind.METHOD, target, declarationTree);
     enclosingMethod = (Symbol.MethodSymbol) target;
   }
 

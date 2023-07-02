@@ -26,7 +26,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   /** Target type of the symbol. */
   public Type targetType;
 
-  public AbstractSymbolLocation(ElementKind kind, Symbol target, JCTree tree, Type targetType) {
+  public AbstractSymbolLocation(ElementKind kind, Symbol target, JCTree tree) {
     Preconditions.checkArgument(
         kind.equals(target.getKind()),
         "Cannot instantiate element of kind: "
@@ -42,7 +42,6 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
             : (enclosingClass.classfile != null ? enclosingClass.classfile.toUri() : null);
     this.path = Serializer.pathToSourceFileFromURI(pathInURI);
     this.declarationTree = tree;
-    this.targetType = targetType;
     this.target = target;
   }
 

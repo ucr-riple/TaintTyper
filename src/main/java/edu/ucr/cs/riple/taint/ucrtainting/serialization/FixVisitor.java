@@ -270,7 +270,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
     if (element == null) {
       return null;
     }
-    location = SymbolLocation.createLocationFromSymbol((Symbol) element, context, type);
+    location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
     if (location == null) {
       return null;
     }
