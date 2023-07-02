@@ -218,12 +218,15 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       if (!(member instanceof Symbol)) {
         return Set.of();
       }
+      // If type is not null, we should annotate type parameter that matches the target type.
       if (type != null) {
-        // Need to check if member contains a type argument that includes the type.
+        // Need to check if member contains a type argument that includes the type. In that case, we
+        // found the right declaration.
         if (Utility.containsTypeArgument(((Symbol) member).type, type)) {
           Fix fix = buildFixForElement(TreeUtils.elementFromUse(node), type);
           return fix == null ? Set.of() : Set.of(fix);
         } else if (node instanceof JCTree.JCFieldAccess) {
+          // Need to traverse the tree to find the right declaration.
           JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) node;
           return fieldAccess.selected.accept(this, type);
         }
