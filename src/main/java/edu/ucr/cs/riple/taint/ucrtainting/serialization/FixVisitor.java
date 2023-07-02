@@ -12,6 +12,7 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.ParenthesizedTree;
 import com.sun.source.tree.PrimitiveTypeTree;
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.TypeCastTree;
 import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
@@ -33,12 +34,18 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
 
   /** The javac context. */
   private final Context context;
-
+  /**
+   * The type factory of the checker. Used to get the type of the tree and generate a fix only if is
+   * {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}.
+   */
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
 
-  public FixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
+  private final Tree errorTree;
+
+  public FixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory, Tree errorTree) {
     this.context = context;
     this.typeFactory = factory;
+    this.errorTree = errorTree;
   }
 
   @Override
@@ -151,7 +158,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       }
       // check for type variable in return type. If present, we should annotate the declaration of
       // the receiver.
-      if (Utility.containsTypeParameter(calledMethod.getReturnType())) {
+      if (Utility.containsTypeArgument(calledMethod.getReturnType())) {
         // set type, if not set.
         type = type == null ? calledMethod.getReturnType() : type;
         if (!calledMethod.isStatic() && node.getMethodSelect() instanceof MemberSelectTree) {
@@ -159,7 +166,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
           if (!Utility.isThisIdentifier(receiver)) {
             // Build the fix for the receiver and leave the called method untouched. Annotation on
             // the declaration on the type argument, will be added on the method automatically.
-            return ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type);
+            return receiver.accept(this, type);
           }
         }
         // Build the fix directly on the method symbol.
@@ -212,8 +219,8 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
         return Set.of();
       }
       if (type != null) {
-        // Need to check if member affects the target type.
-        if (!Utility.typeParameterDeterminedFromEncClass(((Symbol) member).enclClass(), type)) {
+        // Need to check if member contains a type argument that includes the type.
+        if (Utility.containsTypeArgument(((Symbol) member).type, type)) {
           Fix fix = buildFixForElement(TreeUtils.elementFromUse(node), type);
           return fix == null ? Set.of() : Set.of(fix);
         } else if (node instanceof JCTree.JCFieldAccess) {
@@ -236,6 +243,15 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   @Override
   public Set<Fix> visitUnary(UnaryTree node, Type type) {
     return node.getExpression().accept(this, type);
+  }
+
+  /**
+   * Generates fixes for the given error tree.
+   *
+   * @return The set of fixes for the given error tree.
+   */
+  public Set<Fix> generateFixes() {
+    return visit(errorTree, null);
   }
 
   /**

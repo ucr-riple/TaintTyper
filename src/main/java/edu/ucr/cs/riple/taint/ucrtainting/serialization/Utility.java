@@ -114,19 +114,19 @@ public class Utility {
   }
 
   /**
-   * Checks if a type contains a typ parameter.
+   * Checks if a type contains a typ argument.
    *
    * @param type the type to check
-   * @return true if the type contains a typ parameter, false otherwise
+   * @return true if the type contains a typ argument, false otherwise
    */
-  public static boolean containsTypeParameter(Type type) {
+  public static boolean containsTypeArgument(Type type) {
     if (isTypeVar(type)) {
       return true;
     }
     if (type instanceof Type.ClassType) {
       Type.ClassType classType = (Type.ClassType) type;
       for (Type t : classType.getTypeArguments()) {
-        if (containsTypeParameter(t)) {
+        if (containsTypeArgument(t)) {
           return true;
         }
       }
@@ -248,30 +248,16 @@ public class Utility {
   }
 
   /**
-   * Returns true if the passed symbol's type is determined from the type parameters declared in the
-   * enclosing class.
-   *
-   * @param classSymbol the enclosing class symbol.
-   * @param type the type to check.
-   * @return true if the type parameters of the enclosing class are used to determine the type of
-   *     the symbol.
-   */
-  public static boolean typeParameterDeterminedFromEncClass(
-      Symbol.ClassSymbol classSymbol, Type type) {
-    if (type == null || classSymbol == null) {
-      return false;
-    }
-    return containsTypeParameter(classSymbol.type, type);
-  }
-
-  /**
    * Returns true if the passed type contains the specified type parameter.
    *
    * @param type the type to check.
    * @param target the type parameter to look for.
    * @return true if the type contains the type parameter.
    */
-  public static boolean containsTypeParameter(Type type, Type target) {
+  public static boolean containsTypeArgument(Type type, Type target) {
+    if (type == null || target == null) {
+      return false;
+    }
     if (type.equals(target)) {
       return true;
     }
@@ -280,8 +266,8 @@ public class Utility {
       // Should only check the type arguments of the direct enclosing class, not all the type
       // arguments from enclosing classes.
       for (Type t : classType.getTypeArguments()) {
-        if (containsTypeParameter(t)) {
-          return containsTypeParameter(t, target);
+        if (containsTypeArgument(t)) {
+          return containsTypeArgument(t, target);
         }
       }
     }
