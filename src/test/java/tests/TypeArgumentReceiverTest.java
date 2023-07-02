@@ -14,8 +14,8 @@ import tests.tools.SerializationTestHelper;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class TypeArgumentDetectionTest extends SerializationTestHelper {
-  public TypeArgumentDetectionTest(List<File> testFiles) {
+public class TypeArgumentReceiverTest extends SerializationTestHelper {
+  public TypeArgumentReceiverTest(List<File> testFiles) {
     super(
         testFiles,
         UCRTaintingChecker.class,
@@ -28,6 +28,6 @@ public class TypeArgumentDetectionTest extends SerializationTestHelper {
 
   @Parameterized.Parameters
   public static String[] getTestDirs() {
-    return new String[] {"typeargumentdetection"};
+    return new String[] {"typeargumentreceiver"};
   }
 }
