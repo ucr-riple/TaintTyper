@@ -131,30 +131,34 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
           // We cannot do any fix here
           return Set.of();
         }
-        // Check the return type, if it does not contain type variable, we annotate can annotate the
+        // Check the return type, if it does not contain type variable, we can annotate the
         // receiver and all passed arguments.
-
-        Set<Fix> fixes = new HashSet<>();
-        Type finalType = type;
-        node.getArguments().forEach(arg -> fixes.addAll(arg.accept(this, finalType)));
-        // Build the fix for the receiver if not static.
-        if (calledMethod.isStatic()) {
-          // No receiver for static method calls.
+        if ((!(calledMethod.getReturnType() instanceof Type.TypeVar))) {
+          Set<Fix> fixes = new HashSet<>();
+          Type finalType = type;
+          // Add a fix for each passed argument.
+          node.getArguments().forEach(arg -> fixes.addAll(arg.accept(this, finalType)));
+          // Add the fix for the receiver if not static.
+          if (calledMethod.isStatic()) {
+            // No receiver for static method calls.
+            return fixes;
+          }
+          // Build the fix for the receiver.
+          fixes.addAll(
+              ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type));
           return fixes;
         }
-        // Build the fix for the receiver.
-        fixes.addAll(
-            ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type));
-        return fixes;
       }
-      // check for type variable in return type.
+      // check for type variable in return type. If present, we should annotate the declaration of
+      // the receiver.
       if (Utility.containsTypeParameter(calledMethod.getReturnType())) {
         // set type, if not set.
         type = type == null ? calledMethod.getReturnType() : type;
         if (!calledMethod.isStatic() && node.getMethodSelect() instanceof MemberSelectTree) {
           ExpressionTree receiver = ((MemberSelectTree) node.getMethodSelect()).getExpression();
           if (!Utility.isThisIdentifier(receiver)) {
-            // Build the fix for the receiver.
+            // Build the fix for the receiver and leave the called method untouched. Annotation on
+            // the declaration on the type argument, will be added on the method automatically.
             return ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type);
           }
         }

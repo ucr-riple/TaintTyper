@@ -1,6 +1,6 @@
 package test;
 
-public interface I_CmsReport {
+public interface IFoo {
 
   int FORMAT_WARNING = 1;
 }
