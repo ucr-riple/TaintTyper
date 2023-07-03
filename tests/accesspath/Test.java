@@ -11,6 +11,8 @@ public class Test {
     // :: error: assignment
     @RUntainted String untaintedVar = foo.keySet().iterator().next();
     // :: error: assignment
+    untaintedVar = foo.values().iterator().next();
+    // :: error: assignment
     untaintedVar = inner.bar.keySet().iterator().next();
     // :: error: assignment
     untaintedVar = inner.test.foo.keySet().iterator().next();

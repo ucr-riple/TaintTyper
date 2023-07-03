@@ -13,6 +13,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.Set;
 import javax.lang.model.element.Element;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** This class is used to serialize the errors and the fixes for the errors. */
@@ -45,13 +46,19 @@ public class SerializationService {
    * @param messageKey the key of the error message
    * @param args the arguments of the error message
    */
-  public void serializeError(Object source, String messageKey, Object[] args) {
+  public void serializeError(
+      Object source,
+      String messageKey,
+      Object[] args,
+      AnnotatedTypeMirror required,
+      AnnotatedTypeMirror found) {
     if (!serializer.isActive()) {
       return;
     }
+
     Set<Fix> resolvingFixes =
         checkErrorIsFixable(source, messageKey)
-            ? generateFixesForError((Tree) source, messageKey)
+            ? generateFixesForError((Tree) source, messageKey, required, found)
             : ImmutableSet.of();
     Error error =
         new Error(messageKey, args, resolvingFixes, checker.getVisitor().getCurrentPath());
@@ -64,7 +71,8 @@ public class SerializationService {
    * @param tree The given tree.
    * @param messageKey The key of the error message.
    */
-  public Set<Fix> generateFixesForError(Tree tree, String messageKey) {
+  public Set<Fix> generateFixesForError(
+      Tree tree, String messageKey, AnnotatedTypeMirror required, AnnotatedTypeMirror found) {
     TreePath path = checker.getVisitor().getCurrentPath();
     switch (messageKey) {
       case "override.param":
@@ -81,7 +89,7 @@ public class SerializationService {
         if (!Utility.isInAnnotatedPackage(encClass, typeFactory)) {
           return ImmutableSet.of();
         }
-        return new FixVisitor(context, typeFactory, tree).generateFixes();
+        return new FixVisitor(context, typeFactory, tree, required, found).generateFixes();
     }
   }
 

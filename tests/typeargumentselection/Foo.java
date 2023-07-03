@@ -17,23 +17,45 @@ public class Foo {
   //      // :: error: assignment
   //      @RUntainted String s = mapOfList.get(key).get(0);
   //    }
+  //
+  //  public void testGenericFoo() {
+  //    GenericFoo<String, String> gen = new GenericFoo<>();
+  //    // :: error: assignment
+  //    @RUntainted String s = gen.bar.rand();
+  //  }
 
-  public void testGenericFoo() {
-    GenericFoo<String, String> gen = new GenericFoo<>();
+  public void testGenericBar() {
+    GenericBar<String, Map<String, String>> gen = new GenericBar<>();
+    //    // :: error: assignment
+    //    @RUntainted String s = gen.instance().bar.rand();
     // :: error: assignment
-    @RUntainted String s = gen.bar.rand();
+    @RUntainted String s = gen.instanceWithL().getK().keySet().iterator().next();
   }
 
-  static class GenericFoo<T, R> {
-    GenericBar<T> bar;
+  static class GenericFoo<T, K> {
+    GenericBar<T, T> bar;
 
-    GenericBar<T> getBar() {
+    K k;
+
+    GenericBar<T, T> getBar() {
       return bar;
+    }
+
+    public K getK() {
+      return k;
     }
   }
 
-  static class GenericBar<T> {
-    T rand() {
+  static class GenericBar<M, L> {
+    M rand() {
+      return null;
+    }
+
+    GenericFoo<M, L> instanceWithL() {
+      return null;
+    }
+
+    GenericFoo<M, String> instance() {
       return null;
     }
   }

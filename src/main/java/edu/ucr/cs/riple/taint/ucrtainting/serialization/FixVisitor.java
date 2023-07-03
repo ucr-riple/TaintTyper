@@ -1,5 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
+import static edu.ucr.cs.riple.taint.ucrtainting.Log.print;
+
 import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.ConditionalExpressionTree;
@@ -22,13 +24,14 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Generates the fixes for the given tree involved in the reporting error if such fixes exists. */
@@ -47,12 +50,23 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
    * The list of return types of methods that contain a type argument if any invocation is involved
    * in the tree.
    */
-  private List<Type> types;
+  private Deque<Type> types;
+  /** Required annotated type in the assignment on the left hand side. */
+  private final AnnotatedTypeMirror required;
+  /** Found annotated type in the assignment on the right hand side. */
+  private final AnnotatedTypeMirror found;
 
-  public FixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory, Tree errorTree) {
+  public FixVisitor(
+      Context context,
+      UCRTaintingAnnotatedTypeFactory factory,
+      Tree errorTree,
+      AnnotatedTypeMirror required,
+      AnnotatedTypeMirror found) {
     this.context = context;
     this.typeFactory = factory;
     this.errorTree = errorTree;
+    this.required = required;
+    this.found = found;
   }
 
   @Override
@@ -147,7 +161,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
         }
         // Check the return type, if it does not contain type variable, we can annotate the
         // receiver and all passed arguments.
-        if ((!(calledMethod.getReturnType() instanceof Type.TypeVar))) {
+        if (!(Utility.containsTypeArgument(calledMethod.getReturnType()))) {
           Set<Fix> fixes = new HashSet<>();
           // Add a fix for each passed argument.
           for (ExpressionTree argument : node.getArguments()) {
@@ -164,27 +178,27 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
           return fixes;
         }
       }
-      // check for type variable in return type. If present, we should annotate the declaration of
-      // the receiver.
-      if (Utility.containsTypeArgument(calledMethod.getReturnType())) {
+      // Locate method receiver.
+      ExpressionTree receiver = null;
+      if (node.getMethodSelect() instanceof MemberSelectTree) {
+        receiver = ((MemberSelectTree) node.getMethodSelect()).getExpression();
+      }
+      // If method is static, or has no receiver, or receiver is "this", we must annotate the method
+      // directly.
+      if (calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver)) {
+        return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod, type)));
+      }
+      // The method has a receiver, if the method contains a type argument, we should annotate the
+      // receiver and leave the called method untouched. Annotation on the declaration on the type
+      // argument, will be added on the method automatically.
+      if (Utility.containsTypeArgument(calledMethod.getReturnType()) && !calledMethod.isStatic()) {
         addType(calledMethod.getReturnType());
         // set type, if not set.
         type = type == null ? calledMethod.getReturnType() : type;
-        if (!calledMethod.isStatic() && node.getMethodSelect() instanceof MemberSelectTree) {
-          ExpressionTree receiver = ((MemberSelectTree) node.getMethodSelect()).getExpression();
-          if (!Utility.isThisIdentifier(receiver)) {
-            // Build the fix for the receiver and leave the called method untouched. Annotation on
-            // the declaration on the type argument, will be added on the method automatically.
-            return receiver.accept(this, type);
-          }
-        }
-        // Build the fix directly on the method symbol.
-        return Set.of(Objects.requireNonNull(buildFixForElement(element, type)));
+        return receiver.accept(this, type);
       } else {
         // Build a fix for the called method return type.
-        return Set.of(
-            Objects.requireNonNull(
-                buildFixForElement(TreeUtils.elementFromTree(node.getMethodSelect()), null)));
+        return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod, null)));
       }
     }
     return Set.of();
@@ -253,9 +267,9 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
 
   private void addType(Type type) {
     if (this.types == null) {
-      this.types = new ArrayList<>();
+      this.types = new ArrayDeque<>();
     }
-    this.types.add(type);
+    this.types.addFirst(type);
   }
 
   @Override
@@ -288,6 +302,36 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
     location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
     if (type != null) {
       // location requires a type variable modification.
+      Type elementType = ((Symbol) element).type;
+      if (types.size() == 1 && Utility.hasSameUnderlyingType(required, types.peek())) {
+        print("Type match, we should annotate just the elements type");
+      } else {
+        print("Type mismatch");
+        //        Preconditions.checkArgument(elementType instanceof Type.ClassType);
+        //        types.forEach(
+        //            new Consumer<Type>() {
+        //              @Override
+        //              public void accept(Type type) {
+        //                System.out.println("TYPE: " + type + " " + "SYMBOL: " + type.tsym.type);
+        //              }
+        //            });
+        //        System.out.println(
+        //            "ELEMENT TYPE: " + elementType + " " + "SYMBOL: " + elementType.tsym.type);
+        //        System.out.println("REQUIRED: " + required);
+        //        System.out.println("FOUND: " + found);
+        //        Type headOnElement = elementType;
+        //        List<Integer> indecies = new ArrayList<>();
+        //        while (types.size() != 0) {
+        //          Type top = types.pop();
+        //          if (!(Utility.containsTypeArgument(top))) {
+        //            break;
+        //          }
+        //          List<Type> typeVarsTop = top.tsym.type.getTypeArguments();
+        //          List<Type> typeVarsElement = top.tsym.type.getTypeArguments();
+        //        }
+        //        List<Type> typeVars = elementType.tsym.type.getTypeArguments();
+        //        Type top = types.pop();
+      }
     }
     if (location == null) {
       return null;

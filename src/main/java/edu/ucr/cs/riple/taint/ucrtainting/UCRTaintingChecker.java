@@ -1,5 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import static edu.ucr.cs.riple.taint.ucrtainting.Log.print;
+
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.SerializationService;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
 import org.checkerframework.common.basetype.BaseTypeChecker;
@@ -37,16 +39,9 @@ public class UCRTaintingChecker extends BaseTypeChecker {
   }
 
   @Override
-  public void reportWarning(Object source, @CompilerMessageKey String messageKey, Object... args) {
-    super.reportWarning(source, messageKey, args);
-    this.serializationService.serializeError(source, messageKey, args);
-  }
-
-  @Override
   public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
     super.reportError(source, messageKey, args);
-    System.out.println("Index " + ++index);
-    this.serializationService.serializeError(source, messageKey, args);
+    print("Index " + ++index);
   }
 
   public void detailedReportError(
@@ -56,5 +51,7 @@ public class UCRTaintingChecker extends BaseTypeChecker {
       AnnotatedTypeMirror required,
       Object... args) {
     reportError(source, messageKey, args);
+    print("Last visited Node: " + visitor.getCurrentPath().getLeaf());
+    this.serializationService.serializeError(source, messageKey, args, required, found);
   }
 }

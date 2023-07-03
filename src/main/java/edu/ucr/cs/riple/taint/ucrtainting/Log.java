@@ -21,4 +21,8 @@ public class Log {
       throw new RuntimeException(e);
     }
   }
+
+  public static void print(String message) {
+    System.out.println(message);
+  }
 }

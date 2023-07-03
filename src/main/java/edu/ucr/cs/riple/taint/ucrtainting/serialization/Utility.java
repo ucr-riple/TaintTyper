@@ -21,8 +21,10 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
+import org.checkerframework.javacutil.TypeAnnotationUtils;
 
 /** Utility methods for the serialization service. */
 public class Utility {
@@ -114,7 +116,7 @@ public class Utility {
   }
 
   /**
-   * Checks if a type contains a typ argument.
+   * Checks if a type contains a typ argument. (e.g. {@code Foo<E>})
    *
    * @param type the type to check
    * @return true if the type contains a typ argument, false otherwise
@@ -134,6 +136,12 @@ public class Utility {
     return false;
   }
 
+  /**
+   * Checks if the given type is a parameterized type. (e.g. {@code Foo<String>})
+   *
+   * @param type the type to check
+   * @return true if the type is a parameterized type, false otherwise
+   */
   public static boolean isParameterizedType(Type type) {
     if (!(type instanceof Type.ClassType)) {
       return false;
@@ -143,6 +151,20 @@ public class Utility {
       return false;
     }
     return !containsTypeArgument(type);
+  }
+
+  /**
+   * Checks if the given annotated type mirror has the given underlying type.
+   *
+   * @param annotatedTypeMirror the annotated type mirror to check.
+   * @param type the type to check in the given annotated type mirror.
+   * @return true if the given annotated type mirror has the given underlying type, false otherwise.
+   */
+  public static boolean hasSameUnderlyingType(AnnotatedTypeMirror annotatedTypeMirror, Type type) {
+    return TypeAnnotationUtils.unannotatedType(annotatedTypeMirror.getUnderlyingType())
+        .tsym
+        .type
+        .equals(type.tsym.type);
   }
 
   /**
