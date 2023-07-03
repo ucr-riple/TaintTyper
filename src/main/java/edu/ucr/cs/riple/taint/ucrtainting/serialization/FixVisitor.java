@@ -35,7 +35,7 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Generates the fixes for the given tree involved in the reporting error if such fixes exists. */
-public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
+public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
 
   /** The javac context. */
   private final Context context;
@@ -47,14 +47,17 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   /** The tree that caused the error. */
   private final Tree errorTree;
   /**
-   * The list of return types of methods that contain a type argument if any invocation is involved
-   * in the tree.
+   * The list method invocations that their return type contained a type argument. Used to detect
+   * which type in the receiver should be annotated.
    */
-  private Deque<Type> types;
+  private Deque<MethodInvocationTree> invocations;
   /** Required annotated type in the assignment on the left hand side. */
   private final AnnotatedTypeMirror required;
   /** Found annotated type in the assignment on the right hand side. */
   private final AnnotatedTypeMirror found;
+
+  boolean fixOnReceiver = false;
+  boolean fixOnSymbol = true;
 
   public FixVisitor(
       Context context,
@@ -70,62 +73,62 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   }
 
   @Override
-  public Set<Fix> visitIdentifier(IdentifierTree node, Type typeVar) {
+  public Set<Fix> visitIdentifier(IdentifierTree node, Void unused) {
     if (typeFactory.mayBeTainted(node)) {
-      Fix fix = buildFixForElement(TreeUtils.elementFromTree(node), typeVar);
+      Fix fix = buildFixForElement(TreeUtils.elementFromTree(node));
       return fix == null ? Set.of() : Set.of(fix);
     }
     return Set.of();
   }
 
   @Override
-  public Set<Fix> visitConditionalExpression(ConditionalExpressionTree node, Type typeVar) {
+  public Set<Fix> visitConditionalExpression(ConditionalExpressionTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
     if (typeFactory.mayBeTainted(node.getTrueExpression())) {
-      fixes.addAll(node.getTrueExpression().accept(this, typeVar));
+      fixes.addAll(node.getTrueExpression().accept(this, unused));
     }
     if (typeFactory.mayBeTainted(node.getFalseExpression())) {
-      fixes.addAll(node.getFalseExpression().accept(this, typeVar));
+      fixes.addAll(node.getFalseExpression().accept(this, unused));
     }
     return fixes;
   }
 
   @Override
-  public Set<Fix> visitNewClass(com.sun.source.tree.NewClassTree node, Type typeVar) {
+  public Set<Fix> visitNewClass(com.sun.source.tree.NewClassTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
     for (ExpressionTree arg : node.getArguments()) {
       if (typeFactory.mayBeTainted(arg)) {
-        fixes.addAll(arg.accept(this, typeVar));
+        fixes.addAll(arg.accept(this, unused));
       }
     }
     return fixes;
   }
 
   @Override
-  public Set<Fix> visitTypeCast(TypeCastTree node, Type typeVar) {
+  public Set<Fix> visitTypeCast(TypeCastTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
     if (typeFactory.mayBeTainted(node.getExpression())) {
-      fixes.addAll(node.getExpression().accept(this, typeVar));
+      fixes.addAll(node.getExpression().accept(this, unused));
     }
     return fixes;
   }
 
   @Override
-  public Set<Fix> visitNewArray(NewArrayTree node, Type typeVar) {
+  public Set<Fix> visitNewArray(NewArrayTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
     if (node.getInitializers() != null) {
       for (ExpressionTree arg : node.getInitializers()) {
         if (typeFactory.mayBeTainted(arg)) {
-          fixes.addAll(arg.accept(this, typeVar));
+          fixes.addAll(arg.accept(this, unused));
         }
       }
     }
     // Add a fix for each dimension.
     for (ExpressionTree arg : node.getDimensions()) {
       if (typeFactory.mayBeTainted(arg)) {
-        fixes.addAll(arg.accept(this, typeVar));
+        fixes.addAll(arg.accept(this, unused));
       }
     }
     return fixes;
@@ -145,7 +148,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
    * @return Void null.
    */
   @Override
-  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Type type) {
+  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Void unused) {
     if (typeFactory.mayBeTainted(node.getMethodSelect())) {
       Element element = TreeUtils.elementFromUse(node);
       if (element == null) {
@@ -165,7 +168,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
           Set<Fix> fixes = new HashSet<>();
           // Add a fix for each passed argument.
           for (ExpressionTree argument : node.getArguments()) {
-            fixes.addAll(argument.accept(this, type));
+            fixes.addAll(argument.accept(this, unused));
           }
           // Add the fix for the receiver if not static.
           if (calledMethod.isStatic()) {
@@ -174,7 +177,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
           }
           // Build the fix for the receiver.
           fixes.addAll(
-              ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, type));
+              ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, unused));
           return fixes;
         }
       }
@@ -186,74 +189,72 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       // If method is static, or has no receiver, or receiver is "this", we must annotate the method
       // directly.
       if (calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver)) {
-        return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod, type)));
+        return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
       }
       // The method has a receiver, if the method contains a type argument, we should annotate the
       // receiver and leave the called method untouched. Annotation on the declaration on the type
       // argument, will be added on the method automatically.
       if (Utility.containsTypeArgument(calledMethod.getReturnType()) && !calledMethod.isStatic()) {
-        addType(calledMethod.getReturnType());
-        // set type, if not set.
-        type = type == null ? calledMethod.getReturnType() : type;
-        return receiver.accept(this, type);
+        addMethodInvocationNode(node);
+        return receiver.accept(this, unused);
       } else {
         // Build a fix for the called method return type.
-        return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod, null)));
+        return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
       }
     }
     return Set.of();
   }
 
   @Override
-  public Set<Fix> visitLiteral(LiteralTree node, Type type) {
+  public Set<Fix> visitLiteral(LiteralTree node, Void unused) {
     // We do not generate fix for primitive types.
     return Set.of();
   }
 
   @Override
-  public Set<Fix> visitPrimitiveType(PrimitiveTypeTree node, Type type) {
+  public Set<Fix> visitPrimitiveType(PrimitiveTypeTree node, Void unused) {
     // We do not generate fix for primitive types.
     return Set.of();
   }
 
   @Override
-  public Set<Fix> visitExpressionStatement(ExpressionStatementTree node, Type type) {
-    return node.getExpression().accept(this, type);
+  public Set<Fix> visitExpressionStatement(ExpressionStatementTree node, Void unused) {
+    return node.getExpression().accept(this, unused);
   }
 
   @Override
-  public Set<Fix> visitBinary(BinaryTree node, Type type) {
+  public Set<Fix> visitBinary(BinaryTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
-    fixes.addAll(node.getLeftOperand().accept(this, type));
-    fixes.addAll(node.getRightOperand().accept(this, type));
+    fixes.addAll(node.getLeftOperand().accept(this, unused));
+    fixes.addAll(node.getRightOperand().accept(this, unused));
     return fixes;
   }
 
-  public Set<Fix> visitArrayAccess(ArrayAccessTree node, Type type) {
+  public Set<Fix> visitArrayAccess(ArrayAccessTree node, Void unused) {
     // only the expression is enough, we do not need to annotate the index.
-    return node.getExpression().accept(this, type);
+    return node.getExpression().accept(this, unused);
   }
 
   @Override
-  public Set<Fix> visitMemberSelect(MemberSelectTree node, Type type) {
+  public Set<Fix> visitMemberSelect(MemberSelectTree node, Void unused) {
     if (typeFactory.mayBeTainted(node.getExpression())) {
       Element member = TreeUtils.elementFromUse(node);
       if (!(member instanceof Symbol)) {
         return Set.of();
       }
-      // If type is not null, we should annotate type parameter that matches the target type.
-      if (type != null) {
+      // If fix on receiver, we should annotate type parameter that matches the target type.
+      if (fixOnReceiver) {
         // If is a parameterized type, then we found the right declaration.
         if (Utility.isParameterizedType(((Symbol) member).type)) {
-          Fix fix = buildFixForElement(TreeUtils.elementFromUse(node), type);
+          Fix fix = buildFixForElement(TreeUtils.elementFromUse(node));
           return fix == null ? Set.of() : Set.of(fix);
         } else if (node instanceof JCTree.JCFieldAccess) {
           // Need to traverse the tree to find the right declaration.
           JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) node;
-          return fieldAccess.selected.accept(this, type);
+          return fieldAccess.selected.accept(this, unused);
         }
       } else {
-        Fix fix = buildFixForElement(TreeUtils.elementFromUse(node), null);
+        Fix fix = buildFixForElement(TreeUtils.elementFromUse(node));
         return fix == null ? Set.of() : Set.of(fix);
       }
     }
@@ -261,20 +262,13 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   }
 
   @Override
-  public Set<Fix> visitParenthesized(ParenthesizedTree node, Type type) {
-    return node.getExpression().accept(this, type);
-  }
-
-  private void addType(Type type) {
-    if (this.types == null) {
-      this.types = new ArrayDeque<>();
-    }
-    this.types.addFirst(type);
+  public Set<Fix> visitParenthesized(ParenthesizedTree node, Void unused) {
+    return node.getExpression().accept(this, unused);
   }
 
   @Override
-  public Set<Fix> visitUnary(UnaryTree node, Type type) {
-    return node.getExpression().accept(this, type);
+  public Set<Fix> visitUnary(UnaryTree node, Void unused) {
+    return node.getExpression().accept(this, unused);
   }
 
   /**
@@ -286,24 +280,46 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
     return visit(errorTree, null);
   }
 
+  private void setStateOnFixOnReceiver() {
+    this.fixOnReceiver = true;
+    this.fixOnSymbol = false;
+  }
+
+  private void setStateOnFixOnSymbol() {
+    if (fixOnReceiver) {
+      throw new RuntimeException("State already set");
+    }
+    fixOnSymbol = true;
+  }
+
+  private void addMethodInvocationNode(MethodInvocationTree tree) {
+    setStateOnFixOnReceiver();
+    if (this.invocations == null) {
+      this.invocations = new ArrayDeque<>();
+    }
+    this.invocations.addFirst(tree);
+  }
+
   /**
    * Builds the fix for the given element.
    *
    * @param element The element to build the fix for.
-   * @param type The type variable.
    * @return The fix for the given element.
    */
   @Nullable
-  public Fix buildFixForElement(Element element, Type type) {
+  public Fix buildFixForElement(Element element) {
     SymbolLocation location;
     if (element == null) {
       return null;
     }
     location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
-    if (type != null) {
+    if (fixOnReceiver) {
       // location requires a type variable modification.
       Type elementType = ((Symbol) element).type;
-      if (types.size() == 1 && Utility.hasSameUnderlyingType(required, types.peek())) {
+      if (invocations.size() == 1
+          && required
+              .getUnderlyingType()
+              .equals(TreeUtils.elementFromUse(invocations.peek()).getReturnType())) {
         print("Type match, we should annotate just the elements type");
       } else {
         print("Type mismatch");
