@@ -22,7 +22,9 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -39,8 +41,13 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
    * {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}.
    */
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
-
+  /** The tree that caused the error. */
   private final Tree errorTree;
+  /**
+   * The list of return types of methods that contain a type argument if any invocation is involved
+   * in the tree.
+   */
+  private List<Type> types;
 
   public FixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory, Tree errorTree) {
     this.context = context;
@@ -142,9 +149,10 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
         // receiver and all passed arguments.
         if ((!(calledMethod.getReturnType() instanceof Type.TypeVar))) {
           Set<Fix> fixes = new HashSet<>();
-          Type finalType = type;
           // Add a fix for each passed argument.
-          node.getArguments().forEach(arg -> fixes.addAll(arg.accept(this, finalType)));
+          for (ExpressionTree argument : node.getArguments()) {
+            fixes.addAll(argument.accept(this, type));
+          }
           // Add the fix for the receiver if not static.
           if (calledMethod.isStatic()) {
             // No receiver for static method calls.
@@ -159,6 +167,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       // check for type variable in return type. If present, we should annotate the declaration of
       // the receiver.
       if (Utility.containsTypeArgument(calledMethod.getReturnType())) {
+        addType(calledMethod.getReturnType());
         // set type, if not set.
         type = type == null ? calledMethod.getReturnType() : type;
         if (!calledMethod.isStatic() && node.getMethodSelect() instanceof MemberSelectTree) {
@@ -220,9 +229,8 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       }
       // If type is not null, we should annotate type parameter that matches the target type.
       if (type != null) {
-        // Need to check if member contains a type argument that includes the type. In that case, we
-        // found the right declaration.
-        if (Utility.containsTypeArgument(((Symbol) member).type, type)) {
+        // If is a parameterized type, then we found the right declaration.
+        if (Utility.isParameterizedType(((Symbol) member).type)) {
           Fix fix = buildFixForElement(TreeUtils.elementFromUse(node), type);
           return fix == null ? Set.of() : Set.of(fix);
         } else if (node instanceof JCTree.JCFieldAccess) {
@@ -241,6 +249,13 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
   @Override
   public Set<Fix> visitParenthesized(ParenthesizedTree node, Type type) {
     return node.getExpression().accept(this, type);
+  }
+
+  private void addType(Type type) {
+    if (this.types == null) {
+      this.types = new ArrayList<>();
+    }
+    this.types.add(type);
   }
 
   @Override
@@ -271,6 +286,9 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Type> {
       return null;
     }
     location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+    if (type != null) {
+      // location requires a type variable modification.
+    }
     if (location == null) {
       return null;
     }

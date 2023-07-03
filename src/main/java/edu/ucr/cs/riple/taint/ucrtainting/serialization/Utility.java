@@ -134,6 +134,17 @@ public class Utility {
     return false;
   }
 
+  public static boolean isParameterizedType(Type type) {
+    if (!(type instanceof Type.ClassType)) {
+      return false;
+    }
+    Type.ClassType classType = (Type.ClassType) type;
+    if (classType.getTypeArguments().size() == 0) {
+      return false;
+    }
+    return !containsTypeArgument(type);
+  }
+
   /**
    * Given a TreePath, finds the first enclosing node of the given type and returns the path from
    * the enclosing node to the top-level {@code CompilationUnitTree}.
