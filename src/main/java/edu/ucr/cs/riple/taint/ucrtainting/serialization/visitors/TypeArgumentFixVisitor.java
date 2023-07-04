@@ -13,6 +13,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -179,22 +180,28 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
           receiverSymbol instanceof Symbol.MethodSymbol
               ? ((Symbol.MethodSymbol) receiverSymbol).getReturnType()
               : receiverSymbol.type;
-      List<Type> providedTypeArgsForReceiver = receiverType.getTypeArguments();
+      List<Type> typeParametersForReceiver = receiverType.getTypeArguments();
 
       // Update translation:
-      List<Type> typeArguments = getAllTypeArguments(receiverType);
-      for (int i = 0; i < providedTypeArgsForReceiver.size(); i++) {
-        Type providedI = providedTypeArgsForReceiver.get(i);
+      List<Type> typeArgumentsForReceiver = getAllTypeArguments(receiverType);
+      Set<Type.TypeVar> existingTypeVars = typeVarMap.keySet();
+      Set<Type.TypeVar> toRemove = new HashSet<>();
+      for (int i = 0; i < typeParametersForReceiver.size(); i++) {
+        Type providedI = typeParametersForReceiver.get(i);
         if (!(providedI instanceof Type.TypeVar)) {
           continue;
         }
         Type.TypeVar provided = (Type.TypeVar) providedI;
-        if (typeVarMap.containsKey(provided)) {
+        if (existingTypeVars.contains(provided)) {
           Type.TypeVar value = typeVarMap.get(provided);
-          typeVarMap.remove(provided);
-          typeVarMap.put((Type.TypeVar) typeArguments.get(i), value);
+          Type.TypeVar newKey = (Type.TypeVar) typeArgumentsForReceiver.get(i);
+          if (!provided.equals(newKey)) {
+            toRemove.add(provided);
+          }
+          typeVarMap.put(newKey, value);
         }
       }
+      toRemove.forEach(typeVarMap::remove);
 
       if (receiverType instanceof Type.TypeVar) {
         // We should refresh base.

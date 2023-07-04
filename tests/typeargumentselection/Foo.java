@@ -21,15 +21,19 @@ public class Foo {
   public void testGenericFoo() {
     GenericFoo<String, String> gen = new GenericFoo<>();
     // :: error: assignment
-    @RUntainted String s = gen.bar.rand();
+    @RUntainted String s = gen.bar.getM();
+    // :: error: assignment
+    s = gen.bar.getL();
   }
 
   public void testGenericBar() {
     GenericBar<String, Map<String, String>> gen = new GenericBar<>();
     // :: error: assignment
-    @RUntainted String s = gen.instance().bar.rand();
+    @RUntainted String s = gen.instance().bar.getM();
     // :: error: assignment
     s = gen.instanceWithL().getK().keySet().iterator().next();
+    // :: error: assignment
+    s = gen.instanceWithL().getK().values().iterator().next();
   }
 
   static class GenericFoo<T, K> {
@@ -47,7 +51,11 @@ public class Foo {
   }
 
   static class GenericBar<M, L> {
-    M rand() {
+    M getM() {
+      return null;
+    }
+
+    L getL() {
       return null;
     }
 
