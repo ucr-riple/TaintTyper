@@ -318,61 +318,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
               .equals(TreeUtils.elementFromUse(receivers.get(0)).asType())) {
       } else {
         Preconditions.checkArgument(elementType instanceof Type.ClassType);
-
-        // Indexes of the type variables to locate the type which needs to be modified.
-        Map<Type.TypeVar, Type.TypeVar> typeVarMap = new HashMap<>();
-        List<Type> elementTypeArgs = getAllTypeArguments(elementType);
-        getAllTypeArguments(elementType)
-            .forEach(
-                type -> {
-                  Preconditions.checkArgument(type instanceof Type.TypeVar);
-                  typeVarMap.put((Type.TypeVar) type, (Type.TypeVar) type);
-                });
-        for (ExpressionTree receiver : receivers) {
-          // Locate passed type arguments
-          Symbol receiverSymbol = (Symbol) TreeUtils.elementFromUse(receiver);
-          Type receiverType =
-              receiverSymbol instanceof Symbol.MethodSymbol
-                  ? ((Symbol.MethodSymbol) receiverSymbol).getReturnType()
-                  : receiverSymbol.type;
-          List<Type> providedTypeArgsForReceiver = receiverType.getTypeArguments();
-
-          // Update translation:
-          List<Type> typeArguments = getAllTypeArguments(receiverType);
-          for (int i = 0; i < providedTypeArgsForReceiver.size(); i++) {
-            Type providedI = providedTypeArgsForReceiver.get(i);
-            if (!(providedI instanceof Type.TypeVar)) {
-              continue;
-            }
-            Type.TypeVar provided = (Type.TypeVar) providedI;
-            if (typeVarMap.containsKey(provided)) {
-              Type.TypeVar value = typeVarMap.get(provided);
-              typeVarMap.remove(provided);
-              typeVarMap.put((Type.TypeVar) typeArguments.get(i), value);
-            }
-          }
-
-          if (receiverType instanceof Type.TypeVar) {
-            // We should refresh base.
-            Type.TypeVar original = typeVarMap.get((Type.TypeVar) (receiverType));
-            int i;
-            for (i = 0; i < elementTypeArgs.size(); i++) {
-              if (elementTypeArgs.get(i).equals(original)) {
-                indexes.add(i);
-                break;
-              }
-            }
-            elementType = getProvidedTypeArguments(element).get(i);
-            elementTypeArgs = getAllTypeArguments(elementType);
-            typeVarMap.clear();
-            getAllTypeArguments(elementType)
-                .forEach(
-                    type -> {
-                      Preconditions.checkArgument(type instanceof Type.TypeVar);
-                      typeVarMap.put((Type.TypeVar) type, (Type.TypeVar) type);
-                    });
-          }
-        }
+        List<Integer> effectiveTypeArgumentIndex = locateTheEffectiveTypeArgument(element);
       }
     }
     if (location == null) {
@@ -395,5 +341,65 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       return symbol.type.allparams();
     }
     return symbol.type.getTypeArguments();
+  }
+
+  private List<Integer> locateTheEffectiveTypeArgument(Element element) {
+    Type elementType = ((Symbol) element).type;
+    List<Integer> indexes = new ArrayList<>();
+    // Indexes of the type variables to locate the type which needs to be modified.
+    Map<Type.TypeVar, Type.TypeVar> typeVarMap = new HashMap<>();
+    List<Type> elementTypeArgs = getAllTypeArguments(elementType);
+    getAllTypeArguments(elementType)
+        .forEach(
+            type -> {
+              Preconditions.checkArgument(type instanceof Type.TypeVar);
+              typeVarMap.put((Type.TypeVar) type, (Type.TypeVar) type);
+            });
+    for (ExpressionTree receiver : receivers) {
+      // Locate passed type arguments
+      Symbol receiverSymbol = (Symbol) TreeUtils.elementFromUse(receiver);
+      Type receiverType =
+          receiverSymbol instanceof Symbol.MethodSymbol
+              ? ((Symbol.MethodSymbol) receiverSymbol).getReturnType()
+              : receiverSymbol.type;
+      List<Type> providedTypeArgsForReceiver = receiverType.getTypeArguments();
+
+      // Update translation:
+      List<Type> typeArguments = getAllTypeArguments(receiverType);
+      for (int i = 0; i < providedTypeArgsForReceiver.size(); i++) {
+        Type providedI = providedTypeArgsForReceiver.get(i);
+        if (!(providedI instanceof Type.TypeVar)) {
+          continue;
+        }
+        Type.TypeVar provided = (Type.TypeVar) providedI;
+        if (typeVarMap.containsKey(provided)) {
+          Type.TypeVar value = typeVarMap.get(provided);
+          typeVarMap.remove(provided);
+          typeVarMap.put((Type.TypeVar) typeArguments.get(i), value);
+        }
+      }
+
+      if (receiverType instanceof Type.TypeVar) {
+        // We should refresh base.
+        Type.TypeVar original = typeVarMap.get((Type.TypeVar) (receiverType));
+        int i;
+        for (i = 0; i < elementTypeArgs.size(); i++) {
+          if (elementTypeArgs.get(i).equals(original)) {
+            indexes.add(i);
+            break;
+          }
+        }
+        elementType = getProvidedTypeArguments(element).get(i);
+        elementTypeArgs = getAllTypeArguments(elementType);
+        typeVarMap.clear();
+        getAllTypeArguments(elementType)
+            .forEach(
+                type -> {
+                  Preconditions.checkArgument(type instanceof Type.TypeVar);
+                  typeVarMap.put((Type.TypeVar) type, (Type.TypeVar) type);
+                });
+      }
+    }
+    return indexes;
   }
 }

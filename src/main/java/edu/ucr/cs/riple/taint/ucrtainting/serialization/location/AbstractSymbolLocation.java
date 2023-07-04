@@ -45,9 +45,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
     this.target = target;
   }
 
-  /**
-   * @return the type variables of the symbol.
-   */
+  /** @return the type variables of the symbol. */
   public List<Type> getTypeVariables() {
     return target.type.tsym.type.getTypeArguments();
   }
