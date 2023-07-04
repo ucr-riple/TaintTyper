@@ -429,7 +429,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
 
   private List<Type> getAllTypeArguments(Type elementType) {
     if (elementType instanceof Type.ClassType) {
-      return ((Type.ClassType) (elementType).tsym.type).allparams_field;
+      return ((Type.ClassType) (elementType).tsym.type).allparams();
     } else {
       return elementType.tsym.type.getTypeArguments();
     }
@@ -438,7 +438,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   private List<Type> getProvidedTypeArguments(Element element) {
     Symbol symbol = (Symbol) element;
     if (symbol.type instanceof Type.ClassType) {
-      return ((Type.ClassType) symbol.type).allparams_field;
+      return ((Type.ClassType) symbol.type).allparams();
     }
     return symbol.type.getTypeArguments();
   }
