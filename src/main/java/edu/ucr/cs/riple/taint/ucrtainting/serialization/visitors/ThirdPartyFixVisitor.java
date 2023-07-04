@@ -1,0 +1,49 @@
+package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
+
+import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.MemberSelectTree;
+import com.sun.source.tree.MethodInvocationTree;
+import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import java.util.HashSet;
+import java.util.Set;
+import javax.lang.model.element.Element;
+import org.checkerframework.javacutil.TreeUtils;
+
+public class ThirdPartyFixVisitor extends BasicVisitor {
+
+  public ThirdPartyFixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
+    super(context, factory, null);
+  }
+
+  @Override
+  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Void unused) {
+    Element element = TreeUtils.elementFromUse(node);
+    if (element == null) {
+      return Set.of();
+    }
+    Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
+    // check if the call is to a method defined in a third party library.
+
+    // Check if the method is source defined in stubs.
+    if (typeFactory.isFromStubFile(calledMethod)) {
+      // We cannot do any fix here
+      return Set.of();
+    }
+    Set<Fix> fixes = new HashSet<>();
+    // Add a fix for each passed argument.
+    for (ExpressionTree argument : node.getArguments()) {
+      fixes.addAll(argument.accept(this, unused));
+    }
+    // Add the fix for the receiver if not static.
+    if (calledMethod.isStatic()) {
+      // No receiver for static method calls.
+      return fixes;
+    }
+    // Build the fix for the receiver.
+    fixes.addAll(((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, unused));
+    return fixes;
+  }
+}

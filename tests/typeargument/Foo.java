@@ -31,7 +31,7 @@ class Foo {
     // :: error: argument
     requireTypeArgument(getTypeArgument());
     // :: error: assignment
-    field = other.getO().getT();
+    field = other.getO().getE();
     // :: error: assignment
     field = other.inner.innerField.getT();
 

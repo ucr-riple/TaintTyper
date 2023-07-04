@@ -11,6 +11,7 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixVisitor;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -89,7 +90,7 @@ public class SerializationService {
         if (!Utility.isInAnnotatedPackage(encClass, typeFactory)) {
           return ImmutableSet.of();
         }
-        return tree.accept(new FixVisitor(context, typeFactory, required, found), null);
+        return tree.accept(new FixVisitor(context, typeFactory, required), null);
     }
   }
 
