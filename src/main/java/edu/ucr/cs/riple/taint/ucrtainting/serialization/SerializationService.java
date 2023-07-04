@@ -89,7 +89,7 @@ public class SerializationService {
         if (!Utility.isInAnnotatedPackage(encClass, typeFactory)) {
           return ImmutableSet.of();
         }
-        return new FixVisitor(context, typeFactory, tree, required, found).generateFixes();
+        return tree.accept(new FixVisitor(context, typeFactory, required, found), null);
     }
   }
 

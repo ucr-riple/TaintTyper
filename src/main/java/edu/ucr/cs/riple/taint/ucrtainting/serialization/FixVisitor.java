@@ -13,7 +13,6 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.ParenthesizedTree;
 import com.sun.source.tree.PrimitiveTypeTree;
-import com.sun.source.tree.Tree;
 import com.sun.source.tree.TypeCastTree;
 import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
@@ -45,8 +44,6 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
    * {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}.
    */
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
-  /** The tree that caused the error. */
-  private final Tree errorTree;
   /**
    * The list method invocations that their return type contained a type argument. Used to detect
    * which type in the receiver should be annotated.
@@ -56,19 +53,20 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   private final AnnotatedTypeMirror required;
   /** Found annotated type in the assignment on the right hand side. */
   private final AnnotatedTypeMirror found;
-
-  boolean fixOnReceiver = false;
-  boolean fixOnSymbol = true;
+  /**
+   * If true, the fix will be generated on the receiver of the method invocation. The generated
+   * fixes are on a type argument of the receiver which will be copied to the called method returns
+   * type automatically.
+   */
+  private boolean fixOnReceiver = false;
 
   public FixVisitor(
       Context context,
       UCRTaintingAnnotatedTypeFactory factory,
-      Tree errorTree,
       AnnotatedTypeMirror required,
       AnnotatedTypeMirror found) {
     this.context = context;
     this.typeFactory = factory;
-    this.errorTree = errorTree;
     this.required = required;
     this.found = found;
   }
@@ -87,13 +85,13 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     Set<Fix> fixes = new HashSet<>();
     if (typeFactory.mayBeTainted(node.getTrueExpression())) {
       fixes.addAll(
-          new FixVisitor(context, typeFactory, node.getTrueExpression(), required, found)
-              .generateFixes());
+          node.getTrueExpression()
+              .accept(new FixVisitor(context, typeFactory, required, found), null));
     }
     if (typeFactory.mayBeTainted(node.getFalseExpression())) {
       fixes.addAll(
-          new FixVisitor(context, typeFactory, node.getFalseExpression(), required, found)
-              .generateFixes());
+          node.getFalseExpression()
+              .accept(new FixVisitor(context, typeFactory, required, found), null));
     }
     return fixes;
   }
@@ -235,11 +233,9 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   public Set<Fix> visitBinary(BinaryTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
     fixes.addAll(
-        new FixVisitor(context, typeFactory, node.getLeftOperand(), required, found)
-            .generateFixes());
+        node.getLeftOperand().accept(new FixVisitor(context, typeFactory, required, found), null));
     fixes.addAll(
-        new FixVisitor(context, typeFactory, node.getRightOperand(), required, found)
-            .generateFixes());
+        node.getRightOperand().accept(new FixVisitor(context, typeFactory, required, found), null));
     return fixes;
   }
 
@@ -286,28 +282,13 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   }
 
   /**
-   * Generates fixes for the given error tree.
+   * Adds the given tree to the list of receivers. Also sets the {@link #fixOnReceiver} flag to
+   * true.
    *
-   * @return The set of fixes for the given error tree.
+   * @param tree The tree to add to the list of receivers.
    */
-  public Set<Fix> generateFixes() {
-    return visit(errorTree, null);
-  }
-
-  private void setStateOnFixOnReceiver() {
-    this.fixOnReceiver = true;
-    this.fixOnSymbol = false;
-  }
-
-  private void setStateOnFixOnSymbol() {
-    if (fixOnReceiver) {
-      throw new RuntimeException("State already set");
-    }
-    fixOnSymbol = true;
-  }
-
   private void addReceiver(ExpressionTree tree) {
-    setStateOnFixOnReceiver();
+    this.fixOnReceiver = true;
     if (this.receivers == null) {
       this.receivers = new ArrayList<>();
     }
