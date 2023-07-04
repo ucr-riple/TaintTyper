@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import static edu.ucr.cs.riple.taint.ucrtainting.Log.print;
 
+import com.google.common.base.Preconditions;
 import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.ConditionalExpressionTree;
@@ -24,9 +25,11 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -50,7 +53,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
    * The list method invocations that their return type contained a type argument. Used to detect
    * which type in the receiver should be annotated.
    */
-  private Deque<MethodInvocationTree> invocations;
+  private List<MethodInvocationTree> invocations;
   /** Required annotated type in the assignment on the left hand side. */
   private final AnnotatedTypeMirror required;
   /** Found annotated type in the assignment on the right hand side. */
@@ -85,10 +88,14 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   public Set<Fix> visitConditionalExpression(ConditionalExpressionTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
     if (typeFactory.mayBeTainted(node.getTrueExpression())) {
-      fixes.addAll(node.getTrueExpression().accept(this, unused));
+      fixes.addAll(
+          new FixVisitor(context, typeFactory, node.getTrueExpression(), required, found)
+              .generateFixes());
     }
     if (typeFactory.mayBeTainted(node.getFalseExpression())) {
-      fixes.addAll(node.getFalseExpression().accept(this, unused));
+      fixes.addAll(
+          new FixVisitor(context, typeFactory, node.getFalseExpression(), required, found)
+              .generateFixes());
     }
     return fixes;
   }
@@ -149,60 +156,64 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
    */
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Void unused) {
-    if (typeFactory.mayBeTainted(node.getMethodSelect())) {
-      Element element = TreeUtils.elementFromUse(node);
-      if (element == null) {
+    Element element = TreeUtils.elementFromUse(node);
+    if (element == null) {
+      return Set.of();
+    }
+    Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
+    // check if the call is to a method defined in a third party library.
+    if (!Utility.isInAnnotatedPackage(calledMethod, typeFactory)) {
+      // Check if the method is source defined in stubs.
+      if (typeFactory.isFromStubFile(calledMethod)) {
+        // We cannot do any fix here
         return Set.of();
       }
-      Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
-      // check if the call is to a method defined in a third party library.
-      if (!Utility.isInAnnotatedPackage(calledMethod, typeFactory)) {
-        // Check if the method is source defined in stubs.
-        if (typeFactory.isFromStubFile(calledMethod)) {
-          // We cannot do any fix here
-          return Set.of();
+      // Check the return type, if it does not contain type variable, we can annotate the
+      // receiver and all passed arguments.
+      if (!(Utility.containsTypeArgument(calledMethod.getReturnType()))) {
+        Set<Fix> fixes = new HashSet<>();
+        // Add a fix for each passed argument.
+        for (ExpressionTree argument : node.getArguments()) {
+          fixes.addAll(argument.accept(this, unused));
         }
-        // Check the return type, if it does not contain type variable, we can annotate the
-        // receiver and all passed arguments.
-        if (!(Utility.containsTypeArgument(calledMethod.getReturnType()))) {
-          Set<Fix> fixes = new HashSet<>();
-          // Add a fix for each passed argument.
-          for (ExpressionTree argument : node.getArguments()) {
-            fixes.addAll(argument.accept(this, unused));
-          }
-          // Add the fix for the receiver if not static.
-          if (calledMethod.isStatic()) {
-            // No receiver for static method calls.
-            return fixes;
-          }
-          // Build the fix for the receiver.
-          fixes.addAll(
-              ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, unused));
+        // Add the fix for the receiver if not static.
+        if (calledMethod.isStatic()) {
+          // No receiver for static method calls.
           return fixes;
         }
-      }
-      // Locate method receiver.
-      ExpressionTree receiver = null;
-      if (node.getMethodSelect() instanceof MemberSelectTree) {
-        receiver = ((MemberSelectTree) node.getMethodSelect()).getExpression();
-      }
-      // If method is static, or has no receiver, or receiver is "this", we must annotate the method
-      // directly.
-      if (calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver)) {
-        return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
-      }
-      // The method has a receiver, if the method contains a type argument, we should annotate the
-      // receiver and leave the called method untouched. Annotation on the declaration on the type
-      // argument, will be added on the method automatically.
-      if (Utility.containsTypeArgument(calledMethod.getReturnType()) && !calledMethod.isStatic()) {
-        addMethodInvocationNode(node);
-        return receiver.accept(this, unused);
-      } else {
-        // Build a fix for the called method return type.
-        return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
+        // Build the fix for the receiver.
+        fixes.addAll(
+            ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, unused));
+        return fixes;
       }
     }
-    return Set.of();
+    // Locate method receiver.
+    ExpressionTree receiver = null;
+    if (node.getMethodSelect() instanceof MemberSelectTree) {
+      receiver = ((MemberSelectTree) node.getMethodSelect()).getExpression();
+    }
+    // If method is static, or has no receiver, or receiver is "this", we must annotate the method
+    // directly.
+    if (calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver)) {
+      fixOnReceiver = false;
+      return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
+    }
+    if (fixOnReceiver) {
+      addMethodInvocationNode(node);
+    }
+    // The method has a receiver, if the method contains a type argument, we should annotate the
+    // receiver and leave the called method untouched. Annotation on the declaration on the type
+    // argument, will be added on the method automatically.
+    if (Utility.containsTypeArgument(calledMethod.getReturnType()) && !calledMethod.isStatic()) {
+      if (!fixOnReceiver) {
+        addMethodInvocationNode(node);
+      }
+      return receiver.accept(this, unused);
+    } else {
+      fixOnReceiver = false;
+      // Build a fix for the called method return type.
+      return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
+    }
   }
 
   @Override
@@ -225,8 +236,12 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   @Override
   public Set<Fix> visitBinary(BinaryTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
-    fixes.addAll(node.getLeftOperand().accept(this, unused));
-    fixes.addAll(node.getRightOperand().accept(this, unused));
+    fixes.addAll(
+        new FixVisitor(context, typeFactory, node.getLeftOperand(), required, found)
+            .generateFixes());
+    fixes.addAll(
+        new FixVisitor(context, typeFactory, node.getRightOperand(), required, found)
+            .generateFixes());
     return fixes;
   }
 
@@ -295,9 +310,9 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   private void addMethodInvocationNode(MethodInvocationTree tree) {
     setStateOnFixOnReceiver();
     if (this.invocations == null) {
-      this.invocations = new ArrayDeque<>();
+      this.invocations = new ArrayList<>();
     }
-    this.invocations.addFirst(tree);
+    this.invocations.add(0, tree);
   }
 
   /**
@@ -313,45 +328,102 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       return null;
     }
     location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+    List<Integer> indexes = new ArrayList<>();
     if (fixOnReceiver) {
       // location requires a type variable modification.
       Type elementType = ((Symbol) element).type;
       if (invocations.size() == 1
           && required
               .getUnderlyingType()
-              .equals(TreeUtils.elementFromUse(invocations.peek()).getReturnType())) {
+              .equals(TreeUtils.elementFromUse(invocations.get(0)).getReturnType())) {
         print("Type match, we should annotate just the elements type");
       } else {
         print("Type mismatch");
-        //        Preconditions.checkArgument(elementType instanceof Type.ClassType);
-        //        types.forEach(
-        //            new Consumer<Type>() {
-        //              @Override
-        //              public void accept(Type type) {
-        //                System.out.println("TYPE: " + type + " " + "SYMBOL: " + type.tsym.type);
-        //              }
-        //            });
-        //        System.out.println(
-        //            "ELEMENT TYPE: " + elementType + " " + "SYMBOL: " + elementType.tsym.type);
-        //        System.out.println("REQUIRED: " + required);
-        //        System.out.println("FOUND: " + found);
-        //        Type headOnElement = elementType;
-        //        List<Integer> indecies = new ArrayList<>();
-        //        while (types.size() != 0) {
-        //          Type top = types.pop();
-        //          if (!(Utility.containsTypeArgument(top))) {
-        //            break;
-        //          }
-        //          List<Type> typeVarsTop = top.tsym.type.getTypeArguments();
-        //          List<Type> typeVarsElement = top.tsym.type.getTypeArguments();
-        //        }
-        //        List<Type> typeVars = elementType.tsym.type.getTypeArguments();
-        //        Type top = types.pop();
+        Preconditions.checkArgument(elementType instanceof Type.ClassType);
+
+        // Indexes of the type variables to locate the type which needs to be modified.
+        Map<Type.TypeVar, Type.TypeVar> typeVarMap = new HashMap<>();
+        List<Type> elementTypeArgs = elementType.tsym.type.getTypeArguments();
+        elementType
+            .tsym
+            .type
+            .getTypeArguments()
+            .forEach(
+                type -> {
+                  Preconditions.checkArgument(type instanceof Type.TypeVar);
+                  typeVarMap.put((Type.TypeVar) type, (Type.TypeVar) type);
+                });
+        for (MethodInvocationTree callIndex : invocations) {
+          // Update map for translation. Start by mapping the type variables to themselves.
+
+          // Locate passed type arguments
+          Symbol.MethodSymbol calledMethod =
+              (Symbol.MethodSymbol) TreeUtils.elementFromUse(callIndex);
+          List<Type> providedTypeArgsCallIndex = calledMethod.getReturnType().getTypeArguments();
+
+          // Update translation:
+          List<Type> typeArguments = calledMethod.getReturnType().tsym.type.getTypeArguments();
+          for (int i = 0; i < providedTypeArgsCallIndex.size(); i++) {
+            Type.TypeVar provided = (Type.TypeVar) providedTypeArgsCallIndex.get(i);
+            if (typeVarMap.containsKey(provided)) {
+              Type.TypeVar value = typeVarMap.get(provided);
+              typeVarMap.remove(provided);
+              typeVarMap.put((Type.TypeVar) typeArguments.get(i), value);
+            }
+          }
+
+          if (calledMethod.getReturnType() instanceof Type.TypeVar) {
+            // We should refresh base.
+            Type.TypeVar original = typeVarMap.get((Type.TypeVar) (calledMethod.getReturnType()));
+            int i;
+            for (i = 0; i < elementTypeArgs.size(); i++) {
+              if (elementTypeArgs.get(i).equals(original)) {
+                indexes.add(i);
+                break;
+              }
+            }
+            elementType = ((Symbol) element).type.getTypeArguments().get(i);
+            elementTypeArgs = elementType.tsym.type.getTypeArguments();
+            typeVarMap.clear();
+            elementType
+                .tsym
+                .type
+                .getTypeArguments()
+                .forEach(
+                    type -> {
+                      Preconditions.checkArgument(type instanceof Type.TypeVar);
+                      typeVarMap.put((Type.TypeVar) type, (Type.TypeVar) type);
+                    });
+          }
+        }
       }
     }
     if (location == null) {
       return null;
     }
     return new Fix("untainted", location);
+  }
+
+  private void logInvocation(Element element, Type elementType) {
+    invocations.forEach(
+        type -> {
+          JCTree.JCMethodInvocation invocation = (JCTree.JCMethodInvocation) type;
+          Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(type);
+          System.out.println(
+              "CALLED METHOD: "
+                  + calledMethod
+                  + " - RETURN TYPE: "
+                  + invocation.type
+                  + " - CLASS: "
+                  + calledMethod.enclClass().type.tsym.type
+                  + " - RETURN TYPE SYM: "
+                  + calledMethod.getReturnType()
+                  + " - TYPE SYMBOL: "
+                  + calledMethod.getReturnType().tsym.type);
+        });
+    System.out.println("ELEMENT: " + element);
+    System.out.println("TYPE: " + elementType + " - SYMBOL: " + elementType.tsym.type);
+    System.out.println("REQUIRED: " + required);
+    System.out.println("FOUND: " + found);
   }
 }

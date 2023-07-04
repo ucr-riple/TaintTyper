@@ -8,16 +8,16 @@ public class Test {
   Baz<String> baz;
 
   void bar() {
+    //    // :: error: assignment
+    //    @RUntainted String untaintedVar = foo.keySet().iterator().next();
+    //    // :: error: assignment
+    //    untaintedVar = foo.values().iterator().next();
+    //    // :: error: assignment
+    //    untaintedVar = inner.bar.keySet().iterator().next();
+    //    // :: error: assignment
+    //    untaintedVar = inner.test.foo.keySet().iterator().next();
     // :: error: assignment
-    @RUntainted String untaintedVar = foo.keySet().iterator().next();
-    // :: error: assignment
-    untaintedVar = foo.values().iterator().next();
-    // :: error: assignment
-    untaintedVar = inner.bar.keySet().iterator().next();
-    // :: error: assignment
-    untaintedVar = inner.test.foo.keySet().iterator().next();
-    // :: error: assignment
-    untaintedVar = baz.foo.getE();
+    @RUntainted String untaintedVar = baz.foo.getE();
     // :: error: assignment
     untaintedVar = baz.foo.getString();
     // :: error: assignment
