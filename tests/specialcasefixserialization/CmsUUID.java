@@ -18,7 +18,7 @@ public class CmsUUID {
   private static final String BAZ = "property";
   private static final String PATH = "/";
 
-  //  // Should not be error here.
+  // Should not be error here.
   static final int CONCURRENCY_LEVEL = 8;
   public static final List<@RUntainted String> FOLDERS =
       Collections.unmodifiableList(Arrays.asList(BAZ));

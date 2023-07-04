@@ -308,25 +308,36 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       return null;
     }
     location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
-    List<Integer> indexes = new ArrayList<>();
+    Type elementType =
+        element instanceof Symbol.MethodSymbol
+            ? ((Symbol.MethodSymbol) element).getReturnType()
+            : ((Symbol) element).type;
+    Type providedType = elementType;
+    List<Integer> effectiveTypeArgumentIndex = null;
     if (fixOnReceiver) {
       // location requires a type variable modification.
-      Type elementType = ((Symbol) element).type;
-      if (receivers.size() == 1
-          && required
-              .getUnderlyingType()
-              .equals(TreeUtils.elementFromUse(receivers.get(0)).asType())) {
-      } else {
-        Preconditions.checkArgument(elementType instanceof Type.ClassType);
-        List<Integer> effectiveTypeArgumentIndex = locateTheEffectiveTypeArgument(element);
+      Preconditions.checkArgument(elementType instanceof Type.ClassType);
+      effectiveTypeArgumentIndex = locateTheEffectiveTypeParameter(element);
+      for (int index : effectiveTypeArgumentIndex) {
+        providedType = providedType.getTypeArguments().get(index);
       }
+    } else {
+      effectiveTypeArgumentIndex = List.of();
     }
+    System.out.println(providedType);
+    List<List<Integer>> annotsToAdd = new ArrayList<>();
     if (location == null) {
       return null;
     }
     return new Fix("untainted", location);
   }
 
+  /**
+   * Returns the list of type arguments for the given element.
+   *
+   * @param elementType The element to get the type arguments for.
+   * @return The list of type arguments for the given element.
+   */
   private List<Type> getAllTypeArguments(Type elementType) {
     if (elementType instanceof Type.ClassType) {
       return (elementType).tsym.type.allparams();
@@ -335,6 +346,12 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     }
   }
 
+  /**
+   * Returns the list of type arguments for the given element.
+   *
+   * @param element The element to get the type arguments for.
+   * @return The list of type arguments for the given element.
+   */
   private List<Type> getProvidedTypeArguments(Element element) {
     Symbol symbol = (Symbol) element;
     if (symbol.type instanceof Type.ClassType) {
@@ -343,7 +360,13 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     return symbol.type.getTypeArguments();
   }
 
-  private List<Integer> locateTheEffectiveTypeArgument(Element element) {
+  /**
+   * Locates the type parameter in the declaration based on the chain of receivers.
+   *
+   * @param element The element which provided the type parameters.
+   * @return The list of indexes of the type parameters.
+   */
+  private List<Integer> locateTheEffectiveTypeParameter(Element element) {
     Type elementType = ((Symbol) element).type;
     List<Integer> indexes = new ArrayList<>();
     // Indexes of the type variables to locate the type which needs to be modified.
@@ -401,5 +424,21 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       }
     }
     return indexes;
+  }
+
+  private List<Integer> findAnnotsToAdd(Type provided, AnnotatedTypeMirror required) {
+    if (provided instanceof Type.TypeVar
+        && required instanceof AnnotatedTypeMirror.AnnotatedTypeVariable) {
+      // "E" and "E extends @Untainted Object"
+    }
+    if (provided instanceof Type.ClassType
+        && required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      // "List<E>" and "List<@Untainted E>"
+    }
+    if (required instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      // Add on the declaration
+    }
+
+    return null;
   }
 }
