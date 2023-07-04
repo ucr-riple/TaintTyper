@@ -400,36 +400,9 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     return new Fix("untainted", location);
   }
 
-  private void logInvocation(Element element, Type elementType) {
-    receivers.forEach(
-        type -> {
-          ExpressionTree receiver = type;
-          Symbol receiverSymbol = (Symbol) TreeUtils.elementFromTree(type);
-          Type receiverType =
-              receiverSymbol instanceof Symbol.MethodSymbol
-                  ? ((Symbol.MethodSymbol) receiverSymbol).getReturnType()
-                  : receiverSymbol.type;
-          System.out.println(
-              "CALLED METHOD: "
-                  + receiverSymbol
-                  + " - RETURN TYPE: "
-                  + receiver
-                  + " - CLASS: "
-                  + receiverSymbol.enclClass().type.tsym.type
-                  + " - RETURN TYPE SYM: "
-                  + receiverType
-                  + " - TYPE SYMBOL: "
-                  + receiverType.tsym.type);
-        });
-    System.out.println("ELEMENT: " + element);
-    System.out.println("TYPE: " + elementType + " - SYMBOL: " + elementType.tsym.type);
-    System.out.println("REQUIRED: " + required);
-    System.out.println("FOUND: " + found);
-  }
-
   private List<Type> getAllTypeArguments(Type elementType) {
     if (elementType instanceof Type.ClassType) {
-      return ((Type.ClassType) (elementType).tsym.type).allparams();
+      return (elementType).tsym.type.allparams();
     } else {
       return elementType.tsym.type.getTypeArguments();
     }
@@ -438,7 +411,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   private List<Type> getProvidedTypeArguments(Element element) {
     Symbol symbol = (Symbol) element;
     if (symbol.type instanceof Type.ClassType) {
-      return ((Type.ClassType) symbol.type).allparams();
+      return symbol.type.allparams();
     }
     return symbol.type.getTypeArguments();
   }

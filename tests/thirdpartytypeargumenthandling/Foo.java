@@ -15,6 +15,6 @@ public class Foo {
   public void notErrorOnListIterator() {
     @RUntainted List<@RUntainted String> list = new ArrayList<>();
     // Should not be error here.
-    @RUntainted Iterator<@RUntainted String> iterator = list.iterator();
+    Iterator<@RUntainted String> iterator = list.iterator();
   }
 }

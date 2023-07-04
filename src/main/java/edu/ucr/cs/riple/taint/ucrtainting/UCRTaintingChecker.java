@@ -51,7 +51,6 @@ public class UCRTaintingChecker extends BaseTypeChecker {
       AnnotatedTypeMirror required,
       Object... args) {
     reportError(source, messageKey, args);
-    print("Last visited Node: " + visitor.getCurrentPath().getLeaf());
     this.serializationService.serializeError(source, messageKey, args, required, found);
   }
 }
