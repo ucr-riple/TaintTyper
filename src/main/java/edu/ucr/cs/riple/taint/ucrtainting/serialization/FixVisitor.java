@@ -1,7 +1,5 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
-import static edu.ucr.cs.riple.taint.ucrtainting.Log.print;
-
 import com.google.common.base.Preconditions;
 import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.BinaryTree;
@@ -337,10 +335,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
           && required
               .getUnderlyingType()
               .equals(TreeUtils.elementFromUse(receivers.get(0)).asType())) {
-        print("Type match, we should annotate just the elements type");
       } else {
-        print("Type mismatch");
-        logInvocation(element, elementType);
         Preconditions.checkArgument(elementType instanceof Type.ClassType);
 
         // Indexes of the type variables to locate the type which needs to be modified.
@@ -364,7 +359,11 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
           // Update translation:
           List<Type> typeArguments = getAllTypeArguments(receiverType);
           for (int i = 0; i < providedTypeArgsForReceiver.size(); i++) {
-            Type.TypeVar provided = (Type.TypeVar) providedTypeArgsForReceiver.get(i);
+            Type providedI = providedTypeArgsForReceiver.get(i);
+            if (!(providedI instanceof Type.TypeVar)) {
+              continue;
+            }
+            Type.TypeVar provided = (Type.TypeVar) providedI;
             if (typeVarMap.containsKey(provided)) {
               Type.TypeVar value = typeVarMap.get(provided);
               typeVarMap.remove(provided);

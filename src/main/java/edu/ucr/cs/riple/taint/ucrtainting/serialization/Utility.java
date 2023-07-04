@@ -127,7 +127,7 @@ public class Utility {
     }
     if (type instanceof Type.ClassType) {
       Type.ClassType classType = (Type.ClassType) type;
-      for (Type t : classType.getTypeArguments()) {
+      for (Type t : classType.allparams_field) {
         if (containsTypeArgument(t)) {
           return true;
         }

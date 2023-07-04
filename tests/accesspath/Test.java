@@ -21,7 +21,8 @@ public class Test {
     //    // :: error: assignment
     //    untaintedVar = baz.foo.getString();
     // :: error: assignment
-    @RUntainted String untaintedVar = baz.innerBaz.b.innerBaz.getE();
+    @RUntainted
+    String untaintedVar = baz.innerBaz.b.innerBaz.getE(); // TODO: b should be selected here.
     // :: error: assignment
     untaintedVar = baz.innerBaz.getOther().getInnerBaz().getE();
   }
