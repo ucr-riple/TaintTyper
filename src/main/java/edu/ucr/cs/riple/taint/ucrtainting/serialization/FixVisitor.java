@@ -53,7 +53,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
    * The list method invocations that their return type contained a type argument. Used to detect
    * which type in the receiver should be annotated.
    */
-  private List<MethodInvocationTree> invocations;
+  private List<ExpressionTree> receivers;
   /** Required annotated type in the assignment on the left hand side. */
   private final AnnotatedTypeMirror required;
   /** Found annotated type in the assignment on the right hand side. */
@@ -199,14 +199,14 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
     }
     if (fixOnReceiver) {
-      addMethodInvocationNode(node);
+      addReceiver(node);
     }
     // The method has a receiver, if the method contains a type argument, we should annotate the
     // receiver and leave the called method untouched. Annotation on the declaration on the type
     // argument, will be added on the method automatically.
     if (Utility.containsTypeArgument(calledMethod.getReturnType()) && !calledMethod.isStatic()) {
       if (!fixOnReceiver) {
-        addMethodInvocationNode(node);
+        addReceiver(node);
       }
       return receiver.accept(this, unused);
     } else {
@@ -266,6 +266,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
         } else if (node instanceof JCTree.JCFieldAccess) {
           // Need to traverse the tree to find the right declaration.
           JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) node;
+          addReceiver(fieldAccess);
           return fieldAccess.selected.accept(this, unused);
         }
       } else {
@@ -307,12 +308,12 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     fixOnSymbol = true;
   }
 
-  private void addMethodInvocationNode(MethodInvocationTree tree) {
+  private void addReceiver(ExpressionTree tree) {
     setStateOnFixOnReceiver();
-    if (this.invocations == null) {
-      this.invocations = new ArrayList<>();
+    if (this.receivers == null) {
+      this.receivers = new ArrayList<>();
     }
-    this.invocations.add(0, tree);
+    this.receivers.add(0, tree);
   }
 
   /**
@@ -332,39 +333,38 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     if (fixOnReceiver) {
       // location requires a type variable modification.
       Type elementType = ((Symbol) element).type;
-      if (invocations.size() == 1
+      if (receivers.size() == 1
           && required
               .getUnderlyingType()
-              .equals(TreeUtils.elementFromUse(invocations.get(0)).getReturnType())) {
+              .equals(TreeUtils.elementFromUse(receivers.get(0)).asType())) {
         print("Type match, we should annotate just the elements type");
       } else {
         print("Type mismatch");
+        logInvocation(element, elementType);
         Preconditions.checkArgument(elementType instanceof Type.ClassType);
 
         // Indexes of the type variables to locate the type which needs to be modified.
         Map<Type.TypeVar, Type.TypeVar> typeVarMap = new HashMap<>();
-        List<Type> elementTypeArgs = elementType.tsym.type.getTypeArguments();
-        elementType
-            .tsym
-            .type
-            .getTypeArguments()
+        List<Type> elementTypeArgs = getAllTypeArguments(elementType);
+        getAllTypeArguments(elementType)
             .forEach(
                 type -> {
                   Preconditions.checkArgument(type instanceof Type.TypeVar);
                   typeVarMap.put((Type.TypeVar) type, (Type.TypeVar) type);
                 });
-        for (MethodInvocationTree callIndex : invocations) {
-          // Update map for translation. Start by mapping the type variables to themselves.
-
+        for (ExpressionTree receiver : receivers) {
           // Locate passed type arguments
-          Symbol.MethodSymbol calledMethod =
-              (Symbol.MethodSymbol) TreeUtils.elementFromUse(callIndex);
-          List<Type> providedTypeArgsCallIndex = calledMethod.getReturnType().getTypeArguments();
+          Symbol receiverSymbol = (Symbol) TreeUtils.elementFromUse(receiver);
+          Type receiverType =
+              receiverSymbol instanceof Symbol.MethodSymbol
+                  ? ((Symbol.MethodSymbol) receiverSymbol).getReturnType()
+                  : receiverSymbol.type;
+          List<Type> providedTypeArgsForReceiver = receiverType.getTypeArguments();
 
           // Update translation:
-          List<Type> typeArguments = calledMethod.getReturnType().tsym.type.getTypeArguments();
-          for (int i = 0; i < providedTypeArgsCallIndex.size(); i++) {
-            Type.TypeVar provided = (Type.TypeVar) providedTypeArgsCallIndex.get(i);
+          List<Type> typeArguments = getAllTypeArguments(receiverType);
+          for (int i = 0; i < providedTypeArgsForReceiver.size(); i++) {
+            Type.TypeVar provided = (Type.TypeVar) providedTypeArgsForReceiver.get(i);
             if (typeVarMap.containsKey(provided)) {
               Type.TypeVar value = typeVarMap.get(provided);
               typeVarMap.remove(provided);
@@ -372,9 +372,9 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
             }
           }
 
-          if (calledMethod.getReturnType() instanceof Type.TypeVar) {
+          if (receiverType instanceof Type.TypeVar) {
             // We should refresh base.
-            Type.TypeVar original = typeVarMap.get((Type.TypeVar) (calledMethod.getReturnType()));
+            Type.TypeVar original = typeVarMap.get((Type.TypeVar) (receiverType));
             int i;
             for (i = 0; i < elementTypeArgs.size(); i++) {
               if (elementTypeArgs.get(i).equals(original)) {
@@ -382,13 +382,10 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
                 break;
               }
             }
-            elementType = ((Symbol) element).type.getTypeArguments().get(i);
-            elementTypeArgs = elementType.tsym.type.getTypeArguments();
+            elementType = getProvidedTypeArguments(element).get(i);
+            elementTypeArgs = getAllTypeArguments(elementType);
             typeVarMap.clear();
-            elementType
-                .tsym
-                .type
-                .getTypeArguments()
+            getAllTypeArguments(elementType)
                 .forEach(
                     type -> {
                       Preconditions.checkArgument(type instanceof Type.TypeVar);
@@ -405,25 +402,45 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   }
 
   private void logInvocation(Element element, Type elementType) {
-    invocations.forEach(
+    receivers.forEach(
         type -> {
-          JCTree.JCMethodInvocation invocation = (JCTree.JCMethodInvocation) type;
-          Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(type);
+          ExpressionTree receiver = type;
+          Symbol receiverSymbol = (Symbol) TreeUtils.elementFromTree(type);
+          Type receiverType =
+              receiverSymbol instanceof Symbol.MethodSymbol
+                  ? ((Symbol.MethodSymbol) receiverSymbol).getReturnType()
+                  : receiverSymbol.type;
           System.out.println(
               "CALLED METHOD: "
-                  + calledMethod
+                  + receiverSymbol
                   + " - RETURN TYPE: "
-                  + invocation.type
+                  + receiver
                   + " - CLASS: "
-                  + calledMethod.enclClass().type.tsym.type
+                  + receiverSymbol.enclClass().type.tsym.type
                   + " - RETURN TYPE SYM: "
-                  + calledMethod.getReturnType()
+                  + receiverType
                   + " - TYPE SYMBOL: "
-                  + calledMethod.getReturnType().tsym.type);
+                  + receiverType.tsym.type);
         });
     System.out.println("ELEMENT: " + element);
     System.out.println("TYPE: " + elementType + " - SYMBOL: " + elementType.tsym.type);
     System.out.println("REQUIRED: " + required);
     System.out.println("FOUND: " + found);
+  }
+
+  private List<Type> getAllTypeArguments(Type elementType) {
+    if (elementType instanceof Type.ClassType) {
+      return ((Type.ClassType) (elementType).tsym.type).allparams_field;
+    } else {
+      return elementType.tsym.type.getTypeArguments();
+    }
+  }
+
+  private List<Type> getProvidedTypeArguments(Element element) {
+    Symbol symbol = (Symbol) element;
+    if (symbol.type instanceof Type.ClassType) {
+      return ((Type.ClassType) symbol.type).allparams_field;
+    }
+    return symbol.type.getTypeArguments();
   }
 }
