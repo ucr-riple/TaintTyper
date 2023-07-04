@@ -137,12 +137,13 @@ public class Utility {
   }
 
   /**
-   * Checks if the given type is a parameterized type. (e.g. {@code Foo<String>})
+   * Checks if the given type is a parameterized type. (e.g. {@code Foo<String>}, please note:
+   * {@code Bar<E>.Foo<String>} is not a fully parameterized type)
    *
    * @param type the type to check
    * @return true if the type is a parameterized type, false otherwise
    */
-  public static boolean isParameterizedType(Type type) {
+  public static boolean isFullyParameterizedType(Type type) {
     if (!(type instanceof Type.ClassType)) {
       return false;
     }

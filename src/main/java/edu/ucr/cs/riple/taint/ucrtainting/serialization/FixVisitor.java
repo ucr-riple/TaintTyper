@@ -258,7 +258,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       // If fix on receiver, we should annotate type parameter that matches the target type.
       if (fixOnReceiver) {
         // If is a parameterized type, then we found the right declaration.
-        if (Utility.isParameterizedType(((Symbol) member).type)) {
+        if (Utility.isFullyParameterizedType(((Symbol) member).type)) {
           Fix fix = buildFixForElement(TreeUtils.elementFromUse(node));
           return fix == null ? Set.of() : Set.of(fix);
         } else if (node instanceof JCTree.JCFieldAccess) {
