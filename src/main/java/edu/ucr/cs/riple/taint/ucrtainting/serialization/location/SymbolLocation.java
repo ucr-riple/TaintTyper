@@ -5,6 +5,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
+import java.util.List;
 import javax.annotation.Nullable;
 
 /** Provides method for symbol locations. */
@@ -48,4 +49,6 @@ public interface SymbolLocation {
    * @return a visitor-specified result
    */
   <R, P> R accept(LocationVisitor<R, P> v, P p);
+
+  void setTypeVariablePositions(List<List<Integer>> typeVariables);
 }

@@ -221,24 +221,18 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
    */
   @Nullable
   public Fix buildFixForElement(Element element) {
-    SymbolLocation location;
-    if (element == null) {
-      return null;
-    }
-    location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+    SymbolLocation location = buildLocationForElement(element);
     if (location == null) {
       return null;
     }
-    List<List<Integer>> args;
     if (required != null) {
       Type type = getType(element);
-      args = annotateType(type, required);
-      System.out.println(args);
+      location.setTypeVariablePositions(annotateType(type, required));
     }
     return new Fix("untainted", location);
   }
 
-  private List<List<Integer>> annotateType(Type type, AnnotatedTypeMirror required) {
+  protected List<List<Integer>> annotateType(Type type, AnnotatedTypeMirror required) {
     List<List<Integer>> list = new ArrayList<>();
     if (type instanceof Type.TypeVar
         && required instanceof AnnotatedTypeMirror.AnnotatedTypeVariable) {
@@ -289,5 +283,18 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     return element instanceof Symbol.MethodSymbol
         ? ((Symbol.MethodSymbol) element).getReturnType()
         : ((Symbol) element).type;
+  }
+
+  /**
+   * Builds the location for the given element.
+   *
+   * @param element The element to build the location for.
+   * @return The location for the given element.
+   */
+  protected SymbolLocation buildLocationForElement(Element element) {
+    if (element == null) {
+      return null;
+    }
+    return SymbolLocation.createLocationFromSymbol((Symbol) element, context);
   }
 }

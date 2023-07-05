@@ -11,6 +11,7 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -147,9 +148,15 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
    */
   @Nullable
   public Fix buildFixForElement(Element element) {
-    Fix fix = super.buildFixForElement(element);
+    SymbolLocation location = buildLocationForElement(element);
+    if (location == null) {
+      return null;
+    }
     List<Integer> indexes = locateTheEffectiveTypeParameter(element);
-    return fix;
+    if (!indexes.isEmpty()) {
+      location.setTypeVariablePositions(List.of(indexes));
+    }
+    return new Fix("untainted", location);
   }
 
   /**

@@ -7,6 +7,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
+import javax.annotation.Nullable;
 import javax.lang.model.element.ElementKind;
 import org.checkerframework.com.google.common.base.Preconditions;
 
@@ -25,6 +26,8 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   public final Symbol target;
   /** Target type of the symbol. */
   public Type targetType;
+  /** List of indexes to locate the type variable. */
+  @Nullable public List<List<Integer>> typeVariablePositions;
 
   public AbstractSymbolLocation(ElementKind kind, Symbol target, JCTree tree) {
     Preconditions.checkArgument(
@@ -48,5 +51,9 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   /** @return the type variables of the symbol. */
   public List<Type> getTypeVariables() {
     return target.type.tsym.type.getTypeArguments();
+  }
+
+  public void setTypeVariablePositions(@Nullable List<List<Integer>> typeVariablePositions) {
+    this.typeVariablePositions = typeVariablePositions;
   }
 }
