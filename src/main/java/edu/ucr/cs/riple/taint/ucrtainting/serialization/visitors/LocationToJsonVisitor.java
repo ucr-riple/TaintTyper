@@ -6,7 +6,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.FieldLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.LocalVariableLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
-import java.util.Objects;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -19,11 +18,15 @@ public class LocationToJsonVisitor implements LocationVisitor<JSONObject, Void> 
     jsonObject.put("class", Serializer.serializeSymbol(location.enclosingClass));
     jsonObject.put(
         "pos", location.declarationTree != null ? location.declarationTree.getStartPosition() : -1);
-    jsonObject.put(
-        "type-variables",
-        new JSONArray(location.getTypeVariables().stream().map(Objects::toString).toArray()));
-    jsonObject.put(
-        "target-type", location.targetType != null ? location.targetType.toString() : "null");
+    if (location.typeVariablePositions != null) {
+      JSONArray typeVariablePositions = new JSONArray();
+      location.typeVariablePositions.forEach(
+          integers -> {
+            JSONArray positions = new JSONArray(integers);
+            typeVariablePositions.put(positions);
+          });
+      jsonObject.put("type-variable-position", typeVariablePositions);
+    }
     return jsonObject;
   }
 

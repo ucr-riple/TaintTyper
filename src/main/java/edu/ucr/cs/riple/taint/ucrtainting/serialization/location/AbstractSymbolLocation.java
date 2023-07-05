@@ -1,7 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import java.net.URI;
@@ -24,8 +23,6 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   public final JCTree declarationTree;
   /** Target symbol. */
   public final Symbol target;
-  /** Target type of the symbol. */
-  public Type targetType;
   /** List of indexes to locate the type variable. */
   @Nullable public List<List<Integer>> typeVariablePositions;
 
@@ -46,11 +43,6 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
     this.path = Serializer.pathToSourceFileFromURI(pathInURI);
     this.declarationTree = tree;
     this.target = target;
-  }
-
-  /** @return the type variables of the symbol. */
-  public List<Type> getTypeVariables() {
-    return target.type.tsym.type.getTypeArguments();
   }
 
   public void setTypeVariablePositions(@Nullable List<List<Integer>> typeVariablePositions) {
