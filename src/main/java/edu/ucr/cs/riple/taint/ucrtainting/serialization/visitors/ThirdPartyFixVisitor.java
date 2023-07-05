@@ -35,7 +35,7 @@ public class ThirdPartyFixVisitor extends BasicVisitor {
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each passed argument.
     for (ExpressionTree argument : node.getArguments()) {
-      fixes.addAll(argument.accept(this, unused));
+      fixes.addAll(argument.accept(new FixVisitor(context, typeFactory, null), unused));
     }
     // Add the fix for the receiver if not static.
     if (calledMethod.isStatic()) {
@@ -43,7 +43,10 @@ public class ThirdPartyFixVisitor extends BasicVisitor {
       return fixes;
     }
     // Build the fix for the receiver.
-    fixes.addAll(((MemberSelectTree) node.getMethodSelect()).getExpression().accept(this, unused));
+    fixes.addAll(
+        ((MemberSelectTree) node.getMethodSelect())
+            .getExpression()
+            .accept(new FixVisitor(context, typeFactory, null), unused));
     return fixes;
   }
 }

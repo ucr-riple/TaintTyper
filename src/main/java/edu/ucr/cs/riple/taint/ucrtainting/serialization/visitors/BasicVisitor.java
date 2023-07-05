@@ -10,12 +10,15 @@ import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewArrayTree;
+import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.ParenthesizedTree;
 import com.sun.source.tree.PrimitiveTypeTree;
 import com.sun.source.tree.TypeCastTree;
 import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
@@ -63,21 +66,22 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     Set<Fix> fixes = new HashSet<>();
     if (typeFactory.mayBeTainted(node.getTrueExpression())) {
       fixes.addAll(
-          node.getTrueExpression().accept(new FixVisitor(context, typeFactory, null), null));
+          node.getTrueExpression().accept(new FixVisitor(context, typeFactory, required), null));
     }
     if (typeFactory.mayBeTainted(node.getFalseExpression())) {
       fixes.addAll(
-          node.getFalseExpression().accept(new FixVisitor(context, typeFactory, null), null));
+          node.getFalseExpression().accept(new FixVisitor(context, typeFactory, required), null));
     }
     return fixes;
   }
 
   @Override
-  public Set<Fix> visitNewClass(com.sun.source.tree.NewClassTree node, Void unused) {
+  public Set<Fix> visitNewClass(NewClassTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
     for (ExpressionTree arg : node.getArguments()) {
       if (typeFactory.mayBeTainted(arg)) {
+        // Required can be null here, since we only need the passed parameters to be untainted.
         fixes.addAll(arg.accept(new FixVisitor(context, typeFactory, null), unused));
       }
     }
@@ -88,26 +92,33 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   public Set<Fix> visitTypeCast(TypeCastTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
     if (typeFactory.mayBeTainted(node.getExpression())) {
-      fixes.addAll(node.getExpression().accept(new FixVisitor(context, typeFactory, null), unused));
+      fixes.addAll(
+          node.getExpression().accept(new FixVisitor(context, typeFactory, required), unused));
     }
     return fixes;
   }
 
   @Override
   public Set<Fix> visitNewArray(NewArrayTree node, Void unused) {
+    AnnotatedTypeMirror requiredComponentType =
+        required instanceof AnnotatedTypeMirror.AnnotatedArrayType
+            ? ((AnnotatedTypeMirror.AnnotatedArrayType) required).getComponentType()
+            : null;
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
     if (node.getInitializers() != null) {
       for (ExpressionTree arg : node.getInitializers()) {
         if (typeFactory.mayBeTainted(arg)) {
-          fixes.addAll(arg.accept(new FixVisitor(context, typeFactory, null), unused));
+          fixes.addAll(
+              arg.accept(new FixVisitor(context, typeFactory, requiredComponentType), unused));
         }
       }
     }
     // Add a fix for each dimension.
     for (ExpressionTree arg : node.getDimensions()) {
       if (typeFactory.mayBeTainted(arg)) {
-        fixes.addAll(arg.accept(new FixVisitor(context, typeFactory, null), unused));
+        fixes.addAll(
+            arg.accept(new FixVisitor(context, typeFactory, requiredComponentType), unused));
       }
     }
     return fixes;
@@ -147,20 +158,32 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
 
   @Override
   public Set<Fix> visitExpressionStatement(ExpressionStatementTree node, Void unused) {
-    return node.getExpression().accept(new FixVisitor(context, typeFactory, null), unused);
+    return node.getExpression().accept(new FixVisitor(context, typeFactory, required), unused);
   }
 
   @Override
   public Set<Fix> visitBinary(BinaryTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
-    fixes.addAll(node.getLeftOperand().accept(new FixVisitor(context, typeFactory, null), null));
-    fixes.addAll(node.getRightOperand().accept(new FixVisitor(context, typeFactory, null), null));
+    // check if is logical and or operator ->
+    JCTree.JCBinary binary = (JCTree.JCBinary) node;
+    // check if binary is and tree
+    AnnotatedTypeMirror binaryRequiredType = required;
+    if (binary.getTag() == JCTree.Tag.AND || binary.getTag() == JCTree.Tag.OR) {
+      // Here we only need both sides to be simple untainted.
+      binaryRequiredType = null;
+    }
+    fixes.addAll(
+        node.getLeftOperand()
+            .accept(new FixVisitor(context, typeFactory, binaryRequiredType), null));
+    fixes.addAll(
+        node.getRightOperand()
+            .accept(new FixVisitor(context, typeFactory, binaryRequiredType), null));
     return fixes;
   }
 
   public Set<Fix> visitArrayAccess(ArrayAccessTree node, Void unused) {
     // only the expression is enough, we do not need to annotate the index.
-    return node.getExpression().accept(new FixVisitor(context, typeFactory, null), unused);
+    return node.getExpression().accept(new FixVisitor(context, typeFactory, required), unused);
   }
 
   @Override
@@ -179,12 +202,12 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
 
   @Override
   public Set<Fix> visitParenthesized(ParenthesizedTree node, Void unused) {
-    return node.getExpression().accept(new FixVisitor(context, typeFactory, null), unused);
+    return node.getExpression().accept(new FixVisitor(context, typeFactory, required), unused);
   }
 
   @Override
   public Set<Fix> visitUnary(UnaryTree node, Void unused) {
-    return node.getExpression().accept(new FixVisitor(context, typeFactory, null), unused);
+    return node.getExpression().accept(new FixVisitor(context, typeFactory, required), unused);
   }
 
   /**
@@ -203,6 +226,39 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     if (location == null) {
       return null;
     }
+    if (required != null) {
+      Type type = getType(element);
+      System.out.println("HELLO");
+    }
     return new Fix("untainted", location);
+  }
+
+  private void annotateType(Type type) {
+    if (type instanceof Type.TypeVar
+        && required instanceof AnnotatedTypeMirror.AnnotatedTypeVariable) {
+      // e.g. @Untainted T
+    }
+    if (type instanceof Type.ClassType
+        && required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      // e.g. @Untainted String
+    }
+    if (type instanceof Type.ArrayType
+        && required instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      // e.g. @Untainted String[]
+      // Here we should annotate the component type
+    }
+    if (type instanceof Type.JCPrimitiveType) {
+      // e.g. @Untainted int
+    }
+    if (type instanceof Type.TypeVar
+        && required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      // e.g. @Untainted T, should just annotate as @Untainted.
+    }
+  }
+
+  private Type getType(Element element) {
+    return element instanceof Symbol.MethodSymbol
+        ? ((Symbol.MethodSymbol) element).getReturnType()
+        : ((Symbol) element).type;
   }
 }
