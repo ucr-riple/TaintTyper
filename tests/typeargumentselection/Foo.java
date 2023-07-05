@@ -66,5 +66,11 @@ public class Foo {
     GenericFoo<M, String> instance() {
       return null;
     }
+
+    public void internal() {
+      GenericBar<M, L> gen = new GenericBar<>();
+      // :: error: assignment
+      @RUntainted M m = gen.getM();
+    }
   }
 }
