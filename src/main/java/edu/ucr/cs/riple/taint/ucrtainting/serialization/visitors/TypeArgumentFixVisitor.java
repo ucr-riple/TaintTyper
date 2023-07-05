@@ -130,10 +130,7 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
    */
   private List<Type> getProvidedTypeArguments(Element element) {
     Symbol symbol = (Symbol) element;
-    Type type =
-        symbol instanceof Symbol.MethodSymbol
-            ? ((Symbol.MethodSymbol) symbol).getReturnType()
-            : symbol.type;
+    Type type = getType(symbol);
     if (type instanceof Type.ClassType) {
       return type.allparams();
     }
@@ -166,10 +163,7 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
    * @return The list of indexes of the type parameters.
    */
   private List<Integer> locateTheEffectiveTypeParameter(Element element) {
-    Type elementType =
-        element instanceof Symbol.MethodSymbol
-            ? ((Symbol.MethodSymbol) element).getReturnType()
-            : ((Symbol) element).type;
+    Type elementType = getType(element);
     List<Integer> indexes = new ArrayList<>();
     // Indexes of the type variables to locate the type which needs to be modified.
     Map<Type.TypeVar, Type.TypeVar> typeVarMap = new HashMap<>();
@@ -183,10 +177,7 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
     for (ExpressionTree receiver : receivers) {
       // Locate passed type arguments
       Symbol receiverSymbol = (Symbol) TreeUtils.elementFromUse(receiver);
-      Type receiverType =
-          receiverSymbol instanceof Symbol.MethodSymbol
-              ? ((Symbol.MethodSymbol) receiverSymbol).getReturnType()
-              : receiverSymbol.type;
+      Type receiverType = getType(receiverSymbol);
       List<Type> typeParametersForReceiver = receiverType.getTypeArguments();
 
       // Update translation:
