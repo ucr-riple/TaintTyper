@@ -22,8 +22,11 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -226,34 +229,62 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     if (location == null) {
       return null;
     }
+    List<List<Integer>> args;
     if (required != null) {
       Type type = getType(element);
-      System.out.println("HELLO");
+      args = annotateType(type, required);
     }
     return new Fix("untainted", location);
   }
 
-  private void annotateType(Type type) {
+  private List<List<Integer>> annotateType(Type type, AnnotatedTypeMirror required) {
+    List<List<Integer>> list = new ArrayList<>();
     if (type instanceof Type.TypeVar
         && required instanceof AnnotatedTypeMirror.AnnotatedTypeVariable) {
       // e.g. @Untainted T
+      list.add(List.of(0));
+      return list;
     }
     if (type instanceof Type.ClassType
         && required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       // e.g. @Untainted String
+      if (!Utility.hasUntaintedAnnotation(type) && typeFactory.hasUntaintedAnnotation(required)) {
+        list.add(List.of(0));
+      }
+      for (int i = 0; i < type.getTypeArguments().size(); i++) {
+        Type typeArgument = type.getTypeArguments().get(i);
+        AnnotatedTypeMirror typeArgumentRequired =
+            ((AnnotatedTypeMirror.AnnotatedDeclaredType) required).getTypeArguments().get(i);
+        List<List<Integer>> result = annotateType(typeArgument, typeArgumentRequired);
+        if (list.isEmpty()) {
+          return list;
+        }
+        for (List<Integer> l : result) {
+          List<Integer> newL = new ArrayList<>(l);
+          newL.add(0, i + 1);
+          list.add(newL);
+        }
+      }
+      return list;
     }
     if (type instanceof Type.ArrayType
-        && required instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+        && required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       // e.g. @Untainted String[]
       // Here we should annotate the component type
+      annotateType(((Type.ArrayType) type).getComponentType(), required);
     }
     if (type instanceof Type.JCPrimitiveType) {
       // e.g. @Untainted int
+      list.add(List.of(0));
+      return list;
     }
     if (type instanceof Type.TypeVar
         && required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       // e.g. @Untainted T, should just annotate as @Untainted.
+      list.add(List.of(0));
+      return list;
     }
+    return list;
   }
 
   private Type getType(Element element) {

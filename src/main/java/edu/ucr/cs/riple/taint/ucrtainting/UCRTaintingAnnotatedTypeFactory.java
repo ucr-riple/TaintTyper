@@ -212,7 +212,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     for (AnnotatedTypeMirror typeVariable : type.getTypeArguments()) {
       return mayBeTainted(typeVariable);
     }
-    return !type.hasAnnotation(RUNTAINTED);
+    return !hasUntaintedAnnotation(type);
   }
 
   /**
@@ -222,7 +222,11 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @return True if the given array type's component may be tainted, false otherwise.
    */
   public boolean mayBeTainted(AnnotatedTypeMirror.AnnotatedArrayType type) {
-    return type == null || !type.getComponentType().hasAnnotation(RUNTAINTED);
+    return type == null || !hasUntaintedAnnotation(type.getComponentType());
+  }
+
+  public boolean hasUntaintedAnnotation(AnnotatedTypeMirror type) {
+    return type.hasAnnotation(RUNTAINTED);
   }
 
   private class UCRTaintingTreeAnnotator extends TreeAnnotator {

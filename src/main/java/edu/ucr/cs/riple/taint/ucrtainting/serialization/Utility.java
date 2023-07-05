@@ -19,6 +19,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -383,5 +384,24 @@ public class Utility {
       }
     }
     return ElementUtils.isFinal(element) && ElementUtils.isStatic(element);
+  }
+
+  public static boolean hasUntaintedAnnotation(Type type) {
+    if (type == null) {
+      return false;
+    }
+    if (type instanceof Type.ClassType) {
+      Type.ClassType classType = (Type.ClassType) type;
+      for (AnnotationMirror annotation : classType.getAnnotationMirrors()) {
+        if (annotation
+            .getAnnotationType()
+            .asElement()
+            .getSimpleName()
+            .contentEquals("RUntainted")) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }
