@@ -233,6 +233,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     if (required != null) {
       Type type = getType(element);
       args = annotateType(type, required);
+      System.out.println(args);
     }
     return new Fix("untainted", location);
   }
@@ -256,9 +257,6 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
         AnnotatedTypeMirror typeArgumentRequired =
             ((AnnotatedTypeMirror.AnnotatedDeclaredType) required).getTypeArguments().get(i);
         List<List<Integer>> result = annotateType(typeArgument, typeArgumentRequired);
-        if (list.isEmpty()) {
-          return list;
-        }
         for (List<Integer> l : result) {
           List<Integer> newL = new ArrayList<>(l);
           newL.add(0, i + 1);
