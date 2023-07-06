@@ -41,7 +41,11 @@ public class Foo {
     @RUntainted String name1 = (String) (item1.getItemProperty(null).getValue());
   }
 
-  public void recentCrash() {}
+  public @RUntainted String sameTypeVarWithDifferentOwners(String galleryType) {
+    SortedMap<String, String> m_startGalleriesSettings = null;
+    // :: error: return
+    return m_startGalleriesSettings.get(galleryType);
+  }
 
   static class GenericFoo<T, K> {
     GenericBar<T, T> bar;

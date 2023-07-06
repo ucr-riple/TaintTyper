@@ -37,34 +37,37 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
     super(context, factory, null);
   }
 
+  //  @Override
+  //  public Set<Fix> visitIdentifier(IdentifierTree node, Void unused) {
+  //    addReceiver(node);
+  //    Fix fix = buildFixForElement(TreeUtils.elementFromTree(node));
+  //    return fix == null ? Set.of() : Set.of(fix);
+  //  }
+
   @Override
   public Set<Fix> visitMemberSelect(MemberSelectTree node, Void unused) {
-    if (typeFactory.mayBeTainted(node.getExpression())) {
-      Element member = TreeUtils.elementFromUse(node);
-      if (!(member instanceof Symbol)) {
-        return Set.of();
+    Element member = TreeUtils.elementFromUse(node);
+    if (!(member instanceof Symbol)) {
+      return Set.of();
+    }
+    // Check if receiver is used as raw type. In this case, we should annotate the called method.
+    if (Utility.elementHasRawType(member)) {
+      if (!receivers.isEmpty()) {
+        return receivers
+            .get(receivers.size() - 1)
+            .accept(new BasicVisitor(context, typeFactory, null), null);
       }
-      // Check if receiver is used as raw type. In this case, we should annotate the called method.
-      if (Utility.elementHasRawType(member)) {
-        if (!receivers.isEmpty()) {
-          System.out.println(
-              "I WASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs");
-          return receivers
-              .get(receivers.size() - 1)
-              .accept(new BasicVisitor(context, typeFactory, null), null);
-        }
-      }
-      // If fix on receiver, we should annotate type parameter that matches the target type.
-      if (Utility.isFullyParameterizedType(((Symbol) member).type)) {
-        // If is a parameterized type, then we found the right declaration.
-        Fix fix = buildFixForElement(TreeUtils.elementFromUse(node));
-        return fix == null ? Set.of() : Set.of(fix);
-      } else if (node instanceof JCTree.JCFieldAccess) {
-        // Need to traverse the tree to find the right declaration.
-        JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) node;
-        addReceiver(fieldAccess);
-        return fieldAccess.selected.accept(this, unused);
-      }
+    }
+    // If fix on receiver, we should annotate type parameter that matches the target type.
+    if (Utility.isFullyParameterizedType(((Symbol) member).type)) {
+      // If is a parameterized type, then we found the right declaration.
+      Fix fix = buildFixForElement(TreeUtils.elementFromUse(node));
+      return fix == null ? Set.of() : Set.of(fix);
+    } else if (node instanceof JCTree.JCFieldAccess) {
+      // Need to traverse the tree to find the right declaration.
+      JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) node;
+      addReceiver(fieldAccess);
+      return fieldAccess.selected.accept(this, unused);
     }
     return Set.of();
   }
@@ -195,35 +198,37 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
    */
   private List<Integer> locateTheEffectiveTypeParameter(Element element) {
     Type elementType = getType(element);
-    List<Integer> indexes = new ArrayList<>();
     // Indexes of the type variables to locate the type which needs to be modified.
-    Map<Type.TypeVar, Type.TypeVar> typeVarMap = new HashMap<>();
+    List<Integer> indexes = new ArrayList<>();
+    // Map of type arguments symbol names to their provided type parameters symbol names. Cannot use
+    // a map of <Type.TypeVar, Type.TypeVar> since 2 variables with same name can have different
+    // owners and are not considered equal.
+    Map<String, String> typeVarMap = new HashMap<>();
     List<Type> elementTypeArgs = getAllTypeArguments(elementType);
     getAllTypeArguments(elementType)
         .forEach(
             type -> {
               Preconditions.checkArgument(type instanceof Type.TypeVar);
-              typeVarMap.put((Type.TypeVar) type, (Type.TypeVar) type);
+              typeVarMap.put(type.toString(), type.toString());
             });
     for (ExpressionTree receiver : receivers) {
       // Locate passed type arguments
-      Symbol receiverSymbol = (Symbol) TreeUtils.elementFromUse(receiver);
-      Type receiverType = getType(receiverSymbol);
+      Type receiverType = getType(TreeUtils.elementFromUse(receiver));
       List<Type> typeParametersForReceiver = receiverType.getTypeArguments();
 
       // Update translation:
       List<Type> typeArgumentsForReceiver = getAllTypeArguments(receiverType);
-      Set<Type.TypeVar> existingTypeVars = typeVarMap.keySet();
-      Set<Type.TypeVar> toRemove = new HashSet<>();
+      Set<String> existingTypeVars = typeVarMap.keySet();
+      Set<String> toRemove = new HashSet<>();
       for (int i = 0; i < typeParametersForReceiver.size(); i++) {
         Type providedI = typeParametersForReceiver.get(i);
         if (!(providedI instanceof Type.TypeVar)) {
           continue;
         }
-        Type.TypeVar provided = (Type.TypeVar) providedI;
+        String provided = providedI.toString();
         if (existingTypeVars.contains(provided)) {
-          Type.TypeVar value = typeVarMap.get(provided);
-          Type.TypeVar newKey = (Type.TypeVar) typeArgumentsForReceiver.get(i);
+          String value = typeVarMap.get(provided);
+          String newKey = typeArgumentsForReceiver.get(i).toString();
           if (!provided.equals(newKey)) {
             toRemove.add(provided);
           }
@@ -234,10 +239,10 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
 
       if (receiverType instanceof Type.TypeVar) {
         // We should refresh base.
-        Type.TypeVar original = typeVarMap.get((Type.TypeVar) (receiverType));
+        String original = typeVarMap.get(receiverType.toString());
         int i;
         for (i = 0; i < elementTypeArgs.size(); i++) {
-          if (elementTypeArgs.get(i).equals(original)) {
+          if (elementTypeArgs.get(i).toString().equals(original)) {
             indexes.add(i);
             break;
           }
@@ -249,7 +254,7 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
             .forEach(
                 type -> {
                   Preconditions.checkArgument(type instanceof Type.TypeVar);
-                  typeVarMap.put((Type.TypeVar) type, (Type.TypeVar) type);
+                  typeVarMap.put(type.toString(), type.toString());
                 });
       }
     }
