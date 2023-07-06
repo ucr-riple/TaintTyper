@@ -149,6 +149,17 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
     if (location == null) {
       return null;
     }
+    if (getType(element).allparams().isEmpty()) {
+      // receiver is written and not parameterized. We cannot infer the actual types and have to
+      // annotate the method directly.
+      Set<Fix> fixes =
+          receivers
+              .get(receivers.size() - 1)
+              .accept(new BasicVisitor(context, typeFactory, null), null);
+      if (fixes != null && !fixes.isEmpty()) {
+        return fixes.iterator().next();
+      }
+    }
     List<Integer> indexes = locateTheEffectiveTypeParameter(element);
     if (!indexes.isEmpty()) {
       location.setTypeVariablePositions(List.of(indexes));
