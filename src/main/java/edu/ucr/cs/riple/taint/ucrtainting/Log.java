@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class Log {
 
@@ -24,5 +26,9 @@ public class Log {
 
   public static void print(String message) {
     System.out.println(message);
+  }
+
+  public Stream<String> testOnStreamLambda(List<String> s) {
+    return s.stream().filter(x -> x.length() > 0);
   }
 }

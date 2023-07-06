@@ -3,6 +3,7 @@ package foo.bar;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Stream;
 import javax.servlet.http.*;
 
 class Foo {
@@ -32,5 +33,10 @@ class Foo {
     javax.servlet.RequestDispatcher rd =
         request.getRequestDispatcher("/cmdi-00/BenchmarkTest00093.html");
     rd.include(request, response);
+  }
+
+  public @RUntainted Stream<String> testOnStreamLambda(List<String> s) {
+    // :: error: (return)
+    return s.stream().filter(x -> x.length() > 0);
   }
 }
