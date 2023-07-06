@@ -1,6 +1,5 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import javax.lang.model.type.TypeKind;
 import org.checkerframework.dataflow.analysis.TransferInput;
 import org.checkerframework.dataflow.analysis.TransferResult;
 import org.checkerframework.dataflow.cfg.node.ImplicitThisNode;
@@ -12,6 +11,8 @@ import org.checkerframework.framework.flow.CFStore;
 import org.checkerframework.framework.flow.CFTransfer;
 import org.checkerframework.framework.flow.CFValue;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+
+import javax.lang.model.type.TypeKind;
 
 public class UCRTaintingTransfer extends CFTransfer {
   private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
@@ -42,17 +43,46 @@ public class UCRTaintingTransfer extends CFTransfer {
       }
     }
 
+    if (aTypeFactory.ENABLE_LIBRARY_CHECK) {
+      if (aTypeFactory.hasReceiver(n.getTree())) {
+        Node receiver = n.getTarget().getReceiver();
+        if (receiver != null
+            && !(receiver instanceof ImplicitThisNode)
+            && receiver.getTree() != null) {
+          // if the code is part of provided annotated packages or is present
+          // in the stub files, then we don't need any custom handling for it.
+          if (!aTypeFactory.hasAnnotatedPackage(n.getTree())
+              && !aTypeFactory.isPresentInStub(n.getTree())) {
+              if(!aTypeFactory.hasTaintedReceiver(n.getTree()) && aTypeFactory.hasTaintedArgument(n.getTree())) {
+                updateStoreTaint(result, receiver);
+              }
+          }
+        }
+      }
+    }
+
     return result;
   }
 
-  private void updateStore(TransferResult<CFValue, CFStore> result, Node receiver) {
-    AnnotatedTypeMirror receiverType = aTypeFactory.getAnnotatedType(receiver.getTree());
-    if (receiverType.hasAnnotation(aTypeFactory.RTAINTED)) {
-      JavaExpression je = JavaExpression.fromNode(receiver);
+  private void updateStore(TransferResult<CFValue, CFStore> result, Node n) {
+    AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(n.getTree());
+    if (type.hasAnnotation(aTypeFactory.RTAINTED)) {
+      JavaExpression je = JavaExpression.fromNode(n);
       CFStore thenStore = result.getThenStore();
       CFStore elseStore = result.getElseStore();
       thenStore.insertOrRefine(je, aTypeFactory.RUNTAINTED);
       elseStore.insertOrRefine(je, aTypeFactory.RUNTAINTED);
+    }
+  }
+
+  private void updateStoreTaint(TransferResult<CFValue, CFStore> result, Node n) {
+    AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(n.getTree());
+    if (type.hasAnnotation(aTypeFactory.RUNTAINTED)) {
+      JavaExpression je = JavaExpression.fromNode(n);
+      CFStore thenStore = result.getThenStore();
+      CFStore elseStore = result.getElseStore();
+      thenStore.insertOrRefine(je, aTypeFactory.RTAINTED);
+      elseStore.insertOrRefine(je, aTypeFactory.RTAINTED);
     }
   }
 }
