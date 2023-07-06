@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import javax.lang.model.type.TypeKind;
 import org.checkerframework.dataflow.analysis.TransferInput;
 import org.checkerframework.dataflow.analysis.TransferResult;
 import org.checkerframework.dataflow.cfg.node.ImplicitThisNode;
@@ -12,8 +13,6 @@ import org.checkerframework.framework.flow.CFTransfer;
 import org.checkerframework.framework.flow.CFValue;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.AnnotationMirrorSet;
-
-import javax.lang.model.type.TypeKind;
 
 public class UCRTaintingTransfer extends CFTransfer {
   private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
@@ -54,9 +53,10 @@ public class UCRTaintingTransfer extends CFTransfer {
           // in the stub files, then we don't need any custom handling for it.
           if (!aTypeFactory.hasAnnotatedPackage(n.getTree())
               && !aTypeFactory.isPresentInStub(n.getTree())) {
-              if(!aTypeFactory.hasTaintedReceiver(n.getTree()) && aTypeFactory.hasTaintedArgument(n.getTree())) {
-                updateStoreTaint(result, receiver);
-              }
+            if (!aTypeFactory.hasTaintedReceiver(n.getTree())
+                && aTypeFactory.hasTaintedArgument(n.getTree())) {
+              updateStoreTaint(result, receiver);
+            }
           }
         }
       }
@@ -84,8 +84,16 @@ public class UCRTaintingTransfer extends CFTransfer {
       CFStore elseStore = result.getElseStore();
       CFValue thenVal = thenStore.getValue(je);
       CFValue elseVal = elseStore.getValue(je);
-      thenVal = new CFValue(analysis, new AnnotationMirrorSet(aTypeFactory.RTAINTED), thenVal.getUnderlyingType());
-      elseVal = new CFValue(analysis, new AnnotationMirrorSet(aTypeFactory.RTAINTED), elseVal.getUnderlyingType());
+      thenVal =
+          new CFValue(
+              analysis,
+              new AnnotationMirrorSet(aTypeFactory.RTAINTED),
+              thenVal.getUnderlyingType());
+      elseVal =
+          new CFValue(
+              analysis,
+              new AnnotationMirrorSet(aTypeFactory.RTAINTED),
+              elseVal.getUnderlyingType());
 
       thenStore.replaceValue(je, thenVal);
       elseStore.replaceValue(je, elseVal);
