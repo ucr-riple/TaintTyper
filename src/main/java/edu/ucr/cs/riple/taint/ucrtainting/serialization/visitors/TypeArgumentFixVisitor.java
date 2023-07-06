@@ -183,7 +183,7 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
         return fixes.iterator().next();
       }
     }
-    List<Integer> indexes = locateTheEffectiveTypeParameter(element);
+    List<Integer> indexes = locateEffectiveTypeParameter(element);
     if (!indexes.isEmpty()) {
       location.setTypeVariablePositions(List.of(indexes));
     }
@@ -196,7 +196,7 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
    * @param element The element which provided the type parameters.
    * @return The list of indexes of the type parameters.
    */
-  private List<Integer> locateTheEffectiveTypeParameter(Element element) {
+  private List<Integer> locateEffectiveTypeParameter(Element element) {
     Type elementType = getType(element);
     // Indexes of the type variables to locate the type which needs to be modified.
     List<Integer> indexes = new ArrayList<>();
