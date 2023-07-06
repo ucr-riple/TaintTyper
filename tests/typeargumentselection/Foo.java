@@ -36,10 +36,12 @@ public class Foo {
     s = gen.instanceWithL().getK().values().iterator().next();
   }
 
-  public void recentCrash(Item item1) {
+  public void rawUsedTypes(Item item1) {
     // :: error: assignment
     @RUntainted String name1 = (String) (item1.getItemProperty(null).getValue());
   }
+
+  public void recentCrash() {}
 
   static class GenericFoo<T, K> {
     GenericBar<T, T> bar;

@@ -1,5 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
+import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getType;
+
 import com.google.common.base.Preconditions;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MemberSelectTree;
@@ -41,6 +43,16 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
       Element member = TreeUtils.elementFromUse(node);
       if (!(member instanceof Symbol)) {
         return Set.of();
+      }
+      // Check if receiver is used as raw type. In this case, we should annotate the called method.
+      if (Utility.elementHasRawType(member)) {
+        if (!receivers.isEmpty()) {
+          System.out.println(
+              "I WASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs");
+          return receivers
+              .get(receivers.size() - 1)
+              .accept(new BasicVisitor(context, typeFactory, null), null);
+        }
       }
       // If fix on receiver, we should annotate type parameter that matches the target type.
       if (Utility.isFullyParameterizedType(((Symbol) member).type)) {
@@ -86,6 +98,14 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
     // directly.
     if (calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver)) {
       return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
+    }
+    // Check if receiver is used as raw type. In this case, we should annotate the called method.
+    if (Utility.elementHasRawType(calledMethod)) {
+      if (!receivers.isEmpty()) {
+        return receivers
+            .get(receivers.size() - 1)
+            .accept(new BasicVisitor(context, typeFactory, null), null);
+      }
     }
     if (Utility.isFullyParameterizedType(calledMethod.getReturnType())) {
       // Found the right declaration.
@@ -150,8 +170,8 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
       return null;
     }
     if (getType(element).allparams().isEmpty()) {
-      // receiver is written and not parameterized. We cannot infer the actual types and have to
-      // annotate the method directly.
+      // receiver is written as a raw type and not parameterized. We cannot infer the actual types
+      // and have to annotate the method directly.
       Set<Fix> fixes =
           receivers
               .get(receivers.size() - 1)

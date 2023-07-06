@@ -16,21 +16,15 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import java.util.List;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
-import org.checkerframework.javacutil.TypeAnnotationUtils;
 
 /** Utility methods for the serialization service. */
 public class Utility {
-
-  public static final TypeArgumentVisitor TYPE_ARGUMENT_VISITOR = new TypeArgumentVisitor();
 
   private Utility() {
     // This class is mainly a collection of static methods and should not be instantiated.
@@ -87,33 +81,27 @@ public class Utility {
     return null;
   }
 
-  public static List<Type.TypeVar> getTypeParametersInOrder(Type type) {
-    return type.tsym.type.accept(TYPE_ARGUMENT_VISITOR, null);
+  /**
+   * Gets the type of the given element. If the given element is a method, then the return type of
+   * the method is returned.
+   *
+   * @param element The element to get the type for.
+   * @return The type of the given element.
+   */
+  public static Type getType(Element element) {
+    return element instanceof Symbol.MethodSymbol
+        ? ((Symbol.MethodSymbol) element).getReturnType()
+        : ((Symbol) element).type;
   }
 
-  static class TypeArgumentVisitor extends Types.DefaultTypeVisitor<List<Type.TypeVar>, Void> {
-
-    @Override
-    public List<Type.TypeVar> visitClassType(Type.ClassType type, Void unused) {
-      return type.typarams_field.stream()
-          .flatMap(t -> t.accept(this, null).stream())
-          .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Type.TypeVar> visitTypeVar(Type.TypeVar t, Void unused) {
-      Type upperBound = t.getUpperBound();
-      if (upperBound.toString().equals("java.lang.Object")) {
-        return List.of(t);
-      } else {
-        return upperBound.accept(this, null);
-      }
-    }
-
-    @Override
-    public List<Type.TypeVar> visitType(Type type, Void unused) {
-      return List.of();
-    }
+  /**
+   * Checks if the given element has a raw type. (e.g. {@code Foo} instead of {@code Foo<String>})
+   *
+   * @param element The element to check
+   * @return true if the element has a raw type, false otherwise
+   */
+  public static boolean elementHasRawType(Element element) {
+    return getType(element).isRaw();
   }
 
   /**
@@ -123,7 +111,7 @@ public class Utility {
    * @return true if the type contains a typ argument, false otherwise
    */
   public static boolean containsTypeArgument(Type type) {
-    if (isTypeVar(type)) {
+    if (type instanceof Type.TypeVar) {
       return true;
     }
     if (type instanceof Type.ClassType) {
@@ -156,20 +144,6 @@ public class Utility {
   }
 
   /**
-   * Checks if the given annotated type mirror has the given underlying type.
-   *
-   * @param annotatedTypeMirror the annotated type mirror to check.
-   * @param type the type to check in the given annotated type mirror.
-   * @return true if the given annotated type mirror has the given underlying type, false otherwise.
-   */
-  public static boolean hasSameUnderlyingType(AnnotatedTypeMirror annotatedTypeMirror, Type type) {
-    return TypeAnnotationUtils.unannotatedType(annotatedTypeMirror.getUnderlyingType())
-        .tsym
-        .type
-        .equals(type.tsym.type);
-  }
-
-  /**
    * Given a TreePath, finds the first enclosing node of the given type and returns the path from
    * the enclosing node to the top-level {@code CompilationUnitTree}.
    */
@@ -190,16 +164,6 @@ public class Utility {
   public static <T> T findEnclosingNode(TreePath path, Class<T> klass) {
     path = findPathFromEnclosingNodeToTopLevel(path, klass);
     return (path == null) ? null : klass.cast(path.getLeaf());
-  }
-
-  /**
-   * Checks if a type is a parameter type.
-   *
-   * @param type the type to check
-   * @return true if the type is a parameter type, false otherwise
-   */
-  public static boolean isTypeVar(Type type) {
-    return type instanceof Type.TypeVar;
   }
 
   @Nullable
@@ -280,33 +244,6 @@ public class Utility {
   public static boolean isThisIdentifier(Tree tree) {
     return tree instanceof IdentifierTree
         && ((IdentifierTree) tree).getName().contentEquals("this");
-  }
-
-  /**
-   * Returns true if the passed type contains the specified type parameter.
-   *
-   * @param type the type to check.
-   * @param target the type parameter to look for.
-   * @return true if the type contains the type parameter.
-   */
-  public static boolean containsTypeArgument(Type type, Type target) {
-    if (type == null || target == null) {
-      return false;
-    }
-    if (type.equals(target)) {
-      return true;
-    }
-    if (type instanceof Type.ClassType) {
-      Type.ClassType classType = (Type.ClassType) type;
-      // Should only check the type arguments of the direct enclosing class, not all the type
-      // arguments from enclosing classes.
-      for (Type t : classType.getTypeArguments()) {
-        if (containsTypeArgument(t)) {
-          return containsTypeArgument(t, target);
-        }
-      }
-    }
-    return false;
   }
 
   /**

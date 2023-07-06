@@ -1,5 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
+import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getType;
+
 import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.ConditionalExpressionTree;
@@ -277,19 +279,6 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       return list;
     }
     return list;
-  }
-
-  /**
-   * Gets the type of the given element. If the given element is a method, then the return type of
-   * the method is returned.
-   *
-   * @param element The element to get the type for.
-   * @return The type of the given element.
-   */
-  protected static Type getType(Element element) {
-    return element instanceof Symbol.MethodSymbol
-        ? ((Symbol.MethodSymbol) element).getReturnType()
-        : ((Symbol) element).type;
   }
 
   /**
