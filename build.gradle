@@ -12,13 +12,6 @@ repositories {
     mavenLocal()
 }
 
-spotless {
-    java {
-        target '**/*.java'
-        googleJavaFormat()
-    }
-}
-
 configurations {
     // for putting Error Prone javac in bootclasspath for running tests
     errorproneJavac
@@ -78,7 +71,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'edu.ucr.cs.riple.taint'
             artifactId = 'ucrtainting-checker'
-            version = '0.1'
+            version = '0.3'
 
             from components.java
         }
