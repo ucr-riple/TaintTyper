@@ -8,6 +8,12 @@ import javax.servlet.http.*;
 
 class Foo {
 
+  enum MyEnum {
+    A,
+    B,
+    C
+  }
+
   String path;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) {
@@ -38,5 +44,13 @@ class Foo {
   public @RUntainted Stream<String> testOnStreamLambda(List<String> s) {
     // :: error: (return)
     return s.stream().filter(x -> x.length() > 0);
+  }
+
+  public void testCheckTypeForArgumentsBeforeCallingFixVisitor(
+      HttpServletRequest request, HttpServletResponse response) {
+    response.setContentType("text/html;charset=UTF-8");
+
+    // :: error: (assignment)
+    @RUntainted String param = request.getHeader(MyEnum.A.toString());
   }
 }

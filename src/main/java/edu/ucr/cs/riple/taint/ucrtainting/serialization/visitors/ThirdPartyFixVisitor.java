@@ -43,7 +43,9 @@ public class ThirdPartyFixVisitor extends BasicVisitor {
     }
     // Add a fix for each passed argument.
     for (ExpressionTree argument : node.getArguments()) {
-      fixes.addAll(argument.accept(new FixVisitor(context, typeFactory, null), unused));
+      if (typeFactory.mayBeTainted(argument)) {
+        fixes.addAll(argument.accept(new FixVisitor(context, typeFactory, null), unused));
+      }
     }
     // Add the fix for the receiver if not static.
     if (calledMethod.isStatic()) {
