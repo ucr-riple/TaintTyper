@@ -276,20 +276,15 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         if (!hasAnnotatedPackage(node) && !isPresentInStub(node)) {
           if (!hasReceiver(node) && node.getArguments().size() == 1) {
             annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
-          } else {
-
           }
         }
       }
       if (ENABLE_LIBRARY_CHECK) {
-        // ignore local methods
-        if (hasReceiver(node)) {
-          // if the code is part of provided annotated packages or is present
-          // in the stub files, then we don't need any custom handling for it.
-          if (!hasAnnotatedPackage(node) && !isPresentInStub(node)) {
-            if (!hasTaintedArgument(node) && !hasTaintedReceiver(node)) {
-              annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
-            }
+        // if the code is part of provided annotated packages or is present
+        // in the stub files, then we don't need any custom handling for it.
+        if (!hasAnnotatedPackage(node) && !isPresentInStub(node)) {
+          if (!hasTaintedArgument(node) && !hasTaintedReceiver(node)) {
+            annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
           }
         }
       }

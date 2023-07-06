@@ -11,6 +11,7 @@ import org.checkerframework.framework.flow.CFStore;
 import org.checkerframework.framework.flow.CFTransfer;
 import org.checkerframework.framework.flow.CFValue;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.javacutil.AnnotationMirrorSet;
 
 import javax.lang.model.type.TypeKind;
 
@@ -44,7 +45,7 @@ public class UCRTaintingTransfer extends CFTransfer {
     }
 
     if (aTypeFactory.ENABLE_LIBRARY_CHECK) {
-      if (aTypeFactory.hasReceiver(n.getTree())) {
+      if (aTypeFactory.hasReceiver(n.getTree()) && n.getArguments().size() > 0) {
         Node receiver = n.getTarget().getReceiver();
         if (receiver != null
             && !(receiver instanceof ImplicitThisNode)
@@ -81,8 +82,13 @@ public class UCRTaintingTransfer extends CFTransfer {
       JavaExpression je = JavaExpression.fromNode(n);
       CFStore thenStore = result.getThenStore();
       CFStore elseStore = result.getElseStore();
-      thenStore.insertOrRefine(je, aTypeFactory.RTAINTED);
-      elseStore.insertOrRefine(je, aTypeFactory.RTAINTED);
+      CFValue thenVal = thenStore.getValue(je);
+      CFValue elseVal = elseStore.getValue(je);
+      thenVal = new CFValue(analysis, new AnnotationMirrorSet(aTypeFactory.RTAINTED), thenVal.getUnderlyingType());
+      elseVal = new CFValue(analysis, new AnnotationMirrorSet(aTypeFactory.RTAINTED), elseVal.getUnderlyingType());
+
+      thenStore.replaceValue(je, thenVal);
+      elseStore.replaceValue(je, elseVal);
     }
   }
 }
