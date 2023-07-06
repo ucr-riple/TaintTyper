@@ -84,19 +84,22 @@ public class UCRTaintingTransfer extends CFTransfer {
       CFStore elseStore = result.getElseStore();
       CFValue thenVal = thenStore.getValue(je);
       CFValue elseVal = elseStore.getValue(je);
-      thenVal =
-          new CFValue(
-              analysis,
-              new AnnotationMirrorSet(aTypeFactory.RTAINTED),
-              thenVal.getUnderlyingType());
-      elseVal =
-          new CFValue(
-              analysis,
-              new AnnotationMirrorSet(aTypeFactory.RTAINTED),
-              elseVal.getUnderlyingType());
-
-      thenStore.replaceValue(je, thenVal);
-      elseStore.replaceValue(je, elseVal);
+      if (thenVal != null) {
+        thenVal =
+            new CFValue(
+                analysis,
+                new AnnotationMirrorSet(aTypeFactory.RTAINTED),
+                thenVal.getUnderlyingType());
+        thenStore.replaceValue(je, thenVal);
+      }
+      if (elseVal != null) {
+        elseVal =
+            new CFValue(
+                analysis,
+                new AnnotationMirrorSet(aTypeFactory.RTAINTED),
+                elseVal.getUnderlyingType());
+        elseStore.replaceValue(je, elseVal);
+      }
     }
   }
 }
