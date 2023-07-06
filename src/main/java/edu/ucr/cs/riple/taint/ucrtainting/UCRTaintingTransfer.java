@@ -3,9 +3,7 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 import javax.lang.model.type.TypeKind;
 import org.checkerframework.dataflow.analysis.TransferInput;
 import org.checkerframework.dataflow.analysis.TransferResult;
-import org.checkerframework.dataflow.cfg.node.ImplicitThisNode;
-import org.checkerframework.dataflow.cfg.node.MethodInvocationNode;
-import org.checkerframework.dataflow.cfg.node.Node;
+import org.checkerframework.dataflow.cfg.node.*;
 import org.checkerframework.dataflow.expression.JavaExpression;
 import org.checkerframework.framework.flow.CFAnalysis;
 import org.checkerframework.framework.flow.CFStore;
@@ -49,13 +47,15 @@ public class UCRTaintingTransfer extends CFTransfer {
         if (receiver != null
             && !(receiver instanceof ImplicitThisNode)
             && receiver.getTree() != null) {
-          // if the code is part of provided annotated packages or is present
-          // in the stub files, then we don't need any custom handling for it.
-          if (!aTypeFactory.hasAnnotatedPackage(n.getTree())
-              && !aTypeFactory.isPresentInStub(n.getTree())) {
-            if (!aTypeFactory.hasTaintedReceiver(n.getTree())
-                && aTypeFactory.hasTaintedArgument(n.getTree())) {
-              updateStoreTaint(result, receiver);
+          if (receiver instanceof LocalVariableNode || receiver instanceof FieldAccessNode) {
+            // if the code is part of provided annotated packages or is present
+            // in the stub files, then we don't need any custom handling for it.
+            if (!aTypeFactory.hasAnnotatedPackage(n.getTree())
+                && !aTypeFactory.isPresentInStub(n.getTree())) {
+              if (!aTypeFactory.hasTaintedReceiver(n.getTree())
+                  && aTypeFactory.hasTaintedArgument(n.getTree())) {
+                updateStoreTaint(result, receiver);
+              }
             }
           }
         }
