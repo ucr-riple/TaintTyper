@@ -243,7 +243,7 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
         int i;
         for (i = 0; i < elementTypeArgs.size(); i++) {
           if (elementTypeArgs.get(i).toString().equals(original)) {
-            indexes.add(i);
+            indexes.add(i + 1);
             break;
           }
         }
@@ -257,6 +257,9 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
                   typeVarMap.put(type.toString(), type.toString());
                 });
       }
+    }
+    if (!indexes.isEmpty()) {
+      indexes.add(0);
     }
     return indexes;
   }
