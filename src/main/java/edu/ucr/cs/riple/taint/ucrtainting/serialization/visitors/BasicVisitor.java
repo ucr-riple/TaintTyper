@@ -248,8 +248,10 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     List<List<Integer>> list = new ArrayList<>();
     if (type instanceof Type.TypeVar
         && required instanceof AnnotatedTypeMirror.AnnotatedTypeVariable) {
-      // e.g. @Untainted T
-      list.add(List.of(0));
+      if (!Utility.hasUntaintedAnnotation(type) && typeFactory.hasUntaintedAnnotation(required)) {
+        // e.g. @Untainted T
+        list.add(List.of(0));
+      }
       return list;
     }
     if (type instanceof Type.ClassType
@@ -262,12 +264,24 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
         Type typeArgument = type.getTypeArguments().get(i);
         AnnotatedTypeMirror typeArgumentRequired =
             ((AnnotatedTypeMirror.AnnotatedDeclaredType) required).getTypeArguments().get(i);
+        AnnotatedTypeMirror foundTypeArgument =
+            ((AnnotatedTypeMirror.AnnotatedDeclaredType) pair.found).getTypeArguments().get(i);
+        List<Integer> toAddOnThisTypeArg = new ArrayList<>();
+        if (typeFactory.hasUntaintedAnnotation(typeArgumentRequired)
+            && !typeFactory.hasUntaintedAnnotation(foundTypeArgument)) {
+          // e.g. @Untainted List<@Untainted String>
+          toAddOnThisTypeArg.add(i + 1);
+        }
         List<List<Integer>> result =
-            annotateType(typeArgument, FoundRequired.of(null, typeArgumentRequired));
-        for (List<Integer> l : result) {
-          List<Integer> newL = new ArrayList<>(l);
-          newL.add(0, i + 1);
-          list.add(newL);
+            annotateType(typeArgument, FoundRequired.of(foundTypeArgument, typeArgumentRequired));
+        for (List<Integer> toAddOnContainingTypeArg : result) {
+          // Need a fresh chain for each type.
+          if (!toAddOnContainingTypeArg.isEmpty()) {
+            List<Integer> toAddOnThisTypeArgWithContainingTypeArgs =
+                new ArrayList<>(toAddOnThisTypeArg);
+            toAddOnThisTypeArgWithContainingTypeArgs.addAll(toAddOnContainingTypeArg);
+            list.add(toAddOnThisTypeArgWithContainingTypeArgs);
+          }
         }
       }
       return list;
@@ -286,7 +300,9 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     if (type instanceof Type.TypeVar
         && required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       // e.g. @Untainted T, should just annotate as @Untainted.
-      list.add(List.of(0));
+      if (!Utility.hasUntaintedAnnotation(type) && typeFactory.hasUntaintedAnnotation(required)) {
+        list.add(List.of(0));
+      }
       return list;
     }
     return list;
