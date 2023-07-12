@@ -8,12 +8,12 @@ import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Set;
 import javax.lang.model.element.Element;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Generates the fixes for the given tree involved in the reporting error if such fixes exists. */
@@ -25,20 +25,19 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
    * The type factory of the checker. Used to get the type of the tree and generate a fix only if is
    * {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}.
    */
-  private final UCRTaintingAnnotatedTypeFactory typeFactory;
-  /** Required annotated type in the assignment on the left hand side. */
-  private final AnnotatedTypeMirror required;
+  protected final UCRTaintingAnnotatedTypeFactory typeFactory;
 
-  public FixVisitor(
-      Context context, UCRTaintingAnnotatedTypeFactory factory, AnnotatedTypeMirror required) {
+  protected final FoundRequired pair;
+
+  public FixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
     this.context = context;
     this.typeFactory = factory;
-    this.required = required;
+    this.pair = pair;
   }
 
   @Override
   public Set<Fix> defaultAction(Tree node, Void unused) {
-    return node.accept(new BasicVisitor(context, typeFactory, required), null);
+    return node.accept(new BasicVisitor(context, typeFactory, pair), null);
   }
 
   /**
