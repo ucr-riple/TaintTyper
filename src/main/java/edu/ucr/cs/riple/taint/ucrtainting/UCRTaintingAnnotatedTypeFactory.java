@@ -31,9 +31,9 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   /** List of annotated packages. Classes in these packages are considered to be annotated. */
   private final List<String> ANNOTATED_PACKAGE_NAMES_LIST;
   /** AnnotationMirror for {@link RUntainted}. */
-  protected final AnnotationMirror RUNTAINTED;
+  public final AnnotationMirror RUNTAINTED;
   /** AnnotationMirror for {@link RTainted}. */
-  protected final AnnotationMirror RTAINTED;
+  public final AnnotationMirror RTAINTED;
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker);

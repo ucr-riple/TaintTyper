@@ -47,6 +47,15 @@ public class Foo {
   public <M, L> HashMap<M, L> unmodifiable(Map<? extends M, ? extends L> m) {
     return null;
   }
+  //
+  //  public void test(@RUntainted String param){
+  //
+  //  }
+  //
+  //  public void wrong(String p){
+  //    // :: error: argument
+  //    test(p);
+  //  }
 }
 
 class Bar<T, E> {

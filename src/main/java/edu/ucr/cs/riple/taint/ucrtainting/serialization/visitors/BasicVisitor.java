@@ -290,7 +290,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
         && required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       // e.g. @Untainted String[]
       // Here we should annotate the component type
-      annotateType(((Type.ArrayType) type).getComponentType(), pair);
+      return annotateType(((Type.ArrayType) type).getComponentType(), pair);
     }
     if (type instanceof Type.JCPrimitiveType) {
       // e.g. @Untainted int
@@ -304,6 +304,28 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
         list.add(List.of(0));
       }
       return list;
+    }
+    if (type instanceof Type.WildcardType
+        && required instanceof AnnotatedTypeMirror.AnnotatedWildcardType) {
+      // e.g. @Untainted ? extends T
+      // extends
+      Type.WildcardType wildcardType = (Type.WildcardType) type;
+      AnnotatedTypeMirror.AnnotatedWildcardType wildcardRequired =
+          (AnnotatedTypeMirror.AnnotatedWildcardType) required;
+      return annotateType(
+          wildcardType.getExtendsBound(),
+          FoundRequired.of(wildcardRequired.getExtendsBound(), wildcardRequired.getExtendsBound()));
+    }
+    if (type instanceof Type.ClassType
+        && required instanceof AnnotatedTypeMirror.AnnotatedWildcardType) {
+      // e.g. @Untainted ? extends T
+      // extends
+      Type.ClassType wildcardType = (Type.ClassType) type;
+      AnnotatedTypeMirror.AnnotatedWildcardType wildcardRequired =
+          (AnnotatedTypeMirror.AnnotatedWildcardType) required;
+      return annotateType(
+          wildcardType,
+          FoundRequired.of(wildcardRequired.getExtendsBound(), wildcardRequired.getExtendsBound()));
     }
     return list;
   }
