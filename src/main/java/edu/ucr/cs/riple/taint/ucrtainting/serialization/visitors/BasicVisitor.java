@@ -1,7 +1,5 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
-import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getType;
-
 import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.ConditionalExpressionTree;
@@ -19,13 +17,11 @@ import com.sun.source.tree.TypeCastTree;
 import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -237,43 +233,45 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       return null;
     }
     if (pair != null) {
-      Type type = getType(element);
-      location.setTypeVariablePositions(annotateType(type, pair));
+      location.setTypeVariablePositions(annotateType(pair.required, pair.found));
     }
     return new Fix("untainted", location);
   }
 
-  protected List<List<Integer>> annotateType(Type type, FoundRequired pair) {
-    AnnotatedTypeMirror required = pair.required;
+  protected List<List<Integer>> annotateType(
+      AnnotatedTypeMirror required, AnnotatedTypeMirror found) {
     List<List<Integer>> list = new ArrayList<>();
-    if (type instanceof Type.TypeVar
-        && required instanceof AnnotatedTypeMirror.AnnotatedTypeVariable) {
-      if (!Utility.hasUntaintedAnnotation(type) && typeFactory.hasUntaintedAnnotation(required)) {
+    if (required instanceof AnnotatedTypeMirror.AnnotatedTypeVariable) {
+      if (!typeFactory.hasUntaintedAnnotation(found)
+          && typeFactory.hasUntaintedAnnotation(required)) {
         // e.g. @Untainted T
         list.add(List.of(0));
       }
       return list;
     }
-    if (type instanceof Type.ClassType
-        && required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+    if (required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       // e.g. @Untainted String
-      if (!Utility.hasUntaintedAnnotation(type) && typeFactory.hasUntaintedAnnotation(required)) {
+      if (!typeFactory.hasUntaintedAnnotation(found)
+          && typeFactory.hasUntaintedAnnotation(required)) {
         list.add(List.of(0));
       }
+      AnnotatedTypeMirror.AnnotatedDeclaredType type =
+          (AnnotatedTypeMirror.AnnotatedDeclaredType) required;
       for (int i = 0; i < type.getTypeArguments().size(); i++) {
-        Type typeArgument = type.getTypeArguments().get(i);
-        AnnotatedTypeMirror typeArgumentRequired =
-            ((AnnotatedTypeMirror.AnnotatedDeclaredType) required).getTypeArguments().get(i);
-        AnnotatedTypeMirror foundTypeArgument =
-            ((AnnotatedTypeMirror.AnnotatedDeclaredType) pair.found).getTypeArguments().get(i);
+        AnnotatedTypeMirror typeArgumentFound =
+            ((AnnotatedTypeMirror.AnnotatedDeclaredType) found).getTypeArguments().get(i);
+        AnnotatedTypeMirror typeArgumentRequired = type.getTypeArguments().get(i);
+        if (typeArgumentFound.equals(typeArgumentRequired)) {
+          // We do not need to continue this branch.
+          continue;
+        }
         List<Integer> toAddOnThisTypeArg = new ArrayList<>();
         if (typeFactory.hasUntaintedAnnotation(typeArgumentRequired)
-            && !typeFactory.hasUntaintedAnnotation(foundTypeArgument)) {
+            && !typeFactory.hasUntaintedAnnotation(typeArgumentFound)) {
           // e.g. @Untainted List<@Untainted String>
           toAddOnThisTypeArg.add(i + 1);
         }
-        List<List<Integer>> result =
-            annotateType(typeArgument, FoundRequired.of(foundTypeArgument, typeArgumentRequired));
+        List<List<Integer>> result = annotateType(typeArgumentRequired, typeArgumentFound);
         for (List<Integer> toAddOnContainingTypeArg : result) {
           // Need a fresh chain for each type.
           if (!toAddOnContainingTypeArg.isEmpty()) {
@@ -286,46 +284,21 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       }
       return list;
     }
-    if (type instanceof Type.ArrayType
-        && required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-      // e.g. @Untainted String[]
-      // Here we should annotate the component type
-      return annotateType(((Type.ArrayType) type).getComponentType(), pair);
-    }
-    if (type instanceof Type.JCPrimitiveType) {
-      // e.g. @Untainted int
-      list.add(List.of(0));
-      return list;
-    }
-    if (type instanceof Type.TypeVar
-        && required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-      // e.g. @Untainted T, should just annotate as @Untainted.
-      if (!Utility.hasUntaintedAnnotation(type) && typeFactory.hasUntaintedAnnotation(required)) {
+    if (required instanceof AnnotatedTypeMirror.AnnotatedPrimitiveType) {
+      if (!typeFactory.hasUntaintedAnnotation(found)
+          && typeFactory.hasUntaintedAnnotation(required)) {
+        // e.g. @Untainted int
         list.add(List.of(0));
       }
       return list;
     }
-    if (type instanceof Type.WildcardType
-        && required instanceof AnnotatedTypeMirror.AnnotatedWildcardType) {
+    if (required instanceof AnnotatedTypeMirror.AnnotatedWildcardType) {
       // e.g. @Untainted ? extends T
-      // extends
-      Type.WildcardType wildcardType = (Type.WildcardType) type;
       AnnotatedTypeMirror.AnnotatedWildcardType wildcardRequired =
           (AnnotatedTypeMirror.AnnotatedWildcardType) required;
-      return annotateType(
-          wildcardType.getExtendsBound(),
-          FoundRequired.of(wildcardRequired.getExtendsBound(), wildcardRequired.getExtendsBound()));
-    }
-    if (type instanceof Type.ClassType
-        && required instanceof AnnotatedTypeMirror.AnnotatedWildcardType) {
-      // e.g. @Untainted ? extends T
-      // extends
-      Type.ClassType wildcardType = (Type.ClassType) type;
-      AnnotatedTypeMirror.AnnotatedWildcardType wildcardRequired =
-          (AnnotatedTypeMirror.AnnotatedWildcardType) required;
-      return annotateType(
-          wildcardType,
-          FoundRequired.of(wildcardRequired.getExtendsBound(), wildcardRequired.getExtendsBound()));
+      AnnotatedTypeMirror.AnnotatedWildcardType wildcardFound =
+          (AnnotatedTypeMirror.AnnotatedWildcardType) found;
+      return annotateType(wildcardRequired.getExtendsBound(), wildcardFound.getExtendsBound());
     }
     return list;
   }
