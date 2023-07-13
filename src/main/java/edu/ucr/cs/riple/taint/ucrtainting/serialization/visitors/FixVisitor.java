@@ -12,7 +12,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -79,7 +78,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     if (methodHasTypeArgs) {
       Set<Type.TypeVar> effectiveTypes = checkMethodTypeVarImpact(calledMethod, pair);
       if (!effectiveTypes.isEmpty()) {
-        List<Fix> fixes = new ArrayList<>();
+        Set<Fix> fixes = new HashSet<>();
         for (Type.TypeVar typeVar : effectiveTypes) {
           AnnotatedTypeFactory.ParameterizedExecutableType mType = typeFactory.methodFromUse(node);
           AnnotatedTypeMirror.AnnotatedExecutableType invokedMethod = mType.executableType;
@@ -98,8 +97,10 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
                             typeFactory,
                             new FoundRequired(paramsAnnotatedTypeMirrors.get(i), requiredParam)),
                         null));
-            System.out.println("ZIBA");
           }
+        }
+        if (!fixes.isEmpty()) {
+          return fixes;
         }
       }
     }

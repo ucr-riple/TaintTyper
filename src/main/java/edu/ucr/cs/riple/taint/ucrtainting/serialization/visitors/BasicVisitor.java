@@ -266,10 +266,11 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
           continue;
         }
         List<Integer> toAddOnThisTypeArg = new ArrayList<>();
+        toAddOnThisTypeArg.add(i + 1);
         if (typeFactory.hasUntaintedAnnotation(typeArgumentRequired)
             && !typeFactory.hasUntaintedAnnotation(typeArgumentFound)) {
           // e.g. @Untainted List<@Untainted String>
-          toAddOnThisTypeArg.add(i + 1);
+          list.add(List.of(1 + i, 0));
         }
         List<List<Integer>> result = annotateType(typeArgumentRequired, typeArgumentFound);
         for (List<Integer> toAddOnContainingTypeArg : result) {
