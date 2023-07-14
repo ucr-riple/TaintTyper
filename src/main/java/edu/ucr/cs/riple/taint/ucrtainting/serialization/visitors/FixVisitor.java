@@ -6,7 +6,6 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
@@ -78,7 +77,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       receiver = ((MemberSelectTree) node.getMethodSelect()).getExpression();
     }
     boolean isInAnnotatedPackage = Utility.isInAnnotatedPackage(calledMethod, typeFactory);
-    boolean isTypeVar = calledMethod.getReturnType() instanceof Type.TypeVar;
+    boolean isTypeVar = Utility.containsTypeArgument(calledMethod.getReturnType());
     boolean hasReceiver =
         !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));
     boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();

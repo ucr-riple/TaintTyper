@@ -34,6 +34,8 @@ public class Foo {
     s = gen.instanceWithL().getK().keySet().iterator().next();
     // :: error: assignment
     s = gen.instanceWithL().getK().values().iterator().next();
+    // :: error: assignment
+    Iterator<@RUntainted String> iter = gen.instanceWithL().getK().keySet().iterator();
   }
 
   public void rawUsedTypes(Item item1) {

@@ -2,7 +2,6 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getType;
 
-import com.google.common.base.Preconditions;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MemberSelectTree;
@@ -22,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
@@ -98,12 +98,11 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
             .accept(new BasicVisitor(context, typeFactory, null), null);
       }
     }
+    addReceiver(node);
     if (Utility.isFullyParameterizedType(calledMethod.getReturnType())) {
       // Found the right declaration.
-      addReceiver(node);
       return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
     }
-    addReceiver(node);
     return receiver.accept(this, unused);
   }
 
@@ -120,32 +119,20 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
   }
 
   /**
-   * Returns the list of type arguments for the given element.
+   * Returns the list of type arguments of the for the given element's type (e.g. {@code
+   * List<String> will return E}).
    *
    * @param elementType The element to get the type arguments for.
    * @return The list of type arguments for the given element.
    */
-  private List<Type> getAllTypeArguments(Type elementType) {
-    if (elementType instanceof Type.ClassType) {
-      return (elementType).tsym.type.allparams();
-    } else {
-      return elementType.tsym.type.getTypeArguments();
-    }
-  }
-
-  /**
-   * Returns the list of type arguments for the given element.
-   *
-   * @param element The element to get the type arguments for.
-   * @return The list of type arguments for the given element.
-   */
-  private List<Type> getProvidedTypeArguments(Element element) {
-    Symbol symbol = (Symbol) element;
-    Type type = getType(symbol);
-    if (type instanceof Type.ClassType) {
-      return type.allparams();
-    }
-    return type.getTypeArguments();
+  private List<Type.TypeVar> getAllTypeArguments(Type elementType) {
+    List<Type> typeArgsList =
+        elementType instanceof Type.ClassType
+            // Should return all type arguments, including those of the outer class.
+            ? elementType.tsym.type.allparams()
+            : elementType.tsym.type.getTypeArguments();
+    // Should return as list to preserve the order of the type arguments.
+    return typeArgsList.stream().map(type -> (Type.TypeVar) type).collect(Collectors.toList());
   }
 
   /**
@@ -185,31 +172,28 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
    * @return The list of indexes of the type parameters.
    */
   private List<Integer> locateEffectiveTypeParameter(Element element) {
-    Type elementType = getType(element);
+    Type elementParameterizedType = getType(element);
+    Type base = elementParameterizedType;
     // Indexes of the type variables to locate the type which needs to be modified.
     List<Integer> indexes = new ArrayList<>();
     // Map of type arguments symbol names to their provided type parameters symbol names. Cannot use
     // a map of <Type.TypeVar, Type.TypeVar> since 2 variables with same name can have different
     // owners and are not considered equal.
     Map<String, String> typeVarMap = new HashMap<>();
-    List<Type> elementTypeArgs = getAllTypeArguments(elementType);
-    getAllTypeArguments(elementType)
-        .forEach(
-            type -> {
-              Preconditions.checkArgument(type instanceof Type.TypeVar);
-              typeVarMap.put(type.toString(), type.toString());
-            });
+    List<Type.TypeVar> elementTypeArgs = getAllTypeArguments(elementParameterizedType);
+    getAllTypeArguments(elementParameterizedType)
+        .forEach(type -> typeVarMap.put(type.toString(), type.toString()));
     for (ExpressionTree receiver : receivers) {
       // Locate passed type arguments
-      Type receiverType = getType(TreeUtils.elementFromUse(receiver));
-      List<Type> typeParametersForReceiver = receiverType.getTypeArguments();
+      Type receiverParameterizedType = getType(TreeUtils.elementFromUse(receiver));
+      List<Type> receiverProvidedParameterTypes = receiverParameterizedType.getTypeArguments();
 
       // Update translation:
-      List<Type> typeArgumentsForReceiver = getAllTypeArguments(receiverType);
+      List<Type.TypeVar> typeArgumentsForReceiver = getAllTypeArguments(receiverParameterizedType);
       Set<String> existingTypeVars = typeVarMap.keySet();
       Set<String> toRemove = new HashSet<>();
-      for (int i = 0; i < typeParametersForReceiver.size(); i++) {
-        Type providedI = typeParametersForReceiver.get(i);
+      for (int i = 0; i < receiverProvidedParameterTypes.size(); i++) {
+        Type providedI = receiverProvidedParameterTypes.get(i);
         if (!(providedI instanceof Type.TypeVar)) {
           continue;
         }
@@ -219,15 +203,20 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
           String newKey = typeArgumentsForReceiver.get(i).toString();
           if (!provided.equals(newKey)) {
             toRemove.add(provided);
+            typeVarMap.put(newKey, value);
           }
-          typeVarMap.put(newKey, value);
         }
       }
       toRemove.forEach(typeVarMap::remove);
-
-      if (receiverType instanceof Type.TypeVar) {
+      // Check if we entered inside a type parameter. (e.g. E or Foo<E>)
+      if (receiverParameterizedType instanceof Type.TypeVar
+          || typeArgumentsForReceiver.size() == 1) {
+        String enteredType =
+            receiverParameterizedType instanceof Type.TypeVar
+                ? receiverParameterizedType.toString()
+                : typeArgumentsForReceiver.get(0).toString();
         // We should refresh base.
-        String original = typeVarMap.get(receiverType.toString());
+        String original = typeVarMap.get(enteredType);
         int i;
         for (i = 0; i < elementTypeArgs.size(); i++) {
           if (elementTypeArgs.get(i).toString().equals(original)) {
@@ -235,15 +224,16 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
             break;
           }
         }
-        elementType = getProvidedTypeArguments(element).get(i);
-        elementTypeArgs = getAllTypeArguments(elementType);
+        elementParameterizedType = base.allparams().get(i);
+        base = elementParameterizedType;
+        elementTypeArgs = getAllTypeArguments(elementParameterizedType);
+        if (elementTypeArgs.size() == 0) {
+          // Reached the end of type parameters.
+          break;
+        }
         typeVarMap.clear();
-        getAllTypeArguments(elementType)
-            .forEach(
-                type -> {
-                  Preconditions.checkArgument(type instanceof Type.TypeVar);
-                  typeVarMap.put(type.toString(), type.toString());
-                });
+        getAllTypeArguments(elementParameterizedType)
+            .forEach(type -> typeVarMap.put(type.toString(), type.toString()));
       }
     }
     if (!indexes.isEmpty()) {
