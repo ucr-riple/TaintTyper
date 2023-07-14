@@ -33,7 +33,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
             + found.getKind()
             + ":"
             + found
-            + " and required:"
+            + " with required:"
             + required.getKind()
             + ":"
             + required);
@@ -134,5 +134,13 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
       AnnotatedTypeMirror.AnnotatedWildcardType required,
       Void unused) {
     return this.visit(found, required.getExtendsBound(), unused);
+  }
+
+  @Override
+  public List<List<Integer>> visitArray_Array(
+      AnnotatedTypeMirror.AnnotatedArrayType found,
+      AnnotatedTypeMirror.AnnotatedArrayType required,
+      Void unused) {
+    return this.visit(found.getComponentType(), required.getComponentType(), unused);
   }
 }
