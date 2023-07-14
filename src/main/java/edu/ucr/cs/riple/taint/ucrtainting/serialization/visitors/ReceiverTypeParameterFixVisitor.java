@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
+import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getAnnotatedTypeMirrorOfTypeArgumentAt;
 import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getType;
 
 import com.sun.source.tree.ExpressionTree;
@@ -10,10 +11,12 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +27,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
@@ -34,8 +38,9 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
    */
   private List<ExpressionTree> receivers;
 
-  public ReceiverTypeParameterFixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
-    super(context, factory, null);
+  public ReceiverTypeParameterFixVisitor(
+      Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
+    super(context, factory, pair);
   }
 
   @Override
@@ -160,7 +165,35 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
     }
     List<Integer> indexes = locateEffectiveTypeParameter(element);
     if (!indexes.isEmpty()) {
-      location.setTypeVariablePositions(List.of(indexes));
+      AnnotatedTypeMirror m = typeFactory.getAnnotatedType(element);
+      if (!(m instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
+        throw new RuntimeException("Expected AnnotatedDeclaredType, got " + m.getClass());
+      }
+      // The remaining inconsistencies are due to the fact that the parameters are not inside the
+      // receiver. We should locate the remaining. See example below:
+      // Iterator<Entry<String, String>> itEntries = null;
+      // @RUntainted Entry<@RUntainted String, @RUntainted String> entry = itEntries.next();
+      // With controlling type argument, we can make result of next() untainted. However, we need to
+      // make the including type args of Entry untainted as well.
+      AnnotatedTypeMirror.AnnotatedDeclaredType type =
+          (AnnotatedTypeMirror.AnnotatedDeclaredType) m;
+      AnnotatedTypeMirror foundOnTypeArg =
+          getAnnotatedTypeMirrorOfTypeArgumentAt(type, new ArrayDeque<>(indexes));
+      List<List<Integer>> rest =
+          new TypeMatchVisitor(typeFactory).visit(foundOnTypeArg, pair.required, null);
+      List<List<Integer>> positions;
+      if (!rest.isEmpty()) {
+        positions = new ArrayList<>();
+        List<Integer> typeArgPosition = indexes.subList(0, indexes.size() - 1);
+        for (List<Integer> integers : rest) {
+          List<Integer> position = new ArrayList<>(typeArgPosition);
+          position.addAll(integers);
+          positions.add(position);
+        }
+      } else {
+        positions = List.of(indexes);
+      }
+      location.setTypeVariablePositions(positions);
     }
     return new Fix("untainted", location);
   }
@@ -217,6 +250,10 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
                 : typeArgumentsForReceiver.get(0).toString();
         // We should refresh base.
         String original = typeVarMap.get(enteredType);
+        if (original == null) {
+          // We are inside a type parameter which is not provided by the caller.
+          break;
+        }
         int i;
         for (i = 0; i < elementTypeArgs.size(); i++) {
           if (elementTypeArgs.get(i).toString().equals(original)) {

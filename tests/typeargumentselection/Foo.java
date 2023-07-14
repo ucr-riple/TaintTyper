@@ -2,8 +2,8 @@ package test;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.util.*;
-import javax.servlet.http.*;
 import java.util.Map.Entry;
+import javax.servlet.http.*;
 
 public class Foo {
 
@@ -50,7 +50,7 @@ public class Foo {
     return m_startGalleriesSettings.get(galleryType);
   }
 
-  public void multiple(){
+  public void multiple() {
     Iterator<Entry<String, String>> itEntries = null;
     // :: error: assignment
     @RUntainted Entry<@RUntainted String, @RUntainted String> entry = itEntries.next();

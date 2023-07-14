@@ -93,7 +93,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     // receiver and leave the called method untouched. Annotation on the declaration on the type
     // argument, will be added on the method automatically.
     if (isTypeVar && hasReceiver) {
-      return node.accept(new ReceiverTypeParameterFixVisitor(context, typeFactory), unused);
+      return node.accept(new ReceiverTypeParameterFixVisitor(context, typeFactory, pair), unused);
     } else {
       return defaultAction(node, unused);
     }

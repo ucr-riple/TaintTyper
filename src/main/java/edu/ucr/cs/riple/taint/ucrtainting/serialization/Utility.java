@@ -16,10 +16,12 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import java.util.Deque;
 import javax.annotation.Nullable;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
 
@@ -123,6 +125,24 @@ public class Utility {
       }
     }
     return false;
+  }
+
+  public static AnnotatedTypeMirror getAnnotatedTypeMirrorOfTypeArgumentAt(
+      AnnotatedTypeMirror type, Deque<Integer> position) {
+    if (position.isEmpty()) {
+      return type;
+    }
+    int index = position.poll();
+    if (index == 0) {
+      return type;
+    }
+    if (!(type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
+      throw new RuntimeException("Unexpected type: " + type);
+    }
+    AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
+        (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
+    return getAnnotatedTypeMirrorOfTypeArgumentAt(
+        declaredType.getTypeArguments().get(index - 1), position);
   }
 
   /**

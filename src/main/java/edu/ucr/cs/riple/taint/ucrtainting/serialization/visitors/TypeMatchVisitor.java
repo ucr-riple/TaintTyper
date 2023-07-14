@@ -77,13 +77,8 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
       }
       List<Integer> toAddOnThisTypeArg = new ArrayList<>();
       toAddOnThisTypeArg.add(i + 1);
-      if (typeFactory.hasUntaintedAnnotation(typeArgumentRequired)
-          && !typeFactory.hasUntaintedAnnotation(typeArgumentFound)) {
-        // e.g. @Untainted List<@Untainted String>
-        result.add(List.of(1 + i, 0));
-      }
-      List<List<Integer>> unTypeArgs = visit(typeArgumentFound, typeArgumentRequired, unused);
-      for (List<Integer> toAddOnContainingTypeArg : unTypeArgs) {
+      List<List<Integer>> onTypeArgs = visit(typeArgumentFound, typeArgumentRequired, unused);
+      for (List<Integer> toAddOnContainingTypeArg : onTypeArgs) {
         // Need a fresh chain for each type.
         if (!toAddOnContainingTypeArg.isEmpty()) {
           List<Integer> toAddOnThisTypeArgWithContainingTypeArgs =
