@@ -38,6 +38,8 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
    */
   private List<ExpressionTree> receivers;
 
+  private boolean reachedEnd = false;
+
   public ReceiverTypeParameterFixVisitor(
       Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
     super(context, factory, pair);
@@ -166,21 +168,26 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
     List<Integer> indexes = locateEffectiveTypeParameter(element);
     if (!indexes.isEmpty()) {
       AnnotatedTypeMirror m = typeFactory.getAnnotatedType(element);
-      if (!(m instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
-        throw new RuntimeException("Expected AnnotatedDeclaredType, got " + m.getClass());
+      List<List<Integer>> rest;
+      if (reachedEnd) {
+        // The remaining inconsistencies are due to the fact that the parameters are not inside the
+        // receiver. We should locate the remaining. See example below:
+        // Iterator<Entry<String, String>> itEntries = null;
+        // @RUntainted Entry<@RUntainted String, @RUntainted String> entry = itEntries.next();
+        // With controlling type argument, we can make result of next() untainted. However, we need
+        // to
+        // make the including type args of Entry untainted as well.
+        AnnotatedTypeMirror.AnnotatedDeclaredType type =
+            (AnnotatedTypeMirror.AnnotatedDeclaredType) m;
+        AnnotatedTypeMirror foundOnTypeArg =
+            getAnnotatedTypeMirrorOfTypeArgumentAt(type, new ArrayDeque<>(indexes));
+        rest =
+            reachedEnd
+                ? new TypeMatchVisitor(typeFactory).visit(foundOnTypeArg, pair.required, null)
+                : List.of();
+      } else {
+        rest = List.of();
       }
-      // The remaining inconsistencies are due to the fact that the parameters are not inside the
-      // receiver. We should locate the remaining. See example below:
-      // Iterator<Entry<String, String>> itEntries = null;
-      // @RUntainted Entry<@RUntainted String, @RUntainted String> entry = itEntries.next();
-      // With controlling type argument, we can make result of next() untainted. However, we need to
-      // make the including type args of Entry untainted as well.
-      AnnotatedTypeMirror.AnnotatedDeclaredType type =
-          (AnnotatedTypeMirror.AnnotatedDeclaredType) m;
-      AnnotatedTypeMirror foundOnTypeArg =
-          getAnnotatedTypeMirrorOfTypeArgumentAt(type, new ArrayDeque<>(indexes));
-      List<List<Integer>> rest =
-          new TypeMatchVisitor(typeFactory).visit(foundOnTypeArg, pair.required, null);
       List<List<Integer>> positions;
       if (!rest.isEmpty()) {
         positions = new ArrayList<>();
@@ -251,7 +258,7 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
         // We should refresh base.
         String original = typeVarMap.get(enteredType);
         if (original == null) {
-          // We are inside a type parameter which is not provided by the caller.
+          reachedEnd = true;
           break;
         }
         int i;

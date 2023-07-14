@@ -36,7 +36,6 @@ class Foo {
     field = other.getO().getE();
     // :: error: assignment
     field = other.inner.innerField.getT();
-
     MapTypeArgument<String, String, HashMap<String, String>> mapTypeArgument =
         new MapTypeArgument<>();
     @RUntainted Map<?, ?> map;
