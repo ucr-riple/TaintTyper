@@ -12,16 +12,14 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
-import org.checkerframework.framework.type.AnnotatedTypeFactory;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.framework.util.AnnotatedTypes;
 import org.checkerframework.javacutil.TreeUtils;
 
-/** Generates the fixes for the given tree involved in the reporting error if such fixes exists. */
+/**
+ * General Fix visitor.This visitor determines the approach for resolving the error upon visiting
+ * specific nodes that may impact the algorithm selection.
+ */
 public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
 
   /** The javac context. */
@@ -31,7 +29,10 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
    * {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}.
    */
   protected final UCRTaintingAnnotatedTypeFactory typeFactory;
-
+  /**
+   * The pair of found annotated type and the required annotated type. This visitor uses this
+   * information to generated annotations that adapts the found type to the required type.
+   */
   protected final FoundRequired pair;
 
   public FixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
@@ -46,13 +47,16 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   }
 
   /**
-   * Visitor for method invocations. For method invocations:
+   * Visitor for method invocations. In method invocations, we might choose different approaches:
    *
    * <ol>
-   *   <li>If return type is not type variable, we annotate the called method.
-   *   <li>If return type is type variable and defined in source code, we annotate the called
-   *       method.
-   *   <li>If return type is type variable and defined in library, we annotate the receiver.
+   *   <li>If in stub files, exit
+   *   <li>If method has type args, and by changing the parameter types of parameters, we can
+   *       achieve required type, we annotate the parameters.
+   *   <li>If return type of method has type arguments and the call has a valid receiver, we
+   *       annotate the receiver.
+   *   <li>If method is in third party library, we annotate the receiver and parameters.
+   *   <li>Annotate the called method directly
    * </ol>
    *
    * @param node The given tree.
@@ -65,6 +69,9 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       return Set.of();
     }
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
+    if (typeFactory.isPresentInStub(node.getMethodSelect())) {
+      return Set.of();
+    }
     // Locate method receiver.
     ExpressionTree receiver = null;
     if (node.getMethodSelect() instanceof MemberSelectTree) {
@@ -76,129 +83,20 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
         !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));
     boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();
     if (methodHasTypeArgs) {
-      Set<Type.TypeVar> effectiveTypes = checkMethodTypeVarImpact(calledMethod, pair);
-      if (!effectiveTypes.isEmpty()) {
-        Set<Fix> fixes = new HashSet<>();
-        for (Type.TypeVar typeVar : effectiveTypes) {
-          AnnotatedTypeFactory.ParameterizedExecutableType mType = typeFactory.methodFromUse(node);
-          AnnotatedTypeMirror.AnnotatedExecutableType invokedMethod = mType.executableType;
-          List<AnnotatedTypeMirror> paramsAnnotatedTypeMirrors =
-              AnnotatedTypes.adaptParameters(typeFactory, invokedMethod, node.getArguments());
-          for (int i = 0; i < node.getArguments().size(); i++) {
-            AnnotatedTypeMirror requiredParam = paramsAnnotatedTypeMirrors.get(i).deepCopy(true);
-            Type paramType = calledMethod.getParameters().get(i).type;
-            updateAnnotatedTypeMirror(requiredParam, paramType, typeVar);
-            fixes.addAll(
-                node.getArguments()
-                    .get(i)
-                    .accept(
-                        new FixVisitor(
-                            context,
-                            typeFactory,
-                            new FoundRequired(paramsAnnotatedTypeMirrors.get(i), requiredParam)),
-                        null));
-          }
-        }
-        if (!fixes.isEmpty()) {
-          return fixes;
-        }
-      }
+      return node.accept(new MethodTypeArgumentFixVisitor(context, typeFactory, pair), unused);
     }
     // check if the call is to a method defined in a third party library. If the method has a type
     // var return type and has a receiver, we should annotate the receiver.
     if (!isInAnnotatedPackage && !(isTypeVar && hasReceiver)) {
-      return node.accept(new ThirdPartyFixVisitor(context, typeFactory), null);
+      return node.accept(new ThirdPartyFixVisitor(context, typeFactory), unused);
     }
     // The method has a receiver, if the method contains a type argument, we should annotate the
     // receiver and leave the called method untouched. Annotation on the declaration on the type
     // argument, will be added on the method automatically.
     if (isTypeVar && hasReceiver) {
-      return node.accept(new TypeArgumentFixVisitor(context, typeFactory), unused);
+      return node.accept(new ReceiverTypeParameterFixVisitor(context, typeFactory), unused);
     } else {
       return defaultAction(node, unused);
-    }
-  }
-
-  private Set<Type.TypeVar> checkMethodTypeVarImpact(
-      Symbol.MethodSymbol calledMethod, FoundRequired pair) {
-    Set<Type.TypeVar> effectiveTypeVars = new HashSet<>();
-    List<Symbol.TypeVariableSymbol> methodTypeVars = calledMethod.getTypeParameters();
-    for (Symbol.TypeVariableSymbol methodTypeVar : methodTypeVars) {
-      if (typeVarCanImpactFoundRequiredPair(
-          (Type.TypeVar) methodTypeVar.type,
-          calledMethod.getReturnType(),
-          pair.found,
-          pair.required)) {
-        effectiveTypeVars.add((Type.TypeVar) methodTypeVar.type);
-      }
-    }
-    return effectiveTypeVars;
-  }
-
-  /**
-   * Checks if annotating the given type variable on the given type, can make the found type closer
-   * to the required type.
-   *
-   * @param var The type variable to check.
-   * @param type The type to check.
-   * @param found The found type.
-   * @param required The required type.
-   * @return True if annotating the given type variable on the given type, can make the found type
-   *     closer to the required type.
-   */
-  private boolean typeVarCanImpactFoundRequiredPair(
-      Type.TypeVar var, Type type, AnnotatedTypeMirror found, AnnotatedTypeMirror required) {
-    if (type instanceof Type.TypeVar) {
-      return type.equals(var)
-          && typeFactory.hasUntaintedAnnotation(required)
-          && !typeFactory.hasUntaintedAnnotation(found);
-    }
-    if (type instanceof Type.ClassType) {
-      AnnotatedTypeMirror.AnnotatedDeclaredType foundDeclared =
-          (AnnotatedTypeMirror.AnnotatedDeclaredType) found;
-      AnnotatedTypeMirror.AnnotatedDeclaredType requiredDeclared =
-          (AnnotatedTypeMirror.AnnotatedDeclaredType) required;
-      Type.ClassType classType = (Type.ClassType) type;
-      for (int i = 0; i < foundDeclared.getTypeArguments().size(); i++) {
-        boolean canImpact =
-            typeVarCanImpactFoundRequiredPair(
-                var,
-                classType.getTypeArguments().get(i),
-                foundDeclared.getTypeArguments().get(i),
-                requiredDeclared.getTypeArguments().get(i));
-        if (canImpact) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  private void updateAnnotatedTypeMirror(
-      AnnotatedTypeMirror typeMirror, Type elementType, Type.TypeVar var) {
-    // TODO: rewrite this method to use the visitor pattern. AbstractAtmComboVisitor uses type
-    // mirror vs type mirror, not applicable here.
-    if (elementType instanceof Type.TypeVar && elementType.equals(var)) {
-      typeMirror.replaceAnnotation(typeFactory.RUNTAINTED);
-    }
-    if (elementType instanceof Type.ClassType) {
-      AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
-          (AnnotatedTypeMirror.AnnotatedDeclaredType) typeMirror;
-      Type.ClassType classType = (Type.ClassType) elementType;
-      for (int i = 0; i < classType.getTypeArguments().size(); i++) {
-        AnnotatedTypeMirror paramTypeMirror = declaredType.getTypeArguments().get(i);
-        Type paramType = classType.getTypeArguments().get(i);
-        updateAnnotatedTypeMirror(paramTypeMirror, paramType, var);
-      }
-    }
-    if (elementType instanceof Type.WildcardType) {
-      AnnotatedTypeMirror.AnnotatedWildcardType wildcardType =
-          (AnnotatedTypeMirror.AnnotatedWildcardType) typeMirror;
-      Type.WildcardType wildcard = (Type.WildcardType) elementType;
-      AnnotatedTypeMirror extendsBound = wildcardType.getExtendsBound();
-      if (extendsBound != null) {
-        updateAnnotatedTypeMirror(extendsBound, wildcard.getExtendsBound(), var);
-      }
     }
   }
 }

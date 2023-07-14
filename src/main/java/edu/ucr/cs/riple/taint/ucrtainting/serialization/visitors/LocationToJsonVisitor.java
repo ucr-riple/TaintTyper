@@ -9,6 +9,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameter
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/** Visitor for converting a location to a JSON object. */
 public class LocationToJsonVisitor implements LocationVisitor<JSONObject, Void> {
 
   private JSONObject defaultAction(AbstractSymbolLocation location) {

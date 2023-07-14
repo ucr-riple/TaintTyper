@@ -13,6 +13,10 @@ import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
 
+/**
+ * Visitor for handling calls to third party libraries. This visitor gets to the required type by
+ * making receiver and all arguments be untainted.
+ */
 public class ThirdPartyFixVisitor extends BasicVisitor {
 
   public ThirdPartyFixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {

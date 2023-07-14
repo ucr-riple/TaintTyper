@@ -4,6 +4,7 @@ import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getType;
 
 import com.google.common.base.Preconditions;
 import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
@@ -25,7 +26,7 @@ import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
 
-public class TypeArgumentFixVisitor extends BasicVisitor {
+public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
 
   /**
    * The list method invocations that their return type contained a type argument. Used to detect
@@ -33,16 +34,16 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
    */
   private List<ExpressionTree> receivers;
 
-  public TypeArgumentFixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
+  public ReceiverTypeParameterFixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
     super(context, factory, null);
   }
 
-  //  @Override
-  //  public Set<Fix> visitIdentifier(IdentifierTree node, Void unused) {
-  //    addReceiver(node);
-  //    Fix fix = buildFixForElement(TreeUtils.elementFromTree(node));
-  //    return fix == null ? Set.of() : Set.of(fix);
-  //  }
+  @Override
+  public Set<Fix> visitIdentifier(IdentifierTree node, Void unused) {
+    addReceiver(node);
+    Fix fix = buildFixForElement(TreeUtils.elementFromTree(node));
+    return fix == null ? Set.of() : Set.of(fix);
+  }
 
   @Override
   public Set<Fix> visitMemberSelect(MemberSelectTree node, Void unused) {
@@ -72,19 +73,6 @@ public class TypeArgumentFixVisitor extends BasicVisitor {
     return Set.of();
   }
 
-  /**
-   * Visitor for method invocations. For method invocations:
-   *
-   * <ol>
-   *   <li>If return type is not type variable, we annotate the called method.
-   *   <li>If return type is type variable and defined in source code, we annotate the called
-   *       method.
-   *   <li>If return type is type variable and defined in library, we annotate the receiver.
-   * </ol>
-   *
-   * @param node The given tree.
-   * @return Void null.
-   */
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Void unused) {
     Element element = TreeUtils.elementFromUse(node);

@@ -64,4 +64,11 @@ class Foo {
   public @RUntainted Object inheritReturn() {
     return null;
   }
+
+  public void testAndOr(boolean op1, boolean op2) {
+    // :: error: assignment
+    @RUntainted boolean x = op1 && op2;
+    // :: error: assignment
+    x = op1 || op2;
+  }
 }
