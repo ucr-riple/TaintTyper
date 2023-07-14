@@ -23,6 +23,8 @@ class Foo {
     // :: error: assignment
     Iterator<@RUntainted String> iter = ta.getJ().keySet().iterator();
     // :: error: assignment
+    iter = ta.getJ().values().iterator();
+    // :: error: assignment
     field = ta.getJ().keySet().iterator().next();
     // :: error: assignment
     field = ta.getJ().values().iterator().next();
