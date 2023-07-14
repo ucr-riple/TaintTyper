@@ -27,16 +27,16 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
 
   @Override
   protected List<List<Integer>> defaultAction(
-      AnnotatedTypeMirror type1, AnnotatedTypeMirror type2, Void unused) {
+      AnnotatedTypeMirror found, AnnotatedTypeMirror required, Void unused) {
     throw new UnsupportedOperationException(
-        "Did not expect type match of "
-            + type1.getKind()
+        "Did not expect type match of found:"
+            + found.getKind()
             + ":"
-            + type1
-            + " and "
-            + type2.getKind()
+            + found
+            + " and required:"
+            + required.getKind()
             + ":"
-            + type2);
+            + required);
   }
 
   private List<List<Integer>> supportedDefault(
