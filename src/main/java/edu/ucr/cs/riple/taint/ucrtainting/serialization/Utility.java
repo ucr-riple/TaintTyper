@@ -16,7 +16,9 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 import javax.annotation.Nullable;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -127,6 +129,25 @@ public class Utility {
     return false;
   }
 
+  /**
+   * Gets the annotated type mirror of the containing type parameter of the given element.
+   *
+   * @param type the type to get the containing type parameter.
+   * @param positions the positions of the type parameter.
+   * @return the annotated type mirror of the containing type parameter.
+   */
+  public static AnnotatedTypeMirror getAnnotatedTypeMirrorOfTypeArgumentAt(
+      AnnotatedTypeMirror type, List<Integer> positions) {
+    return getAnnotatedTypeMirrorOfTypeArgumentAt(type, new ArrayDeque<>(positions));
+  }
+
+  /**
+   * Gets the annotated type mirror of the containing type parameter of the given element.
+   *
+   * @param type the type to get the containing type parameter.
+   * @param position the position of the type parameter.
+   * @return the annotated type mirror of the containing type parameter.
+   */
   public static AnnotatedTypeMirror getAnnotatedTypeMirrorOfTypeArgumentAt(
       AnnotatedTypeMirror type, Deque<Integer> position) {
     if (position.isEmpty()) {

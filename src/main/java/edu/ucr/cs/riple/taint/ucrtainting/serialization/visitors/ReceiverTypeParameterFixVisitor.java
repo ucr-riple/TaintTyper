@@ -16,7 +16,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -228,17 +227,17 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
           // String>> itEntries = null; @RUntainted Entry<@RUntainted String, @RUntainted String>
           // entry = itEntries.next(); With controlling type argument, we can make result of next()
           // untainted. However, we need to make the including type args of Entry untainted as well.
-          List<List<Integer>> rest;
-          AnnotatedTypeMirror m = typeFactory.getAnnotatedType(element);
-          AnnotatedTypeMirror.AnnotatedDeclaredType type =
-              (AnnotatedTypeMirror.AnnotatedDeclaredType) m;
+          List<List<Integer>> onTypeArgumentIndexes;
+          AnnotatedTypeMirror.AnnotatedDeclaredType elementAnnotatedMirrorType =
+              (AnnotatedTypeMirror.AnnotatedDeclaredType) typeFactory.getAnnotatedType(element);
           AnnotatedTypeMirror foundOnTypeArg =
-              getAnnotatedTypeMirrorOfTypeArgumentAt(type, new ArrayDeque<>(indexes));
-          rest = new TypeMatchVisitor(typeFactory).visit(foundOnTypeArg, pair.required, null);
+              getAnnotatedTypeMirrorOfTypeArgumentAt(elementAnnotatedMirrorType, indexes);
+          onTypeArgumentIndexes =
+              new TypeMatchVisitor(typeFactory).visit(foundOnTypeArg, pair.required, null);
           List<List<Integer>> positions;
-          if (!rest.isEmpty()) {
+          if (!onTypeArgumentIndexes.isEmpty()) {
             positions = new ArrayList<>();
-            for (List<Integer> integers : rest) {
+            for (List<Integer> integers : onTypeArgumentIndexes) {
               List<Integer> position = new ArrayList<>(indexes);
               position.addAll(integers);
               positions.add(position);
