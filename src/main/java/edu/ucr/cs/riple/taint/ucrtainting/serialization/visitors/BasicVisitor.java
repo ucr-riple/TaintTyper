@@ -155,6 +155,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     return fixes;
   }
 
+  @Override
   public Set<Fix> visitArrayAccess(ArrayAccessTree node, Void unused) {
     // only the expression is enough, we do not need to annotate the index.
     return node.getExpression().accept(new FixVisitor(context, typeFactory, pair), unused);

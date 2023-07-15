@@ -38,8 +38,6 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
    */
   private List<ExpressionTree> receivers;
 
-  private boolean reachedEnd = false;
-
   public ReceiverTypeParameterFixVisitor(
       Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
     super(context, factory, pair);
@@ -165,42 +163,9 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
         return fixes.iterator().next();
       }
     }
-    List<Integer> indexes = locateEffectiveTypeParameter(element);
+    List<List<Integer>> indexes = locateEffectiveTypeParameter(element);
     if (!indexes.isEmpty()) {
-      AnnotatedTypeMirror m = typeFactory.getAnnotatedType(element);
-      List<List<Integer>> rest;
-      if (reachedEnd) {
-        // The remaining inconsistencies are due to the fact that the parameters are not inside the
-        // receiver. We should locate the remaining. See example below:
-        // Iterator<Entry<String, String>> itEntries = null;
-        // @RUntainted Entry<@RUntainted String, @RUntainted String> entry = itEntries.next();
-        // With controlling type argument, we can make result of next() untainted. However, we need
-        // to
-        // make the including type args of Entry untainted as well.
-        AnnotatedTypeMirror.AnnotatedDeclaredType type =
-            (AnnotatedTypeMirror.AnnotatedDeclaredType) m;
-        AnnotatedTypeMirror foundOnTypeArg =
-            getAnnotatedTypeMirrorOfTypeArgumentAt(type, new ArrayDeque<>(indexes));
-        rest =
-            reachedEnd
-                ? new TypeMatchVisitor(typeFactory).visit(foundOnTypeArg, pair.required, null)
-                : List.of();
-      } else {
-        rest = List.of();
-      }
-      List<List<Integer>> positions;
-      if (!rest.isEmpty()) {
-        positions = new ArrayList<>();
-        List<Integer> typeArgPosition = indexes.subList(0, indexes.size() - 1);
-        for (List<Integer> integers : rest) {
-          List<Integer> position = new ArrayList<>(typeArgPosition);
-          position.addAll(integers);
-          positions.add(position);
-        }
-      } else {
-        positions = List.of(indexes);
-      }
-      location.setTypeVariablePositions(positions);
+      location.setTypeVariablePositions(indexes);
     }
     return new Fix("untainted", location);
   }
@@ -211,7 +176,7 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
    * @param element The element which provided the type parameters.
    * @return The list of indexes of the type parameters.
    */
-  private List<Integer> locateEffectiveTypeParameter(Element element) {
+  private List<List<Integer>> locateEffectiveTypeParameter(Element element) {
     Type elementParameterizedType = getType(element);
     Type base = elementParameterizedType;
     // Indexes of the type variables to locate the type which needs to be modified.
@@ -258,8 +223,30 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
         // We should refresh base.
         String original = typeVarMap.get(enteredType);
         if (original == null) {
-          reachedEnd = true;
-          break;
+          // The remaining inconsistencies are due to the fact that the parameters are not inside
+          // the receiver. We should locate the remaining. See example below: Iterator<Entry<String,
+          // String>> itEntries = null; @RUntainted Entry<@RUntainted String, @RUntainted String>
+          // entry = itEntries.next(); With controlling type argument, we can make result of next()
+          // untainted. However, we need to make the including type args of Entry untainted as well.
+          List<List<Integer>> rest;
+          AnnotatedTypeMirror m = typeFactory.getAnnotatedType(element);
+          AnnotatedTypeMirror.AnnotatedDeclaredType type =
+              (AnnotatedTypeMirror.AnnotatedDeclaredType) m;
+          AnnotatedTypeMirror foundOnTypeArg =
+              getAnnotatedTypeMirrorOfTypeArgumentAt(type, new ArrayDeque<>(indexes));
+          rest = new TypeMatchVisitor(typeFactory).visit(foundOnTypeArg, pair.required, null);
+          List<List<Integer>> positions;
+          if (!rest.isEmpty()) {
+            positions = new ArrayList<>();
+            for (List<Integer> integers : rest) {
+              List<Integer> position = new ArrayList<>(indexes);
+              position.addAll(integers);
+              positions.add(position);
+            }
+            return positions;
+          } else {
+            return List.of(indexes);
+          }
         }
         int i;
         for (i = 0; i < elementTypeArgs.size(); i++) {
@@ -283,6 +270,6 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
     if (!indexes.isEmpty()) {
       indexes.add(0);
     }
-    return indexes;
+    return List.of(indexes);
   }
 }
