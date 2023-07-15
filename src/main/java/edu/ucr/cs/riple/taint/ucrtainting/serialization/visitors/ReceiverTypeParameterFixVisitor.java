@@ -178,8 +178,8 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
   private List<List<Integer>> locateEffectiveTypeParameter(Element element) {
     Type elementParameterizedType = getType(element);
     Type base = elementParameterizedType;
-    // Indexes of the type variables to locate the type which needs to be modified.
-    List<Integer> indexes = new ArrayList<>();
+    // Indexes of the effective type parameter based on the chain of receivers.
+    List<Integer> indexToEffectiveTypeParameter = new ArrayList<>();
     // Map of type arguments symbol names to their provided type parameters symbol names. Cannot use
     // a map of <Type.TypeVar, Type.TypeVar> since 2 variables with same name can have different
     // owners and are not considered equal.
@@ -188,26 +188,27 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
     getAllTypeArguments(elementParameterizedType)
         .forEach(type -> typeVarMap.put(type.toString(), type.toString()));
     for (ExpressionTree receiver : receivers) {
-      // Locate passed type arguments
       Type receiverParameterizedType = getType(TreeUtils.elementFromUse(receiver));
+      // Extract passed type parameters in a list ordered by the declaration.
       List<Type> receiverProvidedParameterTypes = receiverParameterizedType.getTypeArguments();
-
-      // Update translation:
+      // Update mapping. (e.g. M and N can be provided to Map<M, N>), however, inside the maps,
+      // their actual names are K, V. Should update the mapping to reflect that.
+      // Get the defined type arguments for the receiver.
       List<Type.TypeVar> typeArgumentsForReceiver = getAllTypeArguments(receiverParameterizedType);
       Set<String> existingTypeVars = typeVarMap.keySet();
       Set<String> toRemove = new HashSet<>();
       for (int i = 0; i < receiverProvidedParameterTypes.size(); i++) {
-        Type providedI = receiverProvidedParameterTypes.get(i);
-        if (!(providedI instanceof Type.TypeVar)) {
+        Type providedAtIndexI = receiverProvidedParameterTypes.get(i);
+        if (!(providedAtIndexI instanceof Type.TypeVar)) {
+          // Not a type variable, we do not need to update. Example for String in Foo<T, String>.
           continue;
         }
-        String provided = providedI.toString();
-        if (existingTypeVars.contains(provided)) {
-          String value = typeVarMap.get(provided);
+        String providedTypeArgName = providedAtIndexI.toString();
+        if (existingTypeVars.contains(providedTypeArgName)) {
           String newKey = typeArgumentsForReceiver.get(i).toString();
-          if (!provided.equals(newKey)) {
-            toRemove.add(provided);
-            typeVarMap.put(newKey, value);
+          if (!providedTypeArgName.equals(newKey)) {
+            toRemove.add(providedTypeArgName);
+            typeVarMap.put(newKey, typeVarMap.get(providedTypeArgName));
           }
         }
       }
@@ -219,9 +220,10 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
             receiverParameterizedType instanceof Type.TypeVar
                 ? receiverParameterizedType.toString()
                 : typeArgumentsForReceiver.get(0).toString();
-        // We should refresh base.
-        String original = typeVarMap.get(enteredType);
-        if (original == null) {
+        // We should refresh our map since we no longer are inside the receiver. From now on we are
+        // inside a provided type parameter.
+        String enteredName = typeVarMap.get(enteredType);
+        if (enteredName == null) {
           // The remaining inconsistencies are due to the fact that the parameters are not inside
           // the receiver. We should locate the remaining. See example below:
           // Iterator<Entry<String, String>> itEntries;
@@ -232,26 +234,27 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
           AnnotatedTypeMirror.AnnotatedDeclaredType elementAnnotatedMirrorType =
               (AnnotatedTypeMirror.AnnotatedDeclaredType) typeFactory.getAnnotatedType(element);
           AnnotatedTypeMirror foundOnTypeArg =
-              getAnnotatedTypeMirrorOfTypeArgumentAt(elementAnnotatedMirrorType, indexes);
+              getAnnotatedTypeMirrorOfTypeArgumentAt(
+                  elementAnnotatedMirrorType, indexToEffectiveTypeParameter);
           onTypeArgumentIndexes =
               new TypeMatchVisitor(typeFactory).visit(foundOnTypeArg, pair.required, null);
           List<List<Integer>> positions;
           if (!onTypeArgumentIndexes.isEmpty()) {
             positions = new ArrayList<>();
             for (List<Integer> integers : onTypeArgumentIndexes) {
-              List<Integer> position = new ArrayList<>(indexes);
+              List<Integer> position = new ArrayList<>(indexToEffectiveTypeParameter);
               position.addAll(integers);
               positions.add(position);
             }
             return positions;
           } else {
-            return List.of(indexes);
+            return List.of(indexToEffectiveTypeParameter);
           }
         }
         int i;
         for (i = 0; i < elementTypeArgs.size(); i++) {
-          if (elementTypeArgs.get(i).toString().equals(original)) {
-            indexes.add(i + 1);
+          if (elementTypeArgs.get(i).toString().equals(enteredName)) {
+            indexToEffectiveTypeParameter.add(i + 1);
             break;
           }
         }
@@ -262,14 +265,15 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
           // Reached the end of type parameters.
           break;
         }
+        // Update the map with entered type's type arguments.
         typeVarMap.clear();
         getAllTypeArguments(elementParameterizedType)
             .forEach(type -> typeVarMap.put(type.toString(), type.toString()));
       }
     }
-    if (!indexes.isEmpty()) {
-      indexes.add(0);
+    if (!indexToEffectiveTypeParameter.isEmpty()) {
+      indexToEffectiveTypeParameter.add(0);
     }
-    return List.of(indexes);
+    return List.of(indexToEffectiveTypeParameter);
   }
 }
