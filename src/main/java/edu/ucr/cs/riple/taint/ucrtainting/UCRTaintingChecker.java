@@ -17,7 +17,12 @@ import org.checkerframework.framework.source.SupportedOptions;
   "stubs/Files.astub",
   "stubs/taintedMethods.astub",
 })
-@SupportedOptions({UCRTaintingChecker.ANNOTATED_PACKAGES, UCRTaintingChecker.ENABLE_CUSTOM_CHECKER})
+@SupportedOptions({
+  UCRTaintingChecker.ANNOTATED_PACKAGES,
+  UCRTaintingChecker.ENABLE_CUSTOM_CHECKER,
+  Config.SERIALIZATION_CONFIG_PATH,
+  Config.SERIALIZATION_ACTIVATION_FLAG
+})
 public class UCRTaintingChecker extends BaseTypeChecker {
 
   public static int index = 0;

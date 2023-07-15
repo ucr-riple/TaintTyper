@@ -48,4 +48,20 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   public void setTypeVariablePositions(@Nullable List<List<Integer>> typeVariablePositions) {
     this.typeVariablePositions = typeVariablePositions;
   }
+
+  @Override
+  public String toString() {
+    return "AbstractSymbolLocation{"
+        + "kind="
+        + kind
+        + ", path="
+        + path
+        + ", enclosingClass="
+        + enclosingClass
+        + ", target="
+        + target
+        + ", typeVariablePositions="
+        + typeVariablePositions
+        + '}';
+  }
 }

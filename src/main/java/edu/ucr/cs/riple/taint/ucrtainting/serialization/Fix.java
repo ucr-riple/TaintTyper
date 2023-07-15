@@ -24,4 +24,9 @@ public class Fix implements JSONSerializable {
     ans.put("location", location.accept(new LocationToJsonVisitor(), null));
     return ans;
   }
+
+  @Override
+  public String toString() {
+    return "Fix{" + "location=" + location + '}';
+  }
 }
