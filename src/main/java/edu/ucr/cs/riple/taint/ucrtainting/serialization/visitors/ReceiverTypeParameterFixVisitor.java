@@ -223,9 +223,10 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
         String original = typeVarMap.get(enteredType);
         if (original == null) {
           // The remaining inconsistencies are due to the fact that the parameters are not inside
-          // the receiver. We should locate the remaining. See example below: Iterator<Entry<String,
-          // String>> itEntries = null; @RUntainted Entry<@RUntainted String, @RUntainted String>
-          // entry = itEntries.next(); With controlling type argument, we can make result of next()
+          // the receiver. We should locate the remaining. See example below:
+          // Iterator<Entry<String, String>> itEntries;
+          // @RUntainted Entry<@RUntainted String, @RUntainted String> entry = itEntries.next();
+          // With controlling type argument, we can make result of next()
           // untainted. However, we need to make the including type args of Entry untainted as well.
           List<List<Integer>> onTypeArgumentIndexes;
           AnnotatedTypeMirror.AnnotatedDeclaredType elementAnnotatedMirrorType =
