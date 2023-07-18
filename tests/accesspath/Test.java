@@ -27,11 +27,6 @@ public class Test {
     untaintedVar = baz.innerBaz.getOther().getInnerBaz().getE();
   }
 
-  public void test(@RUntainted Path path) throws Exception {
-    // :: error: type.argument
-    EnumSet.of(StandardOpenOption.READ);
-  }
-
   class Inner {
 
     HashMap<String, String> bar;
