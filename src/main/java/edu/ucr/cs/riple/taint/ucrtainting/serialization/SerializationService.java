@@ -51,12 +51,10 @@ public class SerializationService {
     if (!serializer.isActive()) {
       return;
     }
-
     Set<Fix> resolvingFixes =
         checkErrorIsFixable(source, messageKey)
             ? generateFixesForError((Tree) source, messageKey, pair)
             : ImmutableSet.of();
-    resolvingFixes.forEach(System.out::println);
     Error error =
         new Error(messageKey, args, resolvingFixes, checker.getVisitor().getCurrentPath());
     serializer.serializeError(error);
@@ -147,6 +145,7 @@ public class SerializationService {
       case "return":
       case "argument":
       case "conditional":
+      case "compound.assignment":
         return true;
       default:
         // TODO: investigate if there are other cases where the error is fixable.

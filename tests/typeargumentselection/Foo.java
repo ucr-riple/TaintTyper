@@ -56,6 +56,11 @@ public class Foo {
     @RUntainted Entry<@RUntainted String, @RUntainted String> entry = itEntries.next();
   }
 
+  public void newTest(Map<String, List<String>> headers) {
+    //    Iterator<Map.Entry<@RUntainted String, @RUntainted List<String>>> i =
+    //        headers.entrySet().iterator();
+  }
+
   static class GenericFoo<T, K> {
     GenericBar<T, T> bar;
 

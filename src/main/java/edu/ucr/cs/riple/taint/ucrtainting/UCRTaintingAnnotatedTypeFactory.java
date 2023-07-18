@@ -9,11 +9,13 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
@@ -34,6 +36,8 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   public final AnnotationMirror RUNTAINTED;
   /** AnnotationMirror for {@link RTainted}. */
   public final AnnotationMirror RTAINTED;
+
+  final Set<Symbol.VarSymbol> staticFinalFieldsWithInitializer;
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker);
@@ -60,12 +64,15 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     ANNOTATED_PACKAGE_NAMES_LIST = Arrays.asList(annotatedPackagesFlagValue.split(","));
     RUNTAINTED = AnnotationBuilder.fromClass(elements, RUntainted.class);
     RTAINTED = AnnotationBuilder.fromClass(elements, RTainted.class);
+    this.staticFinalFieldsWithInitializer = new HashSet<>();
     postInit();
   }
 
   @Override
   protected TreeAnnotator createTreeAnnotator() {
-    return new ListTreeAnnotator(super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this));
+    return new ListTreeAnnotator(
+        super.createTreeAnnotator(),
+        new UCRTaintingTreeAnnotator(this, staticFinalFieldsWithInitializer));
   }
 
   /**
@@ -229,15 +236,29 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     return type.hasAnnotation(RUNTAINTED);
   }
 
+  @Override
+  protected void addAnnotationsFromDefaultForType(
+      @Nullable Element element, AnnotatedTypeMirror type) {
+    if (element instanceof Symbol.VarSymbol && staticFinalFieldsWithInitializer.contains(element)) {
+      type.replaceAnnotation(RUNTAINTED);
+    } else {
+      super.addAnnotationsFromDefaultForType(element, type);
+    }
+  }
+
   private class UCRTaintingTreeAnnotator extends TreeAnnotator {
+
+    private final Set<Symbol.VarSymbol> staticFinalVars;
 
     /**
      * UCRTaintingTreeAnnotator
      *
      * @param atypeFactory the type factory
      */
-    protected UCRTaintingTreeAnnotator(AnnotatedTypeFactory atypeFactory) {
+    protected UCRTaintingTreeAnnotator(
+        AnnotatedTypeFactory atypeFactory, Set<Symbol.VarSymbol> staticFinalVars) {
       super(atypeFactory);
+      this.staticFinalVars = staticFinalVars;
     }
 
     /**
@@ -280,6 +301,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
           ExpressionTree initializer = node.getInitializer();
           // check if initializer is a literal or a primitive
           if (Utility.isLiteralOrPrimitive(initializer)) {
+            staticFinalVars.add((Symbol.VarSymbol) element);
             annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
           }
         }

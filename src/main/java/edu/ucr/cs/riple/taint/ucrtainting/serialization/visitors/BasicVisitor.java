@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.BinaryTree;
+import com.sun.source.tree.CompoundAssignmentTree;
 import com.sun.source.tree.ConditionalExpressionTree;
 import com.sun.source.tree.ExpressionStatementTree;
 import com.sun.source.tree.ExpressionTree;
@@ -182,6 +183,11 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
 
   @Override
   public Set<Fix> visitUnary(UnaryTree node, Void unused) {
+    return node.getExpression().accept(new FixVisitor(context, typeFactory, pair), unused);
+  }
+
+  @Override
+  public Set<Fix> visitCompoundAssignment(CompoundAssignmentTree node, Void unused) {
     return node.getExpression().accept(new FixVisitor(context, typeFactory, pair), unused);
   }
 
