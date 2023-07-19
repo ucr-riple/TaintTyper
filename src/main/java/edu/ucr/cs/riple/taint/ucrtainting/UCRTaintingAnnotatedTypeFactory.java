@@ -292,7 +292,10 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
       if (ENABLE_CUSTOM_CHECK) {
         if (Utility.isEnumConstant(node)) {
-          getAnnotatedType(node.getInitializer());
+          ExpressionTree initializer = node.getInitializer();
+          if (!hasTaintedArgument(initializer)) {
+            getAnnotatedType(initializer).replaceAnnotation(RUNTAINTED);
+          }
           annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
         }
         Element element = TreeUtils.elementFromDeclaration(node);
@@ -360,6 +363,24 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
       }
       return super.visitNewClass(node, annotatedTypeMirror);
+    }
+
+    @Override
+    public Void visitNewArray(NewArrayTree node, AnnotatedTypeMirror mirror) {
+      List<? extends ExpressionTree> initializers = node.getInitializers();
+      boolean allUntainted = true;
+      if (initializers != null) {
+        for (ExpressionTree initializer : initializers) {
+          if (mayBeTainted(initializer)) {
+            allUntainted = false;
+            break;
+          }
+        }
+      }
+      if (allUntainted) {
+        mirror.replaceAnnotation(RUNTAINTED);
+      }
+      return super.visitNewArray(node, mirror);
     }
   }
 }

@@ -38,4 +38,19 @@ public class Foo {
       m_suffix = suffix;
     }
   }
+
+  static String taintedStatic = null;
+
+  public enum CodeMirrorLanguage {
+    CSS("css", new String[] {"css"}),
+    // :: error: assignment
+    XML("application/xml", new String[] {"xml", taintedStatic});
+    private final String m_languageName;
+    private Set<String> m_supportedFileTypes;
+
+    private CodeMirrorLanguage(String languageName, String[] fileTypes) {
+      m_languageName = languageName;
+      m_supportedFileTypes = new HashSet<String>(Arrays.asList(fileTypes));
+    }
+  }
 }

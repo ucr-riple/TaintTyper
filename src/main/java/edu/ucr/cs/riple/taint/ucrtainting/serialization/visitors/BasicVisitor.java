@@ -81,7 +81,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     for (ExpressionTree arg : node.getArguments()) {
       if (typeFactory.mayBeTainted(arg)) {
         // Required can be null here, since we only need the passed parameters to be untainted.
-        fixes.addAll(arg.accept(new FixVisitor(context, typeFactory, null), unused));
+        fixes.addAll(arg.accept(new FixVisitor(context, typeFactory, pair), unused));
       }
     }
     return fixes;
@@ -203,7 +203,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     if (location == null) {
       return null;
     }
-    if (pair != null) {
+    if (pair != null && pair.required != null && pair.found != null) {
       location.setTypeVariablePositions(
           new TypeMatchVisitor(typeFactory).visit(pair.found, pair.required, null));
     }
