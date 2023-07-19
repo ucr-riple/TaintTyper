@@ -1,5 +1,9 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import java.util.Collections;
+import java.util.List;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.type.TypeKind;
 import org.checkerframework.dataflow.analysis.TransferInput;
 import org.checkerframework.dataflow.analysis.TransferResult;
 import org.checkerframework.dataflow.cfg.node.*;
@@ -10,11 +14,6 @@ import org.checkerframework.framework.flow.CFTransfer;
 import org.checkerframework.framework.flow.CFValue;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.AnnotationMirrorSet;
-
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.type.TypeKind;
-import java.util.Collections;
-import java.util.List;
 
 public class UCRTaintingTransfer extends CFTransfer {
   private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
@@ -85,17 +84,13 @@ public class UCRTaintingTransfer extends CFTransfer {
       elseStore.insertOrRefine(
           je,
           aTypeFactory.rPossiblyValidatedAM(Collections.singletonList(calledMethod.toString())));
-    } else if(aTypeFactory.isAccumulatorAnnotation(anno)) {
+    } else if (aTypeFactory.isAccumulatorAnnotation(anno)) {
       CFStore thenStore = result.getThenStore();
       CFStore elseStore = result.getElseStore();
       List<String> calledMethods = aTypeFactory.getAccumulatedValues(anno);
       calledMethods.add(calledMethod.toString());
-      thenStore.insertOrRefine(
-              je,
-              aTypeFactory.rPossiblyValidatedAM(calledMethods));
-      elseStore.insertOrRefine(
-              je,
-              aTypeFactory.rPossiblyValidatedAM(calledMethods));
+      thenStore.insertOrRefine(je, aTypeFactory.rPossiblyValidatedAM(calledMethods));
+      elseStore.insertOrRefine(je, aTypeFactory.rPossiblyValidatedAM(calledMethods));
     }
   }
 

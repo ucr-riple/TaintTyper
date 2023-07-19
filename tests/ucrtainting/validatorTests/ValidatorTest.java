@@ -13,7 +13,7 @@ class ValidatorTest {
   }
 
   void validationReceiver(@RTainted String y) {
-    if(y.equals("ssc")) {
+    if (y.equals("ssc")) {
       return;
     }
     if (y.contains("ss")) {
@@ -23,6 +23,7 @@ class ValidatorTest {
   }
 
   void sink2(@RPossiblyValidated({"y.equals(\"ssc\")", "y.contains(\"ss\")"}) String s) {}
+
   void sink(@RPossiblyValidated({"(this).validator(y)"}) String s) {}
 
   boolean validator(@RTainted String a) {
