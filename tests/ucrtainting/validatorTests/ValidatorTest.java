@@ -1,7 +1,7 @@
 package validatorTests;
 
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 
 // Test basic subtyping relationships for the UCR Tainting Checker.
 class ValidatorTest {
@@ -13,13 +13,17 @@ class ValidatorTest {
   }
 
   void validationReceiver(@RTainted String y) {
+    if(y.equals("ssc")) {
+      return;
+    }
     if (y.contains("ss")) {
       return;
     }
-    sink(y);
+    sink2(y);
   }
 
-  void sink(@RUntainted String s) {}
+  void sink2(@RPossiblyValidated({"y.equals(\"ssc\")", "y.contains(\"ss\")"}) String s) {}
+  void sink(@RPossiblyValidated({"(this).validator(y)"}) String s) {}
 
   boolean validator(@RTainted String a) {
     return false;

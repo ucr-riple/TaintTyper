@@ -1,6 +1,9 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import com.sun.source.tree.*;
+import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.NewClassTree;
+import com.sun.source.tree.Tree;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
@@ -9,6 +12,7 @@ import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.common.returnsreceiver.qual.This;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.*;
@@ -16,7 +20,10 @@ import org.checkerframework.javacutil.*;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.util.Elements;
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -75,11 +82,171 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     return new ListTreeAnnotator(super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this));
   }
 
+  @Override
+  protected QualifierHierarchy createQualifierHierarchy() {
+    return new UCRTaintingQualifierHierarchy(this.getSupportedTypeQualifiers(), this.elements);
+  }
+
   public AnnotationMirror rPossiblyValidatedAM(List<String> calledMethods) {
     AnnotationBuilder builder = new AnnotationBuilder(processingEnv, RPossiblyValidated.class);
     builder.setValue("value", calledMethods.toArray());
     AnnotationMirror am = builder.build();
     return am;
+  }
+
+  private class UCRTaintingQualifierHierarchy extends AccumulationQualifierHierarchy {
+
+    /**
+     * Creates a ElementQualifierHierarchy from the given classes.
+     *
+     * @param qualifierClasses classes of annotations that are the qualifiers for this hierarchy
+     * @param elements element utils
+     */
+    protected UCRTaintingQualifierHierarchy(
+        Collection<Class<? extends Annotation>> qualifierClasses, Elements elements) {
+      super(qualifierClasses, elements);
+    }
+
+    @Override
+    public AnnotationMirror greatestLowerBound(AnnotationMirror a1, AnnotationMirror a2) {
+      if (AnnotationUtils.areSame(a1, bottom) || AnnotationUtils.areSame(a2, bottom)) {
+        return bottom;
+      }
+
+      if (AnnotationUtils.areSame(a1, RTAINTED)) {
+        return a2;
+      } else if (AnnotationUtils.areSame(a2, RTAINTED)) {
+        return a1;
+      }
+
+      if (isPolymorphicQualifier(a1) && isPolymorphicQualifier(a2)) {
+        return a1;
+      } else if (isPolymorphicQualifier(a1) || isPolymorphicQualifier(a2)) {
+        return bottom;
+      }
+
+      // If either is a predicate, then both should be converted to predicates and and-ed.
+      if (isPredicate(a1) || isPredicate(a2)) {
+        String a1Pred = convertToPredicate(a1);
+        String a2Pred = convertToPredicate(a2);
+        // check for top
+        if (a1Pred.isEmpty()) {
+          return a2;
+        } else if (a2Pred.isEmpty()) {
+          return a1;
+        } else {
+          return createPredicateAnnotation("(" + a1Pred + ") && (" + a2Pred + ")");
+        }
+      }
+
+      List<String> a1Val = getAccumulatedValues(a1);
+      List<String> a2Val = getAccumulatedValues(a2);
+      // Avoid creating new annotation objects in the common case.
+      if (a1Val.containsAll(a2Val)) {
+        return a1;
+      }
+      if (a2Val.containsAll(a1Val)) {
+        return a2;
+      }
+      a1Val.addAll(a2Val); // union
+      return createAccumulatorAnnotation(a1Val);
+    }
+
+    /**
+     * LUB in this type system is set intersection of the arguments of the two annotations, unless
+     * one of them is bottom, in which case the result is the other annotation.
+     */
+    @Override
+    public AnnotationMirror leastUpperBound(AnnotationMirror a1, AnnotationMirror a2) {
+      if (AnnotationUtils.areSame(a1, bottom)) {
+        return a2;
+      } else if (AnnotationUtils.areSame(a2, bottom)) {
+        return a1;
+      }
+
+      if (AnnotationUtils.areSame(a1, RTAINTED)) {
+        return RTAINTED;
+      } else if (AnnotationUtils.areSame(a2, RTAINTED)) {
+        return RTAINTED;
+      }
+
+      if (isPolymorphicQualifier(a1) && isPolymorphicQualifier(a2)) {
+        return a1;
+      } else if (isPolymorphicQualifier(a1) || isPolymorphicQualifier(a2)) {
+        return top;
+      }
+
+      // If either is a predicate, then both should be converted to predicates and or-ed.
+      if (isPredicate(a1) || isPredicate(a2)) {
+        String a1Pred = convertToPredicate(a1);
+        String a2Pred = convertToPredicate(a2);
+        // check for top
+        if (a1Pred.isEmpty()) {
+          return a1;
+        } else if (a2Pred.isEmpty()) {
+          return a2;
+        } else {
+          return createPredicateAnnotation("(" + a1Pred + ") || (" + a2Pred + ")");
+        }
+      }
+
+      List<String> a1Val = getAccumulatedValues(a1);
+      List<String> a2Val = getAccumulatedValues(a2);
+      // Avoid creating new annotation objects in the common case.
+      if (a1Val.containsAll(a2Val)) {
+        return a2;
+      }
+      if (a2Val.containsAll(a1Val)) {
+        return a1;
+      }
+      a1Val.retainAll(a2Val); // intersection
+      return createAccumulatorAnnotation(a1Val);
+    }
+
+    @Override
+    public boolean isSubtype(AnnotationMirror subAnno, AnnotationMirror superAnno) {
+      if (AnnotationUtils.areSame(subAnno, bottom)) {
+        return true;
+      } else if (AnnotationUtils.areSame(superAnno, bottom)) {
+        return false;
+      }
+
+      if (AnnotationUtils.areSame(superAnno, RTAINTED)
+          && AnnotationUtils.areSame(subAnno, RTAINTED)) {
+        return true;
+      }
+
+      if (AnnotationUtils.areSame(subAnno, RTAINTED)) {
+        return false;
+      } else if (AnnotationUtils.areSame(superAnno, RTAINTED)) {
+        return true;
+      }
+
+      if (isPolymorphicQualifier(subAnno)) {
+        if (isPolymorphicQualifier(superAnno)) {
+          return true;
+        } else {
+          // Use this slightly more expensive conversion here because this is a rare code
+          // path and it's simpler to read than checking for both predicate and
+          // non-predicate forms of top.
+          return "".equals(convertToPredicate(superAnno));
+        }
+      } else if (isPolymorphicQualifier(superAnno)) {
+        // Polymorphic annotations are only a supertype of other polymorphic annotations and
+        // the bottom type, both of which have already been checked above.
+        return false;
+      }
+
+      if (isPredicate(subAnno)) {
+        return isPredicateSubtype(convertToPredicate(subAnno), convertToPredicate(superAnno));
+      } else if (isPredicate(superAnno)) {
+        return evaluatePredicate(subAnno, convertToPredicate(superAnno));
+      }
+
+      List<String> subVal = getAccumulatedValues(subAnno);
+      List<String> superVal = getAccumulatedValues(superAnno);
+      return subVal.containsAll(superVal);
+    }
   }
 
   /**
@@ -302,11 +469,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
         }
       }
       return super.visitNewClass(node, annotatedTypeMirror);
-    }
-
-    @Override
-    public Void visitIf(IfTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-      return super.visitIf(node, annotatedTypeMirror);
     }
   }
 }
