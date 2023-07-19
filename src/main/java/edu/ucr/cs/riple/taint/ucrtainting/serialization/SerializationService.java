@@ -13,6 +13,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixVisitor;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisitor;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
@@ -51,10 +52,16 @@ public class SerializationService {
     if (!serializer.isActive()) {
       return;
     }
-    Set<Fix> resolvingFixes =
-        checkErrorIsFixable(source, messageKey)
-            ? generateFixesForError((Tree) source, messageKey, pair)
-            : ImmutableSet.of();
+    Set<Fix> resolvingFixes;
+    try {
+      resolvingFixes =
+          checkErrorIsFixable(source, messageKey)
+              ? generateFixesForError((Tree) source, messageKey, pair)
+              : ImmutableSet.of();
+    } catch (Exception e) {
+      System.err.println("Error in computing required fixes: " + source + " " + messageKey);
+      resolvingFixes = ImmutableSet.of();
+    }
     Error error =
         new Error(messageKey, args, resolvingFixes, checker.getVisitor().getCurrentPath());
     serializer.serializeError(error);
@@ -70,9 +77,9 @@ public class SerializationService {
     TreePath path = checker.getVisitor().getCurrentPath();
     switch (messageKey) {
       case "override.param":
-        return handleParamOverrideError(tree);
+        return handleParamOverrideError(tree, pair);
       case "override.return":
-        return handleReturnOverrideError(path.getLeaf());
+        return handleReturnOverrideError(path.getLeaf(), pair);
       default:
         ClassTree classTree = Utility.findEnclosingNode(path, ClassTree.class);
         if (classTree == null) {
@@ -93,7 +100,7 @@ public class SerializationService {
    * @param paramTree the parameter tree.
    * @return the set of required fixes to resolve errors of type="override.param".
    */
-  private ImmutableSet<Fix> handleParamOverrideError(Tree paramTree) {
+  private ImmutableSet<Fix> handleParamOverrideError(Tree paramTree, FoundRequired pair) {
     Element treeElement = TreeUtils.elementFromTree(paramTree);
     if (treeElement == null) {
       return ImmutableSet.of();
@@ -110,8 +117,12 @@ public class SerializationService {
     }
     int paramIndex = overridingMethod.getParameters().indexOf((Symbol.VarSymbol) treeElement);
     Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
-    return ImmutableSet.of(
-        new Fix("untainted", SymbolLocation.createLocationFromSymbol(toBeAnnotated, context)));
+    SymbolLocation location = SymbolLocation.createLocationFromSymbol(toBeAnnotated, context);
+    if (location != null) {
+      location.setTypeVariablePositions(
+          new TypeMatchVisitor(typeFactory).visit(pair.found, pair.required, null));
+    }
+    return ImmutableSet.of(new Fix("untainted", location));
   }
 
   /**
@@ -119,11 +130,16 @@ public class SerializationService {
    *
    * @return the set of required fixes to resolve errors of type="override.return".
    */
-  private ImmutableSet<Fix> handleReturnOverrideError(Tree overridingMethodTree) {
+  private ImmutableSet<Fix> handleReturnOverrideError(
+      Tree overridingMethodTree, FoundRequired pair) {
     Symbol.MethodSymbol overridingMethod =
         (Symbol.MethodSymbol) TreeUtils.elementFromTree(overridingMethodTree);
-    return ImmutableSet.of(
-        new Fix("untainted", SymbolLocation.createLocationFromSymbol(overridingMethod, context)));
+    SymbolLocation location = SymbolLocation.createLocationFromSymbol(overridingMethod, context);
+    if (location != null) {
+      location.setTypeVariablePositions(
+          new TypeMatchVisitor(typeFactory).visit(pair.found, pair.required, null));
+    }
+    return ImmutableSet.of(new Fix("untainted", location));
   }
 
   /**
@@ -133,7 +149,7 @@ public class SerializationService {
    * @param messageKey The key of the error message.
    * @return True, if the error is fixable, false otherwise.
    */
-  private static boolean checkErrorIsFixable(Object source, String messageKey) {
+  public static boolean checkErrorIsFixable(Object source, String messageKey) {
     if (!(source instanceof Tree)) {
       // For all cases where the source is not a tree, we return false for now.
       return false;
