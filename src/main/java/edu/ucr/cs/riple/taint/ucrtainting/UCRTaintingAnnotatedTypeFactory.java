@@ -1,23 +1,26 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.*;
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.Modifier;
-import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
+import org.checkerframework.common.accumulation.AccumulationAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
+import org.checkerframework.common.returnsreceiver.qual.This;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.*;
 
-public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFactory {
 
   /**
    * This option enables custom handling of third party code. By default, such handling is enabled.
@@ -40,7 +43,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   public final AnnotationMirror RTAINTED;
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
-    super(checker);
+    super(checker, RPossiblyValidated.class, RUntainted.class, null);
     ENABLE_LIBRARY_CHECK =
         checker.getBooleanOption(UCRTaintingChecker.ENABLE_LIBRARY_CHECKER, true);
     ENABLE_VALIDATION_CHECK =
@@ -70,6 +73,13 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   @Override
   protected TreeAnnotator createTreeAnnotator() {
     return new ListTreeAnnotator(super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this));
+  }
+
+  public AnnotationMirror rPossiblyValidatedAM(List<String> calledMethods) {
+    AnnotationBuilder builder = new AnnotationBuilder(processingEnv, RPossiblyValidated.class);
+    builder.setValue("value", calledMethods.toArray());
+    AnnotationMirror am = builder.build();
+    return am;
   }
 
   /**
@@ -196,6 +206,10 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       }
     }
     return false;
+  }
+
+  public boolean returnsThis(MethodInvocationTree tree) {
+    return this.getDeclAnnotation(TreeUtils.elementFromUse(tree), This.class) != null;
   }
 
   /**

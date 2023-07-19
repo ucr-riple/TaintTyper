@@ -1,9 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.SerializationService;
-import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
-import org.checkerframework.common.basetype.BaseTypeChecker;
+import org.checkerframework.common.accumulation.AccumulationChecker;
 import org.checkerframework.framework.qual.StubFiles;
 import org.checkerframework.framework.source.SupportedOptions;
 
@@ -15,7 +12,8 @@ import org.checkerframework.framework.source.SupportedOptions;
   "stubs/general.astub",
   "stubs/Files.astub",
   "stubs/taintedMethods.astub",
-  "stubs/find-sec-bugs-sanitizers.astub"
+  "stubs/find-sec-bugs-sanitizers.astub",
+  "stubs/string.astub"
 })
 @SupportedOptions({
   UCRTaintingChecker.ANNOTATED_PACKAGES,
@@ -23,7 +21,7 @@ import org.checkerframework.framework.source.SupportedOptions;
   UCRTaintingChecker.ENABLE_VALIDATION_CHECKER,
   UCRTaintingChecker.ENABLE_SANITIZATION_CHECKER
 })
-public class UCRTaintingChecker extends BaseTypeChecker {
+public class UCRTaintingChecker extends AccumulationChecker {
 
   /** Annotated packages config option for the checker. */
   /** Custom Library handling config option for the checker. */
@@ -34,36 +32,38 @@ public class UCRTaintingChecker extends BaseTypeChecker {
   public static final String ANNOTATED_PACKAGES = "annotatedPackages";
 
   /** Serialization service for the checker. */
-  private final SerializationService serializationService;
-  /** Configuration for the checker. */
-  private final Config config;
+  //  private final SerializationService serializationService;
+  //  /** Configuration for the checker. */
+  //  private final Config config;
+  //
+  //  public UCRTaintingChecker() {
+  //    this.config = new Config();
+  //    serializationService = new SerializationService(config);
+  //  }
 
-  public UCRTaintingChecker() {
-    this.config = new Config();
-    serializationService = new SerializationService(config);
-  }
+  //  @Override
+  //  public void reportWarning(Object source, @CompilerMessageKey String messageKey, Object...
+  // args) {
+  //    super.reportWarning(source, messageKey, args);
+  //    serializationService.serializeError(
+  //        source,
+  //        messageKey,
+  //        args,
+  //        visitor,
+  //        getTypeFactory(),
+  //        ((JavacProcessingEnvironment) getProcessingEnvironment()).getContext());
+  //  }
 
-  @Override
-  public void reportWarning(Object source, @CompilerMessageKey String messageKey, Object... args) {
-    super.reportWarning(source, messageKey, args);
-    serializationService.serializeError(
-        source,
-        messageKey,
-        args,
-        visitor,
-        getTypeFactory(),
-        ((JavacProcessingEnvironment) getProcessingEnvironment()).getContext());
-  }
-
-  @Override
-  public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
-    super.reportError(source, messageKey, args);
-    serializationService.serializeError(
-        source,
-        messageKey,
-        args,
-        visitor,
-        getTypeFactory(),
-        ((JavacProcessingEnvironment) getProcessingEnvironment()).getContext());
-  }
+  //  @Override
+  //  public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args)
+  // {
+  //    super.reportError(source, messageKey, args);
+  //    serializationService.serializeError(
+  //        source,
+  //        messageKey,
+  //        args,
+  //        visitor,
+  //        getTypeFactory(),
+  //        ((JavacProcessingEnvironment) getProcessingEnvironment()).getContext());
+  //  }
 }

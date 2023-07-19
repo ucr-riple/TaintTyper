@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import java.util.Collections;
 import javax.lang.model.type.TypeKind;
 import org.checkerframework.dataflow.analysis.TransferInput;
 import org.checkerframework.dataflow.analysis.TransferResult;
@@ -29,19 +30,22 @@ public class UCRTaintingTransfer extends CFTransfer {
     if (aTypeFactory.ENABLE_VALIDATION_CHECK) {
       if (n.getType().getKind() == TypeKind.BOOLEAN) {
         for (Node arg : n.getArguments()) {
-          updateStore(result, arg);
+          updateStore(result, arg, n);
         }
 
         Node receiver = n.getTarget().getReceiver();
         if (receiver != null
             && !(receiver instanceof ImplicitThisNode)
             && receiver.getTree() != null) {
-          updateStore(result, receiver);
+          updateStore(result, receiver, n);
         }
       }
     }
 
     if (aTypeFactory.ENABLE_LIBRARY_CHECK) {
+      if (aTypeFactory.returnsThis(n.getTree())) {
+        System.out.println("hi");
+      }
       if (aTypeFactory.hasReceiver(n.getTree()) && n.getArguments().size() > 0) {
         Node receiver = n.getTarget().getReceiver();
         if (receiver != null
@@ -65,14 +69,18 @@ public class UCRTaintingTransfer extends CFTransfer {
     return result;
   }
 
-  private void updateStore(TransferResult<CFValue, CFStore> result, Node n) {
+  private void updateStore(TransferResult<CFValue, CFStore> result, Node n, Node calledMethod) {
     AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(n.getTree());
     if (type.hasAnnotation(aTypeFactory.RTAINTED)) {
       JavaExpression je = JavaExpression.fromNode(n);
       CFStore thenStore = result.getThenStore();
       CFStore elseStore = result.getElseStore();
-      thenStore.insertOrRefine(je, aTypeFactory.RUNTAINTED);
-      elseStore.insertOrRefine(je, aTypeFactory.RUNTAINTED);
+      thenStore.insertOrRefine(
+          je,
+          aTypeFactory.rPossiblyValidatedAM(Collections.singletonList(calledMethod.toString())));
+      elseStore.insertOrRefine(
+          je,
+          aTypeFactory.rPossiblyValidatedAM(Collections.singletonList(calledMethod.toString())));
     }
   }
 
