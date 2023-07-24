@@ -48,7 +48,7 @@ public class SerializationService {
    * @param messageKey the key of the error message
    * @param args the arguments of the error message
    */
-  public void serializeError(Object source, String messageKey, Object[] args, FoundRequired pair) {
+  public void serializeError(Object source, String messageKey, FoundRequired pair) {
     if (!serializer.isActive()) {
       return;
     }
@@ -62,8 +62,7 @@ public class SerializationService {
       System.err.println("Error in computing required fixes: " + source + " " + messageKey);
       resolvingFixes = ImmutableSet.of();
     }
-    Error error =
-        new Error(messageKey, args, resolvingFixes, checker.getVisitor().getCurrentPath());
+    Error error = new Error(messageKey, resolvingFixes, checker.getVisitor().getCurrentPath());
     serializer.serializeError(error);
   }
 

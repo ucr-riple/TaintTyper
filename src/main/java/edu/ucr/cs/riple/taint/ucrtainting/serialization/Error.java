@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableSet;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
 import org.json.JSONArray;
@@ -16,8 +14,6 @@ public class Error implements JSONSerializable {
 
   /** Message key for the error. */
   public final String messageKey;
-  /** Args for message construction */
-  public final Object[] args;
   /**
    * Set of fixes that can resolve the error. If the error is not fixable, this set will be empty.
    */
@@ -35,9 +31,8 @@ public class Error implements JSONSerializable {
   /** Offset of program point where this error is reported. */
   public final int offset;
 
-  public Error(String messageKey, Object[] args, Set<Fix> resolvingFixes, TreePath path) {
+  public Error(String messageKey, Set<Fix> resolvingFixes, TreePath path) {
     this.messageKey = messageKey;
-    this.args = args;
     this.resolvingFixes =
         resolvingFixes == null ? ImmutableSet.of() : ImmutableSet.copyOf(resolvingFixes);
     this.regionClass = Utility.findRegionClassSymbol(path);
@@ -49,7 +44,6 @@ public class Error implements JSONSerializable {
   public JSONObject toJSON() {
     JSONObject ans = new JSONObject();
     ans.put("messageKey", messageKey);
-    ans.put("args", new JSONArray(Arrays.stream(args).map(Objects::toString).toArray()));
     JSONObject region = new JSONObject();
     region.put("class", Serializer.serializeSymbol(regionClass));
     region.put("symbol", Serializer.serializeSymbol(regionSymbol));

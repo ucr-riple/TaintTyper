@@ -17,8 +17,6 @@ public class LocationToJsonVisitor implements LocationVisitor<JSONObject, Void> 
     jsonObject.put("path", location.path != null ? location.path.toString() : "null");
     jsonObject.put("kind", location.kind.name());
     jsonObject.put("class", Serializer.serializeSymbol(location.enclosingClass));
-    jsonObject.put(
-        "pos", location.declarationTree != null ? location.declarationTree.getStartPosition() : -1);
     if (location.typeVariablePositions != null) {
       JSONArray typeVariablePositions = new JSONArray();
       location.typeVariablePositions.forEach(

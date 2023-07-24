@@ -50,8 +50,8 @@ public class UCRTaintingChecker extends BaseTypeChecker {
   public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
     super.reportError(source, messageKey, args);
     if (serialize) {
-      FoundRequired pair = retrievePair(source, messageKey, args);
-      this.serializationService.serializeError(source, messageKey, args, pair);
+      FoundRequired pair = retrievePair(messageKey, args);
+      this.serializationService.serializeError(source, messageKey, pair);
     }
     print("Index " + ++index);
   }
@@ -61,11 +61,11 @@ public class UCRTaintingChecker extends BaseTypeChecker {
     this.serialize = false;
     reportError(source, messageKey, args);
     print("Last visited node: " + visitor.getCurrentPath().getLeaf());
-    this.serializationService.serializeError(source, messageKey, args, pair);
+    this.serializationService.serializeError(source, messageKey, pair);
     this.serialize = true;
   }
 
-  private FoundRequired retrievePair(Object source, String messageKey, Object... args) {
+  private FoundRequired retrievePair(String messageKey, Object... args) {
     switch (messageKey) {
       case "override.return":
         {
