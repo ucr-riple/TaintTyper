@@ -328,7 +328,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         }
         Element element = TreeUtils.elementFromUse(node);
         // check if is final and static
-        if (Utility.isStaticAndFinal(element)) {
+        if (Utility.isStaticAndFinal(element) && element.getKind().isField()) {
           if (node instanceof JCTree.JCFieldAccess) {
             annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
           }

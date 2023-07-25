@@ -24,7 +24,9 @@ public class Log {
     }
   }
 
-  public static void print(String message) {}
+  public static void print(String message) {
+    System.err.println(message);
+  }
 
   public Stream<String> testOnStreamLambda(List<String> s) {
     return s.stream().filter(x -> x.length() > 0);

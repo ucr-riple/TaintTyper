@@ -46,7 +46,7 @@ public class SerializationService {
    *
    * @param source the source of the error
    * @param messageKey the key of the error message
-   * @param args the arguments of the error message
+   * @param pair the pair of found and required annotated type mirrors.
    */
   public void serializeError(Object source, String messageKey, FoundRequired pair) {
     if (!serializer.isActive()) {

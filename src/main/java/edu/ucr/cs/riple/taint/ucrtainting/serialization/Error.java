@@ -49,7 +49,6 @@ public class Error implements JSONSerializable {
     region.put("symbol", Serializer.serializeSymbol(regionSymbol));
     ans.put("region", region);
     ans.put("fixes", new JSONArray(this.resolvingFixes.stream().map(Fix::toJSON).toArray()));
-    ans.put("offset", offset);
     return ans;
   }
 }
