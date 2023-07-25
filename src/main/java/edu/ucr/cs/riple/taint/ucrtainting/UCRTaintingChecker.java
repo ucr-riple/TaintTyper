@@ -48,16 +48,16 @@ public class UCRTaintingChecker extends BaseTypeChecker {
 
   @Override
   public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
+    print("Index: " + ++index);
     super.reportError(source, messageKey, args);
     if (serialize) {
-      try{
+      try {
         FoundRequired pair = retrievePair(messageKey, args);
         this.serializationService.serializeError(source, messageKey, pair);
-      }catch (Exception e){
+      } catch (Exception e) {
         print("Exception: " + e.getMessage());
       }
     }
-    print("Index: " + ++index);
   }
 
   public void detailedReportError(

@@ -45,16 +45,18 @@ public class MethodTypeArgumentFixVisitor extends BasicVisitor {
         for (int i = 0; i < node.getArguments().size(); i++) {
           AnnotatedTypeMirror requiredParam = paramsAnnotatedTypeMirrors.get(i).deepCopy(true);
           Type paramType = calledMethod.getParameters().get(i).type;
-          updateAnnotatedTypeMirror(requiredParam, paramType, typeVar);
-          fixes.addAll(
-              node.getArguments()
-                  .get(i)
-                  .accept(
-                      new FixVisitor(
-                          context,
-                          typeFactory,
-                          new FoundRequired(paramsAnnotatedTypeMirrors.get(i), requiredParam)),
-                      null));
+          boolean changed = updateAnnotatedTypeMirror(requiredParam, paramType, typeVar);
+          if (changed) {
+            fixes.addAll(
+                node.getArguments()
+                    .get(i)
+                    .accept(
+                        new FixVisitor(
+                            context,
+                            typeFactory,
+                            new FoundRequired(paramsAnnotatedTypeMirrors.get(i), requiredParam)),
+                        null));
+          }
         }
       }
     }
@@ -122,6 +124,18 @@ public class MethodTypeArgumentFixVisitor extends BasicVisitor {
         }
       }
     }
+    if (type instanceof Type.ArrayType) {
+      AnnotatedTypeMirror.AnnotatedArrayType foundArray =
+          (AnnotatedTypeMirror.AnnotatedArrayType) found;
+      AnnotatedTypeMirror.AnnotatedArrayType requiredArray =
+          (AnnotatedTypeMirror.AnnotatedArrayType) required;
+      Type.ArrayType arrayType = (Type.ArrayType) type;
+      return typeVarCanImpactFoundRequiredPair(
+          var,
+          arrayType.getComponentType(),
+          foundArray.getComponentType(),
+          requiredArray.getComponentType());
+    }
     return false;
   }
 
@@ -132,11 +146,14 @@ public class MethodTypeArgumentFixVisitor extends BasicVisitor {
    * @param typeMirror The type mirror to update.
    * @param elementType The type to check.
    * @param var The type variable to check.
+   * @return True if the type mirror was updated.
    */
-  private void updateAnnotatedTypeMirror(
+  private boolean updateAnnotatedTypeMirror(
       AnnotatedTypeMirror typeMirror, Type elementType, Type.TypeVar var) {
+    boolean updated = false;
     if (elementType instanceof Type.TypeVar && elementType.equals(var)) {
       typeMirror.replaceAnnotation(typeFactory.RUNTAINTED);
+      return true;
     }
     if (elementType instanceof Type.ClassType) {
       AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
@@ -145,7 +162,7 @@ public class MethodTypeArgumentFixVisitor extends BasicVisitor {
       for (int i = 0; i < classType.getTypeArguments().size(); i++) {
         AnnotatedTypeMirror paramTypeMirror = declaredType.getTypeArguments().get(i);
         Type paramType = classType.getTypeArguments().get(i);
-        updateAnnotatedTypeMirror(paramTypeMirror, paramType, var);
+        updated = updated || updateAnnotatedTypeMirror(paramTypeMirror, paramType, var);
       }
     }
     if (elementType instanceof Type.WildcardType) {
@@ -154,8 +171,16 @@ public class MethodTypeArgumentFixVisitor extends BasicVisitor {
       Type.WildcardType wildcard = (Type.WildcardType) elementType;
       AnnotatedTypeMirror extendsBound = wildcardType.getExtendsBound();
       if (extendsBound != null) {
-        updateAnnotatedTypeMirror(extendsBound, wildcard.getExtendsBound(), var);
+        updated = updateAnnotatedTypeMirror(extendsBound, wildcard.getExtendsBound(), var);
       }
     }
+    if (elementType instanceof Type.ArrayType) {
+      AnnotatedTypeMirror.AnnotatedArrayType arrayType =
+          (AnnotatedTypeMirror.AnnotatedArrayType) typeMirror;
+      Type.ArrayType array = (Type.ArrayType) elementType;
+      updated =
+          updateAnnotatedTypeMirror(arrayType.getComponentType(), array.getComponentType(), var);
+    }
+    return updated;
   }
 }

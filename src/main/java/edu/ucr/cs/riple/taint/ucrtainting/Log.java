@@ -25,7 +25,7 @@ public class Log {
   }
 
   public static void print(String message) {
-    System.err.println(message);
+    System.err.println("LOG: " + message);
   }
 
   public Stream<String> testOnStreamLambda(List<String> s) {

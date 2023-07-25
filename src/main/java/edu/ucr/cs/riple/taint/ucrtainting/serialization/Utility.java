@@ -16,6 +16,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -305,7 +306,15 @@ public class Utility {
     if (packageName.equals("unnamed package")) {
       packageName = "";
     }
-    return typeFactory.isAnnotatedPackage(packageName);
+    boolean fromAnnotatedPackage = typeFactory.isAnnotatedPackage(packageName);
+    if (!fromAnnotatedPackage) {
+      return false;
+    }
+    URI pathInURI =
+        encClass.sourcefile != null
+            ? encClass.sourcefile.toUri()
+            : (encClass.classfile != null ? encClass.classfile.toUri() : null);
+    return Serializer.pathToSourceFileFromURI(pathInURI) != null;
   }
 
   /**

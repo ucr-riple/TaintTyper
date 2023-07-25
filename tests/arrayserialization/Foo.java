@@ -1,4 +1,5 @@
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.util.Arrays;
 
 public class Foo {
 
@@ -8,5 +9,11 @@ public class Foo {
     // :: error: array.initializer
     // :: error: assignment
     @RUntainted Object[] arr = {field, param};
+  }
+
+  public void arrayCopy(String[] existedProperties) {
+    int epl = existedProperties.length;
+    // :: error: assignment
+    @RUntainted String[] newProperties = Arrays.copyOf(existedProperties, epl + 1);
   }
 }
