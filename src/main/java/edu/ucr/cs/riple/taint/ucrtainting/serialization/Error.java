@@ -43,6 +43,7 @@ public class Error implements JSONSerializable {
   @Override
   public JSONObject toJSON() {
     JSONObject ans = new JSONObject();
+    ans.put("offset", offset);
     ans.put("messageKey", messageKey);
     JSONObject region = new JSONObject();
     region.put("class", Serializer.serializeSymbol(regionClass));
