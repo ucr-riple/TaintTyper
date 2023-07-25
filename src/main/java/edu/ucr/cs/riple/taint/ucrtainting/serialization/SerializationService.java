@@ -161,6 +161,7 @@ public class SerializationService {
       case "argument":
       case "conditional":
       case "compound.assignment":
+      case "enhancedfor":
         return true;
       default:
         // TODO: investigate if there are other cases where the error is fixable.
