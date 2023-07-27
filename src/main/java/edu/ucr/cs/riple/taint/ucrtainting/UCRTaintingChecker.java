@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
 import org.checkerframework.common.accumulation.AccumulationChecker;
 import org.checkerframework.framework.qual.StubFiles;
 import org.checkerframework.framework.source.SupportedOptions;
@@ -13,7 +14,7 @@ import org.checkerframework.framework.source.SupportedOptions;
   "stubs/Files.astub",
   "stubs/taintedMethods.astub",
   "stubs/find-sec-bugs-sanitizers.astub",
-  "stubs/string.astub"
+  "stubs/StringBuffer.astub"
 })
 @SupportedOptions({
   UCRTaintingChecker.ANNOTATED_PACKAGES,
@@ -54,16 +55,20 @@ public class UCRTaintingChecker extends AccumulationChecker {
   //        ((JavacProcessingEnvironment) getProcessingEnvironment()).getContext());
   //  }
 
-  //  @Override
-  //  public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args)
-  // {
-  //    super.reportError(source, messageKey, args);
-  //    serializationService.serializeError(
-  //        source,
-  //        messageKey,
-  //        args,
-  //        visitor,
-  //        getTypeFactory(),
-  //        ((JavacProcessingEnvironment) getProcessingEnvironment()).getContext());
-  //  }
+  @Override
+  public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
+    for (Object arg : args) {
+      if (arg.toString().contains("capture#")) {
+        return;
+      }
+    }
+    super.reportError(source, messageKey, args);
+    //      serializationService.serializeError(
+    //          source,
+    //          messageKey,
+    //          args,
+    //          visitor,
+    //          getTypeFactory(),
+    //          ((JavacProcessingEnvironment) getProcessingEnvironment()).getContext());
+  }
 }

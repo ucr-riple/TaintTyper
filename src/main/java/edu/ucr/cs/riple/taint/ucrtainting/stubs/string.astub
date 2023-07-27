@@ -1,9 +1,0 @@
-import org.checkerframework.common.returnsreceiver.qual.This;
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted;
-
-package java.lang;
-
-public class StringBuffer {
-    public @This StringBuffer append(String str);
-    public @RPolyTainted String toString();
-}
