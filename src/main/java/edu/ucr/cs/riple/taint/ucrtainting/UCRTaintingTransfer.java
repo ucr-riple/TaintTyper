@@ -1,9 +1,5 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import java.util.Collections;
-import java.util.List;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.type.TypeKind;
 import org.checkerframework.dataflow.analysis.TransferInput;
 import org.checkerframework.dataflow.analysis.TransferResult;
 import org.checkerframework.dataflow.cfg.node.*;
@@ -14,6 +10,11 @@ import org.checkerframework.framework.flow.CFTransfer;
 import org.checkerframework.framework.flow.CFValue;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.AnnotationMirrorSet;
+
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.type.TypeKind;
+import java.util.Collections;
+import java.util.List;
 
 public class UCRTaintingTransfer extends CFTransfer {
   private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
@@ -71,6 +72,18 @@ public class UCRTaintingTransfer extends CFTransfer {
     return result;
   }
 
+  @Override
+  public TransferResult<CFValue, CFStore> visitObjectCreation(
+      ObjectCreationNode n, TransferInput<CFValue, CFStore> p) {
+    return super.visitObjectCreation(n, p);
+  }
+
+  @Override
+  public TransferResult<CFValue, CFStore> visitAssignment(
+      AssignmentNode n, TransferInput<CFValue, CFStore> in) {
+    return super.visitAssignment(n, in);
+  }
+
   private void updateStore(TransferResult<CFValue, CFStore> result, Node n, Node calledMethod) {
     AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(n.getTree());
     AnnotationMirror anno = type.getAnnotation();
@@ -84,7 +97,7 @@ public class UCRTaintingTransfer extends CFTransfer {
       elseStore.insertOrRefine(
           je,
           aTypeFactory.rPossiblyValidatedAM(Collections.singletonList(calledMethod.toString())));
-    } else if (aTypeFactory.isAccumulatorAnnotation(anno)) {
+    } else if (anno != null && aTypeFactory.isAccumulatorAnnotation(anno)) {
       CFStore thenStore = result.getThenStore();
       CFStore elseStore = result.getElseStore();
       List<String> calledMethods = aTypeFactory.getAccumulatedValues(anno);
