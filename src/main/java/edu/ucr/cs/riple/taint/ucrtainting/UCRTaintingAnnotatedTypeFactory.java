@@ -79,6 +79,15 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this, handlers));
   }
 
+  @Override
+  protected void addAnnotationsFromDefaultForType(
+      @Nullable Element element, AnnotatedTypeMirror type) {
+    super.addAnnotationsFromDefaultForType(element, type);
+    if (customCheckEnabled) {
+      handlers.forEach(handler -> handler.addAnnotationsFromDefaultForType(element, type));
+    }
+  }
+
   /**
    * Checks if any of the arguments of the node has been annotated with {@link RTainted}
    *
@@ -97,12 +106,8 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     }
     if (argumentsList != null) {
       for (ExpressionTree eTree : argumentsList) {
-        try {
-          if (getAnnotatedType(eTree).hasAnnotation(rTainted)) {
-            return true;
-          }
-        } catch (BugInCF bug) {
-          // TODO:: take care of errors
+        if (getAnnotatedType(eTree).hasAnnotation(rTainted)) {
+          return true;
         }
       }
     }
@@ -138,12 +143,12 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @param node to check for
    * @return true if present, false otherwise
    */
-  public boolean isInAnnotatedPackage(ExpressionTree node) {
+  public boolean isInThirdPartyCode(ExpressionTree node) {
     Symbol symbol = (Symbol) TreeUtils.elementFromTree(node);
     if (symbol == null) {
-      return false;
+      return true;
     }
-    return Utility.isInAnnotatedPackage(symbol, this);
+    return !Utility.isInAnnotatedPackage(symbol, this);
   }
 
   /**
@@ -232,23 +237,31 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     return type == null || !hasUntaintedAnnotation(type.getComponentType());
   }
 
+  /**
+   * Checks if the given annotated type mirror has the {@link RUntainted} annotation.
+   *
+   * @param type The given annotated type mirror
+   * @return True if the given annotated type mirror has the {@link RUntainted} annotation, false
+   *     otherwise.
+   */
   public boolean hasUntaintedAnnotation(AnnotatedTypeMirror type) {
     return type.hasAnnotation(rUntainted);
   }
 
-  @Override
-  protected void addAnnotationsFromDefaultForType(
-      @Nullable Element element, AnnotatedTypeMirror type) {
-    super.addAnnotationsFromDefaultForType(element, type);
-    if (customCheckEnabled) {
-      handlers.forEach(handler -> handler.addAnnotationsFromDefaultForType(element, type));
-    }
-  }
-
+  /**
+   * Makes the given type {@link RUntainted}.
+   *
+   * @param type The given type.
+   */
   public void makeUntainted(AnnotatedTypeMirror type) {
     type.replaceAnnotation(rUntainted);
   }
 
+  /**
+   * Checks if custom check is enabled.
+   *
+   * @return True if custom check is enabled, false otherwise.
+   */
   public boolean customCheckIsEnabled() {
     return customCheckEnabled;
   }
