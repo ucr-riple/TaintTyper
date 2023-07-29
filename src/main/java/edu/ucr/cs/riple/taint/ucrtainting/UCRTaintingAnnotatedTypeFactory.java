@@ -81,7 +81,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @param node to check for
    * @return true if any argument is annotated with {@link RTainted}, false otherwise
    */
-  private boolean hasTaintedArgument(ExpressionTree node) {
+  public boolean hasTaintedArgument(ExpressionTree node) {
     List<? extends ExpressionTree> argumentsList = null;
     if (node instanceof MethodInvocationTree) {
       argumentsList = ((MethodInvocationTree) node).getArguments();
@@ -111,7 +111,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @param node to check for
    * @return true if annotated with {@link RTainted}, false otherwise
    */
-  private boolean hasTaintedReceiver(ExpressionTree node) {
+  public boolean hasTaintedReceiver(ExpressionTree node) {
     if (node != null) {
       ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
       if (receiverTree != null) {
@@ -136,7 +136,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @param node to check for
    * @return true if present, false otherwise
    */
-  private boolean isInAnnotatedPackage(ExpressionTree node) {
+  public boolean isInAnnotatedPackage(ExpressionTree node) {
     Symbol symbol = (Symbol) TreeUtils.elementFromTree(node);
     if (symbol == null) {
       return false;
@@ -244,6 +244,10 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     } else {
       super.addAnnotationsFromDefaultForType(element, type);
     }
+  }
+
+  public void makeUntainted(AnnotatedTypeMirror type) {
+    type.replaceAnnotation(RUNTAINTED);
   }
 
   private class UCRTaintingTreeAnnotator extends TreeAnnotator {
