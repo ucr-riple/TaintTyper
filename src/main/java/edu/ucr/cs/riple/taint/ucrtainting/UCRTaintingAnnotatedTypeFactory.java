@@ -30,19 +30,19 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   /**
    * This option enables custom handling of third party code. By default, such handling is enabled.
    */
-  public final boolean ENABLE_CUSTOM_CHECK;
+  public final boolean customCheckEnabled;
   /** List of annotated packages. Classes in these packages are considered to be annotated. */
-  private final List<String> ANNOTATED_PACKAGE_NAMES_LIST;
+  private final List<String> annotatedPackages;
   /** AnnotationMirror for {@link RUntainted}. */
-  public final AnnotationMirror RUNTAINTED;
+  private final AnnotationMirror rUntainted;
   /** AnnotationMirror for {@link RTainted}. */
-  public final AnnotationMirror RTAINTED;
-
+  private final AnnotationMirror rTainted;
+  /** Set of handlers */
   private final ImmutableSet<Handler> handlers;
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker);
-    ENABLE_CUSTOM_CHECK = checker.getBooleanOption(UCRTaintingChecker.ENABLE_CUSTOM_CHECKER, true);
+    customCheckEnabled = checker.getBooleanOption(UCRTaintingChecker.ENABLE_CUSTOM_CHECKER, true);
     String givenAnnotatedPackages = checker.getOption(UCRTaintingChecker.ANNOTATED_PACKAGES);
     // make sure that annotated package names are always provided and issue error otherwise
     if (givenAnnotatedPackages == null) {
@@ -56,15 +56,13 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
                 + " Please pass this argument in the checker config, refer checker manual");
       }
     }
-    /**
-     * To respect existing annotations, leave them alone based on the provided annotated package
-     * names through this option.
-     */
+    // To respect existing annotations, leave them alone based on the provided annotated
+    // package names through this option.
     String annotatedPackagesFlagValue =
         givenAnnotatedPackages.equals("\"\"") ? "" : givenAnnotatedPackages;
-    ANNOTATED_PACKAGE_NAMES_LIST = Arrays.asList(annotatedPackagesFlagValue.split(","));
-    RUNTAINTED = AnnotationBuilder.fromClass(elements, RUntainted.class);
-    RTAINTED = AnnotationBuilder.fromClass(elements, RTainted.class);
+    annotatedPackages = Arrays.asList(annotatedPackagesFlagValue.split(","));
+    rUntainted = AnnotationBuilder.fromClass(elements, RUntainted.class);
+    rTainted = AnnotationBuilder.fromClass(elements, RTainted.class);
     this.handlers =
         ImmutableSet.<Handler>builder()
             .add(
@@ -100,7 +98,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     if (argumentsList != null) {
       for (ExpressionTree eTree : argumentsList) {
         try {
-          if (getAnnotatedType(eTree).hasAnnotation(RTAINTED)) {
+          if (getAnnotatedType(eTree).hasAnnotation(rTainted)) {
             return true;
           }
         } catch (BugInCF bug) {
@@ -124,11 +122,9 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         Element element = TreeUtils.elementFromTree(node);
         if (element != null) {
           Set<Modifier> modifiers = element.getModifiers();
-          if (modifiers != null
+          return modifiers != null
               && !modifiers.contains(Modifier.STATIC)
-              && getAnnotatedType(receiverTree).hasAnnotation(RTAINTED)) {
-            return true;
-          }
+              && getAnnotatedType(receiverTree).hasAnnotation(rTainted);
         }
       }
     }
@@ -159,9 +155,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   public boolean isPresentInStub(ExpressionTree node) {
     if (node != null) {
       Element elem = TreeUtils.elementFromTree(node);
-      if (elem != null && isFromStubFile(elem)) {
-        return true;
-      }
+      return elem != null && isFromStubFile(elem);
     }
     return false;
   }
@@ -173,7 +167,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @return true if matches, false otherwise
    */
   public boolean isAnnotatedPackage(String packageName) {
-    for (String annotatedPackageName : ANNOTATED_PACKAGE_NAMES_LIST) {
+    for (String annotatedPackageName : annotatedPackages) {
       if (packageName.startsWith(annotatedPackageName)) {
         return true;
       }
@@ -209,7 +203,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     if (type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       return mayBeTainted((AnnotatedTypeMirror.AnnotatedDeclaredType) type);
     }
-    return !type.hasAnnotation(RUNTAINTED);
+    return !type.hasAnnotation(rUntainted);
   }
 
   /**
@@ -239,23 +233,23 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   }
 
   public boolean hasUntaintedAnnotation(AnnotatedTypeMirror type) {
-    return type.hasAnnotation(RUNTAINTED);
+    return type.hasAnnotation(rUntainted);
   }
 
   @Override
   protected void addAnnotationsFromDefaultForType(
       @Nullable Element element, AnnotatedTypeMirror type) {
     super.addAnnotationsFromDefaultForType(element, type);
-    if (ENABLE_CUSTOM_CHECK) {
+    if (customCheckEnabled) {
       handlers.forEach(handler -> handler.addAnnotationsFromDefaultForType(element, type));
     }
   }
 
   public void makeUntainted(AnnotatedTypeMirror type) {
-    type.replaceAnnotation(RUNTAINTED);
+    type.replaceAnnotation(rUntainted);
   }
 
   public boolean customCheckIsEnabled() {
-    return ENABLE_CUSTOM_CHECK;
+    return customCheckEnabled;
   }
 }

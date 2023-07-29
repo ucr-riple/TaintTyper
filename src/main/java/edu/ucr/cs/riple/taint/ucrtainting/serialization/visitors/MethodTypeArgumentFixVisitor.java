@@ -152,7 +152,7 @@ public class MethodTypeArgumentFixVisitor extends BasicVisitor {
       AnnotatedTypeMirror typeMirror, Type elementType, Type.TypeVar var) {
     boolean updated = false;
     if (elementType instanceof Type.TypeVar && elementType.equals(var)) {
-      typeMirror.replaceAnnotation(typeFactory.RUNTAINTED);
+      typeFactory.makeUntainted(typeMirror);
       return true;
     }
     if (elementType instanceof Type.ClassType) {
