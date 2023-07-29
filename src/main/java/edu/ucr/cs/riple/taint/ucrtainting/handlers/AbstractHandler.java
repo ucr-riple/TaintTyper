@@ -1,6 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.VariableTree;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -14,7 +15,12 @@ public abstract class AbstractHandler implements Handler {
   }
 
   @Override
-  public void visitField(Element element, AnnotatedTypeMirror type) {
+  public void addAnnotationsFromDefaultForType(Element element, AnnotatedTypeMirror type) {
+    // no-op
+  }
+
+  @Override
+  public void visitVariable(VariableTree variableTree, AnnotatedTypeMirror type) {
     // no-op
   }
 

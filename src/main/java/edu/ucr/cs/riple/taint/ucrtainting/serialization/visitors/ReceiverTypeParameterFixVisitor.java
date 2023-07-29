@@ -261,7 +261,7 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
         elementParameterizedType = base.allparams().get(i);
         base = elementParameterizedType;
         elementTypeArgs = getAllTypeArguments(elementParameterizedType);
-        if (elementTypeArgs.size() == 0) {
+        if (elementTypeArgs.isEmpty()) {
           // Reached the end of type parameters.
           break;
         }

@@ -1,15 +1,17 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.tree.JCTree;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.EnumHandler;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.StaticFinalFieldHandler;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.ThirdPartyHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.AnnotationMirror;
@@ -18,7 +20,6 @@ import javax.lang.model.element.Modifier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
-import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
@@ -37,7 +38,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   /** AnnotationMirror for {@link RTainted}. */
   public final AnnotationMirror RTAINTED;
 
-  final Set<Symbol.VarSymbol> staticFinalFieldsWithInitializer;
+  private final ImmutableSet<Handler> handlers;
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker);
@@ -64,15 +65,20 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     ANNOTATED_PACKAGE_NAMES_LIST = Arrays.asList(annotatedPackagesFlagValue.split(","));
     RUNTAINTED = AnnotationBuilder.fromClass(elements, RUntainted.class);
     RTAINTED = AnnotationBuilder.fromClass(elements, RTainted.class);
-    this.staticFinalFieldsWithInitializer = new HashSet<>();
+    this.handlers =
+        ImmutableSet.<Handler>builder()
+            .add(
+                new StaticFinalFieldHandler(this),
+                new EnumHandler(this),
+                new ThirdPartyHandler(this))
+            .build();
     postInit();
   }
 
   @Override
   protected TreeAnnotator createTreeAnnotator() {
     return new ListTreeAnnotator(
-        super.createTreeAnnotator(),
-        new UCRTaintingTreeAnnotator(this, staticFinalFieldsWithInitializer));
+        super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this, handlers));
   }
 
   /**
@@ -239,10 +245,9 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   @Override
   protected void addAnnotationsFromDefaultForType(
       @Nullable Element element, AnnotatedTypeMirror type) {
-    if (element instanceof Symbol.VarSymbol && staticFinalFieldsWithInitializer.contains(element)) {
-      type.replaceAnnotation(RUNTAINTED);
-    } else {
-      super.addAnnotationsFromDefaultForType(element, type);
+    super.addAnnotationsFromDefaultForType(element, type);
+    if (ENABLE_CUSTOM_CHECK) {
+      handlers.forEach(handler -> handler.addAnnotationsFromDefaultForType(element, type));
     }
   }
 
@@ -250,141 +255,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     type.replaceAnnotation(RUNTAINTED);
   }
 
-  private class UCRTaintingTreeAnnotator extends TreeAnnotator {
-
-    private final Set<Symbol.VarSymbol> staticFinalVars;
-
-    /**
-     * UCRTaintingTreeAnnotator
-     *
-     * @param atypeFactory the type factory
-     */
-    protected UCRTaintingTreeAnnotator(
-        AnnotatedTypeFactory atypeFactory, Set<Symbol.VarSymbol> staticFinalVars) {
-      super(atypeFactory);
-      this.staticFinalVars = staticFinalVars;
-    }
-
-    /**
-     * Visits all method invocations and updates {@link AnnotatedTypeMirror} according to the
-     * argument and receiver annotations. If any of the arguments or the receiver is {@link
-     * RTainted}, the {@link AnnotatedTypeMirror} is updated to be {@link RTainted}.
-     *
-     * @param node the node being visited
-     * @param annotatedTypeMirror annotated return type of the method invocation
-     */
-    @Override
-    public Void visitMethodInvocation(
-        MethodInvocationTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-      if (ENABLE_CUSTOM_CHECK) {
-        // if the code is part of provided annotated packages or is present
-        // in the stub files, then we don't need any custom handling for it.
-        if (!isInAnnotatedPackage(node) && !isPresentInStub(node)) {
-          if (!hasTaintedArgument(node) && !hasTaintedReceiver(node)) {
-            Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
-            Type type = calledMethod.getReturnType();
-            if (calledMethod.isStatic() || !(type instanceof Type.TypeVar)) {
-              annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
-            }
-          }
-        }
-      }
-      return super.visitMethodInvocation(node, annotatedTypeMirror);
-    }
-
-    @Override
-    public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-      if (ENABLE_CUSTOM_CHECK) {
-        if (Utility.isEnumConstant(node)) {
-          ExpressionTree initializer = node.getInitializer();
-          if (!hasTaintedArgument(initializer)) {
-            getAnnotatedType(initializer).replaceAnnotation(RUNTAINTED);
-          }
-          annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
-        }
-        Element element = TreeUtils.elementFromDeclaration(node);
-        // check if is final and static
-        if (Utility.isStaticAndFinal(element)) {
-          ExpressionTree initializer = node.getInitializer();
-          // check if initializer is a literal or a primitive
-          if (Utility.isLiteralOrPrimitive(initializer)) {
-            staticFinalVars.add((Symbol.VarSymbol) element);
-            annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
-          }
-        }
-      }
-      return super.visitVariable(node, annotatedTypeMirror);
-    }
-
-    @Override
-    public Void visitLiteral(LiteralTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-      if (ENABLE_CUSTOM_CHECK) {
-        annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
-      }
-      return super.visitLiteral(node, annotatedTypeMirror);
-    }
-
-    @Override
-    public Void visitMemberSelect(MemberSelectTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-      if (ENABLE_CUSTOM_CHECK) {
-        if (Utility.isEnumConstant(node)) {
-          annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
-        }
-        Element element = TreeUtils.elementFromUse(node);
-        // check if is final and static
-        if (Utility.isStaticAndFinal(element) && element.getKind().isField()) {
-          if (node instanceof JCTree.JCFieldAccess) {
-            annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
-          }
-        }
-      }
-      return super.visitMemberSelect(node, annotatedTypeMirror);
-    }
-
-    /**
-     * Visits all new class creations and updates {@link AnnotatedTypeMirror} according to the
-     * argument and receiver annotations. If any of the arguments or the receiver is {@link
-     * RTainted}, the {@link AnnotatedTypeMirror} is updated to be {@link RTainted}.
-     *
-     * @param node the node being visited
-     * @param annotatedTypeMirror annotated type of the new class
-     */
-    @Override
-    public Void visitNewClass(NewClassTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-      if (ENABLE_CUSTOM_CHECK) {
-        // if the code is part of provided annotated packages or is present
-        // in the stub files, then we don't need any custom handling for it.
-        if (!isInAnnotatedPackage(node) && !isPresentInStub(node)) {
-          if (hasTaintedArgument(node) || hasTaintedReceiver(node)) {
-            //            annotatedTypeMirror.replaceAnnotation(RTAINTED);
-          } else {
-            annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
-          }
-        } else {
-          if (!hasTaintedArgument(node)) {
-            annotatedTypeMirror.replaceAnnotation(RUNTAINTED);
-          }
-        }
-      }
-      return super.visitNewClass(node, annotatedTypeMirror);
-    }
-
-    @Override
-    public Void visitNewArray(NewArrayTree node, AnnotatedTypeMirror mirror) {
-      List<? extends ExpressionTree> initializers = node.getInitializers();
-      boolean allUntainted = true;
-      if (initializers != null) {
-        for (ExpressionTree initializer : initializers) {
-          if (mayBeTainted(initializer)) {
-            allUntainted = false;
-            break;
-          }
-        }
-      }
-      if (allUntainted) {
-        mirror.replaceAnnotation(RUNTAINTED);
-      }
-      return super.visitNewArray(node, mirror);
-    }
+  public boolean customCheckIsEnabled() {
+    return ENABLE_CUSTOM_CHECK;
   }
 }
