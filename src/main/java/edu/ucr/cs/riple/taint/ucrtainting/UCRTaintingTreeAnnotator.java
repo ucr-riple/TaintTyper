@@ -14,7 +14,9 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.TreeUtils;
@@ -23,6 +25,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   private final ImmutableSet<Handler> handlers;
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
   private final Context context;
+  private final Map<Symbol, Tree> symbolToDeclarationMap;
 
   /**
    * UCRTaintingTreeAnnotator
@@ -38,6 +41,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
     this.typeFactory = typeFactory;
     this.handlers = handlers;
     this.context = context;
+    this.symbolToDeclarationMap = new HashMap<>();
   }
 
   /**
@@ -76,7 +80,12 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   @Override
   public Void visitMemberSelect(MemberSelectTree node, AnnotatedTypeMirror annotatedTypeMirror) {
     if (typeFactory.customCheckIsEnabled()) {
-      Tree selected = Utility.locateDeclaration((Symbol) TreeUtils.elementFromUse(node), context);
+      Symbol symbol = (Symbol) TreeUtils.elementFromUse(node);
+      Tree selected =
+          symbolToDeclarationMap.containsKey(symbol)
+              ? symbolToDeclarationMap.get(symbol)
+              : Utility.locateDeclaration(symbol, context);
+      symbolToDeclarationMap.putIfAbsent(symbol, selected);
       if (selected != null && !typeFactory.mayBeTainted(selected)) {
         typeFactory.makeUntainted(annotatedTypeMirror);
       }
