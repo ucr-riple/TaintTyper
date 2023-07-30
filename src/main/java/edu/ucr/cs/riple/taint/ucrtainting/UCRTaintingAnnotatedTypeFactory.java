@@ -221,9 +221,9 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     if (type == null) {
       return true;
     }
-    for (AnnotatedTypeMirror typeVariable : type.getTypeArguments()) {
-      return mayBeTainted(typeVariable);
-    }
+    //    for (AnnotatedTypeMirror typeVariable : type.getTypeArguments()) {
+    //      return mayBeTainted(typeVariable);
+    //    }
     return !hasUntaintedAnnotation(type);
   }
 

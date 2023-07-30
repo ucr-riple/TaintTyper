@@ -325,6 +325,13 @@ public class Utility {
    */
   public static boolean isEnumConstant(Tree tree) {
     Element element = TreeUtils.elementFromTree(tree);
+    if (element == null) {
+      return false;
+    }
+    return isEnumConstant(element);
+  }
+
+  public static boolean isEnumConstant(Element element) {
     if (element instanceof Symbol.VarSymbol) {
       return ((Symbol.VarSymbol) element).isEnum();
     }
