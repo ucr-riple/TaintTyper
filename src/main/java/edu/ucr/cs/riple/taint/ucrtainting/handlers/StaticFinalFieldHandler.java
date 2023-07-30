@@ -21,7 +21,8 @@ public class StaticFinalFieldHandler extends AbstractHandler {
 
   @Override
   public void addAnnotationsFromDefaultForType(Element element, AnnotatedTypeMirror type) {
-    if (staticFinalFields.contains(element)) {
+    if (staticFinalFields.contains(element)
+        || (Utility.isStaticAndFinal(element) && typeFactory.isInThirdPartyCode(element))) {
       typeFactory.makeUntainted(type);
     }
   }
@@ -29,6 +30,10 @@ public class StaticFinalFieldHandler extends AbstractHandler {
   @Override
   public void visitVariable(VariableTree tree, AnnotatedTypeMirror type) {
     Element element = TreeUtils.elementFromDeclaration(tree);
+    if (staticFinalFields.contains(element)) {
+      typeFactory.makeUntainted(type);
+      return;
+    }
     // check if is final and static
     if (Utility.isStaticAndFinal(element)) {
       ExpressionTree initializer = tree.getInitializer();

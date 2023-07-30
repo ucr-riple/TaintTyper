@@ -3,6 +3,7 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.EnumHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.StaticFinalFieldHandler;
@@ -76,7 +77,11 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   @Override
   protected TreeAnnotator createTreeAnnotator() {
     return new ListTreeAnnotator(
-        super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this, handlers));
+        super.createTreeAnnotator(),
+        new UCRTaintingTreeAnnotator(
+            this,
+            handlers,
+            ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext()));
   }
 
   @Override
@@ -137,17 +142,21 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   }
 
   /**
-   * Checks if the package for the node is present in already annotated according to provided
+   * Checks if the package for the tree is present in already annotated according to provided
    * option.
    *
-   * @param node to check for
+   * @param tree to check for
    * @return true if present, false otherwise
    */
-  public boolean isInThirdPartyCode(ExpressionTree node) {
-    Symbol symbol = (Symbol) TreeUtils.elementFromTree(node);
-    if (symbol == null) {
-      return true;
+  public boolean isInThirdPartyCode(Tree tree) {
+    return isInThirdPartyCode(TreeUtils.elementFromTree(tree));
+  }
+
+  public boolean isInThirdPartyCode(Element element) {
+    if (element == null) {
+      return false;
     }
+    Symbol symbol = (Symbol) element;
     return !Utility.isInAnnotatedPackage(symbol, this);
   }
 
@@ -221,9 +230,6 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     if (type == null) {
       return true;
     }
-    //    for (AnnotatedTypeMirror typeVariable : type.getTypeArguments()) {
-    //      return mayBeTainted(typeVariable);
-    //    }
     return !hasUntaintedAnnotation(type);
   }
 

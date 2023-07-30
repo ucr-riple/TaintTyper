@@ -24,6 +24,5 @@ public class ThirdPartyHandler extends AbstractHandler {
         }
       }
     }
-    System.out.println(tree + " - " + type);
   }
 }

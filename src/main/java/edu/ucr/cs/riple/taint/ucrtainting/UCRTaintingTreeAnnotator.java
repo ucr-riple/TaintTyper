@@ -7,13 +7,14 @@ import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.NewClassTree;
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
-import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.List;
-import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.TreeUtils;
@@ -21,17 +22,22 @@ import org.checkerframework.javacutil.TreeUtils;
 public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   private final ImmutableSet<Handler> handlers;
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
+  private final Context context;
 
   /**
    * UCRTaintingTreeAnnotator
    *
    * @param typeFactory the type factory
+   * @param context The javac context.
    */
   protected UCRTaintingTreeAnnotator(
-      UCRTaintingAnnotatedTypeFactory typeFactory, ImmutableSet<Handler> handlers) {
+      UCRTaintingAnnotatedTypeFactory typeFactory,
+      ImmutableSet<Handler> handlers,
+      Context context) {
     super(typeFactory);
     this.typeFactory = typeFactory;
     this.handlers = handlers;
+    this.context = context;
   }
 
   /**
@@ -70,15 +76,9 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   @Override
   public Void visitMemberSelect(MemberSelectTree node, AnnotatedTypeMirror annotatedTypeMirror) {
     if (typeFactory.customCheckIsEnabled()) {
-      if (Utility.isEnumConstant(node)) {
+      Tree selected = Utility.locateDeclaration((Symbol) TreeUtils.elementFromUse(node), context);
+      if (selected != null && !typeFactory.mayBeTainted(selected)) {
         typeFactory.makeUntainted(annotatedTypeMirror);
-      }
-      Element element = TreeUtils.elementFromUse(node);
-      // check if is final and static
-      if (Utility.isStaticAndFinal(element) && element.getKind().isField()) {
-        if (node instanceof JCTree.JCFieldAccess) {
-          typeFactory.makeUntainted(annotatedTypeMirror);
-        }
       }
     }
     return super.visitMemberSelect(node, annotatedTypeMirror);
