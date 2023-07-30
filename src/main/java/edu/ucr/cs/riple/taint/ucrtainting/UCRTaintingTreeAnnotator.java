@@ -98,7 +98,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
       // if the code is part of provided annotated packages or is present
       // in the stub files, then we don't need any custom handling for it.
       if (typeFactory.isInThirdPartyCode(node) && !typeFactory.isPresentInStub(node)) {
-        if (!(typeFactory.hasTaintedArgument(node) && typeFactory.hasTaintedReceiver(node))) {
+        if (!(typeFactory.hasTaintedArgument(node) || typeFactory.hasTaintedReceiver(node))) {
           typeFactory.makeUntainted(annotatedTypeMirror);
         }
       } else {

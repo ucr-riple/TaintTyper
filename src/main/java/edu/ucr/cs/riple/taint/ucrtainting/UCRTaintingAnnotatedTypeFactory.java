@@ -106,7 +106,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     }
     if (argumentsList != null) {
       for (ExpressionTree eTree : argumentsList) {
-        if (getAnnotatedType(eTree).hasAnnotation(rTainted)) {
+        if (mayBeTainted(getAnnotatedType(eTree))) {
           return true;
         }
       }
