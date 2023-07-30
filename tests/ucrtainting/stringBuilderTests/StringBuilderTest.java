@@ -13,9 +13,9 @@ class StringBuilderTest {
   //    sink(content.toString());
   //  }
 
-  void tainted2(@RUntainted String arg) {
+  void tainted2(@RTainted String arg) {
     StringBuffer content = new StringBuffer();
-    content.append("<fieldX>").append(arg);
+    content.append(fieldX).append(arg);
     sink(content.toString());
   }
 

@@ -7,14 +7,14 @@ import org.checkerframework.framework.source.SupportedOptions;
 
 /** This is the entry point for pluggable type-checking. */
 @StubFiles({
-  "stubs/Connection.astub",
-  "stubs/apache.commons.io.astub",
-  "stubs/apache.commons.lang.astub",
-  "stubs/general.astub",
-  "stubs/Files.astub",
-  "stubs/taintedMethods.astub",
-  "stubs/find-sec-bugs-sanitizers.astub",
-  "stubs/StringBuffer.astub"
+  "Connection.astub",
+  "apache.commons.io.astub",
+  "apache.commons.lang.astub",
+  "general.astub",
+  "Files.astub",
+  "taintedMethods.astub",
+  "find-sec-bugs-sanitizers.astub",
+  "StringBuffer.astub"
 })
 @SupportedOptions({
   UCRTaintingChecker.ANNOTATED_PACKAGES,
