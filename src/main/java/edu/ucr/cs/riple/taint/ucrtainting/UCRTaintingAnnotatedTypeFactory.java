@@ -1,13 +1,10 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.EnumHandler;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.CompositHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.StaticFinalFieldHandler;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.ThirdPartyHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
@@ -39,7 +36,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   /** AnnotationMirror for {@link RTainted}. */
   private final AnnotationMirror rTainted;
   /** Set of handlers */
-  private final ImmutableSet<Handler> handlers;
+  private final Handler handler;
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker);
@@ -64,13 +61,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     annotatedPackages = Arrays.asList(annotatedPackagesFlagValue.split(","));
     rUntainted = AnnotationBuilder.fromClass(elements, RUntainted.class);
     rTainted = AnnotationBuilder.fromClass(elements, RTainted.class);
-    this.handlers =
-        ImmutableSet.<Handler>builder()
-            .add(
-                new StaticFinalFieldHandler(this),
-                new EnumHandler(this),
-                new ThirdPartyHandler(this))
-            .build();
+    this.handler = new CompositHandler(this);
     postInit();
   }
 
@@ -80,7 +71,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
         super.createTreeAnnotator(),
         new UCRTaintingTreeAnnotator(
             this,
-            handlers,
+            handler,
             ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext()));
   }
 
@@ -89,7 +80,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
       @Nullable Element element, AnnotatedTypeMirror type) {
     super.addAnnotationsFromDefaultForType(element, type);
     if (customCheckEnabled) {
-      handlers.forEach(handler -> handler.addAnnotationsFromDefaultForType(element, type));
+      handler.addAnnotationsFromDefaultForType(element, type);
     }
   }
 

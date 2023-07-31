@@ -1,6 +1,5 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MemberSelectTree;
@@ -22,7 +21,7 @@ import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.TreeUtils;
 
 public class UCRTaintingTreeAnnotator extends TreeAnnotator {
-  private final ImmutableSet<Handler> handlers;
+  private final Handler handler;
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
   private final Context context;
   private final Map<Symbol, Tree> symbolToDeclarationMap;
@@ -34,12 +33,10 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
    * @param context The javac context.
    */
   protected UCRTaintingTreeAnnotator(
-      UCRTaintingAnnotatedTypeFactory typeFactory,
-      ImmutableSet<Handler> handlers,
-      Context context) {
+      UCRTaintingAnnotatedTypeFactory typeFactory, Handler handler, Context context) {
     super(typeFactory);
     this.typeFactory = typeFactory;
-    this.handlers = handlers;
+    this.handler = handler;
     this.context = context;
     this.symbolToDeclarationMap = new HashMap<>();
   }
@@ -56,7 +53,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   public Void visitMethodInvocation(
       MethodInvocationTree node, AnnotatedTypeMirror annotatedTypeMirror) {
     if (typeFactory.customCheckIsEnabled()) {
-      handlers.forEach(handler -> handler.visitMethodInvocation(node, annotatedTypeMirror));
+      handler.visitMethodInvocation(node, annotatedTypeMirror);
     }
     return super.visitMethodInvocation(node, annotatedTypeMirror);
   }
@@ -64,7 +61,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   @Override
   public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
     if (typeFactory.customCheckIsEnabled()) {
-      handlers.forEach(handler -> handler.visitVariable(node, annotatedTypeMirror));
+      handler.visitVariable(node, annotatedTypeMirror);
     }
     return super.visitVariable(node, annotatedTypeMirror);
   }
