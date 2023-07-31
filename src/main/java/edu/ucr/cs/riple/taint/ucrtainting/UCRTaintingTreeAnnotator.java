@@ -6,13 +6,12 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
-import org.checkerframework.javacutil.TreeUtils;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
+import org.checkerframework.javacutil.TreeUtils;
 
 public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   private final Handler handler;
@@ -48,7 +47,6 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
       MethodInvocationTree node, AnnotatedTypeMirror annotatedTypeMirror) {
     if (typeFactory.customLibraryCheckIsEnabled()) {
       handler.visitMethodInvocation(node, annotatedTypeMirror);
-
     }
     return super.visitMethodInvocation(node, annotatedTypeMirror);
   }

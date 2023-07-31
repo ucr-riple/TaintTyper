@@ -34,7 +34,8 @@ public class UCRTaintingTransfer extends CFTransfer {
     // Assume any receiver or argument involved in
     // a boolean method invocation to be validated
     if (aTypeFactory.enableValidationCheck) {
-      if (Utility.isMethodInvocationInIfConditional(methodInvocationNode.getTreePath()) && methodInvocationNode.getType().getKind() == TypeKind.BOOLEAN) {
+      if (Utility.isMethodInvocationInIfConditional(methodInvocationNode.getTreePath())
+          && methodInvocationNode.getType().getKind() == TypeKind.BOOLEAN) {
         for (Node arg : methodInvocationNode.getArguments()) {
           makeRPossiblyValidated(result, arg, methodInvocationNode);
         }
@@ -49,7 +50,8 @@ public class UCRTaintingTransfer extends CFTransfer {
     }
 
     if (aTypeFactory.enableLibraryCheck && aTypeFactory.enableSideEffect) {
-      if (aTypeFactory.hasReceiver(methodInvocationNode.getTree()) && methodInvocationNode.getArguments().size() > 0) {
+      if (aTypeFactory.hasReceiver(methodInvocationNode.getTree())
+          && methodInvocationNode.getArguments().size() > 0) {
         Node receiver = methodInvocationNode.getTarget().getReceiver();
         if (receiver != null
             && !(receiver instanceof ImplicitThisNode)
@@ -72,8 +74,8 @@ public class UCRTaintingTransfer extends CFTransfer {
     return result;
   }
 
-
-  private void makeRPossiblyValidated(TransferResult<CFValue, CFStore> result, Node n, Node calledMethod) {
+  private void makeRPossiblyValidated(
+      TransferResult<CFValue, CFStore> result, Node n, Node calledMethod) {
     AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(n.getTree());
     AnnotationMirror anno = type.getAnnotation();
     JavaExpression je = JavaExpression.fromNode(n);
@@ -107,7 +109,8 @@ public class UCRTaintingTransfer extends CFTransfer {
       if (thenVal != null) {
         thenVal =
             new CFValue(
-                analysis, AnnotationMirrorSet.singleton(aTypeFactory.rTainted),
+                analysis,
+                AnnotationMirrorSet.singleton(aTypeFactory.rTainted),
                 thenVal.getUnderlyingType());
         thenStore.replaceValue(je, thenVal);
       }

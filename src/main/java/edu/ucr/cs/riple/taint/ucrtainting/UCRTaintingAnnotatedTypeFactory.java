@@ -5,13 +5,16 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CompositHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
-
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.StaticFinalFieldHandler;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.ThirdPartyHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import java.lang.annotation.Annotation;
+import java.util.*;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.util.Elements;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.accumulation.AccumulationAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
@@ -23,13 +26,6 @@ import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.TreeUtils;
 import org.checkerframework.javacutil.UserError;
-
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.util.Elements;
-import java.lang.annotation.Annotation;
-import java.util.*;
 
 public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFactory {
 
@@ -55,16 +51,15 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   public final AnnotationMirror rUntainted;
   /** AnnotationMirror for {@link RTainted}. */
   public final AnnotationMirror rTainted;
+
   private final Handler handler;
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker, RPossiblyValidated.class, RUntainted.class, null);
-    enableLibraryCheck =
-        checker.getBooleanOption(UCRTaintingChecker.ENABLE_LIBRARY_CHECKER, true);
+    enableLibraryCheck = checker.getBooleanOption(UCRTaintingChecker.ENABLE_LIBRARY_CHECKER, true);
     enableValidationCheck =
         checker.getBooleanOption(UCRTaintingChecker.ENABLE_VALIDATION_CHECKER, false);
-    enableSideEffect =
-            checker.getBooleanOption(UCRTaintingChecker.ENABLE_SIDE_EFFECT, false);
+    enableSideEffect = checker.getBooleanOption(UCRTaintingChecker.ENABLE_SIDE_EFFECT, false);
     String givenAnnotatedPackages = checker.getOption(UCRTaintingChecker.ANNOTATED_PACKAGES);
     // make sure that annotated package names are always provided and issue error otherwise
     if (givenAnnotatedPackages == null) {
@@ -105,7 +100,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     super.addAnnotationsFromDefaultForType(element, type);
     if (enableLibraryCheck) {
       handler.addAnnotationsFromDefaultForType(element, type);
-
     }
   }
 
@@ -421,15 +415,14 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     return !type.hasAnnotation(rUntainted);
   }
 
-
-    /**
-     * Visits all method invocations and updates {@link AnnotatedTypeMirror} according to the
-     * argument and receiver annotations. If any of the arguments or the receiver is {@link
-     * RTainted}, the {@link AnnotatedTypeMirror} is updated to be {@link RTainted}.
-     *
-     * @param node the node being visited
-     * @param annotatedTypeMirror annotated return type of the method invocation
-     */
+  /**
+   * Visits all method invocations and updates {@link AnnotatedTypeMirror} according to the argument
+   * and receiver annotations. If any of the arguments or the receiver is {@link RTainted}, the
+   * {@link AnnotatedTypeMirror} is updated to be {@link RTainted}.
+   *
+   * @param node the node being visited
+   * @param annotatedTypeMirror annotated return type of the method invocation
+   */
 
   /**
    * Checks if the given declared type may be tainted

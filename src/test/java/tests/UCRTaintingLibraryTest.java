@@ -1,9 +1,8 @@
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
-import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
-import org.junit.runners.Parameterized.Parameters;
-
 import java.io.File;
 import java.util.List;
+import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Test runner for tests of the UCR Tainting Checker.
@@ -30,8 +29,13 @@ public class UCRTaintingLibraryTest extends CheckerFrameworkPerDirectoryTest {
 
   @Parameters
   public static String[] getTestDirs() {
-//    return new String[] {"ucrtainting/basicSubTypingTests", "ucrtainting/captureTest", "ucrtainting/javaUtilTest", "ucrtainting/micronaut", "ucrtainting/stringBuilderTests",
-//            "ucrtainting/thirdPartyTests"};
-    return new String[] {"ucrtainting/captureTest"};
+    return new String[] {
+      "ucrtainting/basicSubTypingTests",
+      "ucrtainting/captureTest",
+      "ucrtainting/javaUtilTest",
+      "ucrtainting/micronaut",
+      "ucrtainting/stringBuilderTests",
+      "ucrtainting/thirdPartyTests"
+    };
   }
 }

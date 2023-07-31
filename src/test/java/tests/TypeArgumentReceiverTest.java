@@ -1,11 +1,10 @@
 package tests;
 
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
-import org.junit.runners.Parameterized;
-import tests.tools.SerializationTestHelper;
-
 import java.io.File;
 import java.util.List;
+import org.junit.runners.Parameterized;
+import tests.tools.SerializationTestHelper;
 
 /**
  * Test runner for tests of the UCR Tainting Checker.
