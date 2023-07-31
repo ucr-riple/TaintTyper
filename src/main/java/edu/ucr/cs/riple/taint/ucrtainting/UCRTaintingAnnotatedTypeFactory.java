@@ -56,10 +56,9 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker, RPossiblyValidated.class, RUntainted.class, null);
-    enableLibraryCheck = checker.getBooleanOption(UCRTaintingChecker.ENABLE_LIBRARY_CHECKER, true);
-    enableValidationCheck =
-        checker.getBooleanOption(UCRTaintingChecker.ENABLE_VALIDATION_CHECKER, false);
-    enableSideEffect = checker.getBooleanOption(UCRTaintingChecker.ENABLE_SIDE_EFFECT, false);
+    enableLibraryCheck = checker.hasOption(UCRTaintingChecker.ENABLE_LIBRARY_CHECKER);
+    enableValidationCheck = checker.hasOption(UCRTaintingChecker.ENABLE_VALIDATION_CHECKER);
+    enableSideEffect = checker.hasOption(UCRTaintingChecker.ENABLE_SIDE_EFFECT);
     String givenAnnotatedPackages = checker.getOption(UCRTaintingChecker.ANNOTATED_PACKAGES);
     // make sure that annotated package names are always provided and issue error otherwise
     if (givenAnnotatedPackages == null) {

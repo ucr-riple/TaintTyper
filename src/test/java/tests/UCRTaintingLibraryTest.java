@@ -20,10 +20,7 @@ public class UCRTaintingLibraryTest extends CheckerFrameworkPerDirectoryTest {
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=foo.bar",
-        "-AenableLibraryCheck=true",
-        "-AenableValidationCheck=false",
-        "-AenableSanitizationCheck=false",
-        "-AenableSideEffect=true",
+        "-AenableLibraryCheck",
         "-nowarn");
   }
 

@@ -22,8 +22,7 @@ public class TypeArgumentSelectionTest extends SerializationTestHelper {
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
-        "-AenableLibraryCheck=true",
-        "-AenableValidationCheck=false",
+        "-AenableLibraryCheck",
         "-nowarn");
   }
 

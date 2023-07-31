@@ -36,9 +36,10 @@ public class UCRTaintingChecker extends AccumulationChecker {
   public static final String ENABLE_VALIDATION_CHECKER = "enableValidationCheck";
 
   public static final String ENABLE_LIBRARY_CHECKER = "enableLibraryCheck";
-  public static final String ANNOTATED_PACKAGES = "annotatedPackages";
 
   public static final String ENABLE_SIDE_EFFECT = "enableSideEffect";
+
+  public static final String ANNOTATED_PACKAGES = "annotatedPackages";
   /** Serialization service for the checker. */
   private SerializationService serializationService;
 
