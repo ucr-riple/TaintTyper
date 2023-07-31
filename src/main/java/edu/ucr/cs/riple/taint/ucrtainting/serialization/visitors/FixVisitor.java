@@ -1,7 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.SimpleTreeVisitor;
@@ -72,10 +71,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       return Set.of();
     }
     // Locate method receiver.
-    ExpressionTree receiver = null;
-    if (node.getMethodSelect() instanceof MemberSelectTree) {
-      receiver = ((MemberSelectTree) node.getMethodSelect()).getExpression();
-    }
+    ExpressionTree receiver = TreeUtils.getReceiverTree(node);
     boolean isInAnnotatedPackage = Utility.isInAnnotatedPackage(calledMethod, typeFactory);
     boolean isTypeVar = Utility.containsTypeArgument(calledMethod.getReturnType());
     boolean hasReceiver =

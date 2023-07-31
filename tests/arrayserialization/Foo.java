@@ -18,8 +18,14 @@ public class Foo {
     @RUntainted String[] newProperties = Arrays.copyOf(existedProperties, epl + 1);
   }
 
-  public void toArrayTest(ArrayList<@RUntainted String> processPropList) {
-    //    @RUntainted
-    //    String[] processProperties = processPropList.toArray(new String[processPropList.size()]);
+  public void toArrayTest(
+      Bar<@RUntainted String, @RUntainted String, @RUntainted String> processPropList) {
+    // :: error: assignment
+    @RUntainted
+    String[] processProperties = processPropList.toArray(new String[processPropList.size()]);
   }
+
+  class CustomList<T, K> extends ArrayList<K> {}
+
+  class Bar<M, N, L> extends CustomList<N, M> {}
 }

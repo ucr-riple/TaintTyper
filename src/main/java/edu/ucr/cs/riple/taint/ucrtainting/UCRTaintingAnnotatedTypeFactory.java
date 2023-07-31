@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
+import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.EnumHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.StaticFinalFieldHandler;
@@ -41,6 +43,8 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   /** Set of handlers */
   private final ImmutableSet<Handler> handlers;
 
+  private final Context context;
+
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker);
     customCheckEnabled = checker.getBooleanOption(UCRTaintingChecker.ENABLE_CUSTOM_CHECKER, true);
@@ -64,12 +68,14 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     annotatedPackages = Arrays.asList(annotatedPackagesFlagValue.split(","));
     rUntainted = AnnotationBuilder.fromClass(elements, RUntainted.class);
     rTainted = AnnotationBuilder.fromClass(elements, RTainted.class);
+    this.context = ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext();
     this.handlers =
         ImmutableSet.<Handler>builder()
             .add(
                 new StaticFinalFieldHandler(this),
                 new EnumHandler(this),
-                new ThirdPartyHandler(this))
+                new ThirdPartyHandler(this),
+                new CollectionHandler(this, context))
             .build();
     postInit();
   }
@@ -77,11 +83,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   @Override
   protected TreeAnnotator createTreeAnnotator() {
     return new ListTreeAnnotator(
-        super.createTreeAnnotator(),
-        new UCRTaintingTreeAnnotator(
-            this,
-            handlers,
-            ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext()));
+        super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this, handlers, context));
   }
 
   @Override
