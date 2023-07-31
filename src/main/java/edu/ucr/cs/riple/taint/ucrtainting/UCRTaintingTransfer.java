@@ -1,10 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import com.sun.source.tree.MethodInvocationTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import java.util.Collections;
-import java.util.List;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.type.TypeKind;
 import org.checkerframework.dataflow.analysis.TransferInput;
 import org.checkerframework.dataflow.analysis.TransferResult;
 import org.checkerframework.dataflow.cfg.node.*;
@@ -15,6 +12,10 @@ import org.checkerframework.framework.flow.CFTransfer;
 import org.checkerframework.framework.flow.CFValue;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.AnnotationMirrorSet;
+
+import javax.lang.model.type.TypeKind;
+import java.util.Collections;
+import java.util.List;
 
 public class UCRTaintingTransfer extends CFTransfer {
   private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
@@ -36,35 +37,29 @@ public class UCRTaintingTransfer extends CFTransfer {
       if (Utility.isMethodInvocationInIfConditional(methodInvocationNode.getTreePath())
           && methodInvocationNode.getType().getKind() == TypeKind.BOOLEAN) {
         for (Node arg : methodInvocationNode.getArguments()) {
-          makeRPossiblyValidated(result, arg, methodInvocationNode);
+          makePossiblyValidated(result, arg, methodInvocationNode);
         }
 
         Node receiver = methodInvocationNode.getTarget().getReceiver();
         if (receiver != null
             && !(receiver instanceof ImplicitThisNode)
             && receiver.getTree() != null) {
-          makeRPossiblyValidated(result, receiver, methodInvocationNode);
+          makePossiblyValidated(result, receiver, methodInvocationNode);
         }
       }
     }
 
+    // If any argument is tainted, make the receiver tainted.
+    // Only perform if enableSideEffect flag is on along with enableLibraryCheck flag.
     if (aTypeFactory.enableLibraryCheck && aTypeFactory.enableSideEffect) {
-      if (aTypeFactory.hasReceiver(methodInvocationNode.getTree())
-          && methodInvocationNode.getArguments().size() > 0) {
-        Node receiver = methodInvocationNode.getTarget().getReceiver();
-        if (receiver != null
-            && !(receiver instanceof ImplicitThisNode)
-            && receiver.getTree() != null) {
-          if (receiver instanceof LocalVariableNode || receiver instanceof FieldAccessNode) {
-            // if the code is part of provided annotated packages or is present
-            // in the stub files, then we don't need any custom handling for it.
-            if (aTypeFactory.isInThirdPartyCode(methodInvocationNode.getTree())
-                && !aTypeFactory.isPresentInStub(methodInvocationNode.getTree())) {
-              if (!aTypeFactory.hasTaintedReceiver(methodInvocationNode.getTree())
-                  && aTypeFactory.hasTaintedArgument(methodInvocationNode.getTree())) {
-                makeTaintedBySideEffect(result, receiver);
-              }
-            }
+
+      if (isSideEffectCandidate(methodInvocationNode)) {
+        // if the code is part of provided annotated packages or is present
+        // in the stub files, then we don't need any custom handling for it.
+        MethodInvocationTree tree = methodInvocationNode.getTree();
+        if (aTypeFactory.isUnannotatedThirdParty(tree)) {
+          if (!aTypeFactory.hasTaintedReceiver(tree) && aTypeFactory.hasTaintedArgument(tree)) {
+            makeStoresTainted(result, methodInvocationNode.getTarget().getReceiver());
           }
         }
       }
@@ -73,53 +68,67 @@ public class UCRTaintingTransfer extends CFTransfer {
     return result;
   }
 
-  private void makeRPossiblyValidated(
-      TransferResult<CFValue, CFStore> result, Node n, Node calledMethod) {
-    AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(n.getTree());
-    AnnotationMirror anno = type.getAnnotation();
-    JavaExpression je = JavaExpression.fromNode(n);
+  private boolean isSideEffectCandidate(MethodInvocationNode methodInvocationNode) {
+    if (methodInvocationNode.getArguments().size() > 0) {
+      Node receiver = methodInvocationNode.getTarget().getReceiver();
+      if (receiver != null && !(receiver instanceof ImplicitThisNode)) {
+        if (receiver instanceof LocalVariableNode || receiver instanceof FieldAccessNode) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private void makePossiblyValidated(
+      TransferResult<CFValue, CFStore> result, Node node, Node calledMethod) {
+    AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(node.getTree());
+    JavaExpression je = JavaExpression.fromNode(node);
+    List<String> calledMethods;
+
     if (type.hasAnnotation(aTypeFactory.rTainted)) {
-      CFStore thenStore = result.getThenStore();
-      CFStore elseStore = result.getElseStore();
-      thenStore.insertOrRefine(
-          je,
-          aTypeFactory.rPossiblyValidatedAM(Collections.singletonList(calledMethod.toString())));
-      elseStore.insertOrRefine(
-          je,
-          aTypeFactory.rPossiblyValidatedAM(Collections.singletonList(calledMethod.toString())));
-    } else if (anno != null && aTypeFactory.isAccumulatorAnnotation(anno)) {
-      CFStore thenStore = result.getThenStore();
-      CFStore elseStore = result.getElseStore();
-      List<String> calledMethods = aTypeFactory.getAccumulatedValues(anno);
+      calledMethods = Collections.singletonList(calledMethod.toString());
+      insertOrRefineRPossiblyValidated(result, je, calledMethods);
+    } else if (type.getAnnotation() != null
+        && aTypeFactory.isAccumulatorAnnotation(type.getAnnotation())) {
+      calledMethods = aTypeFactory.getAccumulatedValues(type.getAnnotation());
       calledMethods.add(calledMethod.toString());
-      thenStore.insertOrRefine(je, aTypeFactory.rPossiblyValidatedAM(calledMethods));
-      elseStore.insertOrRefine(je, aTypeFactory.rPossiblyValidatedAM(calledMethods));
+      insertOrRefineRPossiblyValidated(result, je, calledMethods);
     }
   }
 
-  private void makeTaintedBySideEffect(TransferResult<CFValue, CFStore> result, Node n) {
+  private void insertOrRefineRPossiblyValidated(
+      TransferResult<CFValue, CFStore> result, JavaExpression je, List<String> calledMethods) {
+    result.getThenStore().insertOrRefine(je, aTypeFactory.rPossiblyValidatedAM(calledMethods));
+    result.getElseStore().insertOrRefine(je, aTypeFactory.rPossiblyValidatedAM(calledMethods));
+  }
+
+  private void makeStoresTainted(TransferResult<CFValue, CFStore> result, Node n) {
+    if (n.getTree() == null) {
+      return;
+    }
     AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(n.getTree());
     if (type.hasAnnotation(aTypeFactory.rUntainted)) {
       JavaExpression je = JavaExpression.fromNode(n);
-      CFStore thenStore = result.getThenStore();
-      CFStore elseStore = result.getElseStore();
-      CFValue thenVal = thenStore.getValue(je);
-      CFValue elseVal = elseStore.getValue(je);
+
+      CFValue thenVal = result.getThenStore().getValue(je);
       if (thenVal != null) {
         thenVal =
             new CFValue(
                 analysis,
                 AnnotationMirrorSet.singleton(aTypeFactory.rTainted),
                 thenVal.getUnderlyingType());
-        thenStore.replaceValue(je, thenVal);
+        result.getThenStore().replaceValue(je, thenVal);
       }
+
+      CFValue elseVal = result.getElseStore().getValue(je);
       if (elseVal != null) {
         elseVal =
             new CFValue(
                 analysis,
                 AnnotationMirrorSet.singleton(aTypeFactory.rTainted),
                 elseVal.getUnderlyingType());
-        elseStore.replaceValue(je, elseVal);
+        result.getElseStore().replaceValue(je, elseVal);
       }
     }
   }

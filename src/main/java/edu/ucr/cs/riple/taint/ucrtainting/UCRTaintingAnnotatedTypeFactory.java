@@ -9,12 +9,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import java.lang.annotation.Annotation;
-import java.util.*;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.util.Elements;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.accumulation.AccumulationAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
@@ -26,6 +20,13 @@ import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.TreeUtils;
 import org.checkerframework.javacutil.UserError;
+
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.util.Elements;
+import java.lang.annotation.Annotation;
+import java.util.*;
 
 public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFactory {
 
@@ -358,7 +359,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    * @param node to check for
    * @return true if annotated, false otherwise
    */
-  public boolean isPresentInStub(ExpressionTree node) {
+  public boolean isPresentInStub(Tree node) {
     if (node != null) {
       Element elem = TreeUtils.elementFromTree(node);
       return elem != null && isFromStubFile(elem);
@@ -466,6 +467,12 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     type.replaceAnnotation(rUntainted);
   }
 
+  public boolean isUnannotatedThirdParty(Tree tree) {
+    if (isInThirdPartyCode(tree) && !isPresentInStub(tree)) {
+      return true;
+    }
+    return false;
+  }
   /**
    * Checks if custom check is enabled.
    *

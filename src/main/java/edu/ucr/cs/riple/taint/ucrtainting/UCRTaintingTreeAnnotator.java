@@ -6,12 +6,13 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.TreeUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   private final Handler handler;
@@ -97,7 +98,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
     if (typeFactory.customLibraryCheckIsEnabled()) {
       // if the code is part of provided annotated packages or is present
       // in the stub files, then we don't need any custom handling for it.
-      if (typeFactory.isInThirdPartyCode(node) && !typeFactory.isPresentInStub(node)) {
+      if (typeFactory.isUnannotatedThirdParty(node)) {
         if (!(typeFactory.hasTaintedArgument(node) || typeFactory.hasTaintedReceiver(node))) {
           typeFactory.makeUntainted(annotatedTypeMirror);
         }
