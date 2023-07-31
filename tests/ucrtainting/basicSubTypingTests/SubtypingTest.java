@@ -11,4 +11,14 @@ class SubtypeTest {
     @RUntainted int c = x; // expected error on this line
     @RUntainted int d = y;
   }
+
+  public void polyTester(@RTainted String s) {
+    // :: error: (assignment)
+    @RUntainted String untaintedVal = polyTest(s);
+    @RTainted String taintedVal = polyTest(s);
+  }
+
+  public @RPolyTainted String polyTest(@RPolyTainted String arg) {
+    return arg;
+  }
 }

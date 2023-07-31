@@ -32,6 +32,6 @@ public class UCRTaintingLibraryTest extends CheckerFrameworkPerDirectoryTest {
   public static String[] getTestDirs() {
 //    return new String[] {"ucrtainting/basicSubTypingTests", "ucrtainting/captureTest", "ucrtainting/javaUtilTest", "ucrtainting/micronaut", "ucrtainting/stringBuilderTests",
 //            "ucrtainting/thirdPartyTests"};
-    return new String[] {"ucrtainting/thirdPartyTests"};
+    return new String[] {"ucrtainting/captureTest"};
   }
 }
