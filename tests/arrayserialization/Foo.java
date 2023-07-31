@@ -18,8 +18,7 @@ public class Foo {
     @RUntainted String[] newProperties = Arrays.copyOf(existedProperties, epl + 1);
   }
 
-  public void toArrayTest(Bar<@RUntainted String, @RUntainted String, @RUntainted String> b) {
-    // :: error: assignment
+  public void toArrayTest(Bar<String, @RUntainted String, String> b) {
     @RUntainted String[] processProperties = b.toArray(new String[b.size()]);
   }
 
