@@ -10,6 +10,7 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
 public class CompositHandler implements Handler {
 
+  /** Set of handlers to be used to add annotations from default for type. */
   private final ImmutableSet<Handler> handlers;
 
   public CompositHandler(UCRTaintingAnnotatedTypeFactory typeFactory, Context context) {

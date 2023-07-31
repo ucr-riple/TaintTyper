@@ -15,8 +15,11 @@ import org.checkerframework.javacutil.TreeUtils;
 
 public class CollectionHandler extends AbstractHandler {
 
+  /** Types instance used to detect if type is a subtype of java.util.Collection. */
   private final Types types;
+  /** {@link java.util.Collection} interface name. */
   private static final String COLLECTIONS_INTERFACE = java.util.Collection.class.getName();
+  /** {@link java.util.Collection#toArray()} method name. */
   private static final String TO_ARRAY_METHOD_NAME = "toArray";
 
   public CollectionHandler(UCRTaintingAnnotatedTypeFactory typeFactory, Context context) {
@@ -93,6 +96,13 @@ public class CollectionHandler extends AbstractHandler {
     return type instanceof Type.ArrayType && ((Type.ArrayType) type).elemtype.tsym.equals(typeVar);
   }
 
+  /**
+   * Check if the method is {@link java.util.Collection#toArray(Object[])} .
+   *
+   * @param symbol The method symbol to check.
+   * @param types The types instance.
+   * @return True if the method is {@link java.util.Collection#toArray(Object[])}.
+   */
   public static boolean isToArrayWithTypeArgMethod(Symbol.MethodSymbol symbol, Types types) {
     // Check method name
     if (!symbol.getSimpleName().toString().equals(TO_ARRAY_METHOD_NAME)) {
@@ -119,6 +129,12 @@ public class CollectionHandler extends AbstractHandler {
     return isArrayTypeOfTypeArg(symbol.getReturnType(), symbol.getTypeParameters().get(0));
   }
 
+  /**
+   * Retrieve the {@link java.util.Collection} type from the given type.
+   *
+   * @param type The type to retrieve the {@link java.util.Collection} type from.
+   * @return The {@link java.util.Collection} type from the given type.
+   */
   private static Type getCollectionTypeFromType(Type type) {
     Type collectionType = null;
     while (type instanceof Type.ClassType) {
@@ -142,10 +158,22 @@ public class CollectionHandler extends AbstractHandler {
     return collectionType;
   }
 
+  /**
+   * Retrieve the {@link java.util.Collection} type from the given annotated type mirror.
+   *
+   * @param mirror The annotated type mirror to retrieve the {@link java.util.Collection} type from.
+   * @return The {@link java.util.Collection} type from the given annotated type mirror.
+   */
   public static Type getCollectionTypeFromType(AnnotatedTypeMirror mirror) {
     return getCollectionTypeFromType((Type) mirror.getUnderlyingType());
   }
 
+  /**
+   * Retrieve the symbolic {@link java.util.Collection} type from the given type.
+   *
+   * @param mirror The type to retrieve the symbolic {@link java.util.Collection} type from.
+   * @return The symbolic {@link java.util.Collection} type from the given type.
+   */
   public static Type getSymbolicCollectionTypeFromType(AnnotatedTypeMirror mirror) {
     return getCollectionTypeFromType(((Type) mirror.getUnderlyingType()).tsym.type);
   }
