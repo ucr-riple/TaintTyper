@@ -21,8 +21,8 @@ public class ThirdPartyHandlingSerializationTest extends SerializationTestHelper
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
-        "-AannotatedPackages=foo.bar",
-        "-AenableCustomCheck=true",
+        "-AannotatedPackages=\"\"",
+        "-AenableLibraryCheck",
         "-nowarn");
   }
 

@@ -3,14 +3,14 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 import com.sun.source.tree.Tree;
 import javax.lang.model.element.ExecutableElement;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
+import org.checkerframework.common.accumulation.AccumulationVisitor;
 import org.checkerframework.common.basetype.BaseTypeChecker;
-import org.checkerframework.common.basetype.BaseTypeVisitor;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.org.plumelib.util.ArraysPlume;
 
 /** Visitor for the {@link UCRTaintingChecker}. */
-public class UCRTaintingVisitor extends BaseTypeVisitor<UCRTaintingAnnotatedTypeFactory> {
+public class UCRTaintingVisitor extends AccumulationVisitor {
 
   /**
    * Creates a {@link UCRTaintingVisitor}.

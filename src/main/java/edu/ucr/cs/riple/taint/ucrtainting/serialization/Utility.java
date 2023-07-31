@@ -1,10 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
-import com.sun.source.tree.ClassTree;
-import com.sun.source.tree.IdentifierTree;
-import com.sun.source.tree.MethodTree;
-import com.sun.source.tree.Tree;
-import com.sun.source.tree.VariableTree;
+import com.sun.source.tree.*;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
@@ -363,8 +359,8 @@ public class Utility {
     }
   }
 
-  public static boolean isStaticAndFinal(Element element) {
-    if (element == null) {
+  public static boolean isStaticAndFinalField(Element element) {
+    if (element == null || !element.getKind().isField()) {
       return false;
     }
     if (element instanceof Symbol.VarSymbol) {
@@ -395,6 +391,25 @@ public class Utility {
           return true;
         }
       }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if the passed treePath is invoked as part of an if condition
+   *
+   * @param treePath the treePath to check.
+   * @return true if the passed treePath is invoked as part of an if condition
+   */
+  public static boolean isMethodInvocationInIfConditional(TreePath treePath) {
+    TreePath parent = treePath.getParentPath();
+    while (parent != null
+        && parent.getLeaf().getKind() != Tree.Kind.BLOCK
+        && parent.getLeaf().getKind() != Tree.Kind.EXPRESSION_STATEMENT) {
+      if (parent.getLeaf().getKind() == Tree.Kind.IF) {
+        return true;
+      }
+      parent = parent.getParentPath();
     }
     return false;
   }

@@ -23,7 +23,7 @@ public class ThirdPartyTypeArgumentHandlingTest extends SerializationTestHelper 
         "-Anomsgtext",
         "-AannotatedPackages=test",
         "-AenableSerialization",
-        "-AenableCustomCheck=true",
+        "-AenableLibraryCheck",
         "-nowarn");
   }
 
