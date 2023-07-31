@@ -39,7 +39,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
             + required);
   }
 
-  private List<List<Integer>> supportedDefault(
+  protected List<List<Integer>> supportedDefault(
       AnnotatedTypeMirror found, AnnotatedTypeMirror required) {
     if (!typeFactory.hasUntaintedAnnotation(found)
         && typeFactory.hasUntaintedAnnotation(required)) {

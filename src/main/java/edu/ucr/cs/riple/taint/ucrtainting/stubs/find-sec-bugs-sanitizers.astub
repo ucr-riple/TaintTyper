@@ -1,0 +1,189 @@
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+
+package org.apache.commons.lang;
+public class StringEscapeUtils {
+    public static @RUntainted String escapeCsv(String input);
+    public static @RUntainted String unescapeCsv(String input);
+    public static @RUntainted String escapeHtml(String input);
+    public static @RUntainted String unescapeHtml(String input);
+    public static @RUntainted String escapeJava(String input);
+    public static @RUntainted String unescapeJava(String input);
+    public static @RUntainted String escapeJavaScript(String input);
+    public static @RUntainted String unescapeJavaScript(String input);
+    public static @RUntainted String escapeSql(String input);
+    public static @RUntainted String escapeXml(String input);
+    public static @RUntainted String unescapeXml(String input);
+}
+
+package org.apache.commons.lang3;
+public class StringEscapeUtils {
+    public static @RUntainted String escapeJava(String input);
+    public static @RUntainted String unescapeJava(String input);
+    public static @RUntainted String escapeEcmaScript(String input);
+    public static @RUntainted String unescapeEcmaScript(String input);
+    public static @RUntainted String escapeJson(String input);
+    public static @RUntainted String unescapeJson(String input);
+    public static @RUntainted String escapeHtml4(String input);
+    public static @RUntainted String escapeHtml3(String input);
+    public static @RUntainted String unescapeHtml4(String input);
+    public static @RUntainted String unescapeHtml3(String input);
+    public static @RUntainted String escapeXml(String input);
+    public static @RUntainted String unescapeXml(String input);
+    public static @RUntainted String escapeXml10(String input);
+    public static @RUntainted String escapeXml11(String input);
+    public static @RUntainted String escapeCsv(String input);
+    public static @RUntainted String unescapeCsv(String input);
+}
+
+package org.apache.commons.text;
+public class StringEscapeUtils {
+    public static @RUntainted String escapeHtml3(String input);
+    public static @RUntainted String escapeHtml4(String input);
+    public static @RUntainted String escapeEcmaScript(String input);
+    public static @RUntainted String escapeXml10(String input);
+    public static @RUntainted String escapeXml11(String input);
+}
+
+package org.apache.commons.io;
+public class FilenameUtils {
+    public static @RUntainted String getName(String input);
+    public static @RUntainted String getExtension(String input);
+    public static @RUntainted String getBaseName(String input);
+}
+
+package java.net;
+public class URLEncoder {
+    public static @RUntainted String encode(String str1);
+    public static @RUntainted String encode(String str1, String str2);
+}
+
+public class URLDecoder {
+    public static @RUntainted String decode(String str1);
+    public static @RUntainted String decode(String str1, String str2);
+}
+
+package org.springframework.web.util;
+public class HtmlUtils {
+    public static @RUntainted String htmlEscape(String str1);
+    public static @RUntainted String htmlEscape(String str1, String str2);
+    public static @RUntainted String htmlUnescape(String str1);
+    public static @RUntainted String htmlEscapeDecimal(String str1);
+    public static @RUntainted String htmlEscapeDecimal(String str1, String str2);
+    public static @RUntainted String htmlEscapeHex(String str1);
+    public static @RUntainted String htmlEscapeHex(String str1, String str2);
+}
+
+public class JavaScriptUtils {
+    public static @RUntainted String javaScriptEscape(String str1);
+}
+
+package org.springframework.util;
+public class StringUtils {
+    public static @RUntainted String getFilename(String str1);
+    public static @RUntainted String getFilenameExtension(String str1);
+}
+
+package java.util;
+public class Calender {
+    public static @RUntainted String getDisplayName(java.util.Locale input);
+    public static @RUntainted java.util.Map getDisplayNames(java.util.Locale input);
+}
+
+public class UUID {
+    public static @RUntainted java.util.UUID randomUUID();
+}
+
+package java.security;
+public class MessageDigest {
+    public @RUntainted byte[] digest(byte[] input);
+}
+
+package javax.xml.bind;
+public class DatatypeConverter {
+    public static @RUntainted String printHexBinary(byte[] input);
+}
+
+package org.apache.commons.codec.binary;
+public class Hex {
+    public static @RUntainted char[] encodeHex(byte[] input);
+    public static @RUntainted char[] encodeHex(byte[] input, boolean toLowerCase);
+    public static @RUntainted char[] encodeHex(byte[] input, char[] toDigits);
+    public static @RUntainted char[] encodeHex(byte[] data, int dataOffset, int dataLen, boolean toLowerCase);
+    public static @RUntainted char[] encodeHex(java.nio.ByteBuffer input);
+    public static @RUntainted char[] encodeHex(java.nio.ByteBuffer input, boolean toLowerCase);
+    public static @RUntainted char[] encodeHex(java.nio.ByteBuffer input, char[] toDigits);
+    public static @RUntainted String encodeHexString(byte[] input);
+    public static @RUntainted String encodeHexString(byte[] input, boolean toLowerCase);
+    public static @RUntainted String encodeHexString(java.nio.ByteBuffer input);
+    public static @RUntainted String encodeHexString(java.nio.ByteBuffer input, boolean toLowerCase);
+}
+
+package com.google.common.escape;
+public class Escaper {
+    public static @RUntainted String escape(String input);
+}
+
+package org.apache.http.client.utils;
+public class URLBuilder {
+    public @RUntainted java.net.URI build();
+    public @RUntainted java.net.URI build(Object... values);
+    public @RUntainted java.net.URI build(Object[] values, boolean encodeSlashInPath);
+    public @RUntainted String toString();
+}
+
+package org.owasp.esapi;
+public class Encoder {
+    public @RUntainted String canonicalize(String input);
+    public @RUntainted String canonicalize(String input, boolean strict);
+    public @RUntainted String canonicalize(String input, boolean restrictMultiple, boolean restrictMixed);
+    public @RUntainted String encodeForCSS(String input);
+    public @RUntainted String encodeForHTML(String input);
+    public @RUntainted String decodeForHTML(String input);
+    public @RUntainted String encodeForHTMLAttribute(String input);
+    public @RUntainted String encodeForJavaScript(String input);
+    public @RUntainted String encodeForVBScript(String input);
+    public @RUntainted String encodeForSQL(org.owasp.esapi.codecs.Codec c, String s);
+    public @RUntainted String encodeForJavaScript(String input);
+    public @RUntainted String encodeForOS(org.owasp.esapi.codecs.Codec c, String s);
+    public @RUntainted String encodeForLDAP(String input);
+    public @RUntainted String encodeForLDAP(String input, boolean strict);
+    public @RUntainted String encodeForDN(String input);
+    public @RUntainted String encodeForXPath(String input);
+    public @RUntainted String encodeForXML(String input);
+    public @RUntainted String encodeForXMLAttribute(String input);
+    public @RUntainted String encodeForURL(String input);
+    public @RUntainted String encodeForJSON(String input);
+    public @RUntainted String decodeFromURL(String input);
+    public @RUntainted String encodeForBase64(byte[] input, boolean wrap);
+    public @RUntainted byte[] decodeFromBase64(byte[] input);
+    public @RUntainted String getCanonicalizedURI(java.net.URI input);
+    public @RUntainted String decodeFromJSON(String input);
+}
+
+package org.owasp.encoder;
+public class Encode {
+    public static @RUntainted String forCDATA(String input);
+    public static @RUntainted String forCssString(String input);
+    public static @RUntainted String forCssUrl(String input);
+    public static @RUntainted String forHtml(String input);
+    public static @RUntainted String forHtmlAttribute(String input);
+    public static @RUntainted String forHtmlContent(String input);
+    public static @RUntainted String forHtmlUnquotedAttribute(String input);
+    public static @RUntainted String forJava(String input);
+    public static @RUntainted String forJavaScript(String input);
+    public static @RUntainted String forJavaScriptAttribute(String input);
+    public static @RUntainted String forJavaScriptBlock(String input);
+    public static @RUntainted String forJavaScriptSource(String input);
+    public static @RUntainted String forUri(String input);
+    public static @RUntainted String forUriComponent(String input);
+    public static @RUntainted String forXml(String input);
+    public static @RUntainted String forXmlAttribute(String input);
+    public static @RUntainted String forXmlComment(String input);
+    public static @RUntainted String forXmlContent(String input);
+}
+
+package org.owasp.html;
+public class PolicyFactory {
+    public @RUntainted String sanitize(String input);
+    public @RUntainted <CTX> String sanitize(String html, org.owasp.html.HtmlChangeListener<CTX> listener, CTX context);
+}

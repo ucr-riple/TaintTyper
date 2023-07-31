@@ -35,7 +35,7 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
    * The list method invocations that their return type contained a type argument. Used to detect
    * which type in the receiver should be annotated.
    */
-  private List<ExpressionTree> receivers;
+  protected List<ExpressionTree> receivers;
 
   public ReceiverTypeParameterFixVisitor(
       Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
@@ -162,7 +162,8 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
         return fixes.iterator().next();
       }
     }
-    List<List<Integer>> indexes = locateEffectiveTypeParameter(element);
+    List<List<Integer>> indexes =
+        locateEffectiveTypeParameter(element, new TypeMatchVisitor(typeFactory));
     if (!indexes.isEmpty()) {
       location.setTypeVariablePositions(indexes);
     }
@@ -175,7 +176,8 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
    * @param element The element which provided the type parameters.
    * @return The list of indexes of the type parameters.
    */
-  private List<List<Integer>> locateEffectiveTypeParameter(Element element) {
+  protected List<List<Integer>> locateEffectiveTypeParameter(
+      Element element, TypeMatchVisitor visitor) {
     Type elementParameterizedType = getType(element);
     Type base = elementParameterizedType;
     // Indexes of the effective type parameter based on the chain of receivers.
@@ -236,8 +238,7 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
           AnnotatedTypeMirror foundOnTypeArg =
               getAnnotatedTypeMirrorOfTypeArgumentAt(
                   elementAnnotatedMirrorType, indexToEffectiveTypeParameter);
-          onTypeArgumentIndexes =
-              new TypeMatchVisitor(typeFactory).visit(foundOnTypeArg, pair.required, null);
+          onTypeArgumentIndexes = visitor.visit(foundOnTypeArg, pair.required, null);
           List<List<Integer>> positions;
           if (!onTypeArgumentIndexes.isEmpty()) {
             positions = new ArrayList<>();

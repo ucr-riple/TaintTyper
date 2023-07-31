@@ -1,53 +1,64 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import com.sun.tools.javac.util.Context;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.EnumHandler;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.CompositHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.StaticFinalFieldHandler;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.ThirdPartyHandler;
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.lang.annotation.Annotation;
+import java.util.*;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.util.Elements;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.common.basetype.BaseAnnotatedTypeFactory;
+import org.checkerframework.common.accumulation.AccumulationAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
-import org.checkerframework.javacutil.*;
+import org.checkerframework.javacutil.AnnotationBuilder;
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.TreeUtils;
+import org.checkerframework.javacutil.UserError;
 
-public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
+public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFactory {
 
   /**
    * This option enables custom handling of third party code. By default, such handling is enabled.
    */
-  public final boolean customCheckEnabled;
-  /** List of annotated packages. Classes in these packages are considered to be annotated. */
-  private final List<String> annotatedPackages;
-  /** AnnotationMirror for {@link RUntainted}. */
-  private final AnnotationMirror rUntainted;
-  /** AnnotationMirror for {@link RTainted}. */
-  private final AnnotationMirror rTainted;
-  /** Set of handlers */
-  private final ImmutableSet<Handler> handlers;
+  public final boolean enableLibraryCheck;
 
-  private final Context context;
+  /**
+   * This option enables custom handling of validation code. By default, such handling is disabled.
+   */
+  public final boolean enableValidationCheck;
+
+  /**
+   * To respect existing annotations, leave them alone based on the provided annotated package names
+   * through this option.
+   */
+  private final List<String> listOfAnnotatedPackageNames;
+
+  public final boolean enableSideEffect;
+
+  /** AnnotationMirror for {@link RUntainted}. */
+  public final AnnotationMirror rUntainted;
+  /** AnnotationMirror for {@link RTainted}. */
+  public final AnnotationMirror rTainted;
+
+  private final Handler handler;
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
-    super(checker);
-    customCheckEnabled = checker.getBooleanOption(UCRTaintingChecker.ENABLE_CUSTOM_CHECKER, true);
+    super(checker, RPossiblyValidated.class, RUntainted.class, null);
+    enableLibraryCheck = checker.hasOption(UCRTaintingChecker.ENABLE_LIBRARY_CHECKER);
+    enableValidationCheck = checker.hasOption(UCRTaintingChecker.ENABLE_VALIDATION_CHECKER);
+    enableSideEffect = checker.hasOption(UCRTaintingChecker.ENABLE_SIDE_EFFECT);
     String givenAnnotatedPackages = checker.getOption(UCRTaintingChecker.ANNOTATED_PACKAGES);
     // make sure that annotated package names are always provided and issue error otherwise
     if (givenAnnotatedPackages == null) {
@@ -65,33 +76,198 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     // package names through this option.
     String annotatedPackagesFlagValue =
         givenAnnotatedPackages.equals("\"\"") ? "" : givenAnnotatedPackages;
-    annotatedPackages = Arrays.asList(annotatedPackagesFlagValue.split(","));
-    rUntainted = AnnotationBuilder.fromClass(elements, RUntainted.class);
-    rTainted = AnnotationBuilder.fromClass(elements, RTainted.class);
-    this.context = ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext();
-    this.handlers =
-        ImmutableSet.<Handler>builder()
-            .add(
-                new StaticFinalFieldHandler(this),
-                new EnumHandler(this),
-                new ThirdPartyHandler(this),
-                new CollectionHandler(this, context))
-            .build();
+    this.listOfAnnotatedPackageNames = Arrays.asList(annotatedPackagesFlagValue.split(","));
+    this.rUntainted = AnnotationBuilder.fromClass(elements, RUntainted.class);
+    this.rTainted = AnnotationBuilder.fromClass(elements, RTainted.class);
+    this.handler =
+        new CompositHandler(
+            this, ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext());
     postInit();
   }
 
   @Override
   protected TreeAnnotator createTreeAnnotator() {
     return new ListTreeAnnotator(
-        super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this, handlers, context));
+        super.createTreeAnnotator(),
+        new UCRTaintingTreeAnnotator(
+            this,
+            handler,
+            ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext()));
   }
 
   @Override
   protected void addAnnotationsFromDefaultForType(
       @Nullable Element element, AnnotatedTypeMirror type) {
     super.addAnnotationsFromDefaultForType(element, type);
-    if (customCheckEnabled) {
-      handlers.forEach(handler -> handler.addAnnotationsFromDefaultForType(element, type));
+    if (enableLibraryCheck) {
+      handler.addAnnotationsFromDefaultForType(element, type);
+    }
+  }
+
+  @Override
+  protected QualifierHierarchy createQualifierHierarchy() {
+    return new UCRTaintingQualifierHierarchy(this.getSupportedTypeQualifiers(), this.elements);
+  }
+
+  public AnnotationMirror rPossiblyValidatedAM(List<String> calledMethods) {
+    AnnotationBuilder builder = new AnnotationBuilder(processingEnv, RPossiblyValidated.class);
+    builder.setValue("value", calledMethods.toArray());
+    AnnotationMirror am = builder.build();
+    return am;
+  }
+
+  private class UCRTaintingQualifierHierarchy extends AccumulationQualifierHierarchy {
+
+    /**
+     * Creates a ElementQualifierHierarchy from the given classes.
+     *
+     * @param qualifierClasses classes of annotations that are the qualifiers for this hierarchy
+     * @param elements element utils
+     */
+    protected UCRTaintingQualifierHierarchy(
+        Collection<Class<? extends Annotation>> qualifierClasses, Elements elements) {
+      super(qualifierClasses, elements);
+    }
+
+    @Override
+    public AnnotationMirror greatestLowerBound(AnnotationMirror a1, AnnotationMirror a2) {
+      if (AnnotationUtils.areSame(a1, bottom) || AnnotationUtils.areSame(a2, bottom)) {
+        return bottom;
+      }
+
+      if (AnnotationUtils.areSame(a1, rTainted)) {
+        return a2;
+      } else if (AnnotationUtils.areSame(a2, rTainted)) {
+        return a1;
+      }
+
+      if (isPolymorphicQualifier(a1) && isPolymorphicQualifier(a2)) {
+        return a1;
+      } else if (isPolymorphicQualifier(a1) || isPolymorphicQualifier(a2)) {
+        return bottom;
+      }
+
+      // If either is a predicate, then both should be converted to predicates and and-ed.
+      if (isPredicate(a1) || isPredicate(a2)) {
+        String a1Pred = convertToPredicate(a1);
+        String a2Pred = convertToPredicate(a2);
+        // check for top
+        if (a1Pred.isEmpty()) {
+          return a2;
+        } else if (a2Pred.isEmpty()) {
+          return a1;
+        } else {
+          return createPredicateAnnotation("(" + a1Pred + ") && (" + a2Pred + ")");
+        }
+      }
+
+      List<String> a1Val = getAccumulatedValues(a1);
+      List<String> a2Val = getAccumulatedValues(a2);
+      // Avoid creating new annotation objects in the common case.
+      if (a1Val.containsAll(a2Val)) {
+        return a1;
+      }
+      if (a2Val.containsAll(a1Val)) {
+        return a2;
+      }
+      a1Val.addAll(a2Val); // union
+      return createAccumulatorAnnotation(a1Val);
+    }
+
+    /**
+     * LUB in this type system is set intersection of the arguments of the two annotations, unless
+     * one of them is bottom, in which case the result is the other annotation.
+     */
+    @Override
+    public AnnotationMirror leastUpperBound(AnnotationMirror a1, AnnotationMirror a2) {
+      if (AnnotationUtils.areSame(a1, bottom)) {
+        return a2;
+      } else if (AnnotationUtils.areSame(a2, bottom)) {
+        return a1;
+      }
+
+      if (AnnotationUtils.areSame(a1, rTainted)) {
+        return rTainted;
+      } else if (AnnotationUtils.areSame(a2, rTainted)) {
+        return rTainted;
+      }
+
+      if (isPolymorphicQualifier(a1) && isPolymorphicQualifier(a2)) {
+        return a1;
+      } else if (isPolymorphicQualifier(a1) || isPolymorphicQualifier(a2)) {
+        return top;
+      }
+
+      // If either is a predicate, then both should be converted to predicates and or-ed.
+      if (isPredicate(a1) || isPredicate(a2)) {
+        String a1Pred = convertToPredicate(a1);
+        String a2Pred = convertToPredicate(a2);
+        // check for top
+        if (a1Pred.isEmpty()) {
+          return a1;
+        } else if (a2Pred.isEmpty()) {
+          return a2;
+        } else {
+          return createPredicateAnnotation("(" + a1Pred + ") || (" + a2Pred + ")");
+        }
+      }
+
+      List<String> a1Val = getAccumulatedValues(a1);
+      List<String> a2Val = getAccumulatedValues(a2);
+      // Avoid creating new annotation objects in the common case.
+      if (a1Val.containsAll(a2Val)) {
+        return a2;
+      }
+      if (a2Val.containsAll(a1Val)) {
+        return a1;
+      }
+      a1Val.retainAll(a2Val); // intersection
+      return createAccumulatorAnnotation(a1Val);
+    }
+
+    @Override
+    public boolean isSubtype(AnnotationMirror subAnno, AnnotationMirror superAnno) {
+      if (AnnotationUtils.areSame(subAnno, bottom)) {
+        return true;
+      } else if (AnnotationUtils.areSame(superAnno, bottom)) {
+        return false;
+      }
+
+      if (AnnotationUtils.areSame(superAnno, rTainted)
+          && AnnotationUtils.areSame(subAnno, rTainted)) {
+        return true;
+      }
+
+      if (AnnotationUtils.areSame(subAnno, rTainted)) {
+        return false;
+      } else if (AnnotationUtils.areSame(superAnno, rTainted)) {
+        return true;
+      }
+
+      if (isPolymorphicQualifier(subAnno)) {
+        if (isPolymorphicQualifier(superAnno)) {
+          return true;
+        } else {
+          // Use this slightly more expensive conversion here because this is a rare code
+          // path and it's simpler to read than checking for both predicate and
+          // non-predicate forms of top.
+          return "".equals(convertToPredicate(superAnno));
+        }
+      } else if (isPolymorphicQualifier(superAnno)) {
+        // Polymorphic annotations are only a supertype of other polymorphic annotations and
+        // the bottom type, both of which have already been checked above.
+        return false;
+      }
+
+      if (isPredicate(subAnno)) {
+        return isPredicateSubtype(convertToPredicate(subAnno), convertToPredicate(superAnno));
+      } else if (isPredicate(superAnno)) {
+        return evaluatePredicate(subAnno, convertToPredicate(superAnno));
+      }
+
+      List<String> subVal = getAccumulatedValues(subAnno);
+      List<String> superVal = getAccumulatedValues(superAnno);
+      return subVal.containsAll(superVal);
     }
   }
 
@@ -144,7 +320,23 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
   }
 
   /**
-   * Checks if the package for the tree is present in already annotated according to provided
+   * Checks if the receiver tree is available
+   *
+   * @param node to check for
+   * @return true if available, false otherwise
+   */
+  public boolean hasReceiver(ExpressionTree node) {
+    if (node != null) {
+      ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
+      if (receiverTree != null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if the package for the node is present in already annotated according to provided
    * option.
    *
    * @param tree to check for
@@ -168,7 +360,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @param node to check for
    * @return true if annotated, false otherwise
    */
-  public boolean isPresentInStub(ExpressionTree node) {
+  public boolean isPresentInStub(Tree node) {
     if (node != null) {
       Element elem = TreeUtils.elementFromTree(node);
       return elem != null && isFromStubFile(elem);
@@ -183,7 +375,7 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
    * @return true if matches, false otherwise
    */
   public boolean isAnnotatedPackage(String packageName) {
-    for (String annotatedPackageName : annotatedPackages) {
+    for (String annotatedPackageName : listOfAnnotatedPackageNames) {
       if (packageName.startsWith(annotatedPackageName)) {
         return true;
       }
@@ -213,14 +405,25 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     if (type == null) {
       return true;
     }
+
     if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
       return mayBeTainted((AnnotatedTypeMirror.AnnotatedArrayType) type);
     }
     if (type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       return mayBeTainted((AnnotatedTypeMirror.AnnotatedDeclaredType) type);
     }
+
     return !type.hasAnnotation(rUntainted);
   }
+
+  /**
+   * Visits all method invocations and updates {@link AnnotatedTypeMirror} according to the argument
+   * and receiver annotations. If any of the arguments or the receiver is {@link RTainted}, the
+   * {@link AnnotatedTypeMirror} is updated to be {@link RTainted}.
+   *
+   * @param node the node being visited
+   * @param annotatedTypeMirror annotated return type of the method invocation
+   */
 
   /**
    * Checks if the given declared type may be tainted
@@ -265,12 +468,18 @@ public class UCRTaintingAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
     type.replaceAnnotation(rUntainted);
   }
 
+  public boolean isUnannotatedThirdParty(Tree tree) {
+    if (isInThirdPartyCode(tree) && !isPresentInStub(tree)) {
+      return true;
+    }
+    return false;
+  }
   /**
    * Checks if custom check is enabled.
    *
    * @return True if custom check is enabled, false otherwise.
    */
-  public boolean customCheckIsEnabled() {
-    return customCheckEnabled;
+  public boolean customLibraryCheckIsEnabled() {
+    return enableLibraryCheck;
   }
 }

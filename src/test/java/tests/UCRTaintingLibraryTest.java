@@ -1,5 +1,3 @@
-package tests;
-
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import java.io.File;
 import java.util.List;
@@ -14,20 +12,28 @@ import org.junit.runners.Parameterized.Parameters;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class UCRTaintingTest extends CheckerFrameworkPerDirectoryTest {
-  public UCRTaintingTest(List<File> testFiles) {
+public class UCRTaintingLibraryTest extends CheckerFrameworkPerDirectoryTest {
+  public UCRTaintingLibraryTest(List<File> testFiles) {
     super(
         testFiles,
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=foo.bar",
-        "-AenableCustomCheck=true",
+        "-AenableLibraryCheck",
+        "-AenableSideEffect",
         "-nowarn");
   }
 
   @Parameters
   public static String[] getTestDirs() {
-    return new String[] {"ucrtainting"};
+    return new String[] {
+      "ucrtainting/basicSubTypingTests",
+      "ucrtainting/captureTest",
+      "ucrtainting/javaUtilTest",
+      "ucrtainting/micronaut",
+      "ucrtainting/stringBuilderTests",
+      "ucrtainting/thirdPartyTests"
+    };
   }
 }

@@ -1,10 +1,8 @@
-package tests;
-
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import java.io.File;
 import java.util.List;
-import org.junit.runners.Parameterized;
-import tests.tools.SerializationTestHelper;
+import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Test runner for tests of the UCR Tainting Checker.
@@ -14,20 +12,20 @@ import tests.tools.SerializationTestHelper;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class TypeArgumentReceiverTest extends SerializationTestHelper {
-  public TypeArgumentReceiverTest(List<File> testFiles) {
+public class UCRTaintingValidationTest extends CheckerFrameworkPerDirectoryTest {
+  public UCRTaintingValidationTest(List<File> testFiles) {
     super(
         testFiles,
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
-        "-AannotatedPackages=\"\"",
-        "-AenableLibraryCheck",
+        "-AannotatedPackages=foo.bar",
+        "-AenableValidationCheck",
         "-nowarn");
   }
 
-  @Parameterized.Parameters
+  @Parameters
   public static String[] getTestDirs() {
-    return new String[] {"typeargumentreceiver"};
+    return new String[] {"ucrtainting/validatorTests"};
   }
 }

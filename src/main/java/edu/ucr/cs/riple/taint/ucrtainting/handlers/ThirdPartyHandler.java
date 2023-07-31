@@ -15,7 +15,7 @@ public class ThirdPartyHandler extends AbstractHandler {
 
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree, AnnotatedTypeMirror type) {
-    if (typeFactory.isInThirdPartyCode(tree) && !typeFactory.isPresentInStub(tree)) {
+    if (typeFactory.isUnannotatedThirdParty(tree)) {
       if (!typeFactory.hasTaintedArgument(tree) && !typeFactory.hasTaintedReceiver(tree)) {
         Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
         Type returnType = calledMethod.getReturnType();

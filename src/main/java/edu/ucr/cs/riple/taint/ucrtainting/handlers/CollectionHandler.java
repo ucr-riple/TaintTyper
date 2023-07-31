@@ -5,6 +5,7 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
+import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
@@ -26,46 +27,28 @@ public class CollectionHandler extends AbstractHandler {
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree, AnnotatedTypeMirror type) {
     super.visitMethodInvocation(tree, type);
-    Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
-    if (isToArrayWithTypeArgument(calledMethod)) {
-      ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
-      if (Utility.isThisIdentifier(receiver)) {
-        return;
-      }
-      System.out.println(calledMethod);
+    Symbol.MethodSymbol symbol = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
+    if (!(type instanceof AnnotatedTypeMirror.AnnotatedArrayType)) {
+      return;
     }
-  }
-
-  /**
-   * Checks if the method is {@link java.util.Collection#toArray(Object[])}.
-   *
-   * @param symbol The method symbol to check.
-   * @return True if the method is {@link java.util.Collection#toArray(Object[])}.
-   */
-  private boolean isToArrayWithTypeArgument(Symbol.MethodSymbol symbol) {
-    // Check method name
-    if (!symbol.getSimpleName().toString().equals(TO_ARRAY_METHOD_NAME)) {
-      return false;
+    if (!isToArrayWithTypeArgMethod(symbol, types)) {
+      return;
     }
-    // Check if the method has a type argument.
-    if (symbol.getTypeParameters().size() != 1) {
-      return false;
+    ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
+    if (receiver == null || Utility.isThisIdentifier(receiver)) {
+      return;
     }
-    // Check if the method has a single parameter.
-    if (symbol.getParameters().size() != 1) {
-      return false;
+    if (!(((JCTree) receiver).type instanceof Type.ClassType)) {
+      throw new RuntimeException("CollectionHandler: receiver is not a class type");
     }
-    // Check if class is subclass of Collection
-    if (!implementsCollectionInterface(symbol.enclClass().type)) {
-      return false;
+    AnnotatedTypeMirror receiverType = typeFactory.getReceiverType(tree);
+    Type collectionType = getCollectionTypeFromType(receiverType);
+    if (collectionType == null) {
+      return;
     }
-    // Check parameter type.
-    if (!isArrayTypeOfTypeArg(
-        symbol.getParameters().get(0).type, symbol.getTypeParameters().get(0))) {
-      return false;
+    if (Utility.hasUntaintedAnnotation(((Type.ClassType) collectionType).typarams_field.get(0))) {
+      typeFactory.makeUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
     }
-    // Check return type.
-    return isArrayTypeOfTypeArg(symbol.getReturnType(), symbol.getTypeParameters().get(0));
   }
 
   /**
@@ -74,7 +57,7 @@ public class CollectionHandler extends AbstractHandler {
    * @param type The type to check.
    * @return True if the type implements the {@link java.util.Collection} interface.
    */
-  private boolean implementsCollectionInterface(Type type) {
+  private static boolean implementsCollectionInterface(Type type, Types types) {
     if (type == null) {
       return false;
     }
@@ -92,7 +75,7 @@ public class CollectionHandler extends AbstractHandler {
       return true;
     }
     for (Type anInterface : interfaces) {
-      if (implementsCollectionInterface(anInterface)) {
+      if (implementsCollectionInterface(anInterface, types)) {
         return true;
       }
     }
@@ -108,5 +91,62 @@ public class CollectionHandler extends AbstractHandler {
    */
   private static boolean isArrayTypeOfTypeArg(Type type, Symbol.TypeVariableSymbol typeVar) {
     return type instanceof Type.ArrayType && ((Type.ArrayType) type).elemtype.tsym.equals(typeVar);
+  }
+
+  public static boolean isToArrayWithTypeArgMethod(Symbol.MethodSymbol symbol, Types types) {
+    // Check method name
+    if (!symbol.getSimpleName().toString().equals(TO_ARRAY_METHOD_NAME)) {
+      return false;
+    }
+    // Check if the method has a type argument.
+    if (symbol.getTypeParameters().size() != 1) {
+      return false;
+    }
+    // Check if the method has a single parameter.
+    if (symbol.getParameters().size() != 1) {
+      return false;
+    }
+    // Check if class is subclass of Collection
+    if (!implementsCollectionInterface(symbol.enclClass().type, types)) {
+      return false;
+    }
+    // Check parameter type.
+    if (!isArrayTypeOfTypeArg(
+        symbol.getParameters().get(0).type, symbol.getTypeParameters().get(0))) {
+      return false;
+    }
+    // Check return type.
+    return isArrayTypeOfTypeArg(symbol.getReturnType(), symbol.getTypeParameters().get(0));
+  }
+
+  private static Type getCollectionTypeFromType(Type type) {
+    Type collectionType = null;
+    while (type instanceof Type.ClassType) {
+      Type.ClassType classType = (Type.ClassType) type;
+      if (classType.interfaces_field != null) {
+        for (Type iFace : classType.interfaces_field) {
+          if (iFace.tsym instanceof Symbol.ClassSymbol
+              && ((Symbol.ClassSymbol) iFace.tsym)
+                  .fullname
+                  .toString()
+                  .equals("java.util.Collection")) {
+            collectionType = iFace;
+          }
+        }
+        if (collectionType != null) {
+          break;
+        }
+      }
+      type = ((Type.ClassType) type).supertype_field;
+    }
+    return collectionType;
+  }
+
+  public static Type getCollectionTypeFromType(AnnotatedTypeMirror mirror) {
+    return getCollectionTypeFromType((Type) mirror.getUnderlyingType());
+  }
+
+  public static Type getSymbolicCollectionTypeFromType(AnnotatedTypeMirror mirror) {
+    return getCollectionTypeFromType(((Type) mirror.getUnderlyingType()).tsym.type);
   }
 }

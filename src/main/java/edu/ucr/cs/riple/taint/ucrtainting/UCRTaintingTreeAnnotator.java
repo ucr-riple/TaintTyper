@@ -1,6 +1,5 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MemberSelectTree;
@@ -22,7 +21,8 @@ import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.TreeUtils;
 
 public class UCRTaintingTreeAnnotator extends TreeAnnotator {
-  private final ImmutableSet<Handler> handlers;
+
+  private final Handler handler;
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
   private final Context context;
   private final Map<Symbol, Tree> symbolToDeclarationMap;
@@ -34,12 +34,10 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
    * @param context The javac context.
    */
   protected UCRTaintingTreeAnnotator(
-      UCRTaintingAnnotatedTypeFactory typeFactory,
-      ImmutableSet<Handler> handlers,
-      Context context) {
+      UCRTaintingAnnotatedTypeFactory typeFactory, Handler handler, Context context) {
     super(typeFactory);
     this.typeFactory = typeFactory;
-    this.handlers = handlers;
+    this.handler = handler;
     this.context = context;
     this.symbolToDeclarationMap = new HashMap<>();
   }
@@ -55,31 +53,40 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   @Override
   public Void visitMethodInvocation(
       MethodInvocationTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customCheckIsEnabled()) {
-      handlers.forEach(handler -> handler.visitMethodInvocation(node, annotatedTypeMirror));
+    if (typeFactory.customLibraryCheckIsEnabled()) {
+      handler.visitMethodInvocation(node, annotatedTypeMirror);
     }
     return super.visitMethodInvocation(node, annotatedTypeMirror);
   }
 
   @Override
   public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customCheckIsEnabled()) {
-      handlers.forEach(handler -> handler.visitVariable(node, annotatedTypeMirror));
+    if (typeFactory.customLibraryCheckIsEnabled()) {
+      handler.visitVariable(node, annotatedTypeMirror);
     }
     return super.visitVariable(node, annotatedTypeMirror);
   }
 
   @Override
   public Void visitLiteral(LiteralTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customCheckIsEnabled()) {
+    if (typeFactory.customLibraryCheckIsEnabled()) {
       typeFactory.makeUntainted(annotatedTypeMirror);
     }
     return super.visitLiteral(node, annotatedTypeMirror);
   }
 
+  /**
+   * Visits member select trees and updates {@link AnnotatedTypeMirror} according to the identifier.
+   * Particularly, it applies the type of the identifier in the expression to the whole expression.
+   * E.g. for expression {@code e.g.h.b}, if {@code b} is untainted, then {@code e.g.h.b} is
+   * untainted.
+   *
+   * @param node the node being visited
+   * @param annotatedTypeMirror annotated return type of the member select
+   */
   @Override
   public Void visitMemberSelect(MemberSelectTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customCheckIsEnabled()) {
+    if (typeFactory.customLibraryCheckIsEnabled()) {
       Symbol symbol = (Symbol) TreeUtils.elementFromUse(node);
       Tree selected =
           symbolToDeclarationMap.containsKey(symbol)
@@ -103,10 +110,10 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
    */
   @Override
   public Void visitNewClass(NewClassTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customCheckIsEnabled()) {
+    if (typeFactory.customLibraryCheckIsEnabled()) {
       // if the code is part of provided annotated packages or is present
       // in the stub files, then we don't need any custom handling for it.
-      if (typeFactory.isInThirdPartyCode(node) && !typeFactory.isPresentInStub(node)) {
+      if (typeFactory.isUnannotatedThirdParty(node)) {
         if (!(typeFactory.hasTaintedArgument(node) || typeFactory.hasTaintedReceiver(node))) {
           typeFactory.makeUntainted(annotatedTypeMirror);
         }

@@ -22,7 +22,7 @@ public class ParameterExpressionSerializationTest extends SerializationTestHelpe
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=\"\"",
-        "-AenableCustomCheck=true",
+        "-AenableLibraryCheck",
         "-nowarn");
   }
 

@@ -5,9 +5,11 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Set;
@@ -33,10 +35,13 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
    */
   protected final FoundRequired pair;
 
+  protected final Types types;
+
   public FixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
     this.context = context;
     this.typeFactory = factory;
     this.pair = pair;
+    this.types = Types.instance(context);
   }
 
   @Override
@@ -77,6 +82,9 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     boolean hasReceiver =
         !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));
     boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();
+    if (CollectionHandler.isToArrayWithTypeArgMethod(calledMethod, types)) {
+      return node.accept(new CollectionVisitor(context, typeFactory, pair), unused);
+    }
     if (methodHasTypeArgs) {
       return node.accept(new MethodTypeArgumentFixVisitor(context, typeFactory, pair), unused);
     }
