@@ -6,9 +6,8 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 // Test basic subtyping relationships for the UCR Tainting Checker.
 class ValidatorTest {
     void validationArg(@RTainted String y) {
-      if (validator(y)) {
-        sink(y);
-      }
+      if (validator(y))
+        y.isEmpty();
       sink(y);
     }
 

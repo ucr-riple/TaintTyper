@@ -404,7 +404,7 @@ public class Utility {
    */
   public static boolean isMethodInvocationInIfConditional(TreePath treePath) {
     TreePath parent = treePath.getParentPath();
-    while(parent != null && parent.getLeaf().getKind() != Tree.Kind.BLOCK) {
+    while(parent != null && parent.getLeaf().getKind() != Tree.Kind.BLOCK && parent.getLeaf().getKind() != Tree.Kind.EXPRESSION_STATEMENT) {
       if(parent.getLeaf().getKind() == Tree.Kind.IF) {
         return true;
       }
