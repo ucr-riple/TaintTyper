@@ -22,7 +22,7 @@ public class EnumInterfaceSpecialCaseHandlingTest extends SerializationTestHelpe
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=test",
-        "-AenableCustomCheck=true",
+        "-AenableLibraryCheck",
         "-nowarn");
   }
 

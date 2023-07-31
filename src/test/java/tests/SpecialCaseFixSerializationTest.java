@@ -22,7 +22,7 @@ public class SpecialCaseFixSerializationTest extends SerializationTestHelper {
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=test",
-        "-AenableCustomCheck=true",
+        "-AenableLibraryCheck",
         "-nowarn");
   }
 
