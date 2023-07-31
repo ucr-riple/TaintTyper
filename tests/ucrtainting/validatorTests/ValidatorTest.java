@@ -20,7 +20,7 @@ class ValidatorTest {
     x = z;
   }
 
-  void subTypeTest4(@RPossiblyValidated({"a", "b"})  String x, @RPossiblyValidated({"a"}) String y) {
+  void subTypeTest4(@RPossiblyValidated({"a", "b"}) String x, @RPossiblyValidated({"a"}) String y) {
     // :: error: (assignment)
     x = y;
   }
@@ -30,9 +30,10 @@ class ValidatorTest {
     y = z;
   }
 
-  void subTypeTest6(@RPossiblyValidated({"a", "b"})  String x, @RPossiblyValidated({}) String z) {
+  void subTypeTest6(@RPossiblyValidated({"a", "b"}) String x, @RPossiblyValidated({}) String z) {
     z = x;
   }
+
   void validationArg(@RTainted String y) {
     if (validator(y)) y.isEmpty();
     sink(y);
