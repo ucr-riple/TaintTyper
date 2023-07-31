@@ -2,6 +2,9 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.MethodInvocationTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import java.util.Collections;
+import java.util.List;
+import javax.lang.model.type.TypeKind;
 import org.checkerframework.dataflow.analysis.TransferInput;
 import org.checkerframework.dataflow.analysis.TransferResult;
 import org.checkerframework.dataflow.cfg.node.*;
@@ -12,10 +15,6 @@ import org.checkerframework.framework.flow.CFTransfer;
 import org.checkerframework.framework.flow.CFValue;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.AnnotationMirrorSet;
-
-import javax.lang.model.type.TypeKind;
-import java.util.Collections;
-import java.util.List;
 
 public class UCRTaintingTransfer extends CFTransfer {
   private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
