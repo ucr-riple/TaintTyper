@@ -30,28 +30,29 @@ public class CollectionHandler extends AbstractHandler {
     if (receiver == null || Utility.isThisIdentifier(receiver)) {
       return;
     }
-    if (!(receiver instanceof JCTree.JCIdent)
-        || !(((JCTree.JCIdent) receiver).type instanceof Type.ClassType)) {
+    if (!(((JCTree) receiver).type instanceof Type.ClassType)) {
       throw new RuntimeException("CollectionHandler: receiver is not a class type");
     }
     AnnotatedTypeMirror receiverType = typeFactory.getReceiverType(tree);
-    Type collectionType = getCollectionParameterType(receiverType);
-    if (Utility.hasUntaintedAnnotation(collectionType)) {
+    Type collectionType = getCollectionTypeFromType(receiverType);
+    if (collectionType == null) {
+      return;
+    }
+    if (Utility.hasUntaintedAnnotation(((Type.ClassType) collectionType).typarams_field.get(0))) {
       typeFactory.makeUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
     }
   }
 
-  private void overridesCollectionInterface() {
+  public static void overridesCollectionInterface() {
     // todo: merge from branch
   }
 
-  private boolean isToArrayWithTypeArgMethod(Symbol.MethodSymbol symbol) {
+  public static boolean isToArrayWithTypeArgMethod(Symbol.MethodSymbol symbol) {
     // todo: merge from branch
     return symbol.name.toString().equals("toArray") && symbol.params().size() == 1;
   }
 
-  private Type getCollectionParameterType(AnnotatedTypeMirror mirror) {
-    Type type = (Type) mirror.getUnderlyingType();
+  private static Type getCollectionTypeFromType(Type type) {
     Type collectionType = null;
     while (type instanceof Type.ClassType) {
       Type.ClassType classType = (Type.ClassType) type;
@@ -71,9 +72,14 @@ public class CollectionHandler extends AbstractHandler {
       }
       type = ((Type.ClassType) type).supertype_field;
     }
-    if (collectionType == null) {
-      return null;
-    }
-    return ((Type.ClassType) collectionType).typarams_field.get(0);
+    return collectionType;
+  }
+
+  public static Type getCollectionTypeFromType(AnnotatedTypeMirror mirror) {
+    return getCollectionTypeFromType((Type) mirror.getUnderlyingType());
+  }
+
+  public static Type getSymbolicCollectionTypeFromType(AnnotatedTypeMirror mirror) {
+    return getCollectionTypeFromType(((Type) mirror.getUnderlyingType()).tsym.type);
   }
 }

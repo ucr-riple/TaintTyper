@@ -59,7 +59,8 @@ public class SerializationService {
               ? generateFixesForError((Tree) source, messageKey, pair)
               : ImmutableSet.of();
     } catch (Exception e) {
-      System.err.println("Error in computing required fixes: " + source + " " + messageKey);
+      System.err.println(
+          "Error in computing required fixes: " + source + " " + messageKey + ", exception:" + e);
       resolvingFixes = ImmutableSet.of();
     }
     Error error = new Error(messageKey, resolvingFixes, checker.getVisitor().getCurrentPath());

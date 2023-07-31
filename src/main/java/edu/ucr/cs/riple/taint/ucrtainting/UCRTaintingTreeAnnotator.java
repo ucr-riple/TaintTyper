@@ -21,6 +21,7 @@ import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.TreeUtils;
 
 public class UCRTaintingTreeAnnotator extends TreeAnnotator {
+
   private final Handler handler;
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
   private final Context context;
@@ -74,6 +75,15 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
     return super.visitLiteral(node, annotatedTypeMirror);
   }
 
+  /**
+   * Visits member select trees and updates {@link AnnotatedTypeMirror} according to the identifier.
+   * Particularly, it applies the type of the identifier in the expression to the whole expression.
+   * E.g. for expression {@code e.g.h.b}, if {@code b} is untainted, then {@code e.g.h.b} is
+   * untainted.
+   *
+   * @param node the node being visited
+   * @param annotatedTypeMirror annotated return type of the member select
+   */
   @Override
   public Void visitMemberSelect(MemberSelectTree node, AnnotatedTypeMirror annotatedTypeMirror) {
     if (typeFactory.customCheckIsEnabled()) {

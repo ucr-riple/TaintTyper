@@ -9,6 +9,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Set;
@@ -81,6 +82,9 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     boolean hasReceiver =
         !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));
     boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();
+    if (CollectionHandler.isToArrayWithTypeArgMethod(calledMethod)) {
+      return node.accept(new CollectionVisitor(context, typeFactory, pair), unused);
+    }
     if (methodHasTypeArgs) {
       return node.accept(new MethodTypeArgumentFixVisitor(context, typeFactory, pair), unused);
     }
