@@ -2,9 +2,37 @@ package validatorTests;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 
 // Test basic subtyping relationships for the UCR Tainting Checker.
 class ValidatorTest {
+
+  void subTypeTest1(@RTainted String x, @RPossiblyValidated({}) String z) {
+    // :: error: (assignment)
+    z = x;
+  }
+
+  void subTypeTest2(@RUntainted String x, @RPossiblyValidated({}) String z) {
+    z = x;
+  }
+
+  void subTypeTest3(@RTainted String x, @RPossiblyValidated({}) String z) {
+    x = z;
+  }
+
+  void subTypeTest4(@RPossiblyValidated({"a", "b"})  String x, @RPossiblyValidated({"a"}) String y) {
+    // :: error: (assignment)
+    x = y;
+  }
+
+  void subTypeTest5(@RPossiblyValidated({"a"}) String y, @RPossiblyValidated({}) String z) {
+    // :: error: (assignment)
+    y = z;
+  }
+
+  void subTypeTest6(@RPossiblyValidated({"a", "b"})  String x, @RPossiblyValidated({}) String z) {
+    z = x;
+  }
   void validationArg(@RTainted String y) {
     if (validator(y)) y.isEmpty();
     sink(y);
