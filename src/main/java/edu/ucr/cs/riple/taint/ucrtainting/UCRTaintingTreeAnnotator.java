@@ -1,28 +1,21 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import com.google.common.collect.ImmutableSet;
-import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.LiteralTree;
-import com.sun.source.tree.MemberSelectTree;
-import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.tree.NewArrayTree;
-import com.sun.source.tree.NewClassTree;
-import com.sun.source.tree.Tree;
-import com.sun.source.tree.VariableTree;
+import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.TreeUtils;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class UCRTaintingTreeAnnotator extends TreeAnnotator {
-  private final ImmutableSet<Handler> handlers;
+  private final Handler handler;
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
   private final Context context;
   private final Map<Symbol, Tree> symbolToDeclarationMap;
@@ -34,12 +27,10 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
    * @param context The javac context.
    */
   protected UCRTaintingTreeAnnotator(
-      UCRTaintingAnnotatedTypeFactory typeFactory,
-      ImmutableSet<Handler> handlers,
-      Context context) {
+      UCRTaintingAnnotatedTypeFactory typeFactory, Handler handler, Context context) {
     super(typeFactory);
     this.typeFactory = typeFactory;
-    this.handlers = handlers;
+    this.handler = handler;
     this.context = context;
     this.symbolToDeclarationMap = new HashMap<>();
   }
@@ -56,15 +47,17 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   public Void visitMethodInvocation(
       MethodInvocationTree node, AnnotatedTypeMirror annotatedTypeMirror) {
     if (typeFactory.customLibraryCheckIsEnabled()) {
-      handlers.forEach(handler -> handler.visitMethodInvocation(node, annotatedTypeMirror));
+      handler.visitMethodInvocation(node, annotatedTypeMirror);
+
     }
     return super.visitMethodInvocation(node, annotatedTypeMirror);
   }
 
   @Override
   public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
+
     if (typeFactory.customLibraryCheckIsEnabled()) {
-      handlers.forEach(handler -> handler.visitVariable(node, annotatedTypeMirror));
+      handler.visitVariable(node, annotatedTypeMirror);
     }
     return super.visitVariable(node, annotatedTypeMirror);
   }

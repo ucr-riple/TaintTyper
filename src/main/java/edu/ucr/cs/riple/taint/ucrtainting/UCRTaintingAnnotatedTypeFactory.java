@@ -1,11 +1,11 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.EnumHandler;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.CompositHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
+
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.StaticFinalFieldHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.ThirdPartyHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
@@ -50,12 +50,12 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   private final List<String> listOfAnnotatedPackageNames;
 
   public final boolean enableSideEffect;
-  /** Set of handlers */
-  private final ImmutableSet<Handler> handlers;
+
   /** AnnotationMirror for {@link RUntainted}. */
   public final AnnotationMirror rUntainted;
   /** AnnotationMirror for {@link RTainted}. */
   public final AnnotationMirror rTainted;
+  private final Handler handler;
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker, RPossiblyValidated.class, RUntainted.class, null);
@@ -85,13 +85,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     listOfAnnotatedPackageNames = Arrays.asList(annotatedPackagesFlagValue.split(","));
     rUntainted = AnnotationBuilder.fromClass(elements, RUntainted.class);
     rTainted = AnnotationBuilder.fromClass(elements, RTainted.class);
-    this.handlers =
-        ImmutableSet.<Handler>builder()
-            .add(
-                new StaticFinalFieldHandler(this),
-                new EnumHandler(this),
-                new ThirdPartyHandler(this))
-            .build();
+    this.handler = new CompositHandler(this);
     postInit();
   }
 
@@ -101,7 +95,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
         super.createTreeAnnotator(),
         new UCRTaintingTreeAnnotator(
             this,
-            handlers,
+            handler,
             ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext()));
   }
 
@@ -110,7 +104,8 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
       @Nullable Element element, AnnotatedTypeMirror type) {
     super.addAnnotationsFromDefaultForType(element, type);
     if (enableLibraryCheck) {
-      handlers.forEach(handler -> handler.addAnnotationsFromDefaultForType(element, type));
+      handler.addAnnotationsFromDefaultForType(element, type);
+
     }
   }
 

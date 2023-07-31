@@ -18,8 +18,12 @@ public class Foo {
     @RUntainted String[] newProperties = Arrays.copyOf(existedProperties, epl + 1);
   }
 
-  public void toArrayTest(ArrayList<@RUntainted String> processPropList) {
-    //    @RUntainted
-    //    String[] processProperties = processPropList.toArray(new String[processPropList.size()]);
+  public void toArrayTest(Bar<@RUntainted String, @RUntainted String, @RUntainted String> b) {
+    // :: error: assignment
+    @RUntainted String[] processProperties = b.toArray(new String[b.size()]);
   }
+
+  static class CustomList<E, N> extends ArrayList<N> {}
+
+  static class Bar<P, Q, R> extends CustomList<R, Q> {}
 }
