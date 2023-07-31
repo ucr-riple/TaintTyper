@@ -1,10 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
-import com.sun.source.tree.ClassTree;
-import com.sun.source.tree.IdentifierTree;
-import com.sun.source.tree.MethodTree;
-import com.sun.source.tree.Tree;
-import com.sun.source.tree.VariableTree;
+import com.sun.source.tree.*;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
@@ -16,17 +12,18 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import java.net.URI;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.List;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.javacutil.ElementUtils;
+import org.checkerframework.javacutil.TreeUtils;
+
 import javax.annotation.Nullable;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.javacutil.ElementUtils;
-import org.checkerframework.javacutil.TreeUtils;
+import java.net.URI;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
 
 /** Utility methods for the serialization service. */
 public class Utility {
@@ -395,6 +392,23 @@ public class Utility {
           return true;
         }
       }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if the passed treePath is invoked as part of an if condition
+   *
+   * @param treePath the treePath to check.
+   * @return true if the passed treePath is invoked as part of an if condition
+   */
+  public static boolean isMethodInvocationInIfConditional(TreePath treePath) {
+    TreePath parent = treePath.getParentPath();
+    while(parent != null && parent.getLeaf().getKind() != Tree.Kind.BLOCK) {
+      if(parent.getLeaf().getKind() == Tree.Kind.IF) {
+        return true;
+      }
+      parent = parent.getParentPath();
     }
     return false;
   }

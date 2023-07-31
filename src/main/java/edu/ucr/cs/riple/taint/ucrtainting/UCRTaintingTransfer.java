@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import org.checkerframework.dataflow.analysis.TransferInput;
 import org.checkerframework.dataflow.analysis.TransferResult;
 import org.checkerframework.dataflow.cfg.node.*;
@@ -26,42 +27,41 @@ public class UCRTaintingTransfer extends CFTransfer {
 
   @Override
   public TransferResult<CFValue, CFStore> visitMethodInvocation(
-      MethodInvocationNode n, TransferInput<CFValue, CFStore> in) {
-    TransferResult<CFValue, CFStore> result = super.visitMethodInvocation(n, in);
+      MethodInvocationNode methodInvocationNode, TransferInput<CFValue, CFStore> in) {
 
-    // validation
+    TransferResult<CFValue, CFStore> result = super.visitMethodInvocation(methodInvocationNode, in);
+
+    // Assume any receiver or argument involved in
+    // a boolean method invocation to be validated
     if (aTypeFactory.enableValidationCheck) {
-      if (n.getType().getKind() == TypeKind.BOOLEAN) {
-        for (Node arg : n.getArguments()) {
-          updateStore(result, arg, n);
+      if (Utility.isMethodInvocationInIfConditional(methodInvocationNode.getTreePath()) && methodInvocationNode.getType().getKind() == TypeKind.BOOLEAN) {
+        for (Node arg : methodInvocationNode.getArguments()) {
+          makeRPossiblyValidated(result, arg, methodInvocationNode);
         }
 
-        Node receiver = n.getTarget().getReceiver();
+        Node receiver = methodInvocationNode.getTarget().getReceiver();
         if (receiver != null
             && !(receiver instanceof ImplicitThisNode)
             && receiver.getTree() != null) {
-          updateStore(result, receiver, n);
+          makeRPossiblyValidated(result, receiver, methodInvocationNode);
         }
       }
     }
 
     if (aTypeFactory.enableLibraryCheck && aTypeFactory.enableSideEffect) {
-      if (aTypeFactory.returnsThis(n.getTree())) {
-        System.out.println("hi");
-      }
-      if (aTypeFactory.hasReceiver(n.getTree()) && n.getArguments().size() > 0) {
-        Node receiver = n.getTarget().getReceiver();
+      if (aTypeFactory.hasReceiver(methodInvocationNode.getTree()) && methodInvocationNode.getArguments().size() > 0) {
+        Node receiver = methodInvocationNode.getTarget().getReceiver();
         if (receiver != null
             && !(receiver instanceof ImplicitThisNode)
             && receiver.getTree() != null) {
           if (receiver instanceof LocalVariableNode || receiver instanceof FieldAccessNode) {
             // if the code is part of provided annotated packages or is present
             // in the stub files, then we don't need any custom handling for it.
-            if (aTypeFactory.isInThirdPartyCode(n.getTree())
-                && !aTypeFactory.isPresentInStub(n.getTree())) {
-              if (!aTypeFactory.hasTaintedReceiver(n.getTree())
-                  && aTypeFactory.hasTaintedArgument(n.getTree())) {
-                updateStoreTaint(result, receiver);
+            if (aTypeFactory.isInThirdPartyCode(methodInvocationNode.getTree())
+                && !aTypeFactory.isPresentInStub(methodInvocationNode.getTree())) {
+              if (!aTypeFactory.hasTaintedReceiver(methodInvocationNode.getTree())
+                  && aTypeFactory.hasTaintedArgument(methodInvocationNode.getTree())) {
+                makeTaintedBySideEffect(result, receiver);
               }
             }
           }
@@ -72,19 +72,8 @@ public class UCRTaintingTransfer extends CFTransfer {
     return result;
   }
 
-  @Override
-  public TransferResult<CFValue, CFStore> visitObjectCreation(
-      ObjectCreationNode n, TransferInput<CFValue, CFStore> p) {
-    return super.visitObjectCreation(n, p);
-  }
 
-  @Override
-  public TransferResult<CFValue, CFStore> visitAssignment(
-      AssignmentNode n, TransferInput<CFValue, CFStore> in) {
-    return super.visitAssignment(n, in);
-  }
-
-  private void updateStore(TransferResult<CFValue, CFStore> result, Node n, Node calledMethod) {
+  private void makeRPossiblyValidated(TransferResult<CFValue, CFStore> result, Node n, Node calledMethod) {
     AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(n.getTree());
     AnnotationMirror anno = type.getAnnotation();
     JavaExpression je = JavaExpression.fromNode(n);
@@ -107,7 +96,7 @@ public class UCRTaintingTransfer extends CFTransfer {
     }
   }
 
-  private void updateStoreTaint(TransferResult<CFValue, CFStore> result, Node n) {
+  private void makeTaintedBySideEffect(TransferResult<CFValue, CFStore> result, Node n) {
     AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(n.getTree());
     if (type.hasAnnotation(aTypeFactory.rUntainted)) {
       JavaExpression je = JavaExpression.fromNode(n);
