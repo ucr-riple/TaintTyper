@@ -360,8 +360,8 @@ public class Utility {
     }
   }
 
-  public static boolean isStaticAndFinal(Element element) {
-    if (element == null) {
+  public static boolean isStaticAndFinalField(Element element) {
+    if (element == null || !element.getKind().isField()) {
       return false;
     }
     if (element instanceof Symbol.VarSymbol) {

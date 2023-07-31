@@ -22,7 +22,7 @@ public class StaticFinalFieldHandler extends AbstractHandler {
   @Override
   public void addAnnotationsFromDefaultForType(Element element, AnnotatedTypeMirror type) {
     if (staticFinalFields.contains(element)
-        || (Utility.isStaticAndFinal(element) && typeFactory.isInThirdPartyCode(element))) {
+        || (Utility.isStaticAndFinalField(element) && typeFactory.isInThirdPartyCode(element))) {
       typeFactory.makeUntainted(type);
     }
   }
@@ -35,7 +35,7 @@ public class StaticFinalFieldHandler extends AbstractHandler {
       return;
     }
     // check if is final and static
-    if (Utility.isStaticAndFinal(element)) {
+    if (Utility.isStaticAndFinalField(element)) {
       ExpressionTree initializer = tree.getInitializer();
       // check if initializer is a literal or a primitive
       if (Utility.isLiteralOrPrimitive(initializer)) {
