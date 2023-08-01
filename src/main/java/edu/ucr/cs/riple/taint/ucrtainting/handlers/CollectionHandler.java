@@ -7,7 +7,6 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
-import com.sun.tools.javac.util.List;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -67,22 +66,8 @@ public class CollectionHandler extends AbstractHandler {
     if (type.isInterface() && type.tsym.toString().equals(COLLECTIONS_INTERFACE)) {
       return true;
     }
-    List<Type> interfaces = types.interfaces(type);
-    boolean ans =
-        interfaces.stream()
-            .anyMatch(
-                intFace ->
-                    intFace.tsym.isInterface()
-                        && intFace.tsym.toString().equals(COLLECTIONS_INTERFACE));
-    if (ans) {
-      return true;
-    }
-    for (Type anInterface : interfaces) {
-      if (implementsCollectionInterface(anInterface, types)) {
-        return true;
-      }
-    }
-    return false;
+    return types.interfaces(type).stream()
+        .anyMatch(intFace -> implementsCollectionInterface(intFace, types));
   }
 
   /**
