@@ -51,8 +51,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
 
   @Override
   public String toString() {
-    return "AbstractSymbolLocation{"
-        + "kind="
+    return "kind="
         + kind
         + ", path="
         + path

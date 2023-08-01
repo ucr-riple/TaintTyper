@@ -1,35 +1,83 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
-import java.nio.file.*;
-import java.util.*;
 
-public class Foo<E extends Foo<E>> {
+public class Foo {}
 
-  public void test(@RUntainted Bar bar) {
-    // :: error: type.argument
-    get(bar);
-  }
+//  private static final Pattern PATTERN_CRLF = Pattern.compile("(\\r|\\n)");
 
-  public void test1(String op1) {
-    @RUntainted String s = "hello";
-    // :: error: compound.assignment
-    s += op1;
-  }
+//  private @RUntainted String[] processProperties;
+//
+//  public void setProcessProperties(Map<String, String> processProperties) {
+//    ArrayList<@RUntainted String> processPropList = new ArrayList<>(processProperties.size());
+//    boolean hasPath = false;
+//    String systemPath = System.getenv("PATH");
+//    // :: error: enhancedfor
+//    for (Map.Entry<@RUntainted String, @RUntainted String> entry : processProperties.entrySet()) {
+//      @RUntainted String key = entry.getKey();
+//      @RUntainted String value = entry.getValue();
+//      if (key == null) {
+//        continue;
+//      }
+//      if (value == null) {
+//        value = "";
+//      }
+//      key = key.trim();
+//      value = value.trim();
+//      if (key.equals("PATH")) {
+//        if (systemPath != null && systemPath.length() > 0) {
+//          processPropList.add(key + "=" + value + File.pathSeparator + systemPath);
+//        } else {
+//          processPropList.add(key + "=" + value);
+//        }
+//        hasPath = true;
+//      } else {
+//        processPropList.add(key + "=" + value);
+//      }
+//    }
+//    if (!hasPath && systemPath != null && systemPath.length() > 0) {
+//      processPropList.add("PATH=" + systemPath);
+//    }
+//    this.processProperties = processPropList.toArray(new String[processPropList.size()]);
+//  }
+//
+//  private @RUntainted String sanitize(String redirectUrl)
+//  {
+//    if (redirectUrl != null)
+//    {
+//      return PATTERN_CRLF.matcher(redirectUrl).replaceAll("");
+//    }
+//
+//    return null;
+//  }
+// }
 
-  static <E extends Foo<E>> E get(E e) {
-    return null;
-  }
-
-  private Map<@RUntainted String, @RUntainted String> headers;
-
-  public Map<String, String> getHeaders() {
-    // :: error: return
-    return headers;
-  }
-}
-
-class Bar extends Foo<Bar> {}
+// public class Foo<E extends Foo<E>> {
+//
+//  public void test(@RUntainted Bar bar) {
+//    // :: error: type.argument
+//    get(bar);
+//  }
+//
+//  public void test1(String op1) {
+//    @RUntainted String s = "hello";
+//    // :: error: compound.assignment
+//    s += op1;
+//  }
+//
+//  static <E extends Foo<E>> E get(E e) {
+//    return null;
+//  }
+//
+//  private Map<@RUntainted String, @RUntainted String> headers;
+//
+//  public Map<String, String> getHeaders() {
+//    // :: error: return
+//    return headers;
+//  }
+// }
+//
+// class Bar extends Foo<Bar> {}
 
 // Uncomment when new release of Checker Framework is available
 // interface ListPage<E> extends List<E> {}
