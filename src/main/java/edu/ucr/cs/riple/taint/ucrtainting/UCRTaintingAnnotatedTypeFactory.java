@@ -405,10 +405,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     if (type == null) {
       return true;
     }
-
-    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-      return mayBeTainted((AnnotatedTypeMirror.AnnotatedArrayType) type);
-    }
     if (type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       return mayBeTainted((AnnotatedTypeMirror.AnnotatedDeclaredType) type);
     }
@@ -436,16 +432,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
       return true;
     }
     return !hasUntaintedAnnotation(type);
-  }
-
-  /**
-   * Checks if the given array type's component may be tainted
-   *
-   * @param type The given array type
-   * @return True if the given array type's component may be tainted, false otherwise.
-   */
-  public boolean mayBeTainted(AnnotatedTypeMirror.AnnotatedArrayType type) {
-    return type == null || !hasUntaintedAnnotation(type.getComponentType());
   }
 
   /**
