@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
+import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
@@ -22,13 +23,24 @@ public class ThirdPartyHandler extends AbstractHandler {
       typeFactory.makeUntainted(type);
       return;
     }
-    // If the receiver is untainted and all arguments are untainted, the result should be untainted.
-    if (typeFactory.isUnannotatedThirdParty(tree)) {
-      if (!typeFactory.hasTaintedArgument(tree) && !typeFactory.hasTaintedReceiver(tree)) {
-        Type returnType = calledMethod.getReturnType();
-        if (calledMethod.isStatic() || !(returnType instanceof Type.TypeVar)) {
-          typeFactory.makeUntainted(type);
-        }
+    if (!typeFactory.isUnannotatedThirdParty(tree)) {
+      return;
+    }
+    // Check receiver, if receiver is tainted, we should not make it untainted.
+    ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
+    if (receiver == null) {
+      return;
+    }
+    boolean hasValidReceiver = calledMethod.isStatic() || typeFactory.isPolyOrUntainted(receiver);
+    if (!hasValidReceiver) {
+      return;
+    }
+    // Check passed arguments, if any of them is tainted, we should not make it untainted.
+    boolean hasUntaintedAnnotations =
+        tree.getArguments().stream().allMatch(typeFactory::isPolyOrUntainted);
+    if (hasUntaintedAnnotations) {
+      if (calledMethod.isStatic() || !(calledMethod.getReturnType() instanceof Type.TypeVar)) {
+        typeFactory.makeUntainted(type);
       }
     }
   }

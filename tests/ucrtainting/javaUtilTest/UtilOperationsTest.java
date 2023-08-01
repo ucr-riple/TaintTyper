@@ -94,7 +94,7 @@ class UtilOperationsTest {
   }
 
   void getListTestPassingStringLiteralCheckForPolyTaintedReturn() {
-    @RUntainted List<String> uList = getListPolyTainted("string_literal");
+    List<String> uList = getListPolyTainted("string_literal");
   }
 
   void getListTestPassingTaintedStringCheckForPolyTaintedReturn(@RTainted String s) {

@@ -5,6 +5,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CompositHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
@@ -51,6 +52,8 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   public final AnnotationMirror rUntainted;
   /** AnnotationMirror for {@link RTainted}. */
   public final AnnotationMirror rTainted;
+  /** AnnotationMirror for {@link RPolyTainted}. */
+  public final AnnotationMirror rPolyTainted;
 
   private final Handler handler;
 
@@ -79,6 +82,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     this.listOfAnnotatedPackageNames = Arrays.asList(annotatedPackagesFlagValue.split(","));
     this.rUntainted = AnnotationBuilder.fromClass(elements, RUntainted.class);
     this.rTainted = AnnotationBuilder.fromClass(elements, RTainted.class);
+    this.rPolyTainted = AnnotationBuilder.fromClass(elements, RPolyTainted.class);
     this.handler =
         new CompositHandler(
             this, ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext());
@@ -442,6 +446,38 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    */
   public boolean hasUntaintedAnnotation(AnnotatedTypeMirror type) {
     return type.hasAnnotation(rUntainted);
+  }
+
+  /**
+   * Checks if the given tree has the {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted}
+   * annotation.
+   *
+   * @param tree The given tree
+   * @return True if the given tree has the {@link
+   *     edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotation, false otherwise.
+   */
+  public boolean hasPolyTaintedAnnotation(Tree tree) {
+    return hasPolyTaintedAnnotation(getAnnotatedType(tree));
+  }
+
+  /**
+   * Checks if the given annotated type mirror has the {@link
+   * edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotation.
+   *
+   * @param type The given annotated type mirror
+   * @return True if the given annotated type mirror has the {@link
+   *     edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotation, false otherwise.
+   */
+  public boolean hasPolyTaintedAnnotation(AnnotatedTypeMirror type) {
+    return type.hasAnnotation(rPolyTainted);
+  }
+
+  public boolean isPolyOrUntainted(AnnotatedTypeMirror type) {
+    return hasPolyTaintedAnnotation(type) || !mayBeTainted(type);
+  }
+
+  public boolean isPolyOrUntainted(Tree tree) {
+    return hasPolyTaintedAnnotation(tree) || !mayBeTainted(tree);
   }
 
   /**
