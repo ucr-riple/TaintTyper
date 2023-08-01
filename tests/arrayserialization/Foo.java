@@ -6,7 +6,8 @@ import java.util.Map;
 
 public class Foo {
 
-  Object field;
+  private Object field;
+  private @RUntainted String[] processProperties;
 
   public void bar(Object param) {
     // :: error: array.initializer
@@ -45,6 +46,13 @@ public class Foo {
     @RUntainted
     // :: error: assignment
     String[] processProperties = list.toArray(new String[list.size()]);
+  }
+
+  public void toArraySimpleWithNoError(
+      Map<@RUntainted String, @RUntainted String> processProperties) {
+    ArrayList<@RUntainted String> processPropList =
+        new ArrayList<@RUntainted String>(processProperties.size());
+    this.processProperties = processPropList.toArray(new String[processPropList.size()]);
   }
 
   static class CustomList<E, N> extends ArrayList<N> {}
