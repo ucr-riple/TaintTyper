@@ -59,16 +59,6 @@ public class UCRTaintingChecker extends AccumulationChecker {
   @Override
   public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
     print("Index: " + ++index);
-    if (source.toString().equals("reader.getMimetype()")) {
-      print("SOURCE: " + source);
-      print("ANNOTATED TYPE: " + getTypeFactory().getAnnotatedType((Tree) source));
-      JCTree.JCMethodInvocation tree = (JCTree.JCMethodInvocation) source;
-      Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
-      System.out.println("RETURN TYPE: " + methodSymbol.getReturnType());
-      System.out.println(
-          "PARAMETER TYPES: "
-              + ((UCRTaintingAnnotatedTypeFactory) getTypeFactory()).mayBeTainted(tree));
-    }
     super.reportError(source, messageKey, args);
     if (serialize) {
       try {

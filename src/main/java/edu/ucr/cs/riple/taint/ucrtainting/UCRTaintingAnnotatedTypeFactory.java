@@ -472,12 +472,9 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     return type.hasAnnotation(rPolyTainted);
   }
 
-  public boolean isPolyOrUntainted(AnnotatedTypeMirror type) {
-    return hasPolyTaintedAnnotation(type) || !mayBeTainted(type);
-  }
-
   public boolean isPolyOrUntainted(Tree tree) {
-    return hasPolyTaintedAnnotation(tree) || !mayBeTainted(tree);
+    AnnotatedTypeMirror type = getAnnotatedType(tree);
+    return hasPolyTaintedAnnotation(type) || !mayBeTainted(type);
   }
 
   /**
