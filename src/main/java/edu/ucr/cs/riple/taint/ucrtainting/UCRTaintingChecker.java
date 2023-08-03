@@ -2,8 +2,6 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 
 import static edu.ucr.cs.riple.taint.ucrtainting.Log.print;
 
-import com.sun.source.tree.Tree;
-import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.SerializationService;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
@@ -11,7 +9,6 @@ import org.checkerframework.common.accumulation.AccumulationChecker;
 import org.checkerframework.framework.qual.StubFiles;
 import org.checkerframework.framework.source.SupportedOptions;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.javacutil.TreeUtils;
 
 /** This is the entry point for pluggable type-checking. */
 @StubFiles({

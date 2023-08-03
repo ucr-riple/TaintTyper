@@ -1,8 +1,16 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import javax.servlet.http.HttpServletResponse;
 
-public class Foo {}
+public class Foo {
+
+  protected static final String MIME_HTML_TEXT = "text/html";
+
+  protected void writeLoginPageLink(HttpServletResponse resp) {
+    resp.setContentType(MIME_HTML_TEXT);
+  }
+}
 
 //  private static final Pattern PATTERN_CRLF = Pattern.compile("(\\r|\\n)");
 
