@@ -231,6 +231,10 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
 
     @Override
     public boolean isSubtype(AnnotationMirror subAnno, AnnotationMirror superAnno) {
+      if (AnnotationUtils.areSame(subAnno, superAnno)) {
+        return true;
+      }
+
       if (AnnotationUtils.areSame(subAnno, bottom)) {
         return true;
       } else if (AnnotationUtils.areSame(superAnno, bottom)) {
