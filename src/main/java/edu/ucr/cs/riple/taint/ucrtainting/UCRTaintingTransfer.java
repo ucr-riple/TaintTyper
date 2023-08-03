@@ -1,6 +1,8 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RThis;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Collections;
 import java.util.List;
@@ -51,27 +53,50 @@ public class UCRTaintingTransfer extends CFTransfer {
     // If any argument is tainted, make the receiver tainted.
     // Only perform if enableSideEffect flag is on along with enableLibraryCheck flag.
     if (aTypeFactory.enableLibraryCheck && aTypeFactory.enableSideEffect) {
-
       if (isSideEffectCandidate(methodInvocationNode)) {
         // if the code is part of provided annotated packages or is present
         // in the stub files, then we don't need any custom handling for it.
         MethodInvocationTree tree = methodInvocationNode.getTree();
-        if (aTypeFactory.isUnannotatedThirdParty(tree)) {
-          if (!aTypeFactory.hasTaintedReceiver(tree) && aTypeFactory.hasTaintedArgument(tree)) {
-            makeStoresTainted(result, methodInvocationNode.getTarget().getReceiver());
-          }
-        }
+        handleSideEffect(
+            tree,
+            result,
+            methodInvocationNode,
+            aTypeFactory.hasTaintedArgument(tree) && !aTypeFactory.hasTaintedReceiver(tree));
       }
     }
 
     return result;
   }
 
+  private void handleSideEffect(
+      ExpressionTree tree,
+      TransferResult<CFValue, CFStore> result,
+      MethodInvocationNode node,
+      boolean isTainted) {
+    AnnotatedTypeMirror rAnno = aTypeFactory.getAnnotatedType(node.getTree());
+    if (aTypeFactory.isUnannotatedThirdParty(tree) || rAnno.hasAnnotation(RThis.class)) {
+      if (node.getTarget().getReceiver() instanceof MethodInvocationNode) {
+        handleSideEffect(
+            tree,
+            result,
+            (MethodInvocationNode) node.getTarget().getReceiver(),
+            (aTypeFactory.hasTaintedArgument(tree) && !aTypeFactory.hasTaintedReceiver(tree))
+                || isTainted);
+      } else {
+        if (isTainted) {
+          makeStoresTainted(result, node.getTarget().getReceiver());
+        }
+      }
+    }
+  }
+
   private boolean isSideEffectCandidate(MethodInvocationNode methodInvocationNode) {
     if (methodInvocationNode.getArguments().size() > 0) {
       Node receiver = methodInvocationNode.getTarget().getReceiver();
       if (receiver != null && !(receiver instanceof ImplicitThisNode)) {
-        if (receiver instanceof LocalVariableNode || receiver instanceof FieldAccessNode) {
+        if (receiver instanceof LocalVariableNode
+            || receiver instanceof FieldAccessNode
+            || receiver instanceof MethodInvocationNode) {
           return true;
         }
       }
