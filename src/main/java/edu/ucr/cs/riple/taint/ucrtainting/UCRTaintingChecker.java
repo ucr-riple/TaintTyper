@@ -126,15 +126,24 @@ public class UCRTaintingChecker extends AccumulationChecker {
     }
   }
 
+  /**
+   * Determine if the error should be skipped.
+   *
+   * @param source The source of the error.
+   * @param messageKey The message key of the error.
+   * @return True if the error should be skipped, false otherwise.
+   */
   private boolean shouldBeSkipped(Object source, String messageKey) {
     Tree tree = (Tree) source;
     switch (messageKey) {
+        // Skip errors that are caused by third-party code.
       case "override.return":
         {
           Symbol.MethodSymbol overridingMethod =
               (Symbol.MethodSymbol) TreeUtils.elementFromTree(visitor.getCurrentPath().getLeaf());
           return overridingMethod == null || typeFactory.isInThirdPartyCode(overridingMethod);
         }
+        // Skip errors that are caused by third-party code.
       case "override.param":
         {
           Element treeElement = TreeUtils.elementFromTree(tree);
