@@ -11,6 +11,7 @@ public class HttpServletRequest {
 	public @RTainted String getQueryString();
 	public @RTainted String getRemoteUser();
 	public @RTainted StringBuffer getRequestURL();
+	public @RTainted String getParameter(java.lang.String name);
 }
 
 public class HttpServletResponse {
