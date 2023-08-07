@@ -56,6 +56,7 @@ dependencies {
     testImplementation 'javax.servlet:servlet-api:2.5'
     testImplementation group: 'org.safehaus.jug', name: 'jug', version: '2.0.0', classifier: 'lgpl'
     implementation 'com.vaadin:vaadin-shared:8.20.3'
+    testImplementation 'org.springframework:spring-websocket:5.3.29'
 
     // errorprone
     errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"

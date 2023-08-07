@@ -5,6 +5,8 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Stream;
 import javax.servlet.http.*;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 class Foo {
 
@@ -51,5 +53,13 @@ class Foo {
 
     // :: error: (assignment)
     @RUntainted String param = request.getHeader(MyEnum.A.toString());
+  }
+
+  class WebDAVServlet extends HttpServlet {
+    public void testContextCreation() {
+      @RUntainted
+      WebApplicationContext context =
+          WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+    }
   }
 }
