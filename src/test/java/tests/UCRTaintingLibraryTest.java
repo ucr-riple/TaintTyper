@@ -33,7 +33,8 @@ public class UCRTaintingLibraryTest extends CheckerFrameworkPerDirectoryTest {
       "ucrtainting/javaUtilTest",
       "ucrtainting/micronaut",
       "ucrtainting/stringBuilderTests",
-      "ucrtainting/thirdPartyTests"
+      "ucrtainting/thirdPartyTests",
+      "ucrtainting/springSecOAuth"
     };
   }
 }
