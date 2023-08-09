@@ -1,14 +1,22 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 public class Foo {
 
   protected static final String MIME_HTML_TEXT = "text/html";
+  public List<String> param;
 
   protected void writeLoginPageLink(HttpServletResponse resp) {
     resp.setContentType(MIME_HTML_TEXT);
+    // :: error: assignment
+    @RUntainted String s = doInSystemTransaction(param);
+  }
+
+  protected <T> T doInSystemTransaction(List<T> list) {
+    return null;
   }
 }
 

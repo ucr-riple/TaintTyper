@@ -53,7 +53,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
 
   @Override
   public Set<Fix> visitIdentifier(IdentifierTree node, Void unused) {
-    if (typeFactory.mayBeTainted(node)) {
+    if (requireFix()) {
       Fix fix = buildFixForElement(TreeUtils.elementFromTree(node));
       return fix == null ? Set.of() : Set.of(fix);
     }
@@ -63,11 +63,11 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   @Override
   public Set<Fix> visitConditionalExpression(ConditionalExpressionTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
-    if (typeFactory.mayBeTainted(node.getTrueExpression())) {
+    if (requireFix()) {
       fixes.addAll(
           node.getTrueExpression().accept(new FixVisitor(context, typeFactory, pair), null));
     }
-    if (typeFactory.mayBeTainted(node.getFalseExpression())) {
+    if (requireFix()) {
       fixes.addAll(
           node.getFalseExpression().accept(new FixVisitor(context, typeFactory, pair), null));
     }
@@ -79,7 +79,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
     for (ExpressionTree arg : node.getArguments()) {
-      if (typeFactory.mayBeTainted(arg)) {
+      if (requireFix()) {
         // Required can be null here, since we only need the passed parameters to be untainted.
         fixes.addAll(arg.accept(new FixVisitor(context, typeFactory, pair), unused));
       }
@@ -164,7 +164,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
 
   @Override
   public Set<Fix> visitMemberSelect(MemberSelectTree node, Void unused) {
-    if (typeFactory.mayBeTainted(node.getExpression())) {
+    if (requireFix()) {
       Element member = TreeUtils.elementFromUse(node);
       if (!(member instanceof Symbol)) {
         return Set.of();
@@ -221,5 +221,18 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       return null;
     }
     return SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+  }
+
+  /**
+   * Checks if the fix is required.
+   *
+   * @return True if the fix is required, false otherwise.
+   */
+  protected boolean requireFix() {
+    if (pair == null || pair.found == null || pair.required == null) {
+      return true;
+    }
+    AnnotatedTypeMirror widenedValueType = typeFactory.getWidenedType(pair.found, pair.required);
+    return !typeFactory.getTypeHierarchy().isSubtype(widenedValueType, pair.required);
   }
 }
