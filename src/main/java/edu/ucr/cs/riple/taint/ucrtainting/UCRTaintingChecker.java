@@ -70,7 +70,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
     if (shouldBeSkipped(source, messageKey)) {
       return;
     }
-    print("Index: " + ++index);
+    args[args.length - 1] = args[0].toString() + ", index: " + ++index;
     super.reportError(source, messageKey, args);
     if (serialize) {
       try {
