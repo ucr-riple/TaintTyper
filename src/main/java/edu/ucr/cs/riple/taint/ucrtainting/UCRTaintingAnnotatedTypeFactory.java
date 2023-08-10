@@ -402,6 +402,23 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   /**
+   * Checks if the given element is a source of taint.
+   *
+   * @param element The given element.
+   * @return True if the given element is a source of taint, false otherwise.
+   */
+  public boolean isSource(Element element) {
+    if (!isFromStubFile(element)) {
+      return false;
+    }
+    AnnotatedTypeMirror typeMirror = stubTypes.getAnnotatedTypeMirror(element);
+    if (typeMirror == null) {
+      return false;
+    }
+    return hasTaintedAnnotation(typeMirror);
+  }
+
+  /**
    * Checks if the given type may be tainted
    *
    * @param type The given type
@@ -449,6 +466,14 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    */
   public boolean hasUntaintedAnnotation(AnnotatedTypeMirror type) {
     return type.hasAnnotation(rUntainted);
+  }
+
+  public boolean hasTaintedAnnotation(AnnotatedTypeMirror type) {
+    if (type instanceof AnnotatedTypeMirror.AnnotatedExecutableType) {
+      return hasTaintedAnnotation(
+          ((AnnotatedTypeMirror.AnnotatedExecutableType) type).getReturnType());
+    }
+    return type.hasAnnotation(rTainted);
   }
 
   /**

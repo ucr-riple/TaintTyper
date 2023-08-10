@@ -33,7 +33,7 @@ public class ThirdPartyFixVisitor extends BasicVisitor {
     // check if the call is to a method defined in a third party library.
 
     // Check if the method is source defined in stubs.
-    if (typeFactory.isFromStubFile(calledMethod)) {
+    if (typeFactory.isSource(calledMethod)) {
       // We cannot do any fix here
       return Set.of();
     }

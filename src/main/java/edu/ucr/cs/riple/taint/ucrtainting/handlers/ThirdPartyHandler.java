@@ -23,7 +23,10 @@ public class ThirdPartyHandler extends AbstractHandler {
       typeFactory.makeUntainted(type);
       return;
     }
-    if (!typeFactory.isUnannotatedThirdParty(tree)) {
+    if (!typeFactory.isInThirdPartyCode(calledMethod)) {
+      return;
+    }
+    if (typeFactory.isSource(calledMethod)) {
       return;
     }
     // Check receiver, if receiver is tainted, we should not make it untainted.
