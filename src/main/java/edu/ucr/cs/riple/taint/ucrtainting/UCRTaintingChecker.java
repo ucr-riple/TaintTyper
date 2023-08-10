@@ -80,7 +80,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
         this.serializationService.serializeError(source, messageKey, pair);
       }
     }
-    args[args.length - 1] = args[0].toString() + ", index: " + ++index;
+    args[args.length - 1] = args[args.length - 1].toString() + ", index: " + ++index;
     super.reportError(source, messageKey, args);
   }
 
