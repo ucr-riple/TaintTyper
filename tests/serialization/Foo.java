@@ -1,5 +1,14 @@
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 import java.util.*;
+import java.util.jar.JarFile;
 
 class Foo {
 
@@ -70,5 +79,36 @@ class Foo {
     @RUntainted boolean x = op1 && op2;
     // :: error: assignment
     x = op1 || op2;
+  }
+
+  public void testRunnableTempFile() {
+    JarFile jarFile;
+    try (final InputStream in = new BufferedInputStream(System.in)) {
+      jarFile =
+          AccessController.doPrivileged(
+              new PrivilegedExceptionAction<JarFile>() {
+                public JarFile run() throws IOException {
+                  @RUntainted Path tmpFile = Files.createTempFile("jar_cache", null);
+                  try {
+                    Files.copy(in, tmpFile, StandardCopyOption.REPLACE_EXISTING);
+                    JarFile jarFile =
+                        new JarFile(
+                            tmpFile.toFile(), true, JarFile.OPEN_READ | JarFile.OPEN_DELETE);
+                    return jarFile;
+                  } catch (Throwable thr) {
+                    try {
+                      Files.delete(tmpFile);
+                    } catch (IOException ioe) {
+                      thr.addSuppressed(ioe);
+                    }
+                    throw thr;
+                  } finally {
+                    in.close();
+                  }
+                }
+              });
+    } catch (Exception pae) {
+
+    }
   }
 }

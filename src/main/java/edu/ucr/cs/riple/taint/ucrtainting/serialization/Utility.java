@@ -298,6 +298,9 @@ public class Utility {
     }
     Symbol.ClassSymbol encClass =
         symbol instanceof Symbol.ClassSymbol ? (Symbol.ClassSymbol) symbol : symbol.enclClass();
+    if (encClass == null) {
+      return false;
+    }
     String packageName = encClass.packge().toString();
     if (packageName.equals("unnamed package")) {
       packageName = "";

@@ -2,6 +2,8 @@ package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
 import javax.servlet.http.*;
@@ -24,6 +26,11 @@ class Foo {
     @RUntainted String param = request.getHeader("BenchmarkTest00175");
     // :: error: (assignment)
     @RUntainted File file = new File(path);
+    try {
+      @RUntainted Path tmpFile = Files.createTempFile("jar_cache", null);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws Exception {

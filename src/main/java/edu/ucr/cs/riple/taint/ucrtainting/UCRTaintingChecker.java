@@ -70,16 +70,18 @@ public class UCRTaintingChecker extends AccumulationChecker {
     if (shouldBeSkipped(source, messageKey)) {
       return;
     }
-    args[args.length - 1] = args[0].toString() + ", index: " + ++index;
-    super.reportError(source, messageKey, args);
     if (serialize) {
+      FoundRequired pair = null;
       try {
-        FoundRequired pair = retrievePair(messageKey, args);
-        this.serializationService.serializeError(source, messageKey, pair);
+        pair = retrievePair(messageKey, args);
       } catch (Exception e) {
         print("Exception: " + e.getMessage());
+      } finally {
+        this.serializationService.serializeError(source, messageKey, pair);
       }
     }
+    args[args.length - 1] = args[0].toString() + ", index: " + ++index;
+    super.reportError(source, messageKey, args);
   }
 
   public void detailedReportError(

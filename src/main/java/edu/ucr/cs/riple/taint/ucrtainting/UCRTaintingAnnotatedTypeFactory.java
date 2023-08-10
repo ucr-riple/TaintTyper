@@ -1,5 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import static edu.ucr.cs.riple.taint.ucrtainting.Log.print;
+
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
@@ -80,6 +82,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     String annotatedPackagesFlagValue =
         givenAnnotatedPackages.equals("\"\"") ? "" : givenAnnotatedPackages;
     this.listOfAnnotatedPackageNames = Arrays.asList(annotatedPackagesFlagValue.split(","));
+    print("Annotated Packages: " + listOfAnnotatedPackageNames);
     this.rUntainted = AnnotationBuilder.fromClass(elements, RUntainted.class);
     this.rTainted = AnnotationBuilder.fromClass(elements, RTainted.class);
     this.rPolyTainted = AnnotationBuilder.fromClass(elements, RPolyTainted.class);
@@ -487,10 +490,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   public boolean isUnannotatedThirdParty(Tree tree) {
-    if (isInThirdPartyCode(tree) && !isPresentInStub(tree)) {
-      return true;
-    }
-    return false;
+    return isInThirdPartyCode(tree) && !isPresentInStub(tree);
   }
   /**
    * Checks if custom check is enabled.
