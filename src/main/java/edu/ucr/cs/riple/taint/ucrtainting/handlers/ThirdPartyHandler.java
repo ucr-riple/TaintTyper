@@ -6,6 +6,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
@@ -37,12 +38,26 @@ public class ThirdPartyHandler extends AbstractHandler {
       return;
     }
     // Check passed arguments, if any of them is tainted, we should not make it untainted.
-    boolean hasUntaintedAnnotations =
-        tree.getArguments().stream().allMatch(typeFactory::isPolyOrUntainted);
-    if (hasUntaintedAnnotations) {
-      if (calledMethod.isStatic() || !(calledMethod.getReturnType() instanceof Type.TypeVar)) {
-        typeFactory.makeUntainted(type);
+    boolean noTaintedParams = tree.getArguments().stream().allMatch(typeFactory::isPolyOrUntainted);
+    if (noTaintedParams) {
+      if (shouldApplyHeuristic(receiver, calledMethod)) {
+        typeFactory.makeDeepUntainted(type);
       }
     }
+  }
+
+  private boolean shouldApplyHeuristic(ExpressionTree receiver, Symbol.MethodSymbol calledMethod) {
+    Type returnType = calledMethod.getReturnType();
+    // check method type arguments
+    if (calledMethod.type.getParameterTypes().stream()
+        .anyMatch(type -> Utility.containsTypeArgument(returnType, (Type.TypeVar) type))) {
+      return false;
+    }
+    if (receiver == null) {
+      return true;
+    }
+    Element receiverElement = TreeUtils.elementFromUse(receiver);
+    return Utility.getType(receiverElement).getParameterTypes().stream()
+        .noneMatch(type -> Utility.containsTypeArgument(returnType, (Type.TypeVar) type));
   }
 }

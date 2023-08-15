@@ -126,6 +126,21 @@ public class Utility {
     return false;
   }
 
+  public static boolean containsTypeArgument(Type type, Type.TypeVar var) {
+    if (type instanceof Type.TypeVar) {
+      return type.equals(var);
+    }
+    if (type instanceof Type.ClassType) {
+      Type.ClassType classType = (Type.ClassType) type;
+      for (Type t : classType.allparams()) {
+        if (containsTypeArgument(t, var)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   /**
    * Gets the annotated type mirror of the containing type parameter of the given element.
    *
@@ -175,7 +190,7 @@ public class Utility {
       return false;
     }
     Type.ClassType classType = (Type.ClassType) type;
-    if (classType.getTypeArguments().size() == 0) {
+    if (classType.getTypeArguments().isEmpty()) {
       return false;
     }
     return !containsTypeArgument(type);

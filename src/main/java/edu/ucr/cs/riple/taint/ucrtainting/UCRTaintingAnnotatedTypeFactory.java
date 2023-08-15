@@ -514,6 +514,24 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     type.replaceAnnotation(rUntainted);
   }
 
+  /**
+   * Makes the given type and all it's including parameter types {@link RUntainted} recursively. If
+   * the given type is an array type, the component type will also be made {@link RUntainted}.
+   *
+   * @param type The given type.
+   */
+  public void makeDeepUntainted(AnnotatedTypeMirror type) {
+    makeUntainted(type);
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      makeDeepUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
+    }
+    if (type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
+          (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
+      declaredType.getTypeArguments().forEach(this::makeDeepUntainted);
+    }
+  }
+
   public boolean isUnannotatedThirdParty(Tree tree) {
     return isInThirdPartyCode(tree) && !isPresentInStub(tree);
   }
