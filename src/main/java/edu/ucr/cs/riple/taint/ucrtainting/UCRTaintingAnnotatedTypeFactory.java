@@ -322,7 +322,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
           Set<Modifier> modifiers = element.getModifiers();
           return modifiers != null
               && !modifiers.contains(Modifier.STATIC)
-              && getAnnotatedType(receiverTree).hasAnnotation(rTainted);
+              && getAnnotatedType(receiverTree).hasPrimaryAnnotation(rTainted);
         }
       }
     }
@@ -421,7 +421,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     if (type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       return mayBeTainted((AnnotatedTypeMirror.AnnotatedDeclaredType) type);
     }
-    return !type.hasAnnotation(rUntainted);
+    return !type.hasPrimaryAnnotation(rUntainted);
   }
 
   /**
@@ -454,7 +454,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    *     otherwise.
    */
   public boolean hasUntaintedAnnotation(AnnotatedTypeMirror type) {
-    return type.hasAnnotation(rUntainted);
+    return type.hasPrimaryAnnotation(rUntainted);
   }
 
   /**
@@ -478,7 +478,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    *     edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotation, false otherwise.
    */
   public boolean hasPolyTaintedAnnotation(AnnotatedTypeMirror type) {
-    return type.hasAnnotation(rPolyTainted);
+    return type.hasPrimaryAnnotation(rPolyTainted);
   }
 
   public boolean isPolyOrUntainted(Tree tree) {

@@ -75,7 +75,7 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
           MethodInvocationNode node,
           boolean isTainted) {
     AnnotatedTypeMirror rAnno = aTypeFactory.getAnnotatedType(node.getTree());
-    if (aTypeFactory.isUnannotatedThirdParty(tree) || rAnno.hasAnnotation(RThis.class)) {
+    if (aTypeFactory.isUnannotatedThirdParty(tree) || rAnno.hasPrimaryAnnotation(RThis.class)) {
       if (node.getTarget().getReceiver() instanceof MethodInvocationNode) {
         handleSideEffect(
             tree,
@@ -111,12 +111,12 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
     JavaExpression je = JavaExpression.fromNode(node);
     List<String> calledMethods;
 
-    if (type.hasAnnotation(aTypeFactory.rTainted)) {
+    if (type.hasPrimaryAnnotation(aTypeFactory.rTainted)) {
       calledMethods = Collections.singletonList(calledMethod.toString());
       insertOrRefineRPossiblyValidated(result, je, calledMethods);
-    } else if (type.getAnnotation() != null
-        && aTypeFactory.isAccumulatorAnnotation(type.getAnnotation())) {
-      calledMethods = aTypeFactory.getAccumulatedValues(type.getAnnotation());
+    } else if (type.getPrimaryAnnotation() != null
+        && aTypeFactory.isAccumulatorAnnotation(type.getPrimaryAnnotation())) {
+      calledMethods = aTypeFactory.getAccumulatedValues(type.getPrimaryAnnotation());
       calledMethods.add(calledMethod.toString());
       insertOrRefineRPossiblyValidated(result, je, calledMethods);
     }
@@ -133,7 +133,7 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
       return;
     }
     AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(n.getTree());
-    if (type.hasAnnotation(aTypeFactory.rUntainted)) {
+    if (type.hasPrimaryAnnotation(aTypeFactory.rUntainted)) {
       JavaExpression je = JavaExpression.fromNode(n);
 
       @Nullable AccumulationValue thenVal = result.getThenStore().getValue(je);
