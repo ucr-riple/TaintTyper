@@ -5,7 +5,6 @@ import com.sun.source.tree.MethodInvocationTree;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RThis;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.checkerframework.common.accumulation.AccumulationAnalysis;
 import org.checkerframework.common.accumulation.AccumulationStore;
 import org.checkerframework.common.accumulation.AccumulationTransfer;
 import org.checkerframework.common.accumulation.AccumulationValue;
@@ -23,7 +22,7 @@ import java.util.List;
 public class UCRTaintingTransfer extends AccumulationTransfer {
   private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
 
-  public UCRTaintingTransfer(AccumulationAnalysis analysis) {
+  public UCRTaintingTransfer(UCRTaintingAnalysis analysis) {
     super(analysis);
     aTypeFactory = (UCRTaintingAnnotatedTypeFactory) analysis.getTypeFactory();
   }
