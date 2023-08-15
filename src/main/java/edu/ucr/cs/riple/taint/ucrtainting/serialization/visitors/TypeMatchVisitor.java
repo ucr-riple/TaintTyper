@@ -1,10 +1,11 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import java.util.ArrayList;
-import java.util.List;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.visitor.AbstractAtmComboVisitor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Visitor for computing the required set of annotations on the declaration of an element which can
@@ -20,13 +21,13 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  protected String defaultErrorMessage(
+  public String defaultErrorMessage(
       AnnotatedTypeMirror type1, AnnotatedTypeMirror type2, Void unused) {
     return null;
   }
 
   @Override
-  protected List<List<Integer>> defaultAction(
+  public List<List<Integer>> defaultAction(
       AnnotatedTypeMirror found, AnnotatedTypeMirror required, Void unused) {
     throw new UnsupportedOperationException(
         "Did not expect type match of found:"

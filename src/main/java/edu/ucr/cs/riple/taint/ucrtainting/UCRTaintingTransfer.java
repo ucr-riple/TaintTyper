@@ -4,33 +4,34 @@ import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RThis;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import java.util.Collections;
-import java.util.List;
-import javax.lang.model.type.TypeKind;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.common.accumulation.AccumulationStore;
+import org.checkerframework.common.accumulation.AccumulationTransfer;
+import org.checkerframework.common.accumulation.AccumulationValue;
 import org.checkerframework.dataflow.analysis.TransferInput;
 import org.checkerframework.dataflow.analysis.TransferResult;
 import org.checkerframework.dataflow.cfg.node.*;
 import org.checkerframework.dataflow.expression.JavaExpression;
-import org.checkerframework.framework.flow.CFAnalysis;
-import org.checkerframework.framework.flow.CFStore;
-import org.checkerframework.framework.flow.CFTransfer;
-import org.checkerframework.framework.flow.CFValue;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.AnnotationMirrorSet;
 
-public class UCRTaintingTransfer extends CFTransfer {
+import javax.lang.model.type.TypeKind;
+import java.util.Collections;
+import java.util.List;
+
+public class UCRTaintingTransfer extends AccumulationTransfer {
   private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
 
-  public UCRTaintingTransfer(CFAnalysis analysis) {
+  public UCRTaintingTransfer(UCRTaintingAnalysis analysis) {
     super(analysis);
     aTypeFactory = (UCRTaintingAnnotatedTypeFactory) analysis.getTypeFactory();
   }
 
   @Override
-  public TransferResult<CFValue, CFStore> visitMethodInvocation(
-      MethodInvocationNode methodInvocationNode, TransferInput<CFValue, CFStore> in) {
+  public TransferResult<AccumulationValue, AccumulationStore> visitMethodInvocation(
+          MethodInvocationNode methodInvocationNode, TransferInput<AccumulationValue, AccumulationStore> in) {
 
-    TransferResult<CFValue, CFStore> result = super.visitMethodInvocation(methodInvocationNode, in);
+    TransferResult<AccumulationValue, AccumulationStore> result = super.visitMethodInvocation(methodInvocationNode, in);
 
     // Assume any receiver or argument involved in
     // a boolean method invocation to be validated
@@ -69,12 +70,12 @@ public class UCRTaintingTransfer extends CFTransfer {
   }
 
   private void handleSideEffect(
-      ExpressionTree tree,
-      TransferResult<CFValue, CFStore> result,
-      MethodInvocationNode node,
-      boolean isTainted) {
+          ExpressionTree tree,
+          TransferResult<AccumulationValue, AccumulationStore> result,
+          MethodInvocationNode node,
+          boolean isTainted) {
     AnnotatedTypeMirror rAnno = aTypeFactory.getAnnotatedType(node.getTree());
-    if (aTypeFactory.isUnannotatedThirdParty(tree) || rAnno.hasAnnotation(RThis.class)) {
+    if (aTypeFactory.isUnannotatedThirdParty(tree) || rAnno.hasPrimaryAnnotation(RThis.class)) {
       if (node.getTarget().getReceiver() instanceof MethodInvocationNode) {
         handleSideEffect(
             tree,
@@ -105,54 +106,47 @@ public class UCRTaintingTransfer extends CFTransfer {
   }
 
   private void makePossiblyValidated(
-      TransferResult<CFValue, CFStore> result, Node node, Node calledMethod) {
+          TransferResult<AccumulationValue, AccumulationStore> result, Node node, Node calledMethod) {
     AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(node.getTree());
     JavaExpression je = JavaExpression.fromNode(node);
     List<String> calledMethods;
 
-    if (type.hasAnnotation(aTypeFactory.rTainted)) {
+    if (type.hasPrimaryAnnotation(aTypeFactory.rTainted)) {
       calledMethods = Collections.singletonList(calledMethod.toString());
       insertOrRefineRPossiblyValidated(result, je, calledMethods);
-    } else if (type.getAnnotation() != null
-        && aTypeFactory.isAccumulatorAnnotation(type.getAnnotation())) {
-      calledMethods = aTypeFactory.getAccumulatedValues(type.getAnnotation());
+    } else if (type.getPrimaryAnnotation() != null
+        && aTypeFactory.isAccumulatorAnnotation(type.getPrimaryAnnotation())) {
+      calledMethods = aTypeFactory.getAccumulatedValues(type.getPrimaryAnnotation());
       calledMethods.add(calledMethod.toString());
       insertOrRefineRPossiblyValidated(result, je, calledMethods);
     }
   }
 
   private void insertOrRefineRPossiblyValidated(
-      TransferResult<CFValue, CFStore> result, JavaExpression je, List<String> calledMethods) {
+          TransferResult<AccumulationValue, AccumulationStore> result, JavaExpression je, List<String> calledMethods) {
     result.getThenStore().insertOrRefine(je, aTypeFactory.rPossiblyValidatedAM(calledMethods));
     result.getElseStore().insertOrRefine(je, aTypeFactory.rPossiblyValidatedAM(calledMethods));
   }
 
-  private void makeStoresTainted(TransferResult<CFValue, CFStore> result, Node n) {
+  private void makeStoresTainted(TransferResult<AccumulationValue, AccumulationStore> result, Node n) {
     if (n.getTree() == null) {
       return;
     }
     AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(n.getTree());
-    if (type.hasAnnotation(aTypeFactory.rUntainted)) {
+    if (type.hasPrimaryAnnotation(aTypeFactory.rUntainted)) {
       JavaExpression je = JavaExpression.fromNode(n);
 
-      CFValue thenVal = result.getThenStore().getValue(je);
+      @Nullable AccumulationValue thenVal = result.getThenStore().getValue(je);
+
       if (thenVal != null) {
-        thenVal =
-            new CFValue(
-                analysis,
-                AnnotationMirrorSet.singleton(aTypeFactory.rTainted),
-                thenVal.getUnderlyingType());
+        thenVal = analysis.createAbstractValue(AnnotationMirrorSet.singleton(aTypeFactory.rTainted), thenVal.getUnderlyingType());
         result.getThenStore().replaceValue(je, thenVal);
       }
 
-      CFValue elseVal = result.getElseStore().getValue(je);
+      @Nullable AccumulationValue elseVal = result.getElseStore().getValue(je);
       if (elseVal != null) {
-        elseVal =
-            new CFValue(
-                analysis,
-                AnnotationMirrorSet.singleton(aTypeFactory.rTainted),
-                elseVal.getUnderlyingType());
-        result.getElseStore().replaceValue(je, elseVal);
+        elseVal = analysis.createAbstractValue(AnnotationMirrorSet.singleton(aTypeFactory.rTainted), elseVal.getUnderlyingType());
+        result.getThenStore().replaceValue(je, elseVal);
       }
     }
   }

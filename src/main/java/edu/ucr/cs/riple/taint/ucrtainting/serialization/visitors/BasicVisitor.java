@@ -1,21 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
-import com.sun.source.tree.ArrayAccessTree;
-import com.sun.source.tree.BinaryTree;
-import com.sun.source.tree.CompoundAssignmentTree;
-import com.sun.source.tree.ConditionalExpressionTree;
-import com.sun.source.tree.ExpressionStatementTree;
-import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.IdentifierTree;
-import com.sun.source.tree.LiteralTree;
-import com.sun.source.tree.MemberSelectTree;
-import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.tree.NewArrayTree;
-import com.sun.source.tree.NewClassTree;
-import com.sun.source.tree.ParenthesizedTree;
-import com.sun.source.tree.PrimitiveTypeTree;
-import com.sun.source.tree.TypeCastTree;
-import com.sun.source.tree.UnaryTree;
+import com.sun.source.tree.*;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.util.Context;
@@ -23,13 +8,14 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.javacutil.TreeUtils;
+
+import javax.annotation.Nullable;
+import javax.lang.model.element.Element;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import javax.annotation.Nullable;
-import javax.lang.model.element.Element;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.javacutil.TreeUtils;
 
 /** This visitor directly annotates the element declaration to match the required type. */
 public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
@@ -53,7 +39,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
 
   @Override
   public Set<Fix> visitIdentifier(IdentifierTree node, Void unused) {
-    if (typeFactory.mayBeTainted(node)) {
+    if (node != null && typeFactory.mayBeTainted(node)) {
       Fix fix = buildFixForElement(TreeUtils.elementFromTree(node));
       return fix == null ? Set.of() : Set.of(fix);
     }
@@ -63,11 +49,11 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   @Override
   public Set<Fix> visitConditionalExpression(ConditionalExpressionTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
-    if (typeFactory.mayBeTainted(node.getTrueExpression())) {
+    if (node.getTrueExpression() != null && typeFactory.mayBeTainted(node.getTrueExpression())) {
       fixes.addAll(
           node.getTrueExpression().accept(new FixVisitor(context, typeFactory, pair), null));
     }
-    if (typeFactory.mayBeTainted(node.getFalseExpression())) {
+    if (node.getFalseExpression() != null && typeFactory.mayBeTainted(node.getFalseExpression())) {
       fixes.addAll(
           node.getFalseExpression().accept(new FixVisitor(context, typeFactory, pair), null));
     }
@@ -79,7 +65,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
     for (ExpressionTree arg : node.getArguments()) {
-      if (typeFactory.mayBeTainted(arg)) {
+      if (arg != null && typeFactory.mayBeTainted(arg)) {
         // Required can be null here, since we only need the passed parameters to be untainted.
         fixes.addAll(arg.accept(new FixVisitor(context, typeFactory, pair), unused));
       }
@@ -90,7 +76,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   @Override
   public Set<Fix> visitTypeCast(TypeCastTree node, Void unused) {
     Set<Fix> fixes = new HashSet<>();
-    if (typeFactory.mayBeTainted(node.getExpression())) {
+    if (node.getExpression() != null && typeFactory.mayBeTainted(node.getExpression())) {
       fixes.addAll(node.getExpression().accept(new FixVisitor(context, typeFactory, pair), unused));
     }
     return fixes;
@@ -110,7 +96,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     // Add a fix for each argument.
     if (node.getInitializers() != null) {
       for (ExpressionTree arg : node.getInitializers()) {
-        if (typeFactory.mayBeTainted(arg)) {
+        if (arg != null && typeFactory.mayBeTainted(arg)) {
           fixes.addAll(
               arg.accept(
                   new FixVisitor(
@@ -164,7 +150,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
 
   @Override
   public Set<Fix> visitMemberSelect(MemberSelectTree node, Void unused) {
-    if (typeFactory.mayBeTainted(node.getExpression())) {
+    if (node.getExpression() != null && typeFactory.mayBeTainted(node.getExpression())) {
       Element member = TreeUtils.elementFromUse(node);
       if (!(member instanceof Symbol)) {
         return Set.of();

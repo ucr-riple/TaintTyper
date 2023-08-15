@@ -1,24 +1,18 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.LiteralTree;
-import com.sun.source.tree.MemberSelectTree;
-import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.tree.NewArrayTree;
-import com.sun.source.tree.NewClassTree;
-import com.sun.source.tree.Tree;
-import com.sun.source.tree.VariableTree;
+import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.TreeUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class UCRTaintingTreeAnnotator extends TreeAnnotator {
 
@@ -132,7 +126,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
     boolean allUntainted = true;
     if (initializers != null) {
       for (ExpressionTree initializer : initializers) {
-        if (typeFactory.mayBeTainted(initializer)) {
+        if (initializer != null && typeFactory.mayBeTainted(initializer)) {
           allUntainted = false;
           break;
         }
