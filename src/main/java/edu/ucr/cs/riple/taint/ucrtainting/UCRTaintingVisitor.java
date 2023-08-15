@@ -1,13 +1,14 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.Tree;
-import javax.lang.model.element.ExecutableElement;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
 import org.checkerframework.common.accumulation.AccumulationVisitor;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.org.plumelib.util.ArraysPlume;
+
+import javax.lang.model.element.ExecutableElement;
 
 /** Visitor for the {@link UCRTaintingChecker}. */
 public class UCRTaintingVisitor extends AccumulationVisitor {
@@ -30,7 +31,7 @@ public class UCRTaintingVisitor extends AccumulationVisitor {
       AnnotatedExecutableType constructorType, ExecutableElement constructorElement) {}
 
   @Override
-  protected void commonAssignmentCheck(
+  protected boolean commonAssignmentCheck(
       AnnotatedTypeMirror varType,
       AnnotatedTypeMirror valueType,
       Tree valueTree,
@@ -52,5 +53,6 @@ public class UCRTaintingVisitor extends AccumulationVisitor {
               pair,
               ArraysPlume.concatenate(extraArgs, valueTypeString, varTypeString));
     }
+    return success;
   }
 }
