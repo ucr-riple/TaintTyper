@@ -10,6 +10,7 @@ class IteratorForEach<T> {
     }
 
     public void test(Consumer<? super T> action) {
-        it.forEachRemaining(action);
+//        it.forEachRemaining(action);
+        //TODO:: turn on when checker upgraded to 3.38.0
     }
 }
