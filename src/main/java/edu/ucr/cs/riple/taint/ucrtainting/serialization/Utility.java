@@ -12,17 +12,18 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import java.net.URI;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.List;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.javacutil.ElementUtils;
+import org.checkerframework.javacutil.TreeUtils;
+
 import javax.annotation.Nullable;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.javacutil.ElementUtils;
-import org.checkerframework.javacutil.TreeUtils;
+import java.net.URI;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
 
 /** Utility methods for the serialization service. */
 public class Utility {
@@ -298,6 +299,9 @@ public class Utility {
     }
     Symbol.ClassSymbol encClass =
         symbol instanceof Symbol.ClassSymbol ? (Symbol.ClassSymbol) symbol : symbol.enclClass();
+    if(encClass == null) {
+      return false;
+    }
     String packageName = encClass.packge().toString();
     if (packageName.equals("unnamed package")) {
       packageName = "";
