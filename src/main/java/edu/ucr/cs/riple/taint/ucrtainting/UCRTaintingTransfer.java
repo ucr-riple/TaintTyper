@@ -136,17 +136,18 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
     if (type.hasPrimaryAnnotation(aTypeFactory.rUntainted)) {
       JavaExpression je = JavaExpression.fromNode(n);
 
-      @Nullable AccumulationValue thenVal = result.getThenStore().getValue(je);
+      if (!je.containsUnknown()) {
+        AccumulationValue thenVal = result.getThenStore().getValue(je);
+        if (thenVal != null) {
+          thenVal = analysis.createAbstractValue(AnnotationMirrorSet.singleton(aTypeFactory.rTainted), thenVal.getUnderlyingType());
+          result.getThenStore().replaceValue(je, thenVal);
+        }
 
-      if (thenVal != null) {
-        thenVal = analysis.createAbstractValue(AnnotationMirrorSet.singleton(aTypeFactory.rTainted), thenVal.getUnderlyingType());
-        result.getThenStore().replaceValue(je, thenVal);
-      }
-
-      @Nullable AccumulationValue elseVal = result.getElseStore().getValue(je);
-      if (elseVal != null) {
-        elseVal = analysis.createAbstractValue(AnnotationMirrorSet.singleton(aTypeFactory.rTainted), elseVal.getUnderlyingType());
-        result.getThenStore().replaceValue(je, elseVal);
+        AccumulationValue elseVal = result.getElseStore().getValue(je);
+        if (elseVal != null) {
+          elseVal = analysis.createAbstractValue(AnnotationMirrorSet.singleton(aTypeFactory.rTainted), elseVal.getUnderlyingType());
+          result.getThenStore().replaceValue(je, elseVal);
+        }
       }
     }
   }

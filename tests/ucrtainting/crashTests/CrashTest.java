@@ -15,4 +15,3 @@ public class CrashTest {
         results.toArray((Object[]) Array.newInstance(Object.class, results.size()));
     }
 }
-
