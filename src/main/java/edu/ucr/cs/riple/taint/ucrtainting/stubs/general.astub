@@ -109,21 +109,3 @@ public class EntityManager {
 	public Query createQuery(@RUntainted CriteriaUpdate updateQuery);
 	public Query createQuery(@RUntainted String qlString);
 }
-
-package io.micronaut.aop;
-public interface MethodInterceptor<T, R> extends Interceptor<T, R> {
-	R intercept(@RUntainted MethodInvocationContext<T, R> context);
-}
-
-package io.micronaut.data.intercept;
-public interface DataInterceptor<T, R> {
-
-    /**
-     * Intercepts a data method execution.
-     *
-     * @param methodKey The method key
-     * @param context The context
-     * @return The result
-     */
-    R intercept(RepositoryMethodKey methodKey, @RUntainted MethodInvocationContext<T, R> context);
-}
