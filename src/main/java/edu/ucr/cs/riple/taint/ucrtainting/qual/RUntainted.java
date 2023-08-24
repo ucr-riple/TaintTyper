@@ -1,7 +1,10 @@
 package edu.ucr.cs.riple.taint.ucrtainting.qual;
 
+import org.checkerframework.framework.qual.LiteralKind;
+import org.checkerframework.framework.qual.QualifierForLiterals;
+import org.checkerframework.framework.qual.SubtypeOf;
+
 import java.lang.annotation.*;
-import org.checkerframework.framework.qual.*;
 
 /**
  * Denotes a reference that is untainted, i.e. can be trusted.
@@ -13,5 +16,4 @@ import org.checkerframework.framework.qual.*;
 @Target({ElementType.TYPE_USE, ElementType.TYPE_PARAMETER})
 @SubtypeOf(RPossiblyValidated.class)
 @QualifierForLiterals(LiteralKind.STRING)
-@DefaultFor(TypeUseLocation.LOWER_BOUND)
 public @interface RUntainted {}
