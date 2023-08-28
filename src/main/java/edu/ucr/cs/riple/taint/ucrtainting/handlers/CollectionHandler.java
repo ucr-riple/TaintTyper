@@ -29,11 +29,11 @@ public class CollectionHandler extends AbstractHandler {
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree, AnnotatedTypeMirror type) {
     super.visitMethodInvocation(tree, type);
-    Symbol.MethodSymbol symbol = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
+    Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
     if (!(type instanceof AnnotatedTypeMirror.AnnotatedArrayType)) {
       return;
     }
-    if (!isToArrayWithTypeArgMethod(symbol, types)) {
+    if (!isToArrayWithTypeArgMethod(calledMethod, types)) {
       return;
     }
     ExpressionTree receiver = TreeUtils.getReceiverTree(tree);

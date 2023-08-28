@@ -5,6 +5,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.Base64;
 import java.util.stream.Stream;
 import javax.servlet.http.*;
 import org.springframework.web.context.WebApplicationContext;
@@ -52,6 +53,14 @@ class Foo {
   public @RUntainted Stream<String> testOnStreamLambda(List<String> s) {
     // :: error: (return)
     return s.stream().filter(x -> x.length() > 0);
+  }
+
+  public void test() {
+    @RUntainted String nonceValue = Base64.getUrlEncoder().encodeToString(getRandomBytes());
+  }
+
+  private @RUntainted byte[] getRandomBytes() {
+    return new byte[0];
   }
 
   public void testCheckTypeForArgumentsBeforeCallingFixVisitor(

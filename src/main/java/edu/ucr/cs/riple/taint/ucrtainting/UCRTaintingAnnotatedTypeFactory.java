@@ -432,6 +432,12 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     if (type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       return mayBeTainted((AnnotatedTypeMirror.AnnotatedDeclaredType) type);
     }
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      boolean componentMayBeTainted = mayBeTainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
+      if(!componentMayBeTainted) {
+        return false;
+      }
+    }
     return !type.hasAnnotation(rUntainted);
   }
 

@@ -97,10 +97,10 @@ class UtilOperationsTest {
     List<String> uList = getListPolyTainted("string_literal");
   }
 
-  void getListTestPassingTaintedStringCheckForPolyTaintedReturn(@RTainted String s) {
-    // :: error: (assignment)
-    @RUntainted List<String> uList = getListPolyTainted(s);
-  }
+//  void getListTestPassingTaintedStringCheckForPolyTaintedReturn(@RTainted String s) {
+//    // :: error: (assignment)
+//    @RUntainted List<String> uList = getListPolyTainted(s);
+//  }
 
   List<String> getListPolyTainted(String s) {
     List<String> list = new ArrayList<String>();

@@ -49,7 +49,7 @@ public class ThirdPartyHandler extends AbstractHandler {
   private boolean shouldApplyHeuristic(ExpressionTree receiver, Symbol.MethodSymbol calledMethod) {
     Type returnType = calledMethod.getReturnType();
     // check method type arguments
-    if (calledMethod.type.getParameterTypes().stream()
+    if (calledMethod.type.getTypeArguments().stream()
         .anyMatch(type -> Utility.containsTypeArgument(returnType, (Type.TypeVar) type))) {
       return false;
     }
@@ -57,7 +57,7 @@ public class ThirdPartyHandler extends AbstractHandler {
       return true;
     }
     Element receiverElement = TreeUtils.elementFromUse(receiver);
-    return Utility.getType(receiverElement).getParameterTypes().stream()
+    return Utility.getType(receiverElement).tsym.type.getTypeArguments().stream()
         .noneMatch(type -> Utility.containsTypeArgument(returnType, (Type.TypeVar) type));
   }
 }
