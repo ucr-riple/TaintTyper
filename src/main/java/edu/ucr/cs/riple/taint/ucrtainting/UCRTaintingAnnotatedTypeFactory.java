@@ -333,20 +333,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   /**
-   * Checks if the receiver tree is available
-   *
-   * @param node to check for
-   * @return true if available, false otherwise
-   */
-  public boolean hasReceiver(ExpressionTree node) {
-    if (node != null) {
-      ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
-      return receiverTree != null;
-    }
-    return false;
-  }
-
-  /**
    * Checks if the package for the node is present in already annotated according to provided
    * option.
    *
@@ -433,29 +419,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     if (type == null) {
       return true;
     }
-    if (type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-      return mayBeTainted((AnnotatedTypeMirror.AnnotatedDeclaredType) type);
-    }
-    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-      boolean componentMayBeTainted =
-          mayBeTainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
-      if (!componentMayBeTainted) {
-        return false;
-      }
-    }
-    return !type.hasPrimaryAnnotation(rUntainted);
-  }
-
-  /**
-   * Checks if the given declared type may be tainted
-   *
-   * @param type The given declared type
-   * @return True if the given declared type may be tainted, false otherwise.
-   */
-  public boolean mayBeTainted(AnnotatedTypeMirror.AnnotatedDeclaredType type) {
-    if (type == null) {
-      return true;
-    }
     return !hasUntaintedAnnotation(type);
   }
 
@@ -504,6 +467,10 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
 
   public boolean isPolyOrUntainted(Tree tree) {
     AnnotatedTypeMirror type = getAnnotatedType(tree);
+    return isPolyOrUntainted(type);
+  }
+
+  public boolean isPolyOrUntainted(AnnotatedTypeMirror type) {
     return hasPolyTaintedAnnotation(type) || !mayBeTainted(type);
   }
 
@@ -524,9 +491,9 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    */
   public void makeDeepUntainted(AnnotatedTypeMirror type) {
     makeUntainted(type);
-    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-      makeDeepUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
-    }
+    //    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+    //      makeDeepUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
+    //    }
     if (type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
           (AnnotatedTypeMirror.AnnotatedDeclaredType) type;

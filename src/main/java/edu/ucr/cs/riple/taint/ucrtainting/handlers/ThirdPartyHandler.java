@@ -38,7 +38,7 @@ public class ThirdPartyHandler extends AbstractHandler {
       return;
     }
     // Check passed arguments, if any of them is tainted, we should not make it untainted.
-    boolean noTaintedParams = tree.getArguments().stream().allMatch(typeFactory::isPolyOrUntainted);
+    boolean noTaintedParams = tree.getArguments().stream().allMatch(this::polyOrUntaintedParameter);
     if (noTaintedParams) {
       if (shouldApplyHeuristic(receiver, calledMethod)) {
         typeFactory.makeDeepUntainted(type);
@@ -59,5 +59,17 @@ public class ThirdPartyHandler extends AbstractHandler {
     Element receiverElement = TreeUtils.elementFromUse(receiver);
     return Utility.getType(receiverElement).tsym.type.getTypeArguments().stream()
         .noneMatch(type -> Utility.containsTypeArgument(returnType, (Type.TypeVar) type));
+  }
+
+  private boolean polyOrUntaintedParameter(ExpressionTree argument) {
+    AnnotatedTypeMirror type = typeFactory.getAnnotatedType(argument);
+    if (typeFactory.isPolyOrUntainted(type)) {
+      return true;
+    }
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      return typeFactory.isPolyOrUntainted(
+          ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
+    }
+    return false;
   }
 }

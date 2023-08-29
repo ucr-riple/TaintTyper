@@ -92,14 +92,12 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
   }
 
   private boolean isSideEffectCandidate(MethodInvocationNode methodInvocationNode) {
-    if (methodInvocationNode.getArguments().size() > 0) {
+    if (!methodInvocationNode.getArguments().isEmpty()) {
       Node receiver = methodInvocationNode.getTarget().getReceiver();
       if (receiver != null && !(receiver instanceof ImplicitThisNode)) {
-        if (receiver instanceof LocalVariableNode
+        return receiver instanceof LocalVariableNode
             || receiver instanceof FieldAccessNode
-            || receiver instanceof MethodInvocationNode) {
-          return true;
-        }
+            || receiver instanceof MethodInvocationNode;
       }
     }
     return false;

@@ -138,6 +138,9 @@ public class Utility {
         }
       }
     }
+    if (type instanceof Type.ArrayType) {
+      return containsTypeArgument(((Type.ArrayType) type).getComponentType(), var);
+    }
     return false;
   }
 

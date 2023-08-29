@@ -48,9 +48,10 @@ public class CollectionHandler extends AbstractHandler {
     if (collectionType == null) {
       return;
     }
-    if (((Type.ClassType) collectionType).typarams_field.size() == 0) {
+    if (((Type.ClassType) collectionType).typarams_field.isEmpty()) {
       return;
     }
+    Type c = ((Type.ClassType) collectionType).typarams_field.get(0);
     if (Utility.hasUntaintedAnnotation(((Type.ClassType) collectionType).typarams_field.get(0))) {
       typeFactory.makeUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
     }
