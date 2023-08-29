@@ -1,5 +1,4 @@
-import org.checkerframework.common.returnsreceiver.qual.This;
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted;
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RThis;
 
 /*
  * Copyright (c) 1994, 2013, Oracle and/or its affiliates. All rights reserved.
@@ -263,14 +262,14 @@ import java.util.Arrays;
     }
 
     @Override
-    public synchronized @This StringBuffer append(Object obj) {
+    public synchronized @RThis StringBuffer append(Object obj) {
         toStringCache = null;
         super.append(String.valueOf(obj));
         return this;
     }
 
     @Override
-    public synchronized @This StringBuffer append(String str) {
+    public synchronized @RThis StringBuffer append(String str) {
         toStringCache = null;
         super.append(str);
         return this;
@@ -300,7 +299,7 @@ import java.util.Arrays;
      * @return  a reference to this object.
      * @since 1.4
      */
-    public synchronized @This StringBuffer append(StringBuffer sb) {
+    public synchronized @RThis StringBuffer append(StringBuffer sb) {
         toStringCache = null;
         super.append(sb);
         return this;
@@ -310,7 +309,7 @@ import java.util.Arrays;
      * @since 1.8
      */
     @Override
-    synchronized @This StringBuffer append(AbstractStringBuilder asb) {
+    synchronized @RThis StringBuffer append(AbstractStringBuilder asb) {
         toStringCache = null;
         super.append(asb);
         return this;
@@ -338,7 +337,7 @@ import java.util.Arrays;
      * @since 1.5
      */
     @Override
-    public synchronized @This StringBuffer append(CharSequence s) {
+    public synchronized @RThis StringBuffer append(CharSequence s) {
         toStringCache = null;
         super.append(s);
         return this;
@@ -349,7 +348,7 @@ import java.util.Arrays;
      * @since      1.5
      */
     @Override
-    public synchronized @This StringBuffer append(CharSequence s, int start, int end)
+    public synchronized @RThis StringBuffer append(CharSequence s, int start, int end)
     {
         toStringCache = null;
         super.append(s, start, end);
@@ -357,7 +356,7 @@ import java.util.Arrays;
     }
 
     @Override
-    public synchronized @This StringBuffer append(char[] str) {
+    public synchronized @RThis StringBuffer append(char[] str) {
         toStringCache = null;
         super.append(str);
         return this;
@@ -367,28 +366,28 @@ import java.util.Arrays;
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public synchronized @This StringBuffer append(char[] str, int offset, int len) {
+    public synchronized @RThis StringBuffer append(char[] str, int offset, int len) {
         toStringCache = null;
         super.append(str, offset, len);
         return this;
     }
 
     @Override
-    public synchronized @This StringBuffer append(boolean b) {
+    public synchronized @RThis StringBuffer append(boolean b) {
         toStringCache = null;
         super.append(b);
         return this;
     }
 
     @Override
-    public synchronized @This StringBuffer append(char c) {
+    public synchronized @RThis StringBuffer append(char c) {
         toStringCache = null;
         super.append(c);
         return this;
     }
 
     @Override
-    public synchronized @This StringBuffer append(int i) {
+    public synchronized @RThis StringBuffer append(int i) {
         toStringCache = null;
         super.append(i);
         return this;
@@ -398,28 +397,28 @@ import java.util.Arrays;
      * @since 1.5
      */
     @Override
-    public synchronized @This StringBuffer appendCodePoint(int codePoint) {
+    public synchronized @RThis StringBuffer appendCodePoint(int codePoint) {
         toStringCache = null;
         super.appendCodePoint(codePoint);
         return this;
     }
 
     @Override
-    public synchronized @This StringBuffer append(long lng) {
+    public synchronized @RThis StringBuffer append(long lng) {
         toStringCache = null;
         super.append(lng);
         return this;
     }
 
     @Override
-    public synchronized @This StringBuffer append(float f) {
+    public synchronized @RThis StringBuffer append(float f) {
         toStringCache = null;
         super.append(f);
         return this;
     }
 
     @Override
-    public synchronized @This StringBuffer append(double d) {
+    public synchronized @RThis StringBuffer append(double d) {
         toStringCache = null;
         super.append(d);
         return this;
@@ -430,7 +429,7 @@ import java.util.Arrays;
      * @since      1.2
      */
     @Override
-    public synchronized @This StringBuffer delete(int start, int end) {
+    public synchronized @RThis StringBuffer delete(int start, int end) {
         toStringCache = null;
         super.delete(start, end);
         return this;
@@ -441,7 +440,7 @@ import java.util.Arrays;
      * @since      1.2
      */
     @Override
-    public synchronized @This StringBuffer deleteCharAt(int index) {
+    public synchronized @RThis StringBuffer deleteCharAt(int index) {
         toStringCache = null;
         super.deleteCharAt(index);
         return this;
@@ -452,7 +451,7 @@ import java.util.Arrays;
      * @since      1.2
      */
     @Override
-    public synchronized @This StringBuffer replace(int start, int end, String str) {
+    public synchronized @RThis StringBuffer replace(int start, int end, String str) {
         toStringCache = null;
         super.replace(start, end, str);
         return this;
@@ -490,7 +489,7 @@ import java.util.Arrays;
      * @since      1.2
      */
     @Override
-    public synchronized @This StringBuffer insert(int index, char[] str, int offset,
+    public synchronized @RThis StringBuffer insert(int index, char[] str, int offset,
                                             int len)
     {
         toStringCache = null;
@@ -502,7 +501,7 @@ import java.util.Arrays;
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public synchronized @This StringBuffer insert(int offset, Object obj) {
+    public synchronized @RThis StringBuffer insert(int offset, Object obj) {
         toStringCache = null;
         super.insert(offset, String.valueOf(obj));
         return this;
@@ -512,7 +511,7 @@ import java.util.Arrays;
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public synchronized @This StringBuffer insert(int offset, String str) {
+    public synchronized @RThis StringBuffer insert(int offset, String str) {
         toStringCache = null;
         super.insert(offset, str);
         return this;
@@ -522,7 +521,7 @@ import java.util.Arrays;
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public synchronized @This StringBuffer insert(int offset, char[] str) {
+    public synchronized @RThis StringBuffer insert(int offset, char[] str) {
         toStringCache = null;
         super.insert(offset, str);
         return this;
@@ -533,7 +532,7 @@ import java.util.Arrays;
      * @since      1.5
      */
     @Override
-    public @This StringBuffer insert(int dstOffset, CharSequence s) {
+    public @RThis StringBuffer insert(int dstOffset, CharSequence s) {
         // Note, synchronization achieved via invocations of other StringBuffer methods
         // after narrowing of s to specific type
         // Ditto for toStringCache clearing
@@ -546,7 +545,7 @@ import java.util.Arrays;
      * @since      1.5
      */
     @Override
-    public synchronized @This StringBuffer insert(int dstOffset, CharSequence s,
+    public synchronized @RThis StringBuffer insert(int dstOffset, CharSequence s,
             int start, int end)
     {
         toStringCache = null;
@@ -558,7 +557,7 @@ import java.util.Arrays;
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public  @This StringBuffer insert(int offset, boolean b) {
+    public  @RThis StringBuffer insert(int offset, boolean b) {
         // Note, synchronization achieved via invocation of StringBuffer insert(int, String)
         // after conversion of b to String by super class method
         // Ditto for toStringCache clearing
@@ -570,7 +569,7 @@ import java.util.Arrays;
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public synchronized @This StringBuffer insert(int offset, char c) {
+    public synchronized @RThis StringBuffer insert(int offset, char c) {
         toStringCache = null;
         super.insert(offset, c);
         return this;
@@ -580,7 +579,7 @@ import java.util.Arrays;
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public @This StringBuffer insert(int offset, int i) {
+    public @RThis StringBuffer insert(int offset, int i) {
         // Note, synchronization achieved via invocation of StringBuffer insert(int, String)
         // after conversion of i to String by super class method
         // Ditto for toStringCache clearing
@@ -592,7 +591,7 @@ import java.util.Arrays;
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public @This StringBuffer insert(int offset, long l) {
+    public @RThis StringBuffer insert(int offset, long l) {
         // Note, synchronization achieved via invocation of StringBuffer insert(int, String)
         // after conversion of l to String by super class method
         // Ditto for toStringCache clearing
@@ -604,7 +603,7 @@ import java.util.Arrays;
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public @This StringBuffer insert(int offset, float f) {
+    public @RThis StringBuffer insert(int offset, float f) {
         // Note, synchronization achieved via invocation of StringBuffer insert(int, String)
         // after conversion of f to String by super class method
         // Ditto for toStringCache clearing
@@ -616,7 +615,7 @@ import java.util.Arrays;
      * @throws StringIndexOutOfBoundsException {@inheritDoc}
      */
     @Override
-    public @This StringBuffer insert(int offset, double d) {
+    public @RThis StringBuffer insert(int offset, double d) {
         // Note, synchronization achieved via invocation of StringBuffer insert(int, String)
         // after conversion of d to String by super class method
         // Ditto for toStringCache clearing
@@ -662,18 +661,10 @@ import java.util.Arrays;
      * @since   JDK1.0.2
      */
     @Override
-    public synchronized @This StringBuffer reverse() {
+    public synchronized @RThis StringBuffer reverse() {
         toStringCache = null;
         super.reverse();
         return this;
-    }
-
-    @Override
-    public synchronized String toString() {
-        if (toStringCache == null) {
-            toStringCache = Arrays.copyOfRange(value, 0, count);
-        }
-        return new String(toStringCache, true);
     }
 
     /**

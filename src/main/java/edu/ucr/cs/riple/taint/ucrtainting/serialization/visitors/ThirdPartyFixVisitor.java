@@ -8,10 +8,11 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import org.checkerframework.javacutil.TreeUtils;
+
+import javax.lang.model.element.Element;
 import java.util.HashSet;
 import java.util.Set;
-import javax.lang.model.element.Element;
-import org.checkerframework.javacutil.TreeUtils;
 
 /**
  * Visitor for handling calls to third party libraries. This visitor gets to the required type by
@@ -47,7 +48,7 @@ public class ThirdPartyFixVisitor extends BasicVisitor {
     }
     // Add a fix for each passed argument.
     for (ExpressionTree argument : node.getArguments()) {
-      if (typeFactory.mayBeTainted(argument)) {
+      if (argument != null && typeFactory.mayBeTainted(argument)) {
         fixes.addAll(argument.accept(new FixVisitor(context, typeFactory, null), unused));
       }
     }

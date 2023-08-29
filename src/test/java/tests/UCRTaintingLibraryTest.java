@@ -1,8 +1,9 @@
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
-import java.io.File;
-import java.util.List;
 import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
 import org.junit.runners.Parameterized.Parameters;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Test runner for tests of the UCR Tainting Checker.
@@ -33,7 +34,9 @@ public class UCRTaintingLibraryTest extends CheckerFrameworkPerDirectoryTest {
       "ucrtainting/javaUtilTest",
       "ucrtainting/micronaut",
       "ucrtainting/stringBuilderTests",
-      "ucrtainting/thirdPartyTests"
+      "ucrtainting/thirdPartyTests",
+      "ucrtainting/springSecOAuth",
+      "ucrtainting/crashTests"
     };
   }
 }

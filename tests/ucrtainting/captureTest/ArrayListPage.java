@@ -11,4 +11,7 @@ class ArrayListPage<E> extends ArrayList<E> {
     //        super(list);
     super(Collections.emptyList());
   }
+
+  void foo(List<? super Object> a) {
+  }
 }
