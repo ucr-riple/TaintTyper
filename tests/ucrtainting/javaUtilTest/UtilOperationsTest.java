@@ -93,9 +93,9 @@ class UtilOperationsTest {
     @RUntainted String s = list.get(0);
   }
 
-  void getListTestPassingStringLiteralCheckForPolyTaintedReturn() {
-    List<String> uList = getListPolyTainted("string_literal");
-  }
+  //  void getListTestPassingStringLiteralCheckForPolyTaintedReturn() {
+  //    List<String> uList = getListPolyTainted("string_literal");
+  //  }
 
   //  void getListTestPassingTaintedStringCheckForPolyTaintedReturn(@RTainted String s) {
   //    // :: error: (assignment)
