@@ -8,14 +8,13 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.javacutil.TreeUtils;
-
-import javax.annotation.Nullable;
-import javax.lang.model.element.Element;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import javax.annotation.Nullable;
+import javax.lang.model.element.Element;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.javacutil.TreeUtils;
 
 /** This visitor directly annotates the element declaration to match the required type. */
 public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
@@ -55,7 +54,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     }
     if (requireFix()) {
       fixes.addAll(
-              node.getFalseExpression().accept(new FixVisitor(context, typeFactory, pair), null));
+          node.getFalseExpression().accept(new FixVisitor(context, typeFactory, pair), null));
     }
     return fixes;
   }

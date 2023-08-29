@@ -1,6 +1,6 @@
 package crashTests;
 
 public enum TestEnum {
-    HTTP_1,
-    HTTP_2
+  HTTP_1,
+  HTTP_2
 }

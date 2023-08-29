@@ -4,7 +4,9 @@ import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RThis;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import java.util.Collections;
+import java.util.List;
+import javax.lang.model.type.TypeKind;
 import org.checkerframework.common.accumulation.AccumulationStore;
 import org.checkerframework.common.accumulation.AccumulationTransfer;
 import org.checkerframework.common.accumulation.AccumulationValue;
@@ -14,10 +16,6 @@ import org.checkerframework.dataflow.cfg.node.*;
 import org.checkerframework.dataflow.expression.JavaExpression;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.AnnotationMirrorSet;
-
-import javax.lang.model.type.TypeKind;
-import java.util.Collections;
-import java.util.List;
 
 public class UCRTaintingTransfer extends AccumulationTransfer {
   private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
@@ -29,9 +27,11 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
 
   @Override
   public TransferResult<AccumulationValue, AccumulationStore> visitMethodInvocation(
-          MethodInvocationNode methodInvocationNode, TransferInput<AccumulationValue, AccumulationStore> in) {
+      MethodInvocationNode methodInvocationNode,
+      TransferInput<AccumulationValue, AccumulationStore> in) {
 
-    TransferResult<AccumulationValue, AccumulationStore> result = super.visitMethodInvocation(methodInvocationNode, in);
+    TransferResult<AccumulationValue, AccumulationStore> result =
+        super.visitMethodInvocation(methodInvocationNode, in);
 
     // Assume any receiver or argument involved in
     // a boolean method invocation to be validated
@@ -70,10 +70,10 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
   }
 
   private void handleSideEffect(
-          ExpressionTree tree,
-          TransferResult<AccumulationValue, AccumulationStore> result,
-          MethodInvocationNode node,
-          boolean isTainted) {
+      ExpressionTree tree,
+      TransferResult<AccumulationValue, AccumulationStore> result,
+      MethodInvocationNode node,
+      boolean isTainted) {
     AnnotatedTypeMirror rAnno = aTypeFactory.getAnnotatedType(node.getTree());
     if (aTypeFactory.isUnannotatedThirdParty(tree) || rAnno.hasPrimaryAnnotation(RThis.class)) {
       if (node.getTarget().getReceiver() instanceof MethodInvocationNode) {
@@ -106,7 +106,7 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
   }
 
   private void makePossiblyValidated(
-          TransferResult<AccumulationValue, AccumulationStore> result, Node node, Node calledMethod) {
+      TransferResult<AccumulationValue, AccumulationStore> result, Node node, Node calledMethod) {
     AnnotatedTypeMirror type = aTypeFactory.getAnnotatedType(node.getTree());
     JavaExpression je = JavaExpression.fromNode(node);
     List<String> calledMethods;
@@ -123,12 +123,15 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
   }
 
   private void insertOrRefineRPossiblyValidated(
-          TransferResult<AccumulationValue, AccumulationStore> result, JavaExpression je, List<String> calledMethods) {
+      TransferResult<AccumulationValue, AccumulationStore> result,
+      JavaExpression je,
+      List<String> calledMethods) {
     result.getThenStore().insertOrRefine(je, aTypeFactory.rPossiblyValidatedAM(calledMethods));
     result.getElseStore().insertOrRefine(je, aTypeFactory.rPossiblyValidatedAM(calledMethods));
   }
 
-  private void makeStoresTainted(TransferResult<AccumulationValue, AccumulationStore> result, Node n) {
+  private void makeStoresTainted(
+      TransferResult<AccumulationValue, AccumulationStore> result, Node n) {
     if (n.getTree() == null) {
       return;
     }
@@ -139,13 +142,19 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
       if (!je.containsUnknown()) {
         AccumulationValue thenVal = result.getThenStore().getValue(je);
         if (thenVal != null) {
-          thenVal = analysis.createAbstractValue(AnnotationMirrorSet.singleton(aTypeFactory.rTainted), thenVal.getUnderlyingType());
+          thenVal =
+              analysis.createAbstractValue(
+                  AnnotationMirrorSet.singleton(aTypeFactory.rTainted),
+                  thenVal.getUnderlyingType());
           result.getThenStore().replaceValue(je, thenVal);
         }
 
         AccumulationValue elseVal = result.getElseStore().getValue(je);
         if (elseVal != null) {
-          elseVal = analysis.createAbstractValue(AnnotationMirrorSet.singleton(aTypeFactory.rTainted), elseVal.getUnderlyingType());
+          elseVal =
+              analysis.createAbstractValue(
+                  AnnotationMirrorSet.singleton(aTypeFactory.rTainted),
+                  elseVal.getUnderlyingType());
           result.getThenStore().replaceValue(je, elseVal);
         }
       }

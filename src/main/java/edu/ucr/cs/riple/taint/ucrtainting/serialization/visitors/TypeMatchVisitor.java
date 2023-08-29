@@ -1,11 +1,10 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.framework.type.visitor.AbstractAtmComboVisitor;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.type.visitor.AbstractAtmComboVisitor;
 
 /**
  * Visitor for computing the required set of annotations on the declaration of an element which can
