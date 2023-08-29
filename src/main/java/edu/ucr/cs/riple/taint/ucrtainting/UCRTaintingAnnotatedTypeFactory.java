@@ -119,8 +119,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   public AnnotationMirror rPossiblyValidatedAM(List<String> calledMethods) {
     AnnotationBuilder builder = new AnnotationBuilder(processingEnv, RPossiblyValidated.class);
     builder.setValue("value", calledMethods.toArray());
-    AnnotationMirror am = builder.build();
-    return am;
+    return builder.build();
   }
 
   private class UCRTaintingQualifierHierarchy extends AccumulationQualifierHierarchy {
@@ -335,9 +334,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   public boolean hasReceiver(ExpressionTree node) {
     if (node != null) {
       ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
-      if (receiverTree != null) {
-        return true;
-      }
+      return receiverTree != null;
     }
     return false;
   }
@@ -433,22 +430,14 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
       return mayBeTainted((AnnotatedTypeMirror.AnnotatedDeclaredType) type);
     }
     if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-      boolean componentMayBeTainted = mayBeTainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
-      if(!componentMayBeTainted) {
+      boolean componentMayBeTainted =
+          mayBeTainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
+      if (!componentMayBeTainted) {
         return false;
       }
     }
     return !type.hasAnnotation(rUntainted);
   }
-
-  /**
-   * Visits all method invocations and updates {@link AnnotatedTypeMirror} according to the argument
-   * and receiver annotations. If any of the arguments or the receiver is {@link RTainted}, the
-   * {@link AnnotatedTypeMirror} is updated to be {@link RTainted}.
-   *
-   * @param node the node being visited
-   * @param annotatedTypeMirror annotated return type of the method invocation
-   */
 
   /**
    * Checks if the given declared type may be tainted
