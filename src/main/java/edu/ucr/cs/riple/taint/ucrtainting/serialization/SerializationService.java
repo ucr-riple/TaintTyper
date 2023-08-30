@@ -122,7 +122,7 @@ public class SerializationService {
       location.setTypeVariablePositions(
           new TypeMatchVisitor(typeFactory).visit(pair.found, pair.required, null));
     }
-    return ImmutableSet.of(new Fix("untainted", location));
+    return ImmutableSet.of(new Fix(location));
   }
 
   /**
@@ -139,7 +139,7 @@ public class SerializationService {
       location.setTypeVariablePositions(
           new TypeMatchVisitor(typeFactory).visit(pair.found, pair.required, null));
     }
-    return ImmutableSet.of(new Fix("untainted", location));
+    return ImmutableSet.of(new Fix(location));
   }
 
   /**

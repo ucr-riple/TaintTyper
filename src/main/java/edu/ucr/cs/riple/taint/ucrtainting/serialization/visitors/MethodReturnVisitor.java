@@ -4,7 +4,6 @@ import com.sun.source.tree.AssignmentTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.ReturnTree;
 import com.sun.source.tree.VariableTree;
-import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.source.util.TreeScanner;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.util.Context;
@@ -16,7 +15,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.Nullable;
+import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import org.checkerframework.javacutil.TreeUtils;
@@ -40,6 +39,10 @@ public class MethodReturnVisitor extends BasicVisitor {
 
   @Override
   public Set<Fix> visitMethod(MethodTree node, Void unused) {
+    Fix onMethod = buildFixForElement(TreeUtils.elementFromDeclaration(node));
+    if (onMethod == null) {
+      return Set.of();
+    }
     Set<Fix> ans = new HashSet<>();
     Set<Fix> onReturns =
         node.accept(returnStatementScanner, new FixVisitor(context, typeFactory, pair));
@@ -56,8 +59,19 @@ public class MethodReturnVisitor extends BasicVisitor {
         workList.addAll(onAssignments);
       }
     }
-
-    return ans;
+    Set<Fix> onParams =
+        ans.stream()
+            .filter(fix -> fix.location.getKind().equals(ElementKind.PARAMETER))
+            .collect(Collectors.toSet());
+    if (onParams.isEmpty()) {
+      return Set.of(onMethod);
+    }
+    Set<Fix> polymorphicFixes =
+        ans.stream()
+            .map(fix -> fix.location.getKind().equals(ElementKind.PARAMETER) ? fix.toPoly() : fix)
+            .collect(Collectors.toSet());
+    polymorphicFixes.add(onMethod.toPoly());
+    return polymorphicFixes;
   }
 
   abstract static class AccumulateScanner extends TreeScanner<Set<Fix>, FixVisitor> {

@@ -167,7 +167,7 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
     if (!indexes.isEmpty()) {
       location.setTypeVariablePositions(indexes);
     }
-    return new Fix("untainted", location);
+    return new Fix(location);
   }
 
   /**

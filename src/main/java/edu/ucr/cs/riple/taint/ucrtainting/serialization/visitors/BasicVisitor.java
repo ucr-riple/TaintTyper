@@ -202,7 +202,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       location.setTypeVariablePositions(
           new TypeMatchVisitor(typeFactory).visit(pair.found, pair.required, null));
     }
-    return new Fix("untainted", location);
+    return new Fix(location);
   }
 
   /**

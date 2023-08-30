@@ -17,6 +17,10 @@ public class Fix implements JSONSerializable {
     this.location = location;
   }
 
+  public Fix(SymbolLocation location) {
+    this("untainted", location);
+  }
+
   @Override
   public JSONObject toJSON() {
     JSONObject ans = new JSONObject();
@@ -28,5 +32,9 @@ public class Fix implements JSONSerializable {
   @Override
   public String toString() {
     return "Fix{" + "location=" + location + '}';
+  }
+
+  public Fix toPoly() {
+    return new Fix("poly", location);
   }
 }

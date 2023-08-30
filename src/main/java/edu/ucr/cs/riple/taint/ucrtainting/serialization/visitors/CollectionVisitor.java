@@ -45,7 +45,7 @@ public class CollectionVisitor extends ReceiverTypeParameterFixVisitor {
     if (!indexes.isEmpty()) {
       location.setTypeVariablePositions(indexes);
     }
-    return new Fix("untainted", location);
+    return new Fix(location);
   }
 
   static class CollectionTypeMatchVisitor extends TypeMatchVisitor {
