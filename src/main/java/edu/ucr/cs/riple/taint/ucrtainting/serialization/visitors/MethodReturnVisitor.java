@@ -34,7 +34,7 @@ public class MethodReturnVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
 
   @Nullable protected final FoundRequired pair;
 
-  private final TreeScanner<Set<Fix>, FixVisitor> returnStatementScanner;
+  private final AccumulateScanner returnStatementScanner;
 
   public MethodReturnVisitor(
       Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
@@ -42,23 +42,7 @@ public class MethodReturnVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
     this.typeFactory = factory;
     this.pair = pair;
     this.returnStatementScanner =
-        new TreeScanner<>() {
-
-          @Override
-          public Set<Fix> reduce(Set<Fix> r1, Set<Fix> r2) {
-            if (r2 == null && r1 == null) {
-              return Set.of();
-            }
-            Set<Fix> combined = new HashSet<>();
-            if (r1 != null) {
-              combined.addAll(r1);
-            }
-            if (r2 != null) {
-              combined.addAll(r2);
-            }
-            return combined;
-          }
-
+        new AccumulateScanner() {
           @Override
           public Set<Fix> visitReturn(ReturnTree node, FixVisitor visitor) {
             return node.getExpression().accept(visitor, null);
@@ -77,24 +61,17 @@ public class MethodReturnVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
       if (!fix.location.getKind().equals(ElementKind.LOCAL_VARIABLE)) {
         ans.add(fix);
       } else {
-        AssignmentVisitor assignmentVisitor =
-            new AssignmentVisitor((Symbol.VarSymbol) ((LocalVariableLocation) fix.location).target);
+        AssignmentScanner assignmentScanner =
+            new AssignmentScanner((Symbol.VarSymbol) ((LocalVariableLocation) fix.location).target);
         Set<Fix> onAssignments =
-            node.accept(assignmentVisitor, new FixVisitor(context, typeFactory, pair));
+            node.accept(assignmentScanner, new FixVisitor(context, typeFactory, pair));
         workList.addAll(onAssignments);
       }
     }
     return ans;
   }
 
-  static class AssignmentVisitor extends TreeScanner<Set<Fix>, FixVisitor> {
-
-    private final Symbol.VarSymbol localVariable;
-
-    public AssignmentVisitor(Symbol.VarSymbol localVariable) {
-      this.localVariable = localVariable;
-    }
-
+  abstract static class AccumulateScanner extends TreeScanner<Set<Fix>, FixVisitor> {
     @Override
     public Set<Fix> reduce(Set<Fix> r1, Set<Fix> r2) {
       if (r2 == null && r1 == null) {
@@ -108,6 +85,15 @@ public class MethodReturnVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
         combined.addAll(r2);
       }
       return combined;
+    }
+  }
+
+  static class AssignmentScanner extends AccumulateScanner {
+
+    private final Symbol.VarSymbol localVariable;
+
+    public AssignmentScanner(Symbol.VarSymbol localVariable) {
+      this.localVariable = localVariable;
     }
 
     @Override
