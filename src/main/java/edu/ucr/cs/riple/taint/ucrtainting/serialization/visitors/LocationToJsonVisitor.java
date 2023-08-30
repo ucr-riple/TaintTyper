@@ -6,6 +6,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.FieldLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.LocalVariableLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,15 +18,13 @@ public class LocationToJsonVisitor implements LocationVisitor<JSONObject, Void> 
     jsonObject.put("path", location.path != null ? location.path.toString() : "null");
     jsonObject.put("kind", location.kind.name());
     jsonObject.put("class", Serializer.serializeSymbol(location.enclosingClass));
-    if (location.typeVariablePositions != null) {
-      JSONArray typeVariablePositions = new JSONArray();
-      location.typeVariablePositions.forEach(
-          integers -> {
-            JSONArray positions = new JSONArray(integers);
-            typeVariablePositions.put(positions);
-          });
-      jsonObject.put("type-variable-position", typeVariablePositions);
-    }
+    JSONArray typeVariablePositions = new JSONArray();
+    location.typeVariablePositions.forEach(
+        integers -> {
+          JSONArray positions = new JSONArray(integers);
+          typeVariablePositions.put(positions);
+        });
+    jsonObject.put("type-variable-position", typeVariablePositions);
     return jsonObject;
   }
 
@@ -57,6 +56,13 @@ public class LocationToJsonVisitor implements LocationVisitor<JSONObject, Void> 
     JSONObject ans = defaultAction(localVariable);
     ans.put("varName", Serializer.serializeSymbol(localVariable.target));
     ans.put("method", Serializer.serializeSymbol(localVariable.enclosingMethod));
+    return ans;
+  }
+
+  @Override
+  public JSONObject visitPolyMethod(PolyMethodLocation polyMethodLocation, Void unused) {
+    JSONObject ans = defaultAction(polyMethodLocation);
+    ans.put("arguments", new JSONArray(polyMethodLocation.arguments));
     return ans;
   }
 }

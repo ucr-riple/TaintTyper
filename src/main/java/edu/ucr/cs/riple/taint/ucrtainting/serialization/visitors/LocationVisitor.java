@@ -4,6 +4,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.FieldLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.LocalVariableLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 
 /**
@@ -48,4 +49,13 @@ public interface LocationVisitor<R, P> {
    * @return a visitor-specified result
    */
   R visitLocalVariable(LocalVariableLocation localVariable, P p);
+
+  /**
+   * Visits a location for a polymorphic method.
+   *
+   * @param polyMethodLocation the location for a polymorphic method
+   * @param p a visitor-specified parameter
+   * @return a visitor-specified result
+   */
+  R visitPolyMethod(PolyMethodLocation polyMethodLocation, P p);
 }

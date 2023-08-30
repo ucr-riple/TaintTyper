@@ -11,11 +11,13 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.LocalVariableLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import org.checkerframework.javacutil.TreeUtils;
@@ -39,7 +41,8 @@ public class MethodReturnVisitor extends BasicVisitor {
 
   @Override
   public Set<Fix> visitMethod(MethodTree node, Void unused) {
-    Fix onMethod = buildFixForElement(TreeUtils.elementFromDeclaration(node));
+    Element methodElement = TreeUtils.elementFromDeclaration(node);
+    Fix onMethod = buildFixForElement(methodElement);
     if (onMethod == null) {
       return Set.of();
     }
@@ -59,19 +62,29 @@ public class MethodReturnVisitor extends BasicVisitor {
         workList.addAll(onAssignments);
       }
     }
-    Set<Fix> onParams =
-        ans.stream()
-            .filter(fix -> fix.location.getKind().equals(ElementKind.PARAMETER))
-            .collect(Collectors.toSet());
-    if (onParams.isEmpty()) {
+    Set<MethodParameterLocation> polymorphicAnnotations = new HashSet<>();
+    Set<Fix> others = new HashSet<>();
+    ans.forEach(
+        fix -> {
+          if (!(fix.location instanceof MethodParameterLocation)) {
+            others.add(fix);
+            return;
+          }
+          MethodParameterLocation param = (MethodParameterLocation) fix.location;
+          if (param.enclosingMethod.equals(methodElement)) {
+            polymorphicAnnotations.add(param);
+          } else {
+            others.add(fix);
+          }
+        });
+    if (polymorphicAnnotations.isEmpty()) {
       return Set.of(onMethod);
     }
-    Set<Fix> polymorphicFixes =
-        ans.stream()
-            .map(fix -> fix.location.getKind().equals(ElementKind.PARAMETER) ? fix.toPoly() : fix)
-            .collect(Collectors.toSet());
-    polymorphicFixes.add(onMethod.toPoly());
-    return polymorphicFixes;
+    Fix polymorphicFixOnMethod =
+        new Fix(new PolyMethodLocation((MethodLocation) onMethod.location, polymorphicAnnotations))
+            .toPoly();
+    others.add(polymorphicFixOnMethod);
+    return others;
   }
 
   abstract static class AccumulateScanner extends TreeScanner<Set<Fix>, FixVisitor> {

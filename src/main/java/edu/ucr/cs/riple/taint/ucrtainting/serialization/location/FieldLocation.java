@@ -20,9 +20,4 @@ public class FieldLocation extends AbstractSymbolLocation {
   public <R, P> R accept(LocationVisitor<R, P> v, P p) {
     return v.visitField(this, p);
   }
-
-  @Override
-  public ElementKind getKind() {
-    return ElementKind.FIELD;
-  }
 }

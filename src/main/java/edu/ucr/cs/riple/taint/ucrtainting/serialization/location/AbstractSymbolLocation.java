@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.util.List;
 import javax.annotation.Nullable;
 import javax.lang.model.element.ElementKind;
-import org.checkerframework.com.google.common.base.Preconditions;
 
 /** abstract base class for {@link SymbolLocation}. */
 public abstract class AbstractSymbolLocation implements SymbolLocation {
@@ -25,18 +24,11 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   /** Target symbol. */
   public final Symbol target;
   /** List of indexes to locate the type variable. */
-  @Nullable public List<List<Integer>> typeVariablePositions;
+  public List<List<Integer>> typeVariablePositions;
 
   public static final ImmutableList<List<Integer>> ON_TYPE = ImmutableList.of(List.of(0));
 
   public AbstractSymbolLocation(ElementKind kind, Symbol target, JCTree tree) {
-    Preconditions.checkArgument(
-        kind.equals(target.getKind()),
-        "Cannot instantiate element of kind: "
-            + target.getKind()
-            + " with location kind of: "
-            + kind
-            + ".");
     this.kind = kind;
     this.enclosingClass = target.enclClass();
     URI pathInURI =
@@ -46,6 +38,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
     this.path = Serializer.pathToSourceFileFromURI(pathInURI);
     this.declarationTree = tree;
     this.target = target;
+    this.typeVariablePositions = ON_TYPE;
   }
 
   public void setTypeVariablePositions(@Nullable List<List<Integer>> typeVariablePositions) {
@@ -68,5 +61,10 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
         + ", typeVariablePositions="
         + typeVariablePositions
         + '}';
+  }
+
+  @Override
+  public ElementKind getKind() {
+    return kind;
   }
 }

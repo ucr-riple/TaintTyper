@@ -62,6 +62,7 @@ public class SerializationService {
       System.err.println(
           "Error in computing required fixes: " + source + " " + messageKey + ", exception:" + e);
       resolvingFixes = ImmutableSet.of();
+      e.printStackTrace();
     }
     Error error = new Error(messageKey, resolvingFixes, checker.getVisitor().getCurrentPath());
     serializer.serializeError(error);
