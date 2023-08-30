@@ -22,25 +22,13 @@ import javax.lang.model.element.ElementKind;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Fix visitor for method return statements. */
-public class MethodReturnVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
-
-  /** The javac context. */
-  protected final Context context;
-  /**
-   * The type factory of the checker. Used to get the type of the tree and generate a fix only if is
-   * {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}.
-   */
-  protected final UCRTaintingAnnotatedTypeFactory typeFactory;
-
-  @Nullable protected final FoundRequired pair;
+public class MethodReturnVisitor extends BasicVisitor {
 
   private final AccumulateScanner returnStatementScanner;
 
   public MethodReturnVisitor(
       Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
-    this.context = context;
-    this.typeFactory = factory;
-    this.pair = pair;
+    super(context, factory, pair);
     this.returnStatementScanner =
         new AccumulateScanner() {
           @Override
@@ -68,6 +56,7 @@ public class MethodReturnVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
         workList.addAll(onAssignments);
       }
     }
+
     return ans;
   }
 
