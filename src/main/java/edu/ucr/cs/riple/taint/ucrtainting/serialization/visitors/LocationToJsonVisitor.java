@@ -7,6 +7,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.LocalVariableLo
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
+import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -62,7 +63,14 @@ public class LocationToJsonVisitor implements LocationVisitor<JSONObject, Void> 
   @Override
   public JSONObject visitPolyMethod(PolyMethodLocation polyMethodLocation, Void unused) {
     JSONObject ans = defaultAction(polyMethodLocation);
-    ans.put("arguments", new JSONArray(polyMethodLocation.arguments));
+    ans.put(
+        "arguments",
+        new JSONArray(
+            polyMethodLocation.arguments.stream()
+                .map(
+                    methodParameterLocation ->
+                        methodParameterLocation.accept(LocationToJsonVisitor.this, null))
+                .collect(Collectors.toSet())));
     return ans;
   }
 }
