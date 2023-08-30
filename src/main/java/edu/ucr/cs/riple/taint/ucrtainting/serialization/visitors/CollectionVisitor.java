@@ -42,9 +42,7 @@ public class CollectionVisitor extends ReceiverTypeParameterFixVisitor {
     }
     List<List<Integer>> indexes =
         locateEffectiveTypeParameter(element, new CollectionTypeMatchVisitor(typeFactory));
-    if (!indexes.isEmpty()) {
-      location.setTypeVariablePositions(indexes);
-    }
+    location.setTypeVariablePositions(indexes);
     return new Fix(location);
   }
 

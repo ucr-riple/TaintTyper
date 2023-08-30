@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
+import com.google.common.collect.ImmutableList;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
@@ -26,6 +27,8 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   /** List of indexes to locate the type variable. */
   @Nullable public List<List<Integer>> typeVariablePositions;
 
+  public static final ImmutableList<List<Integer>> ON_TYPE = ImmutableList.of(List.of(0));
+
   public AbstractSymbolLocation(ElementKind kind, Symbol target, JCTree tree) {
     Preconditions.checkArgument(
         kind.equals(target.getKind()),
@@ -46,7 +49,10 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   }
 
   public void setTypeVariablePositions(@Nullable List<List<Integer>> typeVariablePositions) {
-    this.typeVariablePositions = typeVariablePositions;
+    this.typeVariablePositions =
+        (typeVariablePositions == null || typeVariablePositions.isEmpty())
+            ? ON_TYPE
+            : typeVariablePositions;
   }
 
   @Override

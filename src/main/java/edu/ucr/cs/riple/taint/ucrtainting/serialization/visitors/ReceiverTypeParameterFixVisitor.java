@@ -164,9 +164,7 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
     }
     List<List<Integer>> indexes =
         locateEffectiveTypeParameter(element, new TypeMatchVisitor(typeFactory));
-    if (!indexes.isEmpty()) {
-      location.setTypeVariablePositions(indexes);
-    }
+    location.setTypeVariablePositions(indexes);
     return new Fix(location);
   }
 
