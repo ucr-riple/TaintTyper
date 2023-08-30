@@ -24,4 +24,9 @@ public class LocalVariableLocation extends AbstractSymbolLocation {
   public <R, P> R accept(LocationVisitor<R, P> v, P p) {
     return v.visitLocalVariable(this, p);
   }
+
+  @Override
+  public ElementKind getKind() {
+    return ElementKind.LOCAL_VARIABLE;
+  }
 }

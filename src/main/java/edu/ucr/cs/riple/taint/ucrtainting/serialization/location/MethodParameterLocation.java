@@ -42,4 +42,9 @@ public class MethodParameterLocation extends AbstractSymbolLocation {
   public <R, P> R accept(LocationVisitor<R, P> v, P p) {
     return v.visitParameter(this, p);
   }
+
+  @Override
+  public ElementKind getKind() {
+    return ElementKind.PARAMETER;
+  }
 }

@@ -3,10 +3,12 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 import com.sun.source.tree.*;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.HashSet;
 import java.util.Objects;
@@ -113,7 +115,15 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Void unused) {
     Element element = TreeUtils.elementFromUse(node);
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
-    return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
+    if (calledMethod.getParameters().isEmpty()) {
+      // no parameters, make untainted
+      return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
+    }
+    JCTree decl = Utility.locateDeclaration(calledMethod, context);
+    if (decl == null) {
+      return Set.of();
+    }
+    return decl.accept(new MethodReturnVisitor(context, typeFactory, pair), null);
   }
 
   @Override
