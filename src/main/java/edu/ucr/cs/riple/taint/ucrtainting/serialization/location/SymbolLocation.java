@@ -7,7 +7,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
 import java.util.List;
 import javax.annotation.Nullable;
-import javax.lang.model.element.ElementKind;
 
 /** Provides method for symbol locations. */
 public interface SymbolLocation {
@@ -53,5 +52,5 @@ public interface SymbolLocation {
 
   void setTypeVariablePositions(List<List<Integer>> typeVariables);
 
-  ElementKind getKind();
+  LocationKind getKind();
 }

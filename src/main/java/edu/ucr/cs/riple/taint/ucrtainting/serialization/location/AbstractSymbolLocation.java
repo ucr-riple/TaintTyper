@@ -8,13 +8,12 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import javax.annotation.Nullable;
-import javax.lang.model.element.ElementKind;
 
 /** abstract base class for {@link SymbolLocation}. */
 public abstract class AbstractSymbolLocation implements SymbolLocation {
 
-  /** Element kind of the targeted symbol */
-  public final ElementKind kind;
+  /** Location kind of the targeted symbol */
+  public final LocationKind kind;
   /** Path of the file containing the symbol, if available. */
   public final Path path;
   /** Enclosing class of the symbol. */
@@ -28,7 +27,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
 
   public static final ImmutableList<List<Integer>> ON_TYPE = ImmutableList.of(List.of(0));
 
-  public AbstractSymbolLocation(ElementKind kind, Symbol target, JCTree tree) {
+  public AbstractSymbolLocation(LocationKind kind, Symbol target, JCTree tree) {
     this.kind = kind;
     this.enclosingClass = target.enclClass();
     URI pathInURI =
@@ -64,7 +63,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   }
 
   @Override
-  public ElementKind getKind() {
+  public LocationKind getKind() {
     return kind;
   }
 }

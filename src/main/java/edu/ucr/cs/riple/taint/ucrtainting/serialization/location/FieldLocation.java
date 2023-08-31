@@ -3,7 +3,6 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
-import javax.lang.model.element.ElementKind;
 
 /** subtype of {@link AbstractSymbolLocation} targeting class fields. */
 public class FieldLocation extends AbstractSymbolLocation {
@@ -12,7 +11,7 @@ public class FieldLocation extends AbstractSymbolLocation {
   public final Symbol.VarSymbol variableSymbol;
 
   public FieldLocation(Symbol target, JCTree declarationTree) {
-    super(ElementKind.FIELD, target, declarationTree);
+    super(LocationKind.FIELD, target, declarationTree);
     variableSymbol = (Symbol.VarSymbol) target;
   }
 

@@ -19,7 +19,6 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Fix visitor for method return statements. */
@@ -52,7 +51,7 @@ public class MethodReturnVisitor extends BasicVisitor {
     Deque<Fix> workList = new ArrayDeque<>(onReturns);
     while (!workList.isEmpty()) {
       Fix fix = workList.pop();
-      if (!fix.location.getKind().equals(ElementKind.LOCAL_VARIABLE)) {
+      if (!fix.location.getKind().isLocalVariable()) {
         ans.add(fix);
       } else {
         AssignmentScanner assignmentScanner =
