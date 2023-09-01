@@ -2,9 +2,8 @@ package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-
 import javax.lang.model.element.Element;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
 public class EnumHandler extends AbstractHandler {
 

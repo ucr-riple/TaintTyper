@@ -1,10 +1,9 @@
 package edu.ucr.cs.riple.taint.ucrtainting.qual;
 
+import java.lang.annotation.*;
 import org.checkerframework.framework.qual.LiteralKind;
 import org.checkerframework.framework.qual.QualifierForLiterals;
 import org.checkerframework.framework.qual.SubtypeOf;
-
-import java.lang.annotation.*;
 
 /**
  * Denotes a reference that is untainted, i.e. can be trusted.

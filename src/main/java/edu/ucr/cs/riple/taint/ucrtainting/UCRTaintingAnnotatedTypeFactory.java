@@ -10,6 +10,12 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import java.lang.annotation.Annotation;
+import java.util.*;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.util.Elements;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.accumulation.AccumulationAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
@@ -21,13 +27,6 @@ import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.TreeUtils;
 import org.checkerframework.javacutil.UserError;
-
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.util.Elements;
-import java.lang.annotation.Annotation;
-import java.util.*;
 
 public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFactory {
 
@@ -135,7 +134,8 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     }
 
     @Override
-    public AnnotationMirror greatestLowerBoundQualifiers(final AnnotationMirror a1, final AnnotationMirror a2) {
+    public AnnotationMirror greatestLowerBoundQualifiers(
+        final AnnotationMirror a1, final AnnotationMirror a2) {
       if (AnnotationUtils.areSame(a1, bottom) || AnnotationUtils.areSame(a2, bottom)) {
         return bottom;
       }
@@ -183,9 +183,9 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
      * LUB in this type system is set intersection of the arguments of the two annotations, unless
      * one of them is bottom, in which case the result is the other annotation.
      */
-
     @Override
-    public AnnotationMirror leastUpperBoundQualifiers(final AnnotationMirror a1, final AnnotationMirror a2) {
+    public AnnotationMirror leastUpperBoundQualifiers(
+        final AnnotationMirror a1, final AnnotationMirror a2) {
       if (AnnotationUtils.areSame(a1, bottom)) {
         return a2;
       } else if (AnnotationUtils.areSame(a2, bottom)) {
@@ -232,7 +232,8 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     }
 
     @Override
-    public boolean isSubtypeQualifiers(final AnnotationMirror subAnno, final AnnotationMirror superAnno) {
+    public boolean isSubtypeQualifiers(
+        final AnnotationMirror subAnno, final AnnotationMirror superAnno) {
       if (AnnotationUtils.areSame(subAnno, superAnno)) {
         return true;
       }

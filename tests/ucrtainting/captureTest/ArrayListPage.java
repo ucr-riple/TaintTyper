@@ -12,6 +12,5 @@ class ArrayListPage<E> extends ArrayList<E> {
     super(Collections.emptyList());
   }
 
-  void foo(List<? super Object> a) {
-  }
+  void foo(List<? super Object> a) {}
 }
