@@ -18,13 +18,12 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
 public class CollectionVisitor extends ReceiverTypeParameterFixVisitor {
 
-  public CollectionVisitor(
-      Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
-    super(context, factory, pair);
+  public CollectionVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
+    super(context, factory);
   }
 
   @Nullable
-  public Fix buildFixForElement(Element element) {
+  public Fix buildFixForElement(Element element, FoundRequired pair) {
     SymbolLocation location = buildLocationForElement(element);
     if (location == null) {
       return null;
@@ -33,15 +32,13 @@ public class CollectionVisitor extends ReceiverTypeParameterFixVisitor {
       // receiver is written as a raw type and not parameterized. We cannot infer the actual types
       // and have to annotate the method directly.
       Set<Fix> fixes =
-          receivers
-              .get(receivers.size() - 1)
-              .accept(new BasicVisitor(context, typeFactory, null), null);
+          receivers.get(receivers.size() - 1).accept(new BasicVisitor(context, typeFactory), null);
       if (fixes != null && !fixes.isEmpty()) {
         return fixes.iterator().next();
       }
     }
     List<List<Integer>> indexes =
-        locateEffectiveTypeParameter(element, new CollectionTypeMatchVisitor(typeFactory));
+        locateEffectiveTypeParameter(element, new CollectionTypeMatchVisitor(typeFactory), pair);
     location.setTypeVariablePositions(indexes);
     return new Fix(location);
   }

@@ -22,13 +22,12 @@ import org.checkerframework.javacutil.TreeUtils;
  */
 public class MethodTypeArgumentFixVisitor extends BasicVisitor {
 
-  public MethodTypeArgumentFixVisitor(
-      Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
-    super(context, factory, pair);
+  public MethodTypeArgumentFixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
+    super(context, factory);
   }
 
   @Override
-  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Void unused) {
+  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
     Element element = TreeUtils.elementFromUse(node);
     if (element == null) {
       return Set.of();
@@ -51,11 +50,8 @@ public class MethodTypeArgumentFixVisitor extends BasicVisitor {
                 node.getArguments()
                     .get(i)
                     .accept(
-                        new FixVisitor(
-                            context,
-                            typeFactory,
-                            new FoundRequired(paramsAnnotatedTypeMirrors.get(i), requiredParam)),
-                        null));
+                        new FixVisitor(context, typeFactory),
+                        new FoundRequired(paramsAnnotatedTypeMirrors.get(i), requiredParam)));
           }
         }
       }

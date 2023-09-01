@@ -20,7 +20,7 @@ import org.checkerframework.javacutil.TreeUtils;
  * General Fix visitor.This visitor determines the approach for resolving the error upon visiting
  * specific nodes that may impact the algorithm selection.
  */
-public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
+public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
 
   /** The javac context. */
   private final Context context;
@@ -29,24 +29,18 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
    * {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}.
    */
   protected final UCRTaintingAnnotatedTypeFactory typeFactory;
-  /**
-   * The pair of found annotated type and the required annotated type. This visitor uses this
-   * information to generated annotations that adapts the found type to the required type.
-   */
-  protected final FoundRequired pair;
 
   protected final Types types;
 
-  public FixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
+  public FixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
     this.context = context;
     this.typeFactory = factory;
-    this.pair = pair;
     this.types = Types.instance(context);
   }
 
   @Override
-  public Set<Fix> defaultAction(Tree node, Void unused) {
-    return node.accept(new BasicVisitor(context, typeFactory, pair), null);
+  public Set<Fix> defaultAction(Tree node, FoundRequired pair) {
+    return node.accept(new BasicVisitor(context, typeFactory), pair);
   }
 
   /**
@@ -66,7 +60,7 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
    * @return Void null.
    */
   @Override
-  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Void unused) {
+  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
     Element element = TreeUtils.elementFromUse(node);
     if (element == null) {
       return Set.of();
@@ -83,23 +77,23 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, Void> {
         !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));
     boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();
     if (CollectionHandler.isToArrayWithTypeArgMethod(calledMethod, types)) {
-      return node.accept(new CollectionVisitor(context, typeFactory, pair), unused);
+      return node.accept(new CollectionVisitor(context, typeFactory), pair);
     }
     if (methodHasTypeArgs) {
-      return node.accept(new MethodTypeArgumentFixVisitor(context, typeFactory, pair), unused);
+      return node.accept(new MethodTypeArgumentFixVisitor(context, typeFactory), pair);
     }
     // check if the call is to a method defined in a third party library. If the method has a type
     // var return type and has a receiver, we should annotate the receiver.
     if (!isInAnnotatedPackage && !(isTypeVar && hasReceiver)) {
-      return node.accept(new ThirdPartyFixVisitor(context, typeFactory), unused);
+      return node.accept(new ThirdPartyFixVisitor(context, typeFactory), pair);
     }
     // The method has a receiver, if the method contains a type argument, we should annotate the
     // receiver and leave the called method untouched. Annotation on the declaration on the type
     // argument, will be added on the method automatically.
     if (isTypeVar && hasReceiver) {
-      return node.accept(new ReceiverTypeParameterFixVisitor(context, typeFactory, pair), unused);
+      return node.accept(new ReceiverTypeParameterFixVisitor(context, typeFactory), pair);
     } else {
-      return defaultAction(node, unused);
+      return defaultAction(node, pair);
     }
   }
 }

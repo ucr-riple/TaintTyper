@@ -26,9 +26,8 @@ public class MethodReturnVisitor extends BasicVisitor {
 
   private final AccumulateScanner returnStatementScanner;
 
-  public MethodReturnVisitor(
-      Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
-    super(context, factory, pair);
+  public MethodReturnVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
+    super(context, factory);
     this.returnStatementScanner =
         new AccumulateScanner() {
           @Override
@@ -39,15 +38,14 @@ public class MethodReturnVisitor extends BasicVisitor {
   }
 
   @Override
-  public Set<Fix> visitMethod(MethodTree node, Void unused) {
+  public Set<Fix> visitMethod(MethodTree node, FoundRequired pair) {
     Element methodElement = TreeUtils.elementFromDeclaration(node);
-    Fix onMethod = buildFixForElement(methodElement);
+    Fix onMethod = buildFixForElement(methodElement, pair);
     if (onMethod == null) {
       return Set.of();
     }
     Set<Fix> ans = new HashSet<>();
-    Set<Fix> onReturns =
-        node.accept(returnStatementScanner, new FixVisitor(context, typeFactory, pair));
+    Set<Fix> onReturns = node.accept(returnStatementScanner, new FixVisitor(context, typeFactory));
     Deque<Fix> workList = new ArrayDeque<>(onReturns);
     while (!workList.isEmpty()) {
       Fix fix = workList.pop();
@@ -57,7 +55,7 @@ public class MethodReturnVisitor extends BasicVisitor {
         AssignmentScanner assignmentScanner =
             new AssignmentScanner((Symbol.VarSymbol) ((LocalVariableLocation) fix.location).target);
         Set<Fix> onAssignments =
-            node.accept(assignmentScanner, new FixVisitor(context, typeFactory, pair));
+            node.accept(assignmentScanner, new FixVisitor(context, typeFactory));
         workList.addAll(onAssignments);
       }
     }

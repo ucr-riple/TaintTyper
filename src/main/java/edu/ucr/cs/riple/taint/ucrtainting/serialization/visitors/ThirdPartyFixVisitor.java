@@ -6,6 +6,7 @@ import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import java.util.HashSet;
@@ -20,11 +21,11 @@ import org.checkerframework.javacutil.TreeUtils;
 public class ThirdPartyFixVisitor extends BasicVisitor {
 
   public ThirdPartyFixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
-    super(context, factory, null);
+    super(context, factory);
   }
 
   @Override
-  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Void unused) {
+  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
     Element element = TreeUtils.elementFromUse(node);
     if (element == null) {
       return Set.of();
@@ -48,7 +49,7 @@ public class ThirdPartyFixVisitor extends BasicVisitor {
     // Add a fix for each passed argument.
     for (ExpressionTree argument : node.getArguments()) {
       if (argument != null && typeFactory.mayBeTainted(argument)) {
-        fixes.addAll(argument.accept(new FixVisitor(context, typeFactory, null), unused));
+        fixes.addAll(argument.accept(new FixVisitor(context, typeFactory), null));
       }
     }
     // Add the fix for the receiver if not static.
@@ -60,7 +61,7 @@ public class ThirdPartyFixVisitor extends BasicVisitor {
     fixes.addAll(
         ((MemberSelectTree) node.getMethodSelect())
             .getExpression()
-            .accept(new FixVisitor(context, typeFactory, null), unused));
+            .accept(new FixVisitor(context, typeFactory), null));
     return fixes;
   }
 }

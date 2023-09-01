@@ -37,20 +37,19 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
    */
   protected List<ExpressionTree> receivers;
 
-  public ReceiverTypeParameterFixVisitor(
-      Context context, UCRTaintingAnnotatedTypeFactory factory, FoundRequired pair) {
-    super(context, factory, pair);
+  public ReceiverTypeParameterFixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
+    super(context, factory);
   }
 
   @Override
-  public Set<Fix> visitIdentifier(IdentifierTree node, Void unused) {
+  public Set<Fix> visitIdentifier(IdentifierTree node, FoundRequired pair) {
     addReceiver(node);
-    Fix fix = buildFixForElement(TreeUtils.elementFromTree(node));
+    Fix fix = buildFixForElement(TreeUtils.elementFromTree(node), pair);
     return fix == null ? Set.of() : Set.of(fix);
   }
 
   @Override
-  public Set<Fix> visitMemberSelect(MemberSelectTree node, Void unused) {
+  public Set<Fix> visitMemberSelect(MemberSelectTree node, FoundRequired pair) {
     Element member = TreeUtils.elementFromUse(node);
     if (!(member instanceof Symbol)) {
       return Set.of();
@@ -60,25 +59,25 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
       if (!receivers.isEmpty()) {
         return receivers
             .get(receivers.size() - 1)
-            .accept(new BasicVisitor(context, typeFactory, null), null);
+            .accept(new BasicVisitor(context, typeFactory), pair);
       }
     }
     // If fix on receiver, we should annotate type parameter that matches the target type.
     if (Utility.isFullyParameterizedType(((Symbol) member).type)) {
       // If is a parameterized type, then we found the right declaration.
-      Fix fix = buildFixForElement(TreeUtils.elementFromUse(node));
+      Fix fix = buildFixForElement(TreeUtils.elementFromUse(node), pair);
       return fix == null ? Set.of() : Set.of(fix);
     } else if (node instanceof JCTree.JCFieldAccess) {
       // Need to traverse the tree to find the right declaration.
       JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) node;
       addReceiver(fieldAccess);
-      return fieldAccess.selected.accept(this, unused);
+      return fieldAccess.selected.accept(this, pair);
     }
     return Set.of();
   }
 
   @Override
-  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, Void unused) {
+  public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
     Element element = TreeUtils.elementFromUse(node);
     if (element == null) {
       return Set.of();
@@ -92,22 +91,22 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
     // If method is static, or has no receiver, or receiver is "this", we must annotate the method
     // directly.
     if (calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver)) {
-      return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
+      return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod, pair)));
     }
     // Check if receiver is used as raw type. In this case, we should annotate the called method.
     if (Utility.elementHasRawType(calledMethod)) {
       if (!receivers.isEmpty()) {
         return receivers
             .get(receivers.size() - 1)
-            .accept(new BasicVisitor(context, typeFactory, null), null);
+            .accept(new BasicVisitor(context, typeFactory), pair);
       }
     }
     addReceiver(node);
     if (Utility.isFullyParameterizedType(calledMethod.getReturnType())) {
       // Found the right declaration.
-      return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod)));
+      return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod, pair)));
     }
-    return receiver.accept(this, unused);
+    return receiver.accept(this, pair);
   }
 
   /**
@@ -146,7 +145,7 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
    * @return The fix for the given element.
    */
   @Nullable
-  public Fix buildFixForElement(Element element) {
+  public Fix buildFixForElement(Element element, FoundRequired pair) {
     SymbolLocation location = buildLocationForElement(element);
     if (location == null) {
       return null;
@@ -155,15 +154,13 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
       // receiver is written as a raw type and not parameterized. We cannot infer the actual types
       // and have to annotate the method directly.
       Set<Fix> fixes =
-          receivers
-              .get(receivers.size() - 1)
-              .accept(new BasicVisitor(context, typeFactory, null), null);
+          receivers.get(receivers.size() - 1).accept(new BasicVisitor(context, typeFactory), null);
       if (fixes != null && !fixes.isEmpty()) {
         return fixes.iterator().next();
       }
     }
     List<List<Integer>> indexes =
-        locateEffectiveTypeParameter(element, new TypeMatchVisitor(typeFactory));
+        locateEffectiveTypeParameter(element, new TypeMatchVisitor(typeFactory), pair);
     location.setTypeVariablePositions(indexes);
     return new Fix(location);
   }
@@ -175,7 +172,7 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
    * @return The list of indexes of the type parameters.
    */
   protected List<List<Integer>> locateEffectiveTypeParameter(
-      Element element, TypeMatchVisitor visitor) {
+      Element element, TypeMatchVisitor visitor, FoundRequired pair) {
     Type elementParameterizedType = getType(element);
     Type base = elementParameterizedType;
     // Indexes of the effective type parameter based on the chain of receivers.
