@@ -14,8 +14,8 @@ import tests.tools.SerializationTestHelper;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class FixVisitorSelectionTest extends SerializationTestHelper {
-  public FixVisitorSelectionTest(List<File> testFiles) {
+public class FixComputerSelectionTest extends SerializationTestHelper {
+  public FixComputerSelectionTest(List<File> testFiles) {
     super(
         testFiles,
         UCRTaintingChecker.class,

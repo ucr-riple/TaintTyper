@@ -29,7 +29,7 @@ import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
-public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
+public class ReceiverTypeParameterFixVisitor extends SpecializedFixComputer {
 
   /**
    * The list method invocations that their return type contained a type argument. Used to detect
@@ -37,8 +37,13 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
    */
   protected List<ExpressionTree> receivers;
 
-  public ReceiverTypeParameterFixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
-    super(context, factory);
+  public ReceiverTypeParameterFixVisitor(
+      Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
+    super(context, factory, fixComputer);
+  }
+
+  public void reset() {
+    receivers = null;
   }
 
   @Override
@@ -57,9 +62,7 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
     // Check if receiver is used as raw type. In this case, we should annotate the called method.
     if (Utility.elementHasRawType(member)) {
       if (!receivers.isEmpty()) {
-        return receivers
-            .get(receivers.size() - 1)
-            .accept(new BasicVisitor(context, typeFactory), pair);
+        return receivers.get(receivers.size() - 1).accept(fixComputer.basicVisitor, pair);
       }
     }
     // If fix on receiver, we should annotate type parameter that matches the target type.
@@ -96,9 +99,7 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
     // Check if receiver is used as raw type. In this case, we should annotate the called method.
     if (Utility.elementHasRawType(calledMethod)) {
       if (!receivers.isEmpty()) {
-        return receivers
-            .get(receivers.size() - 1)
-            .accept(new BasicVisitor(context, typeFactory), pair);
+        return receivers.get(receivers.size() - 1).accept(fixComputer.basicVisitor, pair);
       }
     }
     addReceiver(node);
@@ -153,14 +154,12 @@ public class ReceiverTypeParameterFixVisitor extends BasicVisitor {
     if (getType(element).allparams().isEmpty()) {
       // receiver is written as a raw type and not parameterized. We cannot infer the actual types
       // and have to annotate the method directly.
-      Set<Fix> fixes =
-          receivers.get(receivers.size() - 1).accept(new BasicVisitor(context, typeFactory), null);
+      Set<Fix> fixes = receivers.get(receivers.size() - 1).accept(fixComputer.basicVisitor, null);
       if (fixes != null && !fixes.isEmpty()) {
         return fixes.iterator().next();
       }
     }
-    List<List<Integer>> indexes =
-        locateEffectiveTypeParameter(element, new TypeMatchVisitor(typeFactory), pair);
+    List<List<Integer>> indexes = locateEffectiveTypeParameter(element, typeMatchVisitor, pair);
     location.setTypeVariablePositions(indexes);
     return new Fix(location);
   }

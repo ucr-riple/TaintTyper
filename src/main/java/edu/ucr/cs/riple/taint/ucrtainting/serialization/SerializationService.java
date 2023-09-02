@@ -12,7 +12,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixVisitor;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisitor;
 import java.util.Set;
 import javax.lang.model.element.Element;
@@ -33,11 +33,16 @@ public class SerializationService {
   /** Javac context instance. */
   private final Context context;
 
+  private final FixComputer fixComputer;
+  private final TypeMatchVisitor typeMatchVisitor;
+
   public SerializationService(UCRTaintingChecker checker) {
     this.checker = checker;
     this.serializer = new Serializer(checker);
     this.typeFactory = (UCRTaintingAnnotatedTypeFactory) checker.getTypeFactory();
     this.context = ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext();
+    this.fixComputer = new FixComputer(context, typeFactory);
+    this.typeMatchVisitor = new TypeMatchVisitor(typeFactory);
   }
 
   /**
@@ -91,7 +96,7 @@ public class SerializationService {
         if (!Utility.isInAnnotatedPackage(encClass, typeFactory)) {
           return ImmutableSet.of();
         }
-        return tree.accept(new FixVisitor(context, typeFactory), pair);
+        return tree.accept(fixComputer, pair);
     }
   }
 
@@ -120,8 +125,7 @@ public class SerializationService {
     Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
     SymbolLocation location = SymbolLocation.createLocationFromSymbol(toBeAnnotated, context);
     if (location != null) {
-      location.setTypeVariablePositions(
-          new TypeMatchVisitor(typeFactory).visit(pair.found, pair.required, null));
+      location.setTypeVariablePositions(typeMatchVisitor.visit(pair.found, pair.required, null));
     }
     return ImmutableSet.of(new Fix(location));
   }
@@ -137,8 +141,7 @@ public class SerializationService {
         (Symbol.MethodSymbol) TreeUtils.elementFromTree(overridingMethodTree);
     SymbolLocation location = SymbolLocation.createLocationFromSymbol(overridingMethod, context);
     if (location != null) {
-      location.setTypeVariablePositions(
-          new TypeMatchVisitor(typeFactory).visit(pair.found, pair.required, null));
+      location.setTypeVariablePositions(typeMatchVisitor.visit(pair.found, pair.required, null));
     }
     return ImmutableSet.of(new Fix(location));
   }

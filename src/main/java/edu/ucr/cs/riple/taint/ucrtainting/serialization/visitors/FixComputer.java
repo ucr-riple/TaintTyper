@@ -20,7 +20,7 @@ import org.checkerframework.javacutil.TreeUtils;
  * General Fix visitor.This visitor determines the approach for resolving the error upon visiting
  * specific nodes that may impact the algorithm selection.
  */
-public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
+public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
 
   /** The javac context. */
   private final Context context;
@@ -31,16 +31,28 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   protected final UCRTaintingAnnotatedTypeFactory typeFactory;
 
   protected final Types types;
+  protected final BasicVisitor basicVisitor;
+  protected final SpecializedFixComputer thirdPartyFixVisitor;
+  protected final ReceiverTypeParameterFixVisitor receiverTypeParameterFixVisitor;
+  protected final SpecializedFixComputer methodTypeArgumentFixVisitor;
+  protected final SpecializedFixComputer collectionVisitor;
 
-  public FixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
+  public FixComputer(Context context, UCRTaintingAnnotatedTypeFactory factory) {
     this.context = context;
     this.typeFactory = factory;
     this.types = Types.instance(context);
+    this.basicVisitor = new BasicVisitor(context, factory, this);
+    this.thirdPartyFixVisitor = new ThirdPartyFixVisitor(context, typeFactory, this);
+    this.receiverTypeParameterFixVisitor =
+        new ReceiverTypeParameterFixVisitor(context, typeFactory, this);
+    this.methodTypeArgumentFixVisitor =
+        new MethodTypeArgumentFixVisitor(context, typeFactory, this);
+    this.collectionVisitor = new CollectionVisitor(context, typeFactory, this);
   }
 
   @Override
   public Set<Fix> defaultAction(Tree node, FoundRequired pair) {
-    return node.accept(new BasicVisitor(context, typeFactory), pair);
+    return node.accept(basicVisitor, pair);
   }
 
   /**
@@ -77,21 +89,22 @@ public class FixVisitor extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
         !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));
     boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();
     if (CollectionHandler.isToArrayWithTypeArgMethod(calledMethod, types)) {
-      return node.accept(new CollectionVisitor(context, typeFactory), pair);
+      return node.accept(collectionVisitor, pair);
     }
     if (methodHasTypeArgs) {
-      return node.accept(new MethodTypeArgumentFixVisitor(context, typeFactory), pair);
+      return node.accept(methodTypeArgumentFixVisitor, pair);
     }
     // check if the call is to a method defined in a third party library. If the method has a type
     // var return type and has a receiver, we should annotate the receiver.
     if (!isInAnnotatedPackage && !(isTypeVar && hasReceiver)) {
-      return node.accept(new ThirdPartyFixVisitor(context, typeFactory), pair);
+      return node.accept(thirdPartyFixVisitor, pair);
     }
     // The method has a receiver, if the method contains a type argument, we should annotate the
     // receiver and leave the called method untouched. Annotation on the declaration on the type
     // argument, will be added on the method automatically.
     if (isTypeVar && hasReceiver) {
-      return node.accept(new ReceiverTypeParameterFixVisitor(context, typeFactory), pair);
+      receiverTypeParameterFixVisitor.reset();
+      return node.accept(receiverTypeParameterFixVisitor, pair);
     } else {
       return defaultAction(node, pair);
     }

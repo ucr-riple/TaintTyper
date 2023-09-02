@@ -20,10 +20,11 @@ import org.checkerframework.javacutil.TreeUtils;
  * Visitor used to match the required type argument using method type arguments and passed
  * parameters parameter types.
  */
-public class MethodTypeArgumentFixVisitor extends BasicVisitor {
+public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
 
-  public MethodTypeArgumentFixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
-    super(context, factory);
+  public MethodTypeArgumentFixVisitor(
+      Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
+    super(context, factory, fixComputer);
   }
 
   @Override
@@ -50,7 +51,7 @@ public class MethodTypeArgumentFixVisitor extends BasicVisitor {
                 node.getArguments()
                     .get(i)
                     .accept(
-                        new FixVisitor(context, typeFactory),
+                        new FixComputer(context, typeFactory),
                         new FoundRequired(paramsAnnotatedTypeMirrors.get(i), requiredParam)));
           }
         }

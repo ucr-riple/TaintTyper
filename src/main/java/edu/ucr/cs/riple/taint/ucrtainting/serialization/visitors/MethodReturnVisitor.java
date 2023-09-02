@@ -22,16 +22,17 @@ import javax.lang.model.element.Element;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Fix visitor for method return statements. */
-public class MethodReturnVisitor extends BasicVisitor {
+public class MethodReturnVisitor extends SpecializedFixComputer {
 
   private final AccumulateScanner returnStatementScanner;
 
-  public MethodReturnVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
-    super(context, factory);
+  public MethodReturnVisitor(
+      Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
+    super(context, factory, fixComputer);
     this.returnStatementScanner =
         new AccumulateScanner() {
           @Override
-          public Set<Fix> visitReturn(ReturnTree node, FixVisitor visitor) {
+          public Set<Fix> visitReturn(ReturnTree node, FixComputer visitor) {
             return node.getExpression().accept(visitor, null);
           }
         };
@@ -45,7 +46,7 @@ public class MethodReturnVisitor extends BasicVisitor {
       return Set.of();
     }
     Set<Fix> ans = new HashSet<>();
-    Set<Fix> onReturns = node.accept(returnStatementScanner, new FixVisitor(context, typeFactory));
+    Set<Fix> onReturns = node.accept(returnStatementScanner, fixComputer);
     Deque<Fix> workList = new ArrayDeque<>(onReturns);
     while (!workList.isEmpty()) {
       Fix fix = workList.pop();
@@ -54,8 +55,7 @@ public class MethodReturnVisitor extends BasicVisitor {
       } else {
         AssignmentScanner assignmentScanner =
             new AssignmentScanner((Symbol.VarSymbol) ((LocalVariableLocation) fix.location).target);
-        Set<Fix> onAssignments =
-            node.accept(assignmentScanner, new FixVisitor(context, typeFactory));
+        Set<Fix> onAssignments = node.accept(assignmentScanner, fixComputer);
         workList.addAll(onAssignments);
       }
     }
@@ -84,7 +84,7 @@ public class MethodReturnVisitor extends BasicVisitor {
     return others;
   }
 
-  abstract static class AccumulateScanner extends TreeScanner<Set<Fix>, FixVisitor> {
+  abstract static class AccumulateScanner extends TreeScanner<Set<Fix>, FixComputer> {
     @Override
     public Set<Fix> reduce(Set<Fix> r1, Set<Fix> r2) {
       if (r2 == null && r1 == null) {
@@ -110,7 +110,7 @@ public class MethodReturnVisitor extends BasicVisitor {
     }
 
     @Override
-    public Set<Fix> visitAssignment(AssignmentTree node, FixVisitor visitor) {
+    public Set<Fix> visitAssignment(AssignmentTree node, FixComputer visitor) {
       Element element = TreeUtils.elementFromUse(node.getVariable());
       if (localVariable.equals(element)) {
         return node.getExpression().accept(visitor, null);
@@ -119,7 +119,7 @@ public class MethodReturnVisitor extends BasicVisitor {
     }
 
     @Override
-    public Set<Fix> visitVariable(VariableTree node, FixVisitor visitor) {
+    public Set<Fix> visitVariable(VariableTree node, FixComputer visitor) {
       Element element = TreeUtils.elementFromDeclaration(node);
       if (localVariable.equals(element)) {
         return node.getInitializer().accept(visitor, null);

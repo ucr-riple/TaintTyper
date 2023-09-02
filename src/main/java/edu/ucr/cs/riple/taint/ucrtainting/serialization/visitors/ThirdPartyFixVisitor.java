@@ -18,10 +18,11 @@ import org.checkerframework.javacutil.TreeUtils;
  * Visitor for handling calls to third party libraries. This visitor gets to the required type by
  * making receiver and all arguments be untainted.
  */
-public class ThirdPartyFixVisitor extends BasicVisitor {
+public class ThirdPartyFixVisitor extends SpecializedFixComputer {
 
-  public ThirdPartyFixVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
-    super(context, factory);
+  public ThirdPartyFixVisitor(
+      Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
+    super(context, factory, fixComputer);
   }
 
   @Override
@@ -49,7 +50,7 @@ public class ThirdPartyFixVisitor extends BasicVisitor {
     // Add a fix for each passed argument.
     for (ExpressionTree argument : node.getArguments()) {
       if (argument != null && typeFactory.mayBeTainted(argument)) {
-        fixes.addAll(argument.accept(new FixVisitor(context, typeFactory), null));
+        fixes.addAll(argument.accept(fixComputer, null));
       }
     }
     // Add the fix for the receiver if not static.
@@ -59,9 +60,7 @@ public class ThirdPartyFixVisitor extends BasicVisitor {
     }
     // Build the fix for the receiver.
     fixes.addAll(
-        ((MemberSelectTree) node.getMethodSelect())
-            .getExpression()
-            .accept(new FixVisitor(context, typeFactory), null));
+        ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(fixComputer, pair));
     return fixes;
   }
 }

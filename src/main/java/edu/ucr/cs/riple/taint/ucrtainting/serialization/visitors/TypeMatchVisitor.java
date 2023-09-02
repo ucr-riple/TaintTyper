@@ -112,7 +112,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
       AnnotatedTypeMirror.AnnotatedTypeVariable found,
       AnnotatedTypeMirror.AnnotatedWildcardType required,
       Void unused) {
-    return new TypeMatchVisitor(typeFactory).visit(found, required.getExtendsBound(), unused);
+    return this.visit(found, required.getExtendsBound(), unused);
   }
 
   @Override

@@ -18,8 +18,9 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
 public class CollectionVisitor extends ReceiverTypeParameterFixVisitor {
 
-  public CollectionVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
-    super(context, factory);
+  public CollectionVisitor(
+      Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
+    super(context, factory, fixComputer);
   }
 
   @Nullable
@@ -32,7 +33,9 @@ public class CollectionVisitor extends ReceiverTypeParameterFixVisitor {
       // receiver is written as a raw type and not parameterized. We cannot infer the actual types
       // and have to annotate the method directly.
       Set<Fix> fixes =
-          receivers.get(receivers.size() - 1).accept(new BasicVisitor(context, typeFactory), null);
+          receivers
+              .get(receivers.size() - 1)
+              .accept(new BasicVisitor(context, typeFactory, fixComputer), null);
       if (fixes != null && !fixes.isEmpty()) {
         return fixes.iterator().next();
       }

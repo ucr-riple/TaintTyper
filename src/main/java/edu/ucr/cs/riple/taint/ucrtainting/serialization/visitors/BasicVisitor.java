@@ -1,7 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.tree.*;
-import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
@@ -9,29 +8,22 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** This visitor directly annotates the element declaration to match the required type. */
-public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
+public class BasicVisitor extends SpecializedFixComputer {
 
-  /** The javac context. */
-  protected final Context context;
-  /**
-   * The type factory of the checker. Used to get the type of the tree and generate a fix only if is
-   * {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}.
-   */
-  protected final UCRTaintingAnnotatedTypeFactory typeFactory;
+  protected final MethodReturnVisitor returnVisitor;
 
-  public BasicVisitor(Context context, UCRTaintingAnnotatedTypeFactory factory) {
-    this.context = context;
-    this.typeFactory = factory;
+  public BasicVisitor(
+      Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
+    super(context, factory, fixComputer);
+    this.returnVisitor = new MethodReturnVisitor(context, typeFactory, fixComputer);
   }
 
   @Override
@@ -47,10 +39,10 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   public Set<Fix> visitConditionalExpression(ConditionalExpressionTree node, FoundRequired pair) {
     Set<Fix> fixes = new HashSet<>();
     if (requireFix(pair)) {
-      fixes.addAll(node.getTrueExpression().accept(new FixVisitor(context, typeFactory), pair));
+      fixes.addAll(node.getTrueExpression().accept(fixComputer, pair));
     }
     if (requireFix(pair)) {
-      fixes.addAll(node.getFalseExpression().accept(new FixVisitor(context, typeFactory), pair));
+      fixes.addAll(node.getFalseExpression().accept(fixComputer, pair));
     }
     return fixes;
   }
@@ -62,7 +54,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     for (ExpressionTree arg : node.getArguments()) {
       if (requireFix(pair)) {
         // Required can be null here, since we only need the passed parameters to be untainted.
-        fixes.addAll(arg.accept(new FixVisitor(context, typeFactory), pair));
+        fixes.addAll(arg.accept(fixComputer, pair));
       }
     }
     return fixes;
@@ -72,7 +64,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   public Set<Fix> visitTypeCast(TypeCastTree node, FoundRequired pair) {
     Set<Fix> fixes = new HashSet<>();
     if (node.getExpression() != null && typeFactory.mayBeTainted(node.getExpression())) {
-      fixes.addAll(node.getExpression().accept(new FixVisitor(context, typeFactory), pair));
+      fixes.addAll(node.getExpression().accept(fixComputer, pair));
     }
     return fixes;
   }
@@ -93,9 +85,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       for (ExpressionTree arg : node.getInitializers()) {
         if (arg != null && typeFactory.mayBeTainted(arg)) {
           fixes.addAll(
-              arg.accept(
-                  new FixVisitor(context, typeFactory),
-                  FoundRequired.of(foundComponentType, requiredComponentType)));
+              arg.accept(fixComputer, FoundRequired.of(foundComponentType, requiredComponentType)));
         }
       }
     }
@@ -114,7 +104,7 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     if (decl == null) {
       return Set.of();
     }
-    return decl.accept(new MethodReturnVisitor(context, typeFactory), pair);
+    return decl.accept(returnVisitor, pair);
   }
 
   @Override
@@ -131,21 +121,21 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
 
   @Override
   public Set<Fix> visitExpressionStatement(ExpressionStatementTree node, FoundRequired pair) {
-    return node.getExpression().accept(new FixVisitor(context, typeFactory), pair);
+    return node.getExpression().accept(fixComputer, pair);
   }
 
   @Override
   public Set<Fix> visitBinary(BinaryTree node, FoundRequired pair) {
     Set<Fix> fixes = new HashSet<>();
-    fixes.addAll(node.getLeftOperand().accept(new FixVisitor(context, typeFactory), pair));
-    fixes.addAll(node.getRightOperand().accept(new FixVisitor(context, typeFactory), pair));
+    fixes.addAll(node.getLeftOperand().accept(fixComputer, pair));
+    fixes.addAll(node.getRightOperand().accept(fixComputer, pair));
     return fixes;
   }
 
   @Override
   public Set<Fix> visitArrayAccess(ArrayAccessTree node, FoundRequired pair) {
     // only the expression is enough, we do not need to annotate the index.
-    return node.getExpression().accept(new FixVisitor(context, typeFactory), pair);
+    return node.getExpression().accept(fixComputer, pair);
   }
 
   @Override
@@ -164,49 +154,17 @@ public class BasicVisitor extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
 
   @Override
   public Set<Fix> visitParenthesized(ParenthesizedTree node, FoundRequired pair) {
-    return node.getExpression().accept(new FixVisitor(context, typeFactory), pair);
+    return node.getExpression().accept(fixComputer, pair);
   }
 
   @Override
   public Set<Fix> visitUnary(UnaryTree node, FoundRequired pair) {
-    return node.getExpression().accept(new FixVisitor(context, typeFactory), pair);
+    return node.getExpression().accept(fixComputer, pair);
   }
 
   @Override
   public Set<Fix> visitCompoundAssignment(CompoundAssignmentTree node, FoundRequired pair) {
-    return node.getExpression().accept(new FixVisitor(context, typeFactory), pair);
-  }
-
-  /**
-   * Builds the fix for the given element.
-   *
-   * @param element The element to build the fix for.
-   * @return The fix for the given element.
-   */
-  @Nullable
-  public Fix buildFixForElement(Element element, FoundRequired pair) {
-    SymbolLocation location = buildLocationForElement(element);
-    if (location == null) {
-      return null;
-    }
-    if (pair != null && pair.required != null && pair.found != null) {
-      location.setTypeVariablePositions(
-          new TypeMatchVisitor(typeFactory).visit(pair.found, pair.required, null));
-    }
-    return new Fix(location);
-  }
-
-  /**
-   * Builds the location for the given element.
-   *
-   * @param element The element to build the location for.
-   * @return The location for the given element.
-   */
-  protected SymbolLocation buildLocationForElement(Element element) {
-    if (element == null) {
-      return null;
-    }
-    return SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+    return node.getExpression().accept(fixComputer, pair);
   }
 
   /**
