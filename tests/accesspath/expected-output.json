@@ -1,0 +1,236 @@
+{
+  "errors": [
+    {
+      "messageKey": "assignment",
+      "offset": 229,
+      "index": 1,
+      "region": {
+        "symbol": "bar()",
+        "class": "Test"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "field": "foo",
+            "kind": "FIELD",
+            "class": "Test"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 327,
+      "index": 2,
+      "region": {
+        "symbol": "bar()",
+        "class": "Test"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "field": "foo",
+            "kind": "FIELD",
+            "class": "Test"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 406,
+      "index": 3,
+      "region": {
+        "symbol": "bar()",
+        "class": "Test"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "field": "bar",
+            "kind": "FIELD",
+            "class": "Test$Inner"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 491,
+      "index": 4,
+      "region": {
+        "symbol": "bar()",
+        "class": "Test"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "field": "foo",
+            "kind": "FIELD",
+            "class": "Test"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 581,
+      "index": 5,
+      "region": {
+        "symbol": "bar()",
+        "class": "Test"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "field": "baz",
+            "kind": "FIELD",
+            "class": "Test"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 644,
+      "index": 6,
+      "region": {
+        "symbol": "bar()",
+        "class": "Test"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getString()",
+            "kind": "METHOD",
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 712,
+      "index": 7,
+      "region": {
+        "symbol": "bar()",
+        "class": "Test"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "field": "baz",
+            "kind": "FIELD",
+            "class": "Test"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 791,
+      "index": 8,
+      "region": {
+        "symbol": "bar()",
+        "class": "Test"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "field": "baz",
+            "kind": "FIELD",
+            "class": "Test"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1154,
+      "index": 9,
+      "region": {
+        "symbol": "getInnerBaz()",
+        "class": "Test$Baz$InnerBaz"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getE()",
+            "kind": "METHOD",
+            "class": "Test$Baz$InnerBaz"
+          }
+        }
+      ]
+    }
+  ]
+}
