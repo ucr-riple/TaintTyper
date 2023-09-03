@@ -70,11 +70,16 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
     try {
       String serializedString = new String(Files.readAllBytes(serialized));
       JSONObject serializedContent =
-          new JSONObject(
-              "{ \"errors\": ["
-                  + serializedString.substring(0, serializedString.length() - 1)
-                  + "]}");
-      JSONObject expectedContent = new JSONObject(new String(Files.readAllBytes(expected)));
+          serializedString.isEmpty()
+              ? new JSONObject()
+              : new JSONObject(
+                  "{ \"errors\": ["
+                      + serializedString.substring(0, serializedString.length() - 1)
+                      + "]}");
+      JSONObject expectedContent =
+          expected.toFile().exists()
+              ? new JSONObject(new String(Files.readAllBytes(expected)))
+              : new JSONObject();
       if (!isEqualJSON(serializedContent, expectedContent)) {
         System.err.println("Expected: " + expectedContent.toString(2));
         System.err.println("Actual: " + serializedContent.toString(2));

@@ -8,7 +8,16 @@
         "symbol": "bar(java.lang.Object)",
         "class": "Foo"
       },
-      "fixes": []
+      "fixes": [{
+        "annotation": "untainted",
+        "location": {
+          "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+          "type-variable-position": [[0]],
+          "field": "field",
+          "kind": "FIELD",
+          "class": "Foo"
+        }
+      }]
     },
     {
       "messageKey": "array.initializer",
@@ -18,7 +27,18 @@
         "symbol": "bar(java.lang.Object)",
         "class": "Foo"
       },
-      "fixes": []
+      "fixes": [{
+        "annotation": "untainted",
+        "location": {
+          "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+          "type-variable-position": [[0]],
+          "method": "bar(java.lang.Object)",
+          "kind": "PARAMETER",
+          "name": "param",
+          "index": 0,
+          "class": "Foo"
+        }
+      }]
     },
     {
       "messageKey": "assignment",
@@ -104,7 +124,7 @@
             "type-variable-position": [
               [
                 2,
-                1,
+                2,
                 0
               ]
             ],

@@ -67,7 +67,7 @@ public class CollectionVisitor extends ReceiverTypeParameterFixVisitor {
               .map(t -> t.tsym.name.toString())
               .collect(Collectors.toList())
               .indexOf(typeVarName);
-      return List.of(List.of(index, 0));
+      return List.of(List.of(index + 1, 0));
     }
   }
 }
