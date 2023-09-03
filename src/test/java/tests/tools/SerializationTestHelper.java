@@ -60,6 +60,12 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
     deleteTempDir(outDir);
   }
 
+  /**
+   * Verifies that the serialized output matches the expected output.
+   *
+   * @param expected the path to the expected output file.
+   * @param serialized the path to the serialized output file.
+   */
   private void verifyExpectedOutput(Path expected, Path serialized) {
     try {
       String serializedString = new String(Files.readAllBytes(serialized));
@@ -69,15 +75,10 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
                   + serializedString.substring(0, serializedString.length() - 1)
                   + "]}");
       JSONObject expectedContent = new JSONObject(new String(Files.readAllBytes(expected)));
-      JSONArray expectedErrors = (JSONArray) expectedContent.get("errors");
-      JSONArray serializedErrors = (JSONArray) serializedContent.get("errors");
-      if (expectedErrors.length() != serializedErrors.length()) {
+      if (!isEqualJSON(serializedContent, expectedContent)) {
+        System.err.println("Expected: " + expectedContent.toString(2));
+        System.err.println("Actual: " + serializedContent.toString(2));
         throw new AssertionError("Expected output does not match serialized output.");
-      }
-      for (int i = 0; i < expectedErrors.length(); i++) {
-        if (!isEqualJSON(expectedErrors.get(i), serializedErrors.get(i))) {
-          throw new AssertionError("Expected output does not match serialized output.");
-        }
       }
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -137,14 +138,26 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
     return configPath;
   }
 
+  /**
+   * Retrieves the expected output file for the test based on the test directory name.
+   *
+   * @return the path to the expected output file.
+   */
   private Path retrieveExpectedOutputPath() {
     String currentDirectory = Paths.get("").resolve("tests").toAbsolutePath().toString();
     String singleSource = testFiles.get(0).toPath().toAbsolutePath().toString();
     return Paths.get(currentDirectory)
-        .resolve(Paths.get(singleSource.substring(currentDirectory.length() + 1)).getParent())
+        .resolve(Paths.get(singleSource.substring(currentDirectory.length() + 1)).iterator().next())
         .resolve("expected-output.json");
   }
 
+  /**
+   * Compares two JSON objects. Ignores the "path" and "offset" fields.
+   *
+   * @param r1 JSON object to compare.
+   * @param r2 JSON object to compare.
+   * @return true if the two JSON objects are equal, false otherwise.
+   */
   private static boolean isEqualJSON(Object r1, Object r2) {
     if (r1 == null || r2 == null) {
       return false;
@@ -154,26 +167,19 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
     }
     if (r1 instanceof JSONObject) {
       JSONObject json1 = (JSONObject) r1;
-      JSONObject json2 = (JSONObject) r1;
+      JSONObject json2 = (JSONObject) r2;
       if (!json1.keySet().equals(json2.keySet())) {
         return false;
       }
       for (String key : json1.keySet()) {
-        if (key.equals("path") || key.equals("offset")) {
-          continue;
-        }
-        if (json1.get(key) instanceof JSONObject) {
-          if (!isEqualJSON(json1.get(key), json2.get(key))) {
+        if (!key.equals("path") && !key.equals("offset")) {
+          if (json1.get(key) instanceof JSONObject || json1.get(key) instanceof JSONArray) {
+            if (!isEqualJSON(json1.get(key), json2.get(key))) {
+              return false;
+            }
+          } else if (!json1.get(key).toString().equals(json2.get(key).toString())) {
             return false;
           }
-        }
-        if (json1.get(key) instanceof JSONArray) {
-          if (!isEqualJSON(json1.get(key), json2.get(key))) {
-            return false;
-          }
-        }
-        if (!json1.get(key).toString().equals(json2.get(key).toString())) {
-          return false;
         }
       }
     }
@@ -184,7 +190,15 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
         return false;
       }
       for (int i = 0; i < a1.length(); i++) {
-        if (!isEqualJSON(a1.get(i), a2.get(i))) {
+        boolean found = false;
+        Object target = a1.get(i);
+        for (int j = 0; j < a2.length(); j++) {
+          if (isEqualJSON(target, a2.get(j))) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
           return false;
         }
       }
