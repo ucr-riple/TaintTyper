@@ -57,8 +57,8 @@ public class Foo {
   }
 
   public void newTest(Map<String, List<String>> headers) {
-    //    Iterator<Map.Entry<@RUntainted String, @RUntainted List<String>>> i =
-    //        headers.entrySet().iterator();
+    //        Iterator<Map.Entry<@RUntainted String, @RUntainted List<String>>> i =
+    // headers.entrySet().iterator();
   }
 
   static class GenericFoo<T, K> {

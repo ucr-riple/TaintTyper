@@ -42,10 +42,6 @@ public class ReceiverTypeParameterFixVisitor extends SpecializedFixComputer {
     super(context, factory, fixComputer);
   }
 
-  public void reset() {
-    receivers = null;
-  }
-
   @Override
   public Set<Fix> visitIdentifier(IdentifierTree node, FoundRequired pair) {
     addReceiver(node);

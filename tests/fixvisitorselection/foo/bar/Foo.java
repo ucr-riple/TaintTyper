@@ -5,13 +5,13 @@ import java.util.*;
 
 public class Foo {
 
-  //  public void testClassTypeWithArg() {
-  //    Bar<String, String> bar = new Bar<String, String>();
-  //    // :: error: assignment
-  //    Map<@RUntainted String, @RUntainted String> map = bar.getMapWithE();
-  //    // :: error: assignment
-  //    @RUntainted String s = bar.getE();
-  //  }
+  public void testClassTypeWithArg() {
+    Bar<String, String> bar = new Bar<String, String>();
+    // :: error: assignment
+    Map<@RUntainted String, @RUntainted String> map = bar.getMapWithE();
+    //    // :: error: assignment
+    //    @RUntainted String s = bar.getE();
+  }
   //
   //  public void defaultVisitor() {
   //    Bar<String, String> bar = new Bar<String, String>();
@@ -34,25 +34,23 @@ public class Foo {
   //    // :: error: assignment
   //    @RUntainted String s = map.get("foo");
   //  }
-
-  public HashMap<String, String> getMap() {
-    return null;
-  }
-
-  public void testWithMethodWithTypeArgs() {
-    // :: error: assignment
-    Map<String, @RUntainted String> map = unmodifiable(getMap());
-  }
-
-  public <M, L> HashMap<M, L> unmodifiable(Map<? extends M, ? extends L> m) {
-    return null;
-  }
   //
-  //  public void test(@RUntainted String param){
-  //
+  //  public HashMap<String, String> getMap() {
+  //    return null;
   //  }
   //
-  //  public void wrong(String p){
+  //  public void testWithMethodWithTypeArgs() {
+  //    // :: error: assignment
+  //    Map<String, @RUntainted String> map = unmodifiable(getMap());
+  //  }
+  //
+  //  public <M, L> HashMap<M, L> unmodifiable(Map<? extends M, ? extends L> m) {
+  //    return null;
+  //  }
+  //
+  //  public void test(@RUntainted String param) {}
+  //
+  //  public void wrong(String p) {
   //    // :: error: argument
   //    test(p);
   //  }

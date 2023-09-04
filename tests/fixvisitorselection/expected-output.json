@@ -1,0 +1,235 @@
+{
+  "errors": [
+    {
+      "messageKey": "assignment",
+      "offset": 296,
+      "index": 1,
+      "region": {
+        "symbol": "testClassTypeWithArg()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/fixvisitorselection/foo/bar/Foo.java",
+            "varName": "bar",
+            "type-variable-position": [
+              []
+            ],
+            "method": "testClassTypeWithArg()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 397,
+      "index": 2,
+      "region": {
+        "symbol": "testClassTypeWithArg()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/fixvisitorselection/foo/bar/Foo.java",
+            "varName": "bar",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "testClassTypeWithArg()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 559,
+      "index": 3,
+      "region": {
+        "symbol": "defaultVisitor()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/fixvisitorselection/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getString()",
+            "kind": "METHOD",
+            "class": "foo.bar.Bar"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 823,
+      "index": 4,
+      "region": {
+        "symbol": "testThirdPartyCall(org.apache.commons.text.io.StringSubstitutorReader,char[],int,int)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/fixvisitorselection/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testThirdPartyCall(org.apache.commons.text.io.StringSubstitutorReader,char[],int,int)",
+            "kind": "PARAMETER",
+            "name": "target",
+            "index": 1,
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/fixvisitorselection/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testThirdPartyCall(org.apache.commons.text.io.StringSubstitutorReader,char[],int,int)",
+            "kind": "PARAMETER",
+            "name": "targetLengthIn",
+            "index": 3,
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/fixvisitorselection/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testThirdPartyCall(org.apache.commons.text.io.StringSubstitutorReader,char[],int,int)",
+            "kind": "PARAMETER",
+            "name": "reader",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/fixvisitorselection/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testThirdPartyCall(org.apache.commons.text.io.StringSubstitutorReader,char[],int,int)",
+            "kind": "PARAMETER",
+            "name": "targetIndexIn",
+            "index": 2,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1032,
+      "index": 5,
+      "region": {
+        "symbol": "testWithTypeArgFix()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/fixvisitorselection/foo/bar/Foo.java",
+            "varName": "map",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "testWithTypeArgFix()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1219,
+      "index": 6,
+      "region": {
+        "symbol": "testWithMethodWithTypeArgs()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/fixvisitorselection/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "getMap()",
+            "kind": "METHOD",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "argument",
+      "offset": 1497,
+      "index": 7,
+      "region": {
+        "symbol": "wrong(java.lang.String)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/fixvisitorselection/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "wrong(java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "p",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    }
+  ]
+}

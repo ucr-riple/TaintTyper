@@ -33,7 +33,6 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   protected final Types types;
   protected final BasicVisitor basicVisitor;
   protected final SpecializedFixComputer thirdPartyFixVisitor;
-  protected final ReceiverTypeParameterFixVisitor receiverTypeParameterFixVisitor;
   protected final SpecializedFixComputer methodTypeArgumentFixVisitor;
   protected final SpecializedFixComputer collectionVisitor;
 
@@ -43,8 +42,6 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     this.types = Types.instance(context);
     this.basicVisitor = new BasicVisitor(context, factory, this);
     this.thirdPartyFixVisitor = new ThirdPartyFixVisitor(context, typeFactory, this);
-    this.receiverTypeParameterFixVisitor =
-        new ReceiverTypeParameterFixVisitor(context, typeFactory, this);
     this.methodTypeArgumentFixVisitor =
         new MethodTypeArgumentFixVisitor(context, typeFactory, this);
     this.collectionVisitor = new CollectionVisitor(context, typeFactory, this);
@@ -103,8 +100,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     // receiver and leave the called method untouched. Annotation on the declaration on the type
     // argument, will be added on the method automatically.
     if (isTypeVar && hasReceiver) {
-      receiverTypeParameterFixVisitor.reset();
-      return node.accept(receiverTypeParameterFixVisitor, pair);
+      return node.accept(new ReceiverTypeParameterFixVisitor(context, typeFactory, this), pair);
     } else {
       return defaultAction(node, pair);
     }
