@@ -262,8 +262,11 @@ public class ReceiverTypeParameterFixVisitor extends SpecializedFixComputer {
             .forEach(type -> typeVarMap.put(type.toString(), type.toString()));
       }
     }
-    if (!indexToEffectiveTypeParameter.isEmpty()) {
+    if (indexToEffectiveTypeParameter.isEmpty()) {
+      System.err.println("Failed to locate effective type parameter for element: " + element);
+    } else {
       indexToEffectiveTypeParameter.add(0);
+      typeFactory.getAnnotatedType(element);
     }
     return List.of(indexToEffectiveTypeParameter);
   }
