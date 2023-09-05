@@ -1,0 +1,56 @@
+{
+  "errors": [
+    {
+      "messageKey": "override.return",
+      "offset": 156,
+      "index": 1,
+      "region": {
+        "symbol": "getUntainted()",
+        "class": "foo.bar.Bar"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getUntainted()",
+            "kind": "METHOD",
+            "class": "foo.bar.Bar"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "override.param",
+      "offset": 243,
+      "index": 2,
+      "region": {
+        "symbol": "getUntainted(java.lang.Object)",
+        "class": "foo.bar.Bar"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getUntainted(java.lang.Object)",
+            "kind": "PARAMETER",
+            "name": "pFoo",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    }
+  ]
+}
