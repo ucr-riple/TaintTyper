@@ -9,6 +9,8 @@ import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.*;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
+import javax.servlet.http.HttpServletResponse;
 
 class Foo {
 
@@ -16,6 +18,8 @@ class Foo {
   Bar bar = new Bar();
 
   static final String staticField = "";
+  protected static final String MIME_HTML_TEXT = "text/html";
+  private static final Pattern PATTERN_CRLF = Pattern.compile("(\\r|\\n)");
 
   void bar(String x, @RUntainted String y, boolean b) {
     String localVar = x;
@@ -68,12 +72,6 @@ class Foo {
 
   void requireUntainted(@RUntainted Object param) {}
 
-  public void inheritParam(Object param) {}
-
-  public @RUntainted Object inheritReturn() {
-    return null;
-  }
-
   public void testAndOr(boolean op1, boolean op2) {
     // :: error: assignment
     @RUntainted boolean x = op1 && op2;
@@ -110,5 +108,30 @@ class Foo {
     } catch (Exception pae) {
 
     }
+  }
+
+  protected void writeLoginPageLink(HttpServletResponse resp) {
+    resp.setContentType(MIME_HTML_TEXT);
+    List<String> param = null;
+    // :: error: assignment
+    @RUntainted String s = doInSystemTransaction(param);
+  }
+
+  protected <T> T doInSystemTransaction(List<T> list) {
+    return null;
+  }
+
+  private @RUntainted String sanitize(String redirectUrl) {
+    if (redirectUrl != null) {
+      // :: error: return
+      return PATTERN_CRLF.matcher(redirectUrl).replaceAll("");
+    }
+    return null;
+  }
+
+  public void test1(String op1) {
+    @RUntainted String s = "hello";
+    // :: error: compound.assignment
+    s += op1;
   }
 }

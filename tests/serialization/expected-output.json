@@ -1,0 +1,642 @@
+{
+  "errors": [
+    {
+      "messageKey": "assignment",
+      "offset": 841,
+      "index": 1,
+      "region": {
+        "symbol": "bar(java.lang.String,java.lang.String,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "field",
+            "kind": "FIELD",
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 903,
+      "index": 2,
+      "region": {
+        "symbol": "bar(java.lang.String,java.lang.String,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "PARAMETER",
+            "name": "x",
+            "index": 0,
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 942,
+      "index": 3,
+      "region": {
+        "symbol": "bar(java.lang.String,java.lang.String,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "PARAMETER",
+            "name": "y",
+            "index": 1,
+            "class": "Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "PARAMETER",
+            "name": "x",
+            "index": 0,
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 989,
+      "index": 4,
+      "region": {
+        "symbol": "bar(java.lang.String,java.lang.String,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "PARAMETER",
+            "name": "y",
+            "index": 1,
+            "class": "Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "PARAMETER",
+            "name": "x",
+            "index": 0,
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1032,
+      "index": 5,
+      "region": {
+        "symbol": "bar(java.lang.String,java.lang.String,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "varName": "localVar",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "PARAMETER",
+            "name": "y",
+            "index": 1,
+            "class": "Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "PARAMETER",
+            "name": "x",
+            "index": 0,
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1107,
+      "index": 6,
+      "region": {
+        "symbol": "bar(java.lang.String,java.lang.String,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Bar.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getField()",
+            "kind": "METHOD",
+            "class": "Bar"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1176,
+      "index": 7,
+      "region": {
+        "symbol": "bar(java.lang.String,java.lang.String,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Bar.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "field",
+            "kind": "FIELD",
+            "class": "Bar"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1227,
+      "index": 8,
+      "region": {
+        "symbol": "bar(java.lang.String,java.lang.String,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "PARAMETER",
+            "name": "x",
+            "index": 0,
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1270,
+      "index": 9,
+      "region": {
+        "symbol": "bar(java.lang.String,java.lang.String,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "varName": "localVar",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1320,
+      "index": 10,
+      "region": {
+        "symbol": "bar(java.lang.String,java.lang.String,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Baz.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "field",
+            "kind": "FIELD",
+            "class": "Baz"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1477,
+      "index": 11,
+      "region": {
+        "symbol": "foo()",
+        "class": "Foo$1LocalClass"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "varName": "finalLocalVar",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1540,
+      "index": 12,
+      "region": {
+        "symbol": "foo()",
+        "class": "Foo$1LocalClass"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "f2",
+            "kind": "FIELD",
+            "class": "Foo$1LocalClass"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1755,
+      "index": 13,
+      "region": {
+        "symbol": "baz",
+        "class": "Foo$1LocalClass$1LocalInnerClass"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "varName": "argsList",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "foo()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "Foo$1LocalClass"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "varName": "localVar",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "foo()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "Foo$1LocalClass"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "varName": "argsArray",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "foo()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "Foo$1LocalClass"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1879,
+      "index": 14,
+      "region": {
+        "symbol": "bar(java.lang.String,java.lang.String,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Bar.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "staticF",
+            "kind": "FIELD",
+            "class": "Bar"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 2039,
+      "index": 15,
+      "region": {
+        "symbol": "testAndOr(boolean,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testAndOr(boolean,boolean)",
+            "kind": "PARAMETER",
+            "name": "op1",
+            "index": 0,
+            "class": "Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testAndOr(boolean,boolean)",
+            "kind": "PARAMETER",
+            "name": "op2",
+            "index": 1,
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 2107,
+      "index": 16,
+      "region": {
+        "symbol": "testAndOr(boolean,boolean)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testAndOr(boolean,boolean)",
+            "kind": "PARAMETER",
+            "name": "op2",
+            "index": 1,
+            "class": "Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testAndOr(boolean,boolean)",
+            "kind": "PARAMETER",
+            "name": "op1",
+            "index": 0,
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 3417,
+      "index": 17,
+      "region": {
+        "symbol": "writeLoginPageLink(javax.servlet.http.HttpServletResponse)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "varName": "param",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "writeLoginPageLink(javax.servlet.http.HttpServletResponse)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "return",
+      "offset": 3676,
+      "index": 18,
+      "region": {
+        "symbol": "sanitize(java.lang.String)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "PATTERN_CRLF",
+            "kind": "FIELD",
+            "class": "Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "sanitize(java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "redirectUrl",
+            "index": 0,
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "compound.assignment",
+      "offset": 3872,
+      "index": 19,
+      "region": {
+        "symbol": "test1(java.lang.String)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "test1(java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "op1",
+            "index": 0,
+            "class": "Foo"
+          }
+        }
+      ]
+    }
+  ]
+}

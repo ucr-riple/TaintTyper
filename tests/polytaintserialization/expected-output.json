@@ -1,0 +1,44 @@
+{
+  "errors": [
+    {
+      "messageKey": "assignment",
+      "offset": 1538,
+      "index": 1,
+      "region": {
+        "symbol": "inferPolyWithTypeParamAnnotationTest(java.util.List,java.util.List)",
+        "class": "foo.bar.Test"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "kind": "POLY_METHOD",
+            "arguments": [
+              {
+                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+                "type-variable-position": [
+                  [
+                    1,
+                    0
+                  ]
+                ],
+                "method": "inferPolyWithTypeParamAnnotation(java.util.List)",
+                "kind": "PARAMETER",
+                "name": "param",
+                "index": 0,
+                "class": "foo.bar.Test"
+              }
+            ],
+            "class": "foo.bar.Test"
+          }
+        }
+      ]
+    }
+  ]
+}

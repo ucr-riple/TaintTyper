@@ -1,6 +1,7 @@
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import javax.servlet.http.HttpServletResponse;
 
-class Bar {
+class Bar extends Foo {
   public String field = "";
 
   public Baz baz = new Baz();
@@ -9,5 +10,10 @@ class Bar {
 
   String getField() {
     return field;
+  }
+
+  @Override
+  protected void writeLoginPageLink(HttpServletResponse resp) {
+    resp.setContentType(MIME_HTML_TEXT);
   }
 }
