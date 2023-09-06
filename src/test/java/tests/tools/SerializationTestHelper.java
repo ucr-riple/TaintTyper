@@ -68,7 +68,7 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
    */
   private void verifyExpectedOutput(Path expected, Path serialized) {
     try {
-      String serializedString = new String(Files.readAllBytes(serialized));
+      String serializedString = serialized.toFile().exists() ? new String(Files.readAllBytes(serialized)) : "";
       JSONObject serializedContent =
           serializedString.isEmpty()
               ? new JSONObject()
