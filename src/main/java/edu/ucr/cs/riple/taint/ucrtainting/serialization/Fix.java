@@ -37,4 +37,8 @@ public class Fix implements JSONSerializable {
   public Fix toPoly() {
     return new Fix("poly", location);
   }
+
+  public boolean isPoly() {
+    return location.getKind().isPoly();
+  }
 }

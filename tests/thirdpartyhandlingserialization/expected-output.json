@@ -1,0 +1,114 @@
+{
+  "errors": [
+    {
+      "messageKey": "assignment",
+      "offset": 626,
+      "index": 1,
+      "region": {
+        "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": []
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 728,
+      "index": 2,
+      "region": {
+        "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "path",
+            "kind": "FIELD",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "argument",
+      "offset": 1309,
+      "index": 3,
+      "region": {
+        "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+            "kind": "PARAMETER",
+            "name": "request",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "argument",
+      "offset": 1384,
+      "index": 4,
+      "region": {
+        "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": []
+    },
+    {
+      "messageKey": "return",
+      "offset": 1764,
+      "index": 5,
+      "region": {
+        "symbol": "testOnStreamLambda(java.util.List)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "testOnStreamLambda(java.util.List)",
+            "kind": "PARAMETER",
+            "name": "s",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 2235,
+      "index": 6,
+      "region": {
+        "symbol": "testCheckTypeForArgumentsBeforeCallingFixVisitor(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": []
+    }
+  ]
+}

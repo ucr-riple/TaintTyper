@@ -8,6 +8,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -104,7 +105,25 @@ public class BasicVisitor extends SpecializedFixComputer {
     if (decl == null) {
       return Set.of();
     }
-    return decl.accept(returnVisitor, pair);
+    Set<Fix> fixesOnDecl = decl.accept(returnVisitor, pair);
+    Set<Fix> onActualParameters = new HashSet<>();
+    fixesOnDecl.forEach(
+        fix -> {
+          if (fix.isPoly()) {
+            PolyMethodLocation polyMethodLocation = (PolyMethodLocation) fix.location;
+            polyMethodLocation.arguments.forEach(
+                methodParameterLocation -> {
+                  if (methodParameterLocation.enclosingMethod.equals(calledMethod)) {
+                    onActualParameters.addAll(
+                        node.getArguments()
+                            .get(methodParameterLocation.index)
+                            .accept(fixComputer, null));
+                  }
+                });
+          }
+        });
+    fixesOnDecl.addAll(onActualParameters);
+    return fixesOnDecl;
   }
 
   @Override
@@ -165,6 +184,12 @@ public class BasicVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitCompoundAssignment(CompoundAssignmentTree node, FoundRequired pair) {
     return node.getExpression().accept(fixComputer, pair);
+  }
+
+  @Override
+  public Set<Fix> visitVariable(VariableTree node, FoundRequired foundRequired) {
+    Fix onVariable = buildFixForElement(TreeUtils.elementFromDeclaration(node), foundRequired);
+    return onVariable == null ? Set.of() : Set.of(onVariable);
   }
 
   /**
