@@ -4,6 +4,7 @@ import static edu.ucr.cs.riple.taint.ucrtainting.Log.print;
 
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CompositHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
@@ -451,6 +452,11 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    */
   public boolean hasPolyTaintedAnnotation(Tree tree) {
     return hasPolyTaintedAnnotation(getAnnotatedType(tree));
+  }
+
+  public boolean hasPolyTaintedAnnotation(Type type) {
+    return type.getAnnotationMirrors().stream()
+        .anyMatch(typeCompound -> typeCompound.type.tsym.name.toString().equals("RPolyTainted"));
   }
 
   /**

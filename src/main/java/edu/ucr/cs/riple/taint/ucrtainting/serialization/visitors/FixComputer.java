@@ -84,6 +84,8 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     boolean isTypeVar = Utility.containsTypeArgument(calledMethod.getReturnType());
     boolean hasReceiver =
         !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));
+    boolean hasPolyTaintedAnnotation =
+        typeFactory.hasPolyTaintedAnnotation(calledMethod.getReturnType());
     boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();
     if (CollectionHandler.isToArrayWithTypeArgMethod(calledMethod, types)) {
       return node.accept(collectionVisitor, pair);
