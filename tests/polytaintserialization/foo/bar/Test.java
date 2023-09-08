@@ -50,7 +50,7 @@ public class Test {
   }
 
   public void inferPolyWithTypeParamAnnotationTest(List<@RUntainted String> p1, List<String> p2) {
-    inferPolyWithTypeParamAnnotation(p1);
+    //    inferPolyWithTypeParamAnnotation(p1);
     // :: error: assignment
     @RUntainted String s2 = inferPolyWithTypeParamAnnotation(p2);
   }

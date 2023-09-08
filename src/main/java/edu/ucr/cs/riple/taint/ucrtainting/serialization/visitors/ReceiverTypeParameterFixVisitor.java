@@ -239,7 +239,6 @@ public class ReceiverTypeParameterFixVisitor extends SpecializedFixComputer {
       }
     }
     if (indexToEffectiveTypeParameter.isEmpty()) {
-      System.err.println("Failed to locate effective type parameter for element: " + element);
       return matchOnCurrentType(element, visitor, indexToEffectiveTypeParameter, pair);
     } else {
       indexToEffectiveTypeParameter.add(0);

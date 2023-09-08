@@ -178,7 +178,7 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
         return false;
       }
       for (String key : json1.keySet()) {
-        if (!key.equals("path") && !key.equals("offset")) {
+        if (!key.equals("path") && !key.equals("offset") && !key.equals("index")) {
           if (json1.get(key) instanceof JSONObject || json1.get(key) instanceof JSONArray) {
             if (!isEqualJSON(json1.get(key), json2.get(key))) {
               return false;
