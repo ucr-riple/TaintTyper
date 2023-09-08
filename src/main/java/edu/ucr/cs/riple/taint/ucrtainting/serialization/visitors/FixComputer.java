@@ -87,6 +87,12 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     boolean hasPolyTaintedAnnotation =
         typeFactory.hasPolyTaintedAnnotation(calledMethod.getReturnType());
     boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();
+    if (hasPolyTaintedAnnotation) {
+      Set<Fix> polyFixes = node.accept(new PolyMethodVisitor(context, typeFactory, this), pair);
+      if (!polyFixes.isEmpty()) {
+        return polyFixes;
+      }
+    }
     if (CollectionHandler.isToArrayWithTypeArgMethod(calledMethod, types)) {
       return node.accept(collectionVisitor, pair);
     }

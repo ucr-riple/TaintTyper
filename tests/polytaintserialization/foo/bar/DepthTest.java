@@ -66,8 +66,33 @@ public class DepthTest {
     return ans;
   }
 
+  String bar1(String param) {
+    String s = param;
+    String ans = bar2(s);
+    return ans;
+  }
+
+  String bar2(String param) {
+    String s = param;
+    String ans = bar3(s);
+    return ans;
+  }
+
+  String bar3(String param) {
+    String s = param;
+    String ans = bar4(s);
+    return ans;
+  }
+
+  String bar4(String param) {
+    String s = param;
+    return s;
+  }
+
   public void test(String param) {
     // :: error: assignment
-    @RUntainted String s = foo1(param);
+    @RUntainted String outOfBound = foo1(param);
+    // :: error: assignment
+    @RUntainted String inBound = bar1(param);
   }
 }

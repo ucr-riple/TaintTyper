@@ -12,7 +12,7 @@ public class FoundRequired {
   public final AnnotatedTypeMirror found;
   public final AnnotatedTypeMirror required;
   public int depth;
-  public static final int MAX_DEPTH = 50;
+  public static final int MAX_DEPTH = 5;
 
   public FoundRequired(AnnotatedTypeMirror found, AnnotatedTypeMirror required) {
     this.found = found;

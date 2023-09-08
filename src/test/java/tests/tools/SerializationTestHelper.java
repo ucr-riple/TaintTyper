@@ -82,8 +82,8 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
               ? new JSONObject(new String(Files.readAllBytes(expected)))
               : new JSONObject();
       if (!isEqualJSON(serializedContent, expectedContent)) {
-        System.err.println("Expected: " + expectedContent.toString(2));
         System.err.println("Actual: " + serializedContent.toString(2));
+        System.err.println("Expected: " + expectedContent.toString(2));
         throw new AssertionError("Expected output does not match serialized output.");
       }
     } catch (IOException e) {

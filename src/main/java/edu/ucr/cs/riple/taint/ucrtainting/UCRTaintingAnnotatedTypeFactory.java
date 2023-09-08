@@ -123,6 +123,21 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     return builder.build();
   }
 
+  /**
+   * Replaces all existing {@link RPolyTainted} annotations with {@link RUntainted} annotation.
+   *
+   * @param annotatedTypeMirror Annotated type mirror whose {@link RPolyTainted} annotations are to
+   *     be replaced.
+   */
+  public void replacePolyWithUntainted(AnnotatedTypeMirror annotatedTypeMirror) {
+    annotatedTypeMirror.replaceAnnotation(rUntainted);
+    if (annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      ((AnnotatedTypeMirror.AnnotatedDeclaredType) annotatedTypeMirror)
+          .getTypeArguments()
+          .forEach(this::replacePolyWithUntainted);
+    }
+  }
+
   private class UCRTaintingQualifierHierarchy extends AccumulationQualifierHierarchy {
 
     /**
