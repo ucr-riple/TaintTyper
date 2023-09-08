@@ -10,7 +10,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -97,15 +96,24 @@ public class BasicVisitor extends SpecializedFixComputer {
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
     Element element = TreeUtils.elementFromUse(node);
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
-    if (calledMethod.getParameters().isEmpty()) {
-      // no parameters, make untainted
-      return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod, pair)));
-    }
-    JCTree decl = Utility.locateDeclaration(calledMethod, context);
-    if (decl == null) {
+    Fix onMethod = buildFixForElement(calledMethod, pair);
+    if (onMethod == null) {
       return Set.of();
     }
-    Set<Fix> fixesOnDecl = decl.accept(returnVisitor, pair);
+    if (calledMethod.getParameters().isEmpty()) {
+      // no parameters, make untainted
+      return Set.of(onMethod);
+    }
+    JCTree decl = Utility.locateDeclaration(calledMethod, context);
+    if (decl == null || decl.getKind() != Tree.Kind.METHOD) {
+      return Set.of();
+    }
+    JCTree.JCMethodDecl methodDecl = (JCTree.JCMethodDecl) decl;
+    if (methodDecl.getBody() == null || pair.isMaxDepth()) {
+      return Set.of(onMethod);
+    }
+    pair.incrementDepth();
+    Set<Fix> fixesOnDecl = methodDecl.accept(returnVisitor, pair);
     Set<Fix> onActualParameters = new HashSet<>();
     fixesOnDecl.forEach(
         fix -> {

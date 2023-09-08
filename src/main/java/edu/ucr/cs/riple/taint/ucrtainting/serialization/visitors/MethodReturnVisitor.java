@@ -25,6 +25,7 @@ import org.checkerframework.javacutil.TreeUtils;
 public class MethodReturnVisitor extends SpecializedFixComputer {
 
   private final AccumulateScanner returnStatementScanner;
+  private final int maxDepth = 5;
 
   public MethodReturnVisitor(
       Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
@@ -54,7 +55,8 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
         ans.add(fix);
       } else {
         AssignmentScanner assignmentScanner =
-            new AssignmentScanner((Symbol.VarSymbol) ((LocalVariableLocation) fix.location).target);
+            new AssignmentScanner(
+                (Symbol.VarSymbol) ((LocalVariableLocation) fix.location).target, pair);
         Set<Fix> onAssignments = node.accept(assignmentScanner, fixComputer);
         workList.addAll(onAssignments);
       }
@@ -104,16 +106,18 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
   static class AssignmentScanner extends AccumulateScanner {
 
     private final Symbol.VarSymbol localVariable;
+    private final FoundRequired pair;
 
-    public AssignmentScanner(Symbol.VarSymbol localVariable) {
+    public AssignmentScanner(Symbol.VarSymbol localVariable, FoundRequired pair) {
       this.localVariable = localVariable;
+      this.pair = pair;
     }
 
     @Override
     public Set<Fix> visitAssignment(AssignmentTree node, FixComputer visitor) {
       Element element = TreeUtils.elementFromUse(node.getVariable());
       if (localVariable.equals(element)) {
-        return node.getExpression().accept(visitor, null);
+        return node.getExpression().accept(visitor, pair);
       }
       return Set.of();
     }
@@ -122,7 +126,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     public Set<Fix> visitVariable(VariableTree node, FixComputer visitor) {
       Element element = TreeUtils.elementFromDeclaration(node);
       if (localVariable.equals(element)) {
-        return node.getInitializer().accept(visitor, null);
+        return node.getInitializer().accept(visitor, pair);
       }
       return Set.of();
     }
