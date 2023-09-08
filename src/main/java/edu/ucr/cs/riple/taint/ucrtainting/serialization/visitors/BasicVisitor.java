@@ -97,7 +97,7 @@ public class BasicVisitor extends SpecializedFixComputer {
     Element element = TreeUtils.elementFromUse(node);
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
     Fix onMethod = buildFixForElement(calledMethod, pair);
-    if (onMethod == null) {
+    if (onMethod == null || !requireFix(pair) || pair.isMaxDepth()) {
       return Set.of();
     }
     if (calledMethod.getParameters().isEmpty()) {
@@ -109,11 +109,10 @@ public class BasicVisitor extends SpecializedFixComputer {
       return Set.of();
     }
     JCTree.JCMethodDecl methodDecl = (JCTree.JCMethodDecl) decl;
-    if (methodDecl.getBody() == null || pair.isMaxDepth()) {
+    if (methodDecl.getBody() == null) {
       return Set.of(onMethod);
     }
-    pair.incrementDepth();
-    Set<Fix> fixesOnDecl = methodDecl.accept(returnVisitor, pair);
+    Set<Fix> fixesOnDecl = new HashSet<>(methodDecl.accept(returnVisitor, pair));
     Set<Fix> onActualParameters = new HashSet<>();
     fixesOnDecl.forEach(
         fix -> {

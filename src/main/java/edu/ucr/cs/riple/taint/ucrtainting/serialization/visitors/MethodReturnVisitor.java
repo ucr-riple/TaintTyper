@@ -15,6 +15,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +26,6 @@ import org.checkerframework.javacutil.TreeUtils;
 public class MethodReturnVisitor extends SpecializedFixComputer {
 
   private final AccumulateScanner returnStatementScanner;
-  private final int maxDepth = 5;
 
   public MethodReturnVisitor(
       Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
@@ -44,7 +44,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     Element methodElement = TreeUtils.elementFromDeclaration(node);
     Fix onMethod = buildFixForElement(methodElement, pair);
     if (onMethod == null) {
-      return Set.of();
+      return Collections.emptySet();
     }
     Set<Fix> ans = new HashSet<>();
     Set<Fix> onReturns = node.accept(returnStatementScanner, fixComputer);
@@ -57,7 +57,9 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
         AssignmentScanner assignmentScanner =
             new AssignmentScanner(
                 (Symbol.VarSymbol) ((LocalVariableLocation) fix.location).target, pair);
+        pair.incrementDepth();
         Set<Fix> onAssignments = node.accept(assignmentScanner, fixComputer);
+        pair.decrementDepth();
         workList.addAll(onAssignments);
       }
     }

@@ -12,7 +12,7 @@ public class FoundRequired {
   public final AnnotatedTypeMirror found;
   public final AnnotatedTypeMirror required;
   public int depth;
-  public static final int MAX_DEPTH = 5;
+  public static final int MAX_DEPTH = 50;
 
   public FoundRequired(AnnotatedTypeMirror found, AnnotatedTypeMirror required) {
     this.found = found;
@@ -30,11 +30,26 @@ public class FoundRequired {
     return new FoundRequired(found, required);
   }
 
+  /**
+   * Increments the depth of the found required pair. This is used to prevent infinite recursion.
+   * While visiting a new method body, the depth is incremented.
+   */
   public void incrementDepth() {
     this.depth++;
   }
 
+  /**
+   * Returns true if the depth of the found required pair is greater than or equal to the max depth.
+   */
   public boolean isMaxDepth() {
     return this.depth >= MAX_DEPTH;
+  }
+
+  /**
+   * Decrements the depth of the found required pair. This is used to decrease depth when exiting a
+   * method body.
+   */
+  public void decrementDepth() {
+    this.depth--;
   }
 }
