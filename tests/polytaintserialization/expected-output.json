@@ -2,17 +2,33 @@
   "errors": [
     {
       "messageKey": "assignment",
-      "offset": 1538,
+      "offset": 419,
       "index": 1,
       "region": {
-        "symbol": "inferPolyWithTypeParamAnnotationTest(java.util.List,java.util.List)",
+        "symbol": "simple(java.lang.String)",
         "class": "foo.bar.Test"
       },
       "fixes": [
         {
+          "annotation": "untainted",
+          "location": {
+            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "simple(java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "param",
+            "index": 0,
+            "class": "foo.bar.Test"
+          }
+        },
+        {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "type-variable-position": [
               [
                 0
@@ -21,7 +37,85 @@
             "kind": "POLY_METHOD",
             "arguments": [
               {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+                "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+                "type-variable-position": [
+                  [
+                    0
+                  ]
+                ],
+                "method": "foo(java.lang.String,java.lang.String)",
+                "kind": "PARAMETER",
+                "name": "s0",
+                "index": 0,
+                "class": "foo.bar.Test"
+              }
+            ],
+            "class": "foo.bar.Test"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1067,
+      "index": 2,
+      "region": {
+        "symbol": "test()",
+        "class": "foo.bar.Test"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "kind": "POLY_METHOD",
+            "arguments": [
+              {
+                "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+                "type-variable-position": [
+                  [
+                    0
+                  ]
+                ],
+                "method": "inferPoly(java.lang.String)",
+                "kind": "PARAMETER",
+                "name": "param",
+                "index": 0,
+                "class": "foo.bar.Test"
+              }
+            ],
+            "class": "foo.bar.Test"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1442,
+      "index": 3,
+      "region": {
+        "symbol": "inferPolyWithTypeParamAnnotationTest(java.util.List,java.util.List)",
+        "class": "foo.bar.Test"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "kind": "POLY_METHOD",
+            "arguments": [
+              {
+                "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
                 "type-variable-position": [
                   [
                     1,
@@ -35,6 +129,22 @@
                 "class": "foo.bar.Test"
               }
             ],
+            "class": "foo.bar.Test"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "inferPolyWithTypeParamAnnotationTest(java.util.List,java.util.List)",
+            "kind": "PARAMETER",
+            "name": "p2",
+            "index": 1,
             "class": "foo.bar.Test"
           }
         }

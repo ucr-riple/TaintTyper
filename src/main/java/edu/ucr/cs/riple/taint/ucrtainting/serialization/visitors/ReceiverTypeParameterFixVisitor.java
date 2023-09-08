@@ -216,31 +216,7 @@ public class ReceiverTypeParameterFixVisitor extends SpecializedFixComputer {
         // inside a provided type parameter.
         String enteredName = typeVarMap.get(enteredType);
         if (enteredName == null) {
-          // The remaining inconsistencies are due to the fact that the parameters are not inside
-          // the receiver. We should locate the remaining. See example below:
-          // Iterator<Entry<String, String>> itEntries;
-          // @RUntainted Entry<@RUntainted String, @RUntainted String> entry = itEntries.next();
-          // With controlling type argument, we can make result of next()
-          // untainted. However, we need to make the including type args of Entry untainted as well.
-          List<List<Integer>> onTypeArgumentIndexes;
-          AnnotatedTypeMirror.AnnotatedDeclaredType elementAnnotatedMirrorType =
-              (AnnotatedTypeMirror.AnnotatedDeclaredType) typeFactory.getAnnotatedType(element);
-          AnnotatedTypeMirror foundOnTypeArg =
-              getAnnotatedTypeMirrorOfTypeArgumentAt(
-                  elementAnnotatedMirrorType, indexToEffectiveTypeParameter);
-          onTypeArgumentIndexes = visitor.visit(foundOnTypeArg, pair.required, null);
-          List<List<Integer>> positions;
-          if (!onTypeArgumentIndexes.isEmpty()) {
-            positions = new ArrayList<>();
-            for (List<Integer> integers : onTypeArgumentIndexes) {
-              List<Integer> position = new ArrayList<>(indexToEffectiveTypeParameter);
-              position.addAll(integers);
-              positions.add(position);
-            }
-            return positions;
-          } else {
-            return List.of(indexToEffectiveTypeParameter);
-          }
+          return matchOnCurrentType(element, visitor, indexToEffectiveTypeParameter, pair);
         }
         int i;
         for (i = 0; i < elementTypeArgs.size(); i++) {
@@ -264,10 +240,43 @@ public class ReceiverTypeParameterFixVisitor extends SpecializedFixComputer {
     }
     if (indexToEffectiveTypeParameter.isEmpty()) {
       System.err.println("Failed to locate effective type parameter for element: " + element);
+      return matchOnCurrentType(element, visitor, indexToEffectiveTypeParameter, pair);
     } else {
       indexToEffectiveTypeParameter.add(0);
       typeFactory.getAnnotatedType(element);
     }
     return List.of(indexToEffectiveTypeParameter);
+  }
+
+  private List<List<Integer>> matchOnCurrentType(
+      Element element,
+      TypeMatchVisitor visitor,
+      List<Integer> indexToEffectiveTypeParameter,
+      FoundRequired pair) {
+    // The remaining inconsistencies are due to the fact that the parameters are not inside
+    // the receiver. We should locate the remaining. See example below:
+    // Iterator<Entry<String, String>> itEntries;
+    // @RUntainted Entry<@RUntainted String, @RUntainted String> entry = itEntries.next();
+    // With controlling type argument, we can make result of next()
+    // untainted. However, we need to make the including type args of Entry untainted as well.
+    List<List<Integer>> onTypeArgumentIndexes;
+    AnnotatedTypeMirror.AnnotatedDeclaredType elementAnnotatedMirrorType =
+        (AnnotatedTypeMirror.AnnotatedDeclaredType) typeFactory.getAnnotatedType(element);
+    AnnotatedTypeMirror foundOnTypeArg =
+        getAnnotatedTypeMirrorOfTypeArgumentAt(
+            elementAnnotatedMirrorType, indexToEffectiveTypeParameter);
+    onTypeArgumentIndexes = visitor.visit(foundOnTypeArg, pair.required, null);
+    List<List<Integer>> positions;
+    if (!onTypeArgumentIndexes.isEmpty()) {
+      positions = new ArrayList<>();
+      for (List<Integer> integers : onTypeArgumentIndexes) {
+        List<Integer> position = new ArrayList<>(indexToEffectiveTypeParameter);
+        position.addAll(integers);
+        positions.add(position);
+      }
+      return positions;
+    } else {
+      return List.of(indexToEffectiveTypeParameter);
+    }
   }
 }
