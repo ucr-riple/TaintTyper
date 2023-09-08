@@ -38,12 +38,8 @@ public class BasicVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitConditionalExpression(ConditionalExpressionTree node, FoundRequired pair) {
     Set<Fix> fixes = new HashSet<>();
-    if (requireFix(pair)) {
-      fixes.addAll(node.getTrueExpression().accept(fixComputer, pair));
-    }
-    if (requireFix(pair)) {
-      fixes.addAll(node.getFalseExpression().accept(fixComputer, pair));
-    }
+    fixes.addAll(node.getTrueExpression().accept(fixComputer, pair));
+    fixes.addAll(node.getFalseExpression().accept(fixComputer, pair));
     return fixes;
   }
 
@@ -52,10 +48,8 @@ public class BasicVisitor extends SpecializedFixComputer {
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
     for (ExpressionTree arg : node.getArguments()) {
-      if (requireFix(pair)) {
-        // Required can be null here, since we only need the passed parameters to be untainted.
-        fixes.addAll(arg.accept(fixComputer, pair));
-      }
+      // Required can be null here, since we only need the passed parameters to be untainted.
+      fixes.addAll(arg.accept(fixComputer, pair));
     }
     return fixes;
   }
@@ -171,7 +165,6 @@ public class BasicVisitor extends SpecializedFixComputer {
       if (!(member instanceof Symbol)) {
         return Set.of();
       }
-
       Fix fix = buildFixForElement(TreeUtils.elementFromUse(node), pair);
       return fix == null ? Set.of() : Set.of(fix);
     }
@@ -196,6 +189,9 @@ public class BasicVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitVariable(VariableTree node, FoundRequired foundRequired) {
     Fix onVariable = buildFixForElement(TreeUtils.elementFromDeclaration(node), foundRequired);
+    if (!requireFix(foundRequired)) {
+      return Set.of();
+    }
     return onVariable == null ? Set.of() : Set.of(onVariable);
   }
 
