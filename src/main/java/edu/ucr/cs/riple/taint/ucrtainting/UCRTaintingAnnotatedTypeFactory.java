@@ -130,11 +130,30 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    *     be replaced.
    */
   public void replacePolyWithUntainted(AnnotatedTypeMirror annotatedTypeMirror) {
-    annotatedTypeMirror.replaceAnnotation(rUntainted);
+    if (annotatedTypeMirror.hasPrimaryAnnotation(rPolyTainted)) {
+      annotatedTypeMirror.replaceAnnotation(rUntainted);
+    }
     if (annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       ((AnnotatedTypeMirror.AnnotatedDeclaredType) annotatedTypeMirror)
           .getTypeArguments()
           .forEach(this::replacePolyWithUntainted);
+    }
+  }
+
+  public void replacePolyWithUntainted(
+      AnnotatedTypeMirror toAdaptType, AnnotatedTypeMirror typeWithPoly) {
+    if (typeWithPoly.hasPrimaryAnnotation(rPolyTainted)) {
+      toAdaptType.replaceAnnotation(rUntainted);
+    }
+    if (toAdaptType instanceof AnnotatedTypeMirror.AnnotatedDeclaredType
+        && typeWithPoly instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      List<AnnotatedTypeMirror> toAdaptTypeArgs =
+          ((AnnotatedTypeMirror.AnnotatedDeclaredType) toAdaptType).getTypeArguments();
+      List<AnnotatedTypeMirror> typeWithPolyArgs =
+          ((AnnotatedTypeMirror.AnnotatedDeclaredType) typeWithPoly).getTypeArguments();
+      for (int i = 0; i < toAdaptTypeArgs.size(); i++) {
+        replacePolyWithUntainted(toAdaptTypeArgs.get(i), typeWithPolyArgs.get(i));
+      }
     }
   }
 

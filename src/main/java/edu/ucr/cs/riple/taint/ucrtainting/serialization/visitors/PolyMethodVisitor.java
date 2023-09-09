@@ -38,12 +38,14 @@ public class PolyMethodVisitor extends SpecializedFixComputer {
       Set<Fix> onArguments = new HashSet<>();
       for (int i = 0; i < node.getArguments().size(); i++) {
         AnnotatedTypeMirror argType = typeFactory.getAnnotatedType(node.getArguments().get(i));
+        AnnotatedTypeMirror formalParameterAnnotatedTypeMirror =
+            typeFactory.getAnnotatedType(methodDecl.getParameters().get(i));
         // Check if the formal parameter is poly tainted.
-        if (!typeFactory.hasPolyTaintedAnnotation(methodDecl.getParameters().get(i))) {
+        if (!typeFactory.hasPolyTaintedAnnotation(formalParameterAnnotatedTypeMirror)) {
           continue;
         }
         AnnotatedTypeMirror copyArg = argType.deepCopy(true);
-        typeFactory.replacePolyWithUntainted(copyArg);
+        typeFactory.replacePolyWithUntainted(copyArg, formalParameterAnnotatedTypeMirror);
         onArguments.addAll(
             node.getArguments().get(i).accept(fixComputer, FoundRequired.of(argType, copyArg)));
       }
