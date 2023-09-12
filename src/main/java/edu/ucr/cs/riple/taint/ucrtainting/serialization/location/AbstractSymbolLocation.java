@@ -7,6 +7,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.Nullable;
 
 /** abstract base class for {@link SymbolLocation}. */
@@ -65,5 +66,28 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   @Override
   public LocationKind getKind() {
     return kind;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof AbstractSymbolLocation)) {
+      return false;
+    }
+    AbstractSymbolLocation that = (AbstractSymbolLocation) o;
+    return getKind() == that.getKind()
+        && Objects.equals(path, that.path)
+        && Objects.equals(enclosingClass, that.enclosingClass)
+        && Objects.equals(declarationTree, that.declarationTree)
+        && Objects.equals(target, that.target)
+        && Objects.equals(typeVariablePositions, that.typeVariablePositions);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(
+        getKind(), path, enclosingClass, declarationTree, target, typeVariablePositions);
   }
 }

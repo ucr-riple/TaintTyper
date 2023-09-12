@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationToJsonVisitor;
+import java.util.Objects;
 import org.json.JSONObject;
 
 /** This class represents an annotation to be added on an element to resolve an error. */
@@ -40,5 +41,22 @@ public class Fix implements JSONSerializable {
 
   public boolean isPoly() {
     return location.getKind().isPoly();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Fix)) {
+      return false;
+    }
+    Fix fix = (Fix) o;
+    return Objects.equals(annotation, fix.annotation) && Objects.equals(location, fix.location);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(annotation, location);
   }
 }

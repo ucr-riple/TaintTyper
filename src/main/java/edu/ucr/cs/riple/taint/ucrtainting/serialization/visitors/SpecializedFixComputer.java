@@ -66,6 +66,9 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
                             elementAnnotatedType, integers)))
             .collect(Collectors.toList());
     location.setTypeVariablePositions(indices);
+    if (indices.isEmpty()) {
+      return null;
+    }
     return new Fix(location);
   }
 

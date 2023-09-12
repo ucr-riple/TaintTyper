@@ -72,22 +72,6 @@
             ],
             "method": "bar(java.lang.String,java.lang.String,boolean)",
             "kind": "PARAMETER",
-            "name": "y",
-            "index": 1,
-            "class": "Foo"
-          }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "method": "bar(java.lang.String,java.lang.String,boolean)",
-            "kind": "PARAMETER",
             "name": "x",
             "index": 0,
             "class": "Foo"
@@ -104,22 +88,6 @@
         "class": "Foo"
       },
       "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "method": "bar(java.lang.String,java.lang.String,boolean)",
-            "kind": "PARAMETER",
-            "name": "y",
-            "index": 1,
-            "class": "Foo"
-          }
-        },
         {
           "annotation": "untainted",
           "location": {
@@ -151,37 +119,6 @@
           "annotation": "untainted",
           "location": {
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
-            "varName": "localVar",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "method": "bar(java.lang.String,java.lang.String,boolean)",
-            "kind": "LOCAL_VARIABLE",
-            "class": "Foo"
-          }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "method": "bar(java.lang.String,java.lang.String,boolean)",
-            "kind": "PARAMETER",
-            "name": "y",
-            "index": 1,
-            "class": "Foo"
-          }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -191,6 +128,21 @@
             "kind": "PARAMETER",
             "name": "x",
             "index": 0,
+            "class": "Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "varName": "localVar",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "LOCAL_VARIABLE",
             "class": "Foo"
           }
         }
@@ -388,10 +340,9 @@
           "annotation": "untainted",
           "location": {
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
-            "varName": "argsList",
+            "varName": "localVar",
             "type-variable-position": [
               [
-                1,
                 0
               ]
             ],
@@ -404,9 +355,10 @@
           "annotation": "untainted",
           "location": {
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
-            "varName": "localVar",
+            "varName": "argsList",
             "type-variable-position": [
               [
+                1,
                 0
               ]
             ],
@@ -520,8 +472,8 @@
             ],
             "method": "testAndOr(boolean,boolean)",
             "kind": "PARAMETER",
-            "name": "op2",
-            "index": 1,
+            "name": "op1",
+            "index": 0,
             "class": "Foo"
           }
         },
@@ -536,8 +488,8 @@
             ],
             "method": "testAndOr(boolean,boolean)",
             "kind": "PARAMETER",
-            "name": "op1",
-            "index": 0,
+            "name": "op2",
+            "index": 1,
             "class": "Foo"
           }
         }

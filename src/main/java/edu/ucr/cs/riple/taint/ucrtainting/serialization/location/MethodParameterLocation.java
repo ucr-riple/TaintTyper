@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
+import java.util.Objects;
 import javax.lang.model.element.ElementKind;
 
 /** subtype of {@link AbstractSymbolLocation} targeting a method parameter. */
@@ -40,5 +41,27 @@ public class MethodParameterLocation extends AbstractSymbolLocation {
   @Override
   public <R, P> R accept(LocationVisitor<R, P> v, P p) {
     return v.visitParameter(this, p);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof MethodParameterLocation)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+    MethodParameterLocation that = (MethodParameterLocation) o;
+    return index == that.index
+        && Objects.equals(enclosingMethod, that.enclosingMethod)
+        && Objects.equals(paramSymbol, that.paramSymbol);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), enclosingMethod, paramSymbol, index);
   }
 }

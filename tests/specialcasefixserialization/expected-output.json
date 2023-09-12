@@ -12,7 +12,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "type-variable-position": [
               [
                 0
@@ -37,21 +37,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "field": "m_uuid",
-            "kind": "FIELD",
-            "class": "test.CmsUUID"
-          }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "type-variable-position": [
               [
                 0
@@ -76,7 +62,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "type-variable-position": [
               [
                 0
@@ -85,7 +71,7 @@
             "kind": "POLY_METHOD",
             "arguments": [
               {
-                "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
                 "type-variable-position": [
                   [
                     0
@@ -104,7 +90,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "type-variable-position": [
               [
                 0
@@ -131,23 +117,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "method": "decode(java.lang.String,java.lang.String)",
-            "kind": "PARAMETER",
-            "name": "encoding",
-            "index": 1,
-            "class": "test.CmsUUID"
-          }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "type-variable-position": [
               [
                 0
@@ -157,6 +127,22 @@
             "kind": "PARAMETER",
             "name": "content",
             "index": 0,
+            "class": "test.CmsUUID"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "decode(java.lang.String,java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "encoding",
+            "index": 1,
             "class": "test.CmsUUID"
           }
         }
@@ -174,7 +160,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "type-variable-position": [
               [
                 0
@@ -199,7 +185,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "varName": "list",
             "type-variable-position": [
               [
@@ -236,7 +222,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "varName": "tokens",
             "type-variable-position": [
               [
@@ -262,50 +248,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
-            "varName": "name",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "method": "multipleAdditionTest()",
-            "kind": "LOCAL_VARIABLE",
-            "class": "test.CmsUUID"
-          }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "field": "BAZ",
-            "kind": "FIELD",
-            "class": "test.CmsUUID"
-          }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "method": "getRootPath()",
-            "kind": "METHOD",
-            "class": "test.CmsUUID$1XMLPage"
-          }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "varName": "tokens",
             "type-variable-position": [
               [
@@ -315,6 +258,20 @@
             "method": "multipleAdditionTest()",
             "kind": "LOCAL_VARIABLE",
             "class": "test.CmsUUID"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getRootPath()",
+            "kind": "METHOD",
+            "class": "test.CmsUUID$1XMLPage"
           }
         }
       ]
@@ -331,7 +288,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "varName": "key",
             "type-variable-position": [
               [
@@ -357,7 +314,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "varName": "value",
             "type-variable-position": [
               [
@@ -383,7 +340,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "varName": "params",
             "type-variable-position": [
               [
@@ -410,7 +367,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "type-variable-position": [
               [
                 0
