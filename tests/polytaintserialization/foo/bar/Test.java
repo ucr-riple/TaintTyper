@@ -17,6 +17,9 @@ public class Test {
     @RUntainted String s = foo("foo", param);
     // :: error: assignment
     @RUntainted String s2 = foo(param, "bar");
+    List<String> list = new ArrayList<>();
+    // :: error: assignment
+    @RUntainted String s3 = foo(list.get(0), "bar");
   }
 
   public @RPolyTainted String thirdParty(@RPolyTainted int index, @RPolyTainted String s) {
