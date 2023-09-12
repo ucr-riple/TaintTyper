@@ -65,23 +65,10 @@ public class BasicVisitor extends SpecializedFixComputer {
 
   @Override
   public Set<Fix> visitNewArray(NewArrayTree node, FoundRequired pair) {
-    AnnotatedTypeMirror requiredComponentType =
-        pair.required instanceof AnnotatedTypeMirror.AnnotatedArrayType
-            ? ((AnnotatedTypeMirror.AnnotatedArrayType) pair.required).getComponentType()
-            : null;
-    AnnotatedTypeMirror foundComponentType =
-        pair.found instanceof AnnotatedTypeMirror.AnnotatedArrayType
-            ? ((AnnotatedTypeMirror.AnnotatedArrayType) pair.found).getComponentType()
-            : null;
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
     if (node.getInitializers() != null) {
-      for (ExpressionTree arg : node.getInitializers()) {
-        if (arg != null && typeFactory.mayBeTainted(arg)) {
-          fixes.addAll(
-              arg.accept(fixComputer, FoundRequired.of(foundComponentType, requiredComponentType)));
-        }
-      }
+      node.getInitializers().forEach(arg -> fixes.addAll(arg.accept(fixComputer, pair)));
     }
     return fixes;
   }
@@ -114,11 +101,22 @@ public class BasicVisitor extends SpecializedFixComputer {
             PolyMethodLocation polyMethodLocation = (PolyMethodLocation) fix.location;
             polyMethodLocation.arguments.forEach(
                 methodParameterLocation -> {
+                  int index = methodParameterLocation.index;
                   if (methodParameterLocation.enclosingMethod.equals(calledMethod)) {
+                    AnnotatedTypeMirror formalParameterAnnotatedTypeMirror =
+                        typeFactory
+                            .getAnnotatedType(methodDecl.getParameters().get(index))
+                            .deepCopy(true);
+                    typeFactory.makeUntainted(formalParameterAnnotatedTypeMirror);
+                    AnnotatedTypeMirror foundParameterType =
+                        typeFactory.getAnnotatedType(node.getArguments().get(index));
                     onActualParameters.addAll(
                         node.getArguments()
-                            .get(methodParameterLocation.index)
-                            .accept(fixComputer, null));
+                            .get(index)
+                            .accept(
+                                fixComputer,
+                                FoundRequired.of(
+                                    foundParameterType, formalParameterAnnotatedTypeMirror)));
                   }
                 });
           }

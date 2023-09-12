@@ -1,7 +1,5 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
-import static edu.ucr.cs.riple.taint.ucrtainting.serialization.location.AbstractSymbolLocation.ON_TYPE;
-
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.util.Context;
@@ -51,10 +49,7 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
     if (location == null) {
       return null;
     }
-    List<List<Integer>> indices =
-        (pair != null && pair.required != null && pair.found != null)
-            ? typeMatchVisitor.visit(pair.found, pair.required, null)
-            : ON_TYPE;
+    List<List<Integer>> indices = typeMatchVisitor.visit(pair.found, pair.required, null);
     AnnotatedTypeMirror elementAnnotatedType = typeFactory.getAnnotatedType(element);
     // remove redundant indices.
     indices =

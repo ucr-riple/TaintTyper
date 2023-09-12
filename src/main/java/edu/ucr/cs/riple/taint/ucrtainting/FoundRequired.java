@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import javax.annotation.Nonnull;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
 /**
@@ -14,11 +15,11 @@ public class FoundRequired {
   public int depth;
   public static final int MAX_DEPTH = 5;
 
-  public FoundRequired(AnnotatedTypeMirror found, AnnotatedTypeMirror required) {
+  public FoundRequired(@Nonnull AnnotatedTypeMirror found, @Nonnull AnnotatedTypeMirror required) {
     this.found = found;
     this.required = required;
-    this.foundString = found == null ? "" : found.toString(true);
-    this.requiredString = required == null ? "" : required.toString(true);
+    this.foundString = found.toString(true);
+    this.requiredString = required.toString(true);
     this.depth = 0;
   }
 

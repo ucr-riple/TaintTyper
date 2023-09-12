@@ -24,19 +24,9 @@ import org.checkerframework.javacutil.TreeUtils;
 
 /** Fix visitor for method return statements. */
 public class MethodReturnVisitor extends SpecializedFixComputer {
-
-  private final AccumulateScanner returnStatementScanner;
-
   public MethodReturnVisitor(
       Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
     super(context, factory, fixComputer);
-    this.returnStatementScanner =
-        new AccumulateScanner() {
-          @Override
-          public Set<Fix> visitReturn(ReturnTree node, FixComputer visitor) {
-            return node.getExpression().accept(visitor, null);
-          }
-        };
   }
 
   @Override
@@ -47,7 +37,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
       return Collections.emptySet();
     }
     Set<Fix> ans = new HashSet<>();
-    Set<Fix> onReturns = node.accept(returnStatementScanner, fixComputer);
+    Set<Fix> onReturns = node.accept(new ReturnStatementVisitor(pair), fixComputer);
     Deque<Fix> workList = new ArrayDeque<>(onReturns);
     while (!workList.isEmpty()) {
       Fix fix = workList.pop();
@@ -89,6 +79,13 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
   }
 
   abstract static class AccumulateScanner extends TreeScanner<Set<Fix>, FixComputer> {
+
+    protected final FoundRequired pair;
+
+    public AccumulateScanner(FoundRequired pair) {
+      this.pair = pair;
+    }
+
     @Override
     public Set<Fix> reduce(Set<Fix> r1, Set<Fix> r2) {
       if (r2 == null && r1 == null) {
@@ -108,11 +105,10 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
   static class AssignmentScanner extends AccumulateScanner {
 
     private final Symbol.VarSymbol localVariable;
-    private final FoundRequired pair;
 
     public AssignmentScanner(Symbol.VarSymbol localVariable, FoundRequired pair) {
+      super(pair);
       this.localVariable = localVariable;
-      this.pair = pair;
     }
 
     @Override
@@ -131,6 +127,18 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
         return node.getInitializer().accept(visitor, pair);
       }
       return Set.of();
+    }
+  }
+
+  static class ReturnStatementVisitor extends AccumulateScanner {
+
+    public ReturnStatementVisitor(FoundRequired pair) {
+      super(pair);
+    }
+
+    @Override
+    public Set<Fix> visitReturn(ReturnTree node, FixComputer visitor) {
+      return node.getExpression().accept(visitor, pair);
     }
   }
 }

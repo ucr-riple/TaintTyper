@@ -12,6 +12,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import java.util.HashSet;
 import java.util.Set;
 import javax.lang.model.element.Element;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 /**
@@ -48,10 +49,15 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
       }
     }
     // Add a fix for each passed argument.
-    for (ExpressionTree argument : node.getArguments()) {
-      if (argument != null && typeFactory.mayBeTainted(argument)) {
-        fixes.addAll(argument.accept(fixComputer, null));
-      }
+    for (int i = 0; i < node.getArguments().size(); i++) {
+      ExpressionTree argument = node.getArguments().get(i);
+      Symbol.VarSymbol formalParameter = calledMethod.params().get(i);
+      AnnotatedTypeMirror formalParameterType =
+          typeFactory.getAnnotatedType(formalParameter).deepCopy(true);
+      makeUntainted(formalParameterType, typeFactory);
+      AnnotatedTypeMirror actualParameterType = typeFactory.getAnnotatedType(argument);
+      fixes.addAll(
+          argument.accept(fixComputer, FoundRequired.of(actualParameterType, formalParameterType)));
     }
     // Add the fix for the receiver if not static.
     if (calledMethod.isStatic()) {
@@ -62,5 +68,22 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
     fixes.addAll(
         ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(fixComputer, pair));
     return fixes;
+  }
+
+  /**
+   * Makes the given type untainted. If the type is an array, the component type is made untainted.
+   * Do not use or change {@link UCRTaintingAnnotatedTypeFactory#makeUntainted} method.
+   *
+   * @param type The type to make untainted.
+   * @param factory The type factory.
+   */
+  private void makeUntainted(AnnotatedTypeMirror type, UCRTaintingAnnotatedTypeFactory factory) {
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      ((AnnotatedTypeMirror.AnnotatedArrayType) type)
+          .getComponentType()
+          .replaceAnnotation(factory.rUntainted);
+    } else {
+      type.replaceAnnotation(factory.rUntainted);
+    }
   }
 }
