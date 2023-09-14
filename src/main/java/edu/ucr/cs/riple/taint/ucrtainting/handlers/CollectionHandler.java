@@ -51,7 +51,6 @@ public class CollectionHandler extends AbstractHandler {
     if (((Type.ClassType) collectionType).typarams_field.isEmpty()) {
       return;
     }
-    Type c = ((Type.ClassType) collectionType).typarams_field.get(0);
     if (Utility.hasUntaintedAnnotation(((Type.ClassType) collectionType).typarams_field.get(0))) {
       typeFactory.makeUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
     }
@@ -70,8 +69,13 @@ public class CollectionHandler extends AbstractHandler {
     if (type.isInterface() && type.tsym.toString().equals(COLLECTIONS_INTERFACE)) {
       return true;
     }
-    return types.interfaces(type).stream()
-        .anyMatch(intFace -> implementsCollectionInterface(intFace, types));
+    boolean implementsCollection =
+        types.interfaces(type).stream()
+            .anyMatch(intFace -> implementsCollectionInterface(intFace, types));
+    if (implementsCollection) {
+      return true;
+    }
+    return implementsCollectionInterface(types.supertype(type), types);
   }
 
   /**
@@ -124,7 +128,7 @@ public class CollectionHandler extends AbstractHandler {
    * @param type The type to retrieve the {@link java.util.Collection} type from.
    * @return The {@link java.util.Collection} type from the given type.
    */
-  private static Type getCollectionTypeFromType(Type type) {
+  public static Type getCollectionTypeFromType(Type type) {
     Type collectionType = null;
     while (type instanceof Type.ClassType) {
       Type.ClassType classType = (Type.ClassType) type;

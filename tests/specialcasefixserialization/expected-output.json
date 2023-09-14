@@ -379,6 +379,33 @@
           }
         }
       ]
+    },
+    {
+      "messageKey": "argument",
+      "offset": 7987,
+      "index": 14,
+      "region": {
+        "symbol": "checkToArrayForCustomList()",
+        "class": "test.CmsUUID"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "varName": "params",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "checkToArrayForCustomList()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "test.CmsUUID"
+          }
+        }
+      ]
     }
   ]
 }

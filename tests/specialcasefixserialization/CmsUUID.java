@@ -177,8 +177,6 @@ public class CmsUUID {
     int l = source.length();
     int n = source.indexOf(delimiter);
     while (n != -1) {
-      // zero - length items are not seen as tokens at start or end:  ",," is one empty token but
-      // not three
       if ((i < n) || ((i > 0) && (i < l))) {
         result.add(trim ? source.substring(i, n).trim() : source.substring(i, n));
       }
@@ -224,5 +222,63 @@ public class CmsUUID {
     public String getId() {
       return id;
     }
+  }
+
+  public void checkToArrayForCustomList() {
+    abstract class CustomList<R, V> implements Collection<V> {}
+    class Custom<H, U> extends CustomList<U, H> {
+      public int size() {
+        return 0;
+      }
+
+      public boolean isEmpty() {
+        return false;
+      }
+
+      public boolean contains(Object o) {
+        return false;
+      }
+
+      public Iterator<H> iterator() {
+        return null;
+      }
+
+      public Object[] toArray() {
+        return new Object[0];
+      }
+
+      public <T> T[] toArray(T[] a) {
+        return null;
+      }
+
+      public boolean add(H h) {
+        return false;
+      }
+
+      public boolean remove(Object o) {
+        return false;
+      }
+
+      public boolean containsAll(Collection<?> c) {
+        return false;
+      }
+
+      public boolean addAll(Collection<? extends H> c) {
+        return false;
+      }
+
+      public boolean removeAll(Collection<?> c) {
+        return false;
+      }
+
+      public boolean retainAll(Collection<?> c) {
+        return false;
+      }
+
+      public void clear() {}
+    }
+    Custom<String, String> params = new Custom<>();
+    // :: error: argument
+    ProcessBuilder pb = new ProcessBuilder(params.toArray(new String[params.size()]));
   }
 }

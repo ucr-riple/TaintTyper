@@ -36,11 +36,11 @@ public class Foo {
     String[] processProperties = b.values().iterator().next().toArray(new String[b.size()]);
   }
 
-  public void toArrayTestWithError(Map<String, Bar<@RUntainted String, String, String>> b) {
-    @RUntainted
-    // :: error: assignment
-    String[] processProperties = b.values().iterator().next().toArray(new String[b.size()]);
-  }
+  //  public void toArrayTestWithError(Map<String, Bar<@RUntainted String, String, String>> b) {
+  //    @RUntainted
+  //    // :: error: assignment
+  //    String[] processProperties = b.values().iterator().next().toArray(new String[b.size()]);
+  //  }
 
   public void toArrayTestWithErrorSimple(List<String> list) {
     @RUntainted

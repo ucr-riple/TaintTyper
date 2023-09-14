@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getType;
 
+import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
@@ -16,7 +17,7 @@ import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
-public class CollectionVisitor extends ReceiverTypeParameterFixVisitor {
+public class CollectionVisitor extends ReceiverTypeArgumentFixVisitor {
 
   public CollectionVisitor(
       Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
@@ -29,7 +30,16 @@ public class CollectionVisitor extends ReceiverTypeParameterFixVisitor {
     if (location == null) {
       return null;
     }
-    if (getType(element).allparams().isEmpty()) {
+    Type elementType = getType(element);
+    int index = getCollectionTypeArgumentIndex(elementType);
+    AnnotatedTypeMirror found = typeFactory.getAnnotatedType(element);
+    AnnotatedTypeMirror required = found.deepCopy(true);
+    if (!(required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
+      throw new RuntimeException("Not a declared type");
+    }
+    typeFactory.makeUntainted(
+        ((AnnotatedTypeMirror.AnnotatedDeclaredType) required).getTypeArguments().get(index));
+    if (elementType.allparams().isEmpty()) {
       // receiver is written as a raw type and not parameterized. We cannot infer the actual types
       // and have to annotate the method directly.
       Set<Fix> fixes =
@@ -41,9 +51,42 @@ public class CollectionVisitor extends ReceiverTypeParameterFixVisitor {
       }
     }
     List<List<Integer>> indexes =
-        locateEffectiveTypeParameter(element, new CollectionTypeMatchVisitor(typeFactory), pair);
+        locateEffectiveTypeArgument(
+            element,
+            new CollectionTypeMatchVisitor(typeFactory),
+            new FoundRequired(found, required));
     location.setTypeVariablePositions(indexes);
     return new Fix(location);
+  }
+
+  private int getCollectionTypeArgumentIndex(Type type) {
+    Type current = type.tsym.type;
+    while (current instanceof Type.ClassType) {
+      Type.ClassType classType = (Type.ClassType) current;
+      if (classType.interfaces_field != null) {
+        for (Type iFace : classType.interfaces_field) {
+          if (iFace.tsym instanceof Symbol.ClassSymbol
+              && ((Symbol.ClassSymbol) iFace.tsym)
+                  .fullname
+                  .toString()
+                  .equals("java.util.Collection")) {
+            String name = iFace.getTypeArguments().get(0).toString();
+            for (int i = 0; i < type.tsym.type.getTypeArguments().size(); i++) {
+              if (type.tsym.type.getTypeArguments().get(i).toString().equals(name)) {
+                return i;
+              }
+            }
+          }
+        }
+      }
+      Type superType = ((Type.ClassType) current).supertype_field;
+      if (!(superType instanceof Type.ClassType)) {
+        // todo: FIX
+        return 0;
+      }
+      current = superType;
+    }
+    throw new RuntimeException("Not found");
   }
 
   static class CollectionTypeMatchVisitor extends TypeMatchVisitor {
