@@ -73,3 +73,29 @@ public class Foo<E, D> {
     return withString;
   }
 }
+
+class TypeMapSelectTest {
+  void testOnTypeArgumentMapSelection() {
+    C<String, String, String> c = new C<String, String, String>();
+    // :: error: assignment
+    A<String, @RUntainted String> a = c.getB().getA();
+  }
+
+  class A<I, H> {}
+
+  class B<M, N, P> {
+    A<N, M> a;
+
+    A<N, M> getA() {
+      return a;
+    }
+  }
+
+  class C<R, Q, L> {
+    B<Q, L, R> b;
+
+    B<Q, L, R> getB() {
+      return b;
+    }
+  }
+}

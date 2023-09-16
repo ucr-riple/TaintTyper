@@ -1,10 +1,8 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
-import com.sun.tools.javac.code.Type;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.visitor.AbstractAtmComboVisitor;
 
@@ -12,8 +10,7 @@ import org.checkerframework.framework.type.visitor.AbstractAtmComboVisitor;
  * Visitor for computing the required set of annotations on the declaration of an element which can
  * match the found annotated type mirror to the required annotated type mirror.
  */
-public class TypeMatchVisitor
-    extends AbstractAtmComboVisitor<List<List<Integer>>, Map<Type.TypeVar, Type.TypeVar>> {
+public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>>, Void> {
 
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
 
@@ -24,17 +21,13 @@ public class TypeMatchVisitor
 
   @Override
   public String defaultErrorMessage(
-      AnnotatedTypeMirror type1,
-      AnnotatedTypeMirror type2,
-      Map<Type.TypeVar, Type.TypeVar> typeVarMap) {
+      AnnotatedTypeMirror type1, AnnotatedTypeMirror type2, Void unused) {
     return null;
   }
 
   @Override
   public List<List<Integer>> defaultAction(
-      AnnotatedTypeMirror found,
-      AnnotatedTypeMirror required,
-      Map<Type.TypeVar, Type.TypeVar> typeVarMap) {
+      AnnotatedTypeMirror found, AnnotatedTypeMirror required, Void unused) {
     throw new UnsupportedOperationException(
         "Did not expect type match of found:"
             + found.getKind()
@@ -60,7 +53,7 @@ public class TypeMatchVisitor
   public List<List<Integer>> visitTypevar_Typevar(
       AnnotatedTypeMirror.AnnotatedTypeVariable found,
       AnnotatedTypeMirror.AnnotatedTypeVariable required,
-      Map<Type.TypeVar, Type.TypeVar> typeVarMap) {
+      Void unused) {
     return supportedDefault(found, required);
   }
 
@@ -68,7 +61,7 @@ public class TypeMatchVisitor
   public List<List<Integer>> visitDeclared_Declared(
       AnnotatedTypeMirror.AnnotatedDeclaredType found,
       AnnotatedTypeMirror.AnnotatedDeclaredType required,
-      Map<Type.TypeVar, Type.TypeVar> typeVarMap) {
+      Void unused) {
     List<List<Integer>> result = new ArrayList<>();
     // e.g. @Untainted String
     if (!typeFactory.hasUntaintedAnnotation(found)
@@ -87,7 +80,7 @@ public class TypeMatchVisitor
       }
       List<Integer> toAddOnThisTypeArg = new ArrayList<>();
       toAddOnThisTypeArg.add(i + 1);
-      List<List<Integer>> onTypeArgs = visit(typeArgumentFound, typeArgumentRequired, typeVarMap);
+      List<List<Integer>> onTypeArgs = visit(typeArgumentFound, typeArgumentRequired, unused);
       for (List<Integer> toAddOnContainingTypeArg : onTypeArgs) {
         // Need a fresh chain for each type.
         if (!toAddOnContainingTypeArg.isEmpty()) {
@@ -105,7 +98,7 @@ public class TypeMatchVisitor
   public List<List<Integer>> visitPrimitive_Primitive(
       AnnotatedTypeMirror.AnnotatedPrimitiveType found,
       AnnotatedTypeMirror.AnnotatedPrimitiveType required,
-      Map<Type.TypeVar, Type.TypeVar> typeVarMap) {
+      Void unused) {
     return supportedDefault(found, required);
   }
 
@@ -113,23 +106,23 @@ public class TypeMatchVisitor
   public List<List<Integer>> visitWildcard_Wildcard(
       AnnotatedTypeMirror.AnnotatedWildcardType found,
       AnnotatedTypeMirror.AnnotatedWildcardType required,
-      Map<Type.TypeVar, Type.TypeVar> typeVarMap) {
-    return this.visit(found.getExtendsBound(), required.getExtendsBound(), typeVarMap);
+      Void unused) {
+    return this.visit(found.getExtendsBound(), required.getExtendsBound(), unused);
   }
 
   @Override
   public List<List<Integer>> visitTypevar_Wildcard(
       AnnotatedTypeMirror.AnnotatedTypeVariable found,
       AnnotatedTypeMirror.AnnotatedWildcardType required,
-      Map<Type.TypeVar, Type.TypeVar> typeVarMap) {
-    return this.visit(found, required.getExtendsBound(), typeVarMap);
+      Void unused) {
+    return this.visit(found, required.getExtendsBound(), unused);
   }
 
   @Override
   public List<List<Integer>> visitTypevar_Declared(
       AnnotatedTypeMirror.AnnotatedTypeVariable found,
       AnnotatedTypeMirror.AnnotatedDeclaredType required,
-      Map<Type.TypeVar, Type.TypeVar> typeVarMap) {
+      Void unused) {
     return supportedDefault(found, required);
   }
 
@@ -137,15 +130,15 @@ public class TypeMatchVisitor
   public List<List<Integer>> visitDeclared_Wildcard(
       AnnotatedTypeMirror.AnnotatedDeclaredType found,
       AnnotatedTypeMirror.AnnotatedWildcardType required,
-      Map<Type.TypeVar, Type.TypeVar> typeVarMap) {
-    return this.visit(found, required.getExtendsBound(), typeVarMap);
+      Void unused) {
+    return this.visit(found, required.getExtendsBound(), unused);
   }
 
   @Override
   public List<List<Integer>> visitArray_Array(
       AnnotatedTypeMirror.AnnotatedArrayType found,
       AnnotatedTypeMirror.AnnotatedArrayType required,
-      Map<Type.TypeVar, Type.TypeVar> typeVarMap) {
-    return this.visit(found.getComponentType(), required.getComponentType(), typeVarMap);
+      Void unused) {
+    return this.visit(found.getComponentType(), required.getComponentType(), unused);
   }
 }

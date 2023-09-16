@@ -50,8 +50,8 @@ class Foo {
     rd.include(request, response);
   }
 
-  public @RUntainted Stream<String> testOnStreamLambda(List<String> s) {
-    // :: error: (return)
+  public Stream<@RUntainted String> testOnStreamLambda(List<String> s) {
+    // :: error: return
     return s.stream().filter(x -> x.length() > 0);
   }
 

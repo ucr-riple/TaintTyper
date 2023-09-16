@@ -467,6 +467,33 @@
           }
         }
       ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 2316,
+      "index": 1,
+      "region": {
+        "symbol": "testOnTypeArgumentMapSelection()",
+        "class": "TypeMapSelectTest"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/Foo.java",
+            "varName": "c",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "testOnTypeArgumentMapSelection()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "TypeMapSelectTest"
+          }
+        }
+      ]
     }
   ]
 }

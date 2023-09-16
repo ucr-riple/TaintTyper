@@ -50,11 +50,7 @@ public class CollectionVisitor extends ReceiverTypeArgumentFixVisitor {
         return fixes.iterator().next();
       }
     }
-    List<List<Integer>> indexes =
-        locateEffectiveTypeArgument(
-            element,
-            new CollectionTypeMatchVisitor(typeFactory),
-            new FoundRequired(found, required));
+    List<List<Integer>> indexes = typeMatchVisitor.visit(found, required, null);
     location.setTypeVariablePositions(indexes);
     return new Fix(location);
   }

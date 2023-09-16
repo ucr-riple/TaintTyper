@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
+import javax.lang.model.type.TypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
@@ -229,6 +229,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
         elementTypeVariables = getTypeVariables(elementParameterizedType);
         if (elementTypeVariables.isEmpty()) {
           // Reached the end of type parameters.
+          typeVarMap.clear();
           break;
         }
         // Update the map with entered type's type arguments.
@@ -237,18 +238,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
                 .collect(Collectors.toMap(Type.TypeVar::toString, Type.TypeVar::toString));
       }
     }
-    List<List<Integer>> ans =
-        matchOnCurrentType(element, visitor, effectiveRegionIndex, pair, typeVarMap);
-    ans.forEach(
-        new Consumer<List<Integer>>() {
-          @Override
-          public void accept(List<Integer> integers) {
-            if (!integers.isEmpty() && integers.get(integers.size() - 1) != 0) {
-              integers.add(0);
-            }
-          }
-        });
-    return ans;
+    return matchOnCurrentType(element, visitor, effectiveRegionIndex, pair, typeVarMap);
   }
 
   private List<List<Integer>> matchOnCurrentType(
@@ -263,22 +253,86 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     // @RUntainted Entry<@RUntainted String, @RUntainted String> entry = itEntries.next();
     // With controlling type argument, we can make result of next()
     // untainted. However, we need to make the including type args of Entry untainted as well.
-    List<List<Integer>> onTypeArgumentIndexes;
-    AnnotatedTypeMirror foundOnTypeArg =
+    AnnotatedTypeMirror typeArgumentRegion =
         getAnnotatedTypeMirrorOfTypeArgumentAt(
             typeFactory.getAnnotatedType(element), effectiveRegionIndex);
-    onTypeArgumentIndexes = visitor.visit(foundOnTypeArg, pair.required, null);
-    List<List<Integer>> positions;
-    if (!onTypeArgumentIndexes.isEmpty()) {
-      positions = new ArrayList<>();
-      for (List<Integer> integers : onTypeArgumentIndexes) {
-        List<Integer> position = new ArrayList<>(effectiveRegionIndex);
-        position.addAll(integers);
-        positions.add(position);
+    if (typeArgumentRegion instanceof AnnotatedTypeMirror.AnnotatedExecutableType) {
+      typeArgumentRegion =
+          ((AnnotatedTypeMirror.AnnotatedExecutableType) typeArgumentRegion).getReturnType();
+    }
+    List<List<Integer>> positions = new ArrayList<>();
+    if (!(typeArgumentRegion instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)
+        || !(pair.found instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
+      List<List<Integer>> result = visitor.visit(typeArgumentRegion, pair.required, null);
+      if (!result.isEmpty()) {
+        for (List<Integer> integers : result) {
+          List<Integer> position = new ArrayList<>(effectiveRegionIndex);
+          position.addAll(integers);
+          positions.add(position);
+        }
       }
       return positions;
-    } else {
-      return List.of(effectiveRegionIndex);
     }
+    AnnotatedTypeMirror.AnnotatedDeclaredType regionDeclaredType =
+        (AnnotatedTypeMirror.AnnotatedDeclaredType) typeArgumentRegion;
+    AnnotatedTypeMirror.AnnotatedDeclaredType requiredDeclared =
+        (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.required;
+    TypeMirror foundType = typeArgumentRegion.getUnderlyingType();
+    TypeMirror requiredType = pair.required.getUnderlyingType();
+    if (!(foundType instanceof Type.ClassType) || !(requiredType instanceof Type.ClassType)) {
+      throw new RuntimeException("Not a class type");
+    }
+    if (typeVarMap.isEmpty()) {
+      AnnotatedTypeMirror requiredTypeArgument;
+      if (requiredDeclared.getTypeArguments().isEmpty()) {
+        requiredTypeArgument = requiredDeclared;
+      } else if (requiredDeclared.getTypeArguments().size() == 1) {
+        requiredTypeArgument = requiredDeclared.getTypeArguments().get(0);
+      } else {
+        throw new RuntimeException("Empty type var map");
+      }
+      List<List<Integer>> result = visitor.visit(regionDeclaredType, requiredTypeArgument, null);
+      if (!result.isEmpty()) {
+        for (List<Integer> integers : result) {
+          List<Integer> position = new ArrayList<>(effectiveRegionIndex);
+          position.addAll(integers);
+          positions.add(position);
+        }
+      }
+      return positions;
+    }
+    if (typeFactory.hasUntaintedAnnotation(requiredDeclared)
+        && !typeFactory.hasUntaintedAnnotation(regionDeclaredType)) {
+      List<Integer> onType = new ArrayList<>(effectiveRegionIndex);
+      onType.add(0);
+      positions.add(onType);
+    }
+    Type.ClassType foundClass = (Type.ClassType) foundType;
+    Type.ClassType requiredClass = (Type.ClassType) requiredType;
+    List<String> foundTypeVariables =
+        foundClass.tsym.type.getTypeArguments().stream()
+            .map(Type::toString)
+            .collect(Collectors.toList());
+    List<String> requiredTypeVariables =
+        requiredClass.tsym.type.getTypeArguments().stream()
+            .map(Type::toString)
+            .collect(Collectors.toList());
+    for (int i = 0; i < requiredTypeVariables.size(); i++) {
+      int regionTypeVariableIndex =
+          foundTypeVariables.indexOf(typeVarMap.get(requiredTypeVariables.get(i)));
+      AnnotatedTypeMirror regionTypeArgument =
+          regionDeclaredType.getTypeArguments().get(regionTypeVariableIndex);
+      AnnotatedTypeMirror requiredTypeArgument = requiredDeclared.getTypeArguments().get(i);
+      List<List<Integer>> result = visitor.visit(regionTypeArgument, requiredTypeArgument, null);
+      if (!result.isEmpty()) {
+        for (List<Integer> integers : result) {
+          List<Integer> position = new ArrayList<>(effectiveRegionIndex);
+          position.addAll(integers);
+          position.add(0, i + 1);
+          positions.add(position);
+        }
+      }
+    }
+    return positions;
   }
 }
