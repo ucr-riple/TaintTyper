@@ -11,6 +11,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import com.sun.tools.javac.util.Pair;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
@@ -155,7 +156,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
         return fixes.iterator().next();
       }
     }
-    List<List<Integer>> indexes = locateEffectiveTypeArgument(element, typeMatchVisitor, pair);
+    List<List<Integer>> indexes = computeIndices(element, typeMatchVisitor, pair);
     location.setTypeVariablePositions(indexes);
     return new Fix(location);
   }
@@ -166,8 +167,18 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
    * @param element The element which provided the type parameters.
    * @return The list of indexes of the type parameters.
    */
-  protected List<List<Integer>> locateEffectiveTypeArgument(
+  protected List<List<Integer>> computeIndices(
       Element element, TypeMatchVisitor visitor, FoundRequired pair) {
+    // Indexes of the effective type argument based on the chain of receivers.
+    Pair<List<Integer>, Map<String, String>> effectiveRegion =
+        locateEffectiveTypeArgumentRegion(element);
+    List<Integer> effectiveRegionIndex = effectiveRegion.fst;
+    Map<String, String> typeVarMap = effectiveRegion.snd;
+    return matchOnCurrentType(element, visitor, effectiveRegionIndex, pair, typeVarMap);
+  }
+
+  private Pair<List<Integer>, Map<String, String>> locateEffectiveTypeArgumentRegion(
+      Element element) {
     Type elementParameterizedType = getType(element);
     Type base = elementParameterizedType;
     // Indexes of the effective type argument based on the chain of receivers.
@@ -238,7 +249,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
                 .collect(Collectors.toMap(Type.TypeVar::toString, Type.TypeVar::toString));
       }
     }
-    return matchOnCurrentType(element, visitor, effectiveRegionIndex, pair, typeVarMap);
+    return Pair.of(effectiveRegionIndex, typeVarMap);
   }
 
   private List<List<Integer>> matchOnCurrentType(
