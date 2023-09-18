@@ -11,7 +11,6 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
-import com.sun.tools.javac.util.Pair;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
@@ -170,15 +169,13 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
   protected List<List<Integer>> computeIndices(
       Element element, TypeMatchVisitor visitor, FoundRequired pair) {
     // Indexes of the effective type argument based on the chain of receivers.
-    Pair<List<Integer>, Map<String, String>> effectiveRegion =
-        locateEffectiveTypeArgumentRegion(element);
-    List<Integer> effectiveRegionIndex = effectiveRegion.fst;
-    Map<String, String> typeVarMap = effectiveRegion.snd;
+    TypeArgumentRegion effectiveRegion = locateEffectiveTypeArgumentRegion(element);
+    List<Integer> effectiveRegionIndex = effectiveRegion.effectiveRegionIndex;
+    Map<String, String> typeVarMap = effectiveRegion.typeVarMap;
     return matchOnCurrentType(element, visitor, effectiveRegionIndex, pair, typeVarMap);
   }
 
-  private Pair<List<Integer>, Map<String, String>> locateEffectiveTypeArgumentRegion(
-      Element element) {
+  protected TypeArgumentRegion locateEffectiveTypeArgumentRegion(Element element) {
     Type elementParameterizedType = getType(element);
     Type base = elementParameterizedType;
     // Indexes of the effective type argument based on the chain of receivers.
@@ -190,7 +187,9 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     Map<String, String> typeVarMap =
         elementTypeVariables.stream()
             .collect(Collectors.toMap(Type.TypeVar::toString, Type.TypeVar::toString));
+    int index = 0;
     for (ExpressionTree receiver : receivers) {
+      index++;
       Type receiverType = getType(TreeUtils.elementFromUse(receiver));
       // Extract passed type arguments in a list ordered by the declaration.
       List<Type> receiverTypeArguments = receiverType.getTypeArguments();
@@ -217,7 +216,8 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
       }
       toRemove.forEach(typeVarMap::remove);
       // Check if we entered inside a type parameter. (e.g. E or Foo<E>)
-      if (receiverType instanceof Type.TypeVar || receiverTypeVariables.size() == 1) {
+      if (receiverType instanceof Type.TypeVar
+          || receiverTypeVariables.size() == 1 && (index > 1)) {
         String enteredType =
             receiverType instanceof Type.TypeVar
                 ? receiverType.toString()
@@ -249,10 +249,10 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
                 .collect(Collectors.toMap(Type.TypeVar::toString, Type.TypeVar::toString));
       }
     }
-    return Pair.of(effectiveRegionIndex, typeVarMap);
+    return new TypeArgumentRegion(effectiveRegionIndex, typeVarMap, base);
   }
 
-  private List<List<Integer>> matchOnCurrentType(
+  protected List<List<Integer>> matchOnCurrentType(
       Element element,
       TypeMatchVisitor visitor,
       List<Integer> effectiveRegionIndex,

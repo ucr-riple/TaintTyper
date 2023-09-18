@@ -7,12 +7,11 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -26,19 +25,24 @@ public class CollectionVisitor extends ReceiverTypeArgumentFixVisitor {
 
   @Nullable
   public Fix buildFixForElement(Element element, FoundRequired pair) {
+    Type elementType = getType(element);
     SymbolLocation location = buildLocationForElement(element);
-    if (location == null) {
+    if (location == null || !(elementType instanceof Type.ClassType)) {
       return null;
     }
-    Type elementType = getType(element);
-    int index = getCollectionTypeArgumentIndex(elementType);
+    TypeArgumentRegion region = locateEffectiveTypeArgumentRegion(element);
+    int index = getCollectionTypeArgumentIndex(region.type);
     AnnotatedTypeMirror found = typeFactory.getAnnotatedType(element);
     AnnotatedTypeMirror required = found.deepCopy(true);
     if (!(required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
       throw new RuntimeException("Not a declared type");
     }
     typeFactory.makeUntainted(
-        ((AnnotatedTypeMirror.AnnotatedDeclaredType) required).getTypeArguments().get(index));
+        ((AnnotatedTypeMirror.AnnotatedDeclaredType)
+                Utility.getAnnotatedTypeMirrorOfTypeArgumentAt(
+                    required, region.effectiveRegionIndex))
+            .getTypeArguments()
+            .get(index));
     if (elementType.allparams().isEmpty()) {
       // receiver is written as a raw type and not parameterized. We cannot infer the actual types
       // and have to annotate the method directly.
@@ -77,36 +81,10 @@ public class CollectionVisitor extends ReceiverTypeArgumentFixVisitor {
       }
       Type superType = ((Type.ClassType) current).supertype_field;
       if (!(superType instanceof Type.ClassType)) {
-        // todo: FIX
-        return 0;
+        break;
       }
       current = superType;
     }
     throw new RuntimeException("Not found");
-  }
-
-  static class CollectionTypeMatchVisitor extends TypeMatchVisitor {
-    public CollectionTypeMatchVisitor(UCRTaintingAnnotatedTypeFactory factory) {
-      super(factory);
-    }
-
-    @Override
-    public List<List<Integer>> visitDeclared_Array(
-        AnnotatedTypeMirror.AnnotatedDeclaredType found,
-        AnnotatedTypeMirror.AnnotatedArrayType required,
-        Void unused) {
-      Type type = CollectionHandler.getSymbolicCollectionTypeFromType(found);
-      if (!(type instanceof Type.ClassType)) {
-        return List.of();
-      }
-      String typeVarName = ((Type.ClassType) type).typarams_field.get(0).tsym.name.toString();
-      Type.ClassType foundClass = (Type.ClassType) found.getUnderlyingType();
-      int index =
-          foundClass.tsym.type.getTypeArguments().stream()
-              .map(t -> t.tsym.name.toString())
-              .collect(Collectors.toList())
-              .indexOf(typeVarName);
-      return List.of(List.of(index + 1, 0));
-    }
   }
 }

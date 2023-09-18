@@ -34,7 +34,6 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   protected final BasicVisitor basicVisitor;
   protected final SpecializedFixComputer thirdPartyFixVisitor;
   protected final SpecializedFixComputer methodTypeArgumentFixVisitor;
-  protected final SpecializedFixComputer collectionVisitor;
 
   public FixComputer(Context context, UCRTaintingAnnotatedTypeFactory factory) {
     this.context = context;
@@ -44,7 +43,6 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     this.thirdPartyFixVisitor = new ThirdPartyFixVisitor(context, typeFactory, this);
     this.methodTypeArgumentFixVisitor =
         new MethodTypeArgumentFixVisitor(context, typeFactory, this);
-    this.collectionVisitor = new CollectionVisitor(context, typeFactory, this);
   }
 
   @Override
@@ -94,7 +92,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       }
     }
     if (CollectionHandler.isToArrayWithTypeArgMethod(calledMethod, types)) {
-      return node.accept(collectionVisitor, pair);
+      return node.accept(new CollectionVisitor(context, typeFactory, this), pair);
     }
     if (methodHasTypeArgs) {
       return node.accept(methodTypeArgumentFixVisitor, pair);

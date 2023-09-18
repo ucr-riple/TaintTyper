@@ -122,8 +122,37 @@
     },
     {
       "messageKey": "assignment",
-      "offset": 1515,
+      "offset": 1305,
       "index": 5,
+      "region": {
+        "symbol": "toArrayTestWithError(java.util.Map)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [
+              [
+                2,
+                2,
+                0
+              ]
+            ],
+            "method": "toArrayTestWithError(java.util.Map)",
+            "kind": "PARAMETER",
+            "name": "b",
+            "index": 0,
+            "class": "Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 1515,
+      "index": 6,
       "region": {
         "symbol": "toArrayTestWithErrorSimple(java.util.List)",
         "class": "Foo"

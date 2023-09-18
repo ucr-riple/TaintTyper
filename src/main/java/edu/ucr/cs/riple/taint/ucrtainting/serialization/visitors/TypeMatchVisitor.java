@@ -68,16 +68,9 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
         && typeFactory.hasUntaintedAnnotation(required)) {
       result.add(List.of(0));
     }
-    if (required.getTypeArguments().size() != found.getTypeArguments().size()) {
-      return result;
-    }
     for (int i = 0; i < required.getTypeArguments().size(); i++) {
       AnnotatedTypeMirror typeArgumentFound = found.getTypeArguments().get(i);
       AnnotatedTypeMirror typeArgumentRequired = required.getTypeArguments().get(i);
-      if (typeArgumentFound.equals(typeArgumentRequired)) {
-        // We do not need to continue this branch.
-        continue;
-      }
       List<Integer> toAddOnThisTypeArg = new ArrayList<>();
       toAddOnThisTypeArg.add(i + 1);
       List<List<Integer>> onTypeArgs = visit(typeArgumentFound, typeArgumentRequired, unused);
