@@ -39,8 +39,7 @@ public class CollectionVisitor extends ReceiverTypeArgumentFixVisitor {
     }
     typeFactory.makeUntainted(
         ((AnnotatedTypeMirror.AnnotatedDeclaredType)
-                Utility.getAnnotatedTypeMirrorOfTypeArgumentAt(
-                    required, region.effectiveRegionIndex))
+                Utility.getAnnotatedTypeMirrorOfTypeArgumentAt(required, region.index))
             .getTypeArguments()
             .get(index));
     if (elementType.allparams().isEmpty()) {

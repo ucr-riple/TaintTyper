@@ -170,11 +170,17 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
       Element element, TypeMatchVisitor visitor, FoundRequired pair) {
     // Indexes of the effective type argument based on the chain of receivers.
     TypeArgumentRegion effectiveRegion = locateEffectiveTypeArgumentRegion(element);
-    List<Integer> effectiveRegionIndex = effectiveRegion.effectiveRegionIndex;
+    List<Integer> effectiveRegionIndex = effectiveRegion.index;
     Map<String, String> typeVarMap = effectiveRegion.typeVarMap;
-    return matchOnCurrentType(element, visitor, effectiveRegionIndex, pair, typeVarMap);
+    return typeRegionTypesToRequiredType(element, visitor, effectiveRegionIndex, pair, typeVarMap);
   }
 
+  /**
+   * Locates the effective type argument region based on the chain of receivers.
+   *
+   * @param element The element which provided the type parameters.
+   * @return The effective type argument region.
+   */
   protected TypeArgumentRegion locateEffectiveTypeArgumentRegion(Element element) {
     Type elementParameterizedType = getType(element);
     Type base = elementParameterizedType;
@@ -252,7 +258,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     return new TypeArgumentRegion(effectiveRegionIndex, typeVarMap, base);
   }
 
-  protected List<List<Integer>> matchOnCurrentType(
+  protected List<List<Integer>> typeRegionTypesToRequiredType(
       Element element,
       TypeMatchVisitor visitor,
       List<Integer> effectiveRegionIndex,
