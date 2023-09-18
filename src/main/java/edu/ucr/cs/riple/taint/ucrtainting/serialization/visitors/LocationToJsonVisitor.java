@@ -63,13 +63,12 @@ public class LocationToJsonVisitor implements LocationVisitor<JSONObject, Void> 
   @Override
   public JSONObject visitPolyMethod(PolyMethodLocation polyMethodLocation, Void unused) {
     JSONObject ans = defaultAction(polyMethodLocation);
+    ans.put("method", Serializer.serializeSymbol(polyMethodLocation.target));
     ans.put(
         "arguments",
         new JSONArray(
             polyMethodLocation.arguments.stream()
-                .map(
-                    methodParameterLocation ->
-                        methodParameterLocation.accept(LocationToJsonVisitor.this, null))
+                .map(methodParameterLocation -> methodParameterLocation.index)
                 .collect(Collectors.toSet())));
     return ans;
   }

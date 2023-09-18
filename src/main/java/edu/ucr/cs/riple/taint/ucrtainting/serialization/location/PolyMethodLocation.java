@@ -11,6 +11,16 @@ public class PolyMethodLocation extends AbstractSymbolLocation {
   public PolyMethodLocation(MethodLocation location, Set<MethodParameterLocation> arguments) {
     super(LocationKind.POLY_METHOD, location.target, location.declarationTree);
     this.arguments = arguments;
+    if (arguments.isEmpty()) {
+      throw new RuntimeException("PolyMethodLocation must have at least one argument");
+    }
+    arguments.forEach(
+        methodParameterLocation -> {
+          if (!methodParameterLocation.enclosingMethod.equals(location.enclosingMethod)) {
+            throw new RuntimeException(
+                "PolyMethodLocation must have arguments from the same method");
+          }
+        });
   }
 
   @Override
