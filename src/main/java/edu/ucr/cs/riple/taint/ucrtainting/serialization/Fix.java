@@ -32,7 +32,7 @@ public class Fix implements JSONSerializable {
 
   @Override
   public String toString() {
-    return "Fix{" + "location=" + location + '}';
+    return location.toString();
   }
 
   public Fix toPoly() {

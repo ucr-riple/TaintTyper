@@ -52,8 +52,6 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   public String toString() {
     return "kind="
         + kind
-        + ", path="
-        + path
         + ", enclosingClass="
         + enclosingClass
         + ", target="
