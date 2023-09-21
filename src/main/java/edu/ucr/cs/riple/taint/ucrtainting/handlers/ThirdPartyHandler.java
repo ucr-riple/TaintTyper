@@ -4,6 +4,7 @@ import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import javax.lang.model.element.Element;
@@ -54,6 +55,10 @@ public class ThirdPartyHandler extends AbstractHandler {
       return false;
     }
     if (receiver == null) {
+      return true;
+    }
+    if (receiver instanceof JCTree.JCLiteral) {
+      // e.g. "bar".equals()
       return true;
     }
     Element receiverElement = TreeUtils.elementFromUse(receiver);

@@ -63,7 +63,7 @@ public class CollectionHandler extends AbstractHandler {
    * @return True if the type implements the {@link java.util.Collection} interface.
    */
   private static boolean implementsCollectionInterface(Type type, Types types) {
-    if (type == null) {
+    if (type == null || type.tsym == null) {
       return false;
     }
     if (type.isInterface() && type.tsym.toString().equals(COLLECTIONS_INTERFACE)) {

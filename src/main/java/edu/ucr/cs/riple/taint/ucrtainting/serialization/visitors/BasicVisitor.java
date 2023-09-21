@@ -163,7 +163,7 @@ public class BasicVisitor extends SpecializedFixComputer {
       if (!(member instanceof Symbol)) {
         return Set.of();
       }
-      Fix fix = buildFixForElement(TreeUtils.elementFromUse(node), pair);
+      Fix fix = buildFixForElement(member, pair);
       return fix == null ? Set.of() : Set.of(fix);
     }
     return Set.of();
