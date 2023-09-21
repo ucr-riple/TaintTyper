@@ -42,7 +42,7 @@ public class UCRTaintingVisitor extends AccumulationVisitor {
     boolean success = atypeFactory.getTypeHierarchy().isSubtype(widenedValueType, varType);
     // Use an error key only if it's overridden by a checker.
     if (!success) {
-      FoundRequired pair = FoundRequired.of(valueType, varType);
+      FoundRequired pair = FoundRequired.of(valueType, varType, 0);
       String valueTypeString = pair.foundString;
       String varTypeString = pair.requiredString;
       ((UCRTaintingChecker) checker)

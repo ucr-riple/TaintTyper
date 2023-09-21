@@ -57,7 +57,8 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
       makeUntainted(formalParameterType, typeFactory);
       AnnotatedTypeMirror actualParameterType = typeFactory.getAnnotatedType(argument);
       fixes.addAll(
-          argument.accept(fixComputer, FoundRequired.of(actualParameterType, formalParameterType)));
+          argument.accept(
+              fixComputer, FoundRequired.of(actualParameterType, formalParameterType, pair.depth)));
     }
     // Add the fix for the receiver if not static.
     if (calledMethod.isStatic()) {

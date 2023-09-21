@@ -88,4 +88,9 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
     return Objects.hash(
         getKind(), path, enclosingClass, declarationTree, target, typeVariablePositions);
   }
+
+  @Override
+  public Symbol getTarget() {
+    return target;
+  }
 }

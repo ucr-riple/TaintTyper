@@ -52,7 +52,8 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
                     .get(i)
                     .accept(
                         new FixComputer(context, typeFactory),
-                        new FoundRequired(paramsAnnotatedTypeMirrors.get(i), requiredParam)));
+                        new FoundRequired(
+                            paramsAnnotatedTypeMirrors.get(i), requiredParam, pair.depth)));
           }
         }
       }

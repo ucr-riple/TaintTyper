@@ -53,4 +53,6 @@ public interface SymbolLocation {
   void setTypeVariablePositions(List<List<Integer>> typeVariables);
 
   LocationKind getKind();
+
+  Symbol getTarget();
 }

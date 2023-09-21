@@ -103,7 +103,8 @@ public class UCRTaintingChecker extends AccumulationChecker {
               (AnnotatedTypeMirror.AnnotatedExecutableType) args[5];
           AnnotatedTypeMirror.AnnotatedExecutableType overridingType =
               (AnnotatedTypeMirror.AnnotatedExecutableType) args[3];
-          return FoundRequired.of(overridingType.getReturnType(), overriddenType.getReturnType());
+          return FoundRequired.of(
+              overridingType.getReturnType(), overriddenType.getReturnType(), 0);
         }
       case "override.param":
         {
@@ -121,7 +122,8 @@ public class UCRTaintingChecker extends AccumulationChecker {
           }
           return FoundRequired.of(
               overriddenType.getParameterTypes().get(index),
-              overridingType.getParameterTypes().get(index));
+              overridingType.getParameterTypes().get(index),
+              0);
         }
       default:
         return null;

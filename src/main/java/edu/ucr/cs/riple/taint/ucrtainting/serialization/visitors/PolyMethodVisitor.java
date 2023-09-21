@@ -47,7 +47,9 @@ public class PolyMethodVisitor extends SpecializedFixComputer {
         AnnotatedTypeMirror copyArg = argType.deepCopy(true);
         typeFactory.replacePolyWithUntainted(copyArg, formalParameterAnnotatedTypeMirror);
         onArguments.addAll(
-            node.getArguments().get(i).accept(fixComputer, FoundRequired.of(argType, copyArg)));
+            node.getArguments()
+                .get(i)
+                .accept(fixComputer, FoundRequired.of(argType, copyArg, pair.depth)));
       }
       return onArguments;
     }

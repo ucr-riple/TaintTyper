@@ -61,5 +61,48 @@ public class Test {
     @RUntainted String s2 = inferPolyWithTypeParamAnnotation(p2);
   }
 
+  public static String getFolderPath(String resource) {
+    return resource.substring(0, resource.lastIndexOf('/') + 1);
+  }
+
+  public static String getPathPart(String resource, int level) {
+    resource = getFolderPath(resource);
+    String result = null;
+    int pos = 0, count = 0;
+    if (level >= 0) {
+      while ((count < level) && (pos > -1)) {
+        count++;
+        pos = resource.indexOf('/', pos + 1);
+      }
+    } else {
+      pos = resource.length();
+      while ((count > level) && (pos > -1)) {
+        count--;
+        pos = resource.lastIndexOf('/', pos - 1);
+      }
+    }
+    if (pos > -1) {
+      result = resource.substring(0, pos + 1);
+    } else {
+      result = (level < 0) ? "/" : resource;
+    }
+    return result;
+  }
+
+  public String simpleLoopLocalVariableAssigment(String param) {
+    String l1 = param;
+    String l2 = l1;
+    l1 = l2;
+    l2 = l1;
+    return l2;
+  }
+
+  public void inferPolyForRecursiveLocalVariablesAssignment() {
+    // :: error: assignment
+    @RUntainted String s1 = getPathPart("foo/bar/baz", 1);
+    // :: error: assignment
+    @RUntainted String s2 = simpleLoopLocalVariableAssigment("foo/bar/baz");
+  }
+
   class ActionInvocation {}
 }

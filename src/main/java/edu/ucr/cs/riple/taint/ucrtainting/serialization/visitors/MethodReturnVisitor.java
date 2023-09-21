@@ -10,7 +10,6 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.LocalVariableLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
@@ -39,19 +38,23 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     Set<Fix> ans = new HashSet<>();
     Set<Fix> onReturns = node.accept(new ReturnStatementVisitor(pair), fixComputer);
     Deque<Fix> workList = new ArrayDeque<>(onReturns);
+    Set<Symbol> involvedElementsInReturnValueCreation = new HashSet<>();
     while (!workList.isEmpty()) {
       Fix fix = workList.pop();
       if (!fix.location.getKind().isLocalVariable()) {
         ans.add(fix);
-      } else {
-        AssignmentScanner assignmentScanner =
-            new AssignmentScanner(
-                (Symbol.VarSymbol) ((LocalVariableLocation) fix.location).target, pair);
-        pair.incrementDepth();
-        Set<Fix> onAssignments = node.accept(assignmentScanner, fixComputer);
-        pair.decrementDepth();
-        workList.addAll(onAssignments);
       }
+      Symbol involvedElement = fix.location.getTarget();
+      if (involvedElementsInReturnValueCreation.contains(involvedElement)) {
+        // already processed
+        continue;
+      }
+      AssignmentScanner assignmentScanner = new AssignmentScanner(involvedElement, pair);
+      involvedElementsInReturnValueCreation.add(involvedElement);
+      pair.incrementDepth();
+      Set<Fix> onAssignments = node.accept(assignmentScanner, fixComputer);
+      pair.decrementDepth();
+      workList.addAll(onAssignments);
     }
     Set<MethodParameterLocation> polymorphicAnnotations = new HashSet<>();
     Set<Fix> others = new HashSet<>();
@@ -104,17 +107,17 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
 
   static class AssignmentScanner extends AccumulateScanner {
 
-    private final Symbol.VarSymbol localVariable;
+    private final Symbol variable;
 
-    public AssignmentScanner(Symbol.VarSymbol localVariable, FoundRequired pair) {
+    public AssignmentScanner(Symbol variable, FoundRequired pair) {
       super(pair);
-      this.localVariable = localVariable;
+      this.variable = variable;
     }
 
     @Override
     public Set<Fix> visitAssignment(AssignmentTree node, FixComputer visitor) {
       Element element = TreeUtils.elementFromUse(node.getVariable());
-      if (localVariable.equals(element)) {
+      if (variable.equals(element)) {
         return node.getExpression().accept(visitor, pair);
       }
       return Set.of();
@@ -123,7 +126,10 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     @Override
     public Set<Fix> visitVariable(VariableTree node, FixComputer visitor) {
       Element element = TreeUtils.elementFromDeclaration(node);
-      if (localVariable.equals(element)) {
+      if (variable.equals(element)) {
+        if (node.getInitializer() == null) {
+          return Set.of();
+        }
         return node.getInitializer().accept(visitor, pair);
       }
       return Set.of();

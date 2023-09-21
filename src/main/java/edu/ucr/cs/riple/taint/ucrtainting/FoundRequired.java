@@ -15,20 +15,22 @@ public class FoundRequired {
   public int depth;
   public static final int MAX_DEPTH = 5;
 
-  public FoundRequired(@Nonnull AnnotatedTypeMirror found, @Nonnull AnnotatedTypeMirror required) {
+  public FoundRequired(
+      @Nonnull AnnotatedTypeMirror found, @Nonnull AnnotatedTypeMirror required, int depth) {
     this.found = found;
     this.required = required;
     this.foundString = found.toString(true);
     this.requiredString = required.toString(true);
-    this.depth = 0;
+    this.depth = depth;
   }
 
   /**
    * Creates string representations of {@link AnnotatedTypeMirror}s which are only verbose if
    * required to differentiate the two types.
    */
-  public static FoundRequired of(AnnotatedTypeMirror found, AnnotatedTypeMirror required) {
-    return new FoundRequired(found, required);
+  public static FoundRequired of(
+      AnnotatedTypeMirror found, AnnotatedTypeMirror required, int depth) {
+    return new FoundRequired(found, required, depth);
   }
 
   /**

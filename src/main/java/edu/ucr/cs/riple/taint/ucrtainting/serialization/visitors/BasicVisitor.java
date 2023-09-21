@@ -116,7 +116,9 @@ public class BasicVisitor extends SpecializedFixComputer {
                             .accept(
                                 fixComputer,
                                 FoundRequired.of(
-                                    foundParameterType, formalParameterAnnotatedTypeMirror)));
+                                    foundParameterType,
+                                    formalParameterAnnotatedTypeMirror,
+                                    pair.depth)));
                   }
                 });
           }
