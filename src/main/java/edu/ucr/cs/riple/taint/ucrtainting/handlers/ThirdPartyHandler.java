@@ -19,35 +19,60 @@ public class ThirdPartyHandler extends AbstractHandler {
 
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree, AnnotatedTypeMirror type) {
+    if (!checkHeuristicApplicability(tree, typeFactory)) {
+      return;
+    }
+    typeFactory.makeUntainted(type);
+  }
+
+  /**
+   * Determines if the heuristic is applicable to the passed invocation tree.
+   *
+   * @param tree the invocation tree.
+   * @param factory the type factory of the checker.
+   * @return true if the heuristic is applicable, false otherwise.
+   */
+  public static boolean checkHeuristicApplicability(
+      MethodInvocationTree tree, UCRTaintingAnnotatedTypeFactory factory) {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
     // If already untainted, it should be acknowledged
     if (Utility.hasUntaintedAnnotation(calledMethod.getReturnType())) {
-      typeFactory.makeUntainted(type);
-      return;
+      return true;
     }
-    if (!typeFactory.isInThirdPartyCode(calledMethod)) {
-      return;
+    if (!factory.isInThirdPartyCode(calledMethod)) {
+      return false;
     }
-    if (typeFactory.isSource(calledMethod)) {
-      return;
+    if (factory.isSource(calledMethod)) {
+      return false;
     }
     // Check receiver, if receiver is tainted, we should not make it untainted.
     ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
     boolean hasValidReceiver =
-        receiver == null || calledMethod.isStatic() || typeFactory.isPolyOrUntainted(receiver);
+        receiver == null || calledMethod.isStatic() || factory.isPolyOrUntainted(receiver);
     if (!hasValidReceiver) {
-      return;
+      return false;
     }
     // Check passed arguments, if any of them is tainted, we should not make it untainted.
-    boolean noTaintedParams = tree.getArguments().stream().allMatch(this::polyOrUntaintedParameter);
+    boolean noTaintedParams =
+        tree.getArguments().stream()
+            .allMatch(expressionTree -> polyOrUntaintedParameter(expressionTree, factory));
     if (noTaintedParams) {
-      if (shouldApplyHeuristic(receiver, calledMethod)) {
-        typeFactory.makeDeepUntainted(type);
-      }
+      return hasInvariantReturnType(tree);
     }
+    return false;
   }
 
-  private boolean shouldApplyHeuristic(ExpressionTree receiver, Symbol.MethodSymbol calledMethod) {
+  /**
+   * Determines if the invocation has an invariant return type. This is used to determine if the
+   * mismatch in the return type can be fixed by adding an annotation either on the receiver or the
+   * passed arguments.
+   *
+   * @param tree the invocation tree.
+   * @return true if the return type is invariant, false otherwise.
+   */
+  public static boolean hasInvariantReturnType(MethodInvocationTree tree) {
+    Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
+    ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
     Type returnType = calledMethod.getReturnType();
     // check method type arguments
     if (calledMethod.type.getTypeArguments().stream()
@@ -66,7 +91,14 @@ public class ThirdPartyHandler extends AbstractHandler {
         .noneMatch(type -> Utility.containsTypeArgument(returnType, (Type.TypeVar) type));
   }
 
-  private boolean polyOrUntaintedParameter(ExpressionTree argument) {
+  /**
+   * Determines if the passed argument is either poly or untainted.
+   *
+   * @param argument the argument to check.
+   * @return true if the argument is either poly or untainted, false otherwise.
+   */
+  private static boolean polyOrUntaintedParameter(
+      ExpressionTree argument, UCRTaintingAnnotatedTypeFactory typeFactory) {
     AnnotatedTypeMirror type = typeFactory.getAnnotatedType(argument);
     if (typeFactory.isPolyOrUntainted(type)) {
       return true;

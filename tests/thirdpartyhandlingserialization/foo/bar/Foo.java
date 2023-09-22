@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.Base64;
 import java.util.stream.Stream;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.servlet.http.*;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -69,6 +71,10 @@ class Foo {
 
     // :: error: (assignment)
     @RUntainted String param = request.getHeader(MyEnum.A.toString());
+  }
+
+  public void testSkipOnTypeArgUntaintedFromThirdParty(@RUntainted MBeanServer mBeanServer) {
+    Set<@RUntainted ObjectName> res = mBeanServer.queryNames(null, null);
   }
 
   class WebDAVServlet extends HttpServlet {

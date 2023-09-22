@@ -1,12 +1,13 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import static edu.ucr.cs.riple.taint.ucrtainting.Log.print;
-
+import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.ThirdPartyHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.SerializationService;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import javax.lang.model.element.Element;
@@ -53,6 +54,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
   private Types types;
   private UCRTaintingAnnotatedTypeFactory typeFactory;
   private boolean serialize = true;
+  private FoundRequired pair = null;
 
   public UCRTaintingChecker() {}
 
@@ -67,18 +69,12 @@ public class UCRTaintingChecker extends AccumulationChecker {
 
   @Override
   public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
-    if (shouldBeSkipped(source, messageKey)) {
+    pair = pair == null ? retrievePair(messageKey, args) : pair;
+    if (shouldBeSkipped(source, messageKey, pair)) {
       return;
     }
     if (serialize) {
-      FoundRequired pair = null;
-      try {
-        pair = retrievePair(messageKey, args);
-      } catch (Exception e) {
-        print("Exception: " + e.getMessage());
-      } finally {
-        this.serializationService.serializeError(source, messageKey, pair);
-      }
+      this.serializationService.serializeError(source, messageKey, pair);
     }
     args[args.length - 1] = args[args.length - 1].toString() + ", index: " + ++index;
     super.reportError(source, messageKey, args);
@@ -86,12 +82,14 @@ public class UCRTaintingChecker extends AccumulationChecker {
 
   public void detailedReportError(
       Object source, @CompilerMessageKey String messageKey, FoundRequired pair, Object... args) {
-    if (shouldBeSkipped(source, messageKey)) {
+    if (shouldBeSkipped(source, messageKey, pair)) {
       return;
     }
     this.serializationService.serializeError(source, messageKey, pair);
     this.serialize = false;
+    this.pair = pair;
     this.reportError(source, messageKey, args);
+    this.pair = null;
     this.serialize = true;
   }
 
@@ -135,9 +133,10 @@ public class UCRTaintingChecker extends AccumulationChecker {
    *
    * @param source The source of the error.
    * @param messageKey The message key of the error.
+   * @param pair The pair of found and required annotated type mirrors.
    * @return True if the error should be skipped, false otherwise.
    */
-  private boolean shouldBeSkipped(Object source, String messageKey) {
+  private boolean shouldBeSkipped(Object source, String messageKey, FoundRequired pair) {
     Tree tree = (Tree) source;
     switch (messageKey) {
         // Skip errors that are caused by third-party code.
@@ -162,6 +161,46 @@ public class UCRTaintingChecker extends AccumulationChecker {
           Symbol.MethodSymbol overriddenMethod =
               Utility.getClosestOverriddenMethod(overridingMethod, types);
           return overriddenMethod == null || typeFactory.isInThirdPartyCode(overriddenMethod);
+        }
+      case "assignment":
+        {
+          Tree errorTree = visitor.getCurrentPath().getLeaf();
+          if (!(errorTree instanceof JCTree.JCVariableDecl)) {
+            return false;
+          }
+          JCTree.JCVariableDecl errorVar = (JCTree.JCVariableDecl) errorTree;
+          if (!(errorVar.getInitializer() instanceof JCTree.JCMethodInvocation)) {
+            return false;
+          }
+          boolean isApplicable =
+              ThirdPartyHandler.checkHeuristicApplicability(
+                  (MethodInvocationTree) errorVar.getInitializer(), typeFactory);
+          if (!isApplicable) {
+            return false;
+          }
+          // check miss match is only try args which found is untainted, but required is tainted.
+          if (pair == null) {
+            return false;
+          }
+          if (!(pair.found instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)
+              || !(pair.required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)
+              || !(pair.found.getUnderlyingType() instanceof Type.ClassType)
+              || !(pair.required.getUnderlyingType() instanceof Type.ClassType)) {
+            return false;
+          }
+          AnnotatedTypeMirror.AnnotatedDeclaredType found =
+              (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.found;
+          AnnotatedTypeMirror.AnnotatedDeclaredType required =
+              (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.required;
+          Type.ClassType foundType = (Type.ClassType) found.getUnderlyingType();
+          Type.ClassType requiredType = (Type.ClassType) required.getUnderlyingType();
+          if (!foundType.tsym.equals(requiredType.tsym)) {
+            // We do not want to handle complex cases for now.
+            return false;
+          }
+          // all other mismatches should be ignored.
+          return !typeFactory.hasUntaintedAnnotation(required)
+              || typeFactory.hasUntaintedAnnotation(found);
         }
       default:
         return false;
