@@ -34,10 +34,20 @@ public class ThirdPartyHandler extends AbstractHandler {
    */
   public static boolean checkHeuristicApplicability(
       MethodInvocationTree tree, UCRTaintingAnnotatedTypeFactory factory) {
+    boolean log = false;
+    if(tree.toString().equals("TextParseUtil.translateVariables(param, invocation.getStack(), new EncodingParsedValueEvaluator())")){
+      log = true;
+    }
+    if(log) {
+      System.out.println("tree in handler: " + tree);
+    }
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
     // If already untainted, it should be acknowledged
     if (Utility.hasUntaintedAnnotation(calledMethod.getReturnType())) {
       return true;
+    }
+    if(log){
+      System.out.println("Is in third party: " + factory.isInThirdPartyCode(calledMethod));
     }
     if (!factory.isInThirdPartyCode(calledMethod)) {
       return false;
@@ -97,8 +107,8 @@ public class ThirdPartyHandler extends AbstractHandler {
    * @param argument the argument to check.
    * @return true if the argument is either poly or untainted, false otherwise.
    */
-  private static boolean polyOrUntaintedParameter(
-      ExpressionTree argument, UCRTaintingAnnotatedTypeFactory typeFactory) {
+  public static boolean polyOrUntaintedParameter(
+          ExpressionTree argument, UCRTaintingAnnotatedTypeFactory typeFactory) {
     AnnotatedTypeMirror type = typeFactory.getAnnotatedType(argument);
     if (typeFactory.isPolyOrUntainted(type)) {
       return true;

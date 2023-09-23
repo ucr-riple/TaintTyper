@@ -3,6 +3,8 @@ package foo.bar;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.util.*;
 import javax.servlet.http.*;
+import com.opensymphony.xwork2.util.TextParseUtil;
+import com.opensymphony.xwork2.ActionInvocation;
 
 public class Test {
 
@@ -104,5 +106,22 @@ public class Test {
     @RUntainted String s2 = simpleLoopLocalVariableAssigment("foo/bar/baz");
   }
 
-  class ActionInvocation {}
+  public boolean parse;
+  protected @RPolyTainted String conditionalParse2(@RPolyTainted String param, @RPolyTainted ActionInvocation invocation) {
+    if (parse && param != null && invocation != null) {
+      return TextParseUtil.translateVariables(
+              param,
+              invocation.getStack(),
+              new EncodingParsedValueEvaluator());
+    } else {
+      return param;
+    }
+  }
+
+  class EncodingParsedValueEvaluator implements TextParseUtil.ParsedValueEvaluator {
+    @Override
+    public Object evaluate(Object parsedValue) {
+      return parsedValue;
+    }
+  }
 }

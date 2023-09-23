@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
+import static edu.ucr.cs.riple.taint.ucrtainting.handlers.ThirdPartyHandler.polyOrUntaintedParameter;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
@@ -11,6 +12,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Set;
 import javax.lang.model.element.Element;
@@ -85,6 +87,25 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     boolean hasPolyTaintedAnnotation =
         typeFactory.hasPolyTaintedAnnotation(calledMethod.getReturnType());
     boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();
+    Serializer.log("Method: " + calledMethod);
+    Serializer.log("Actual Node: " + node);
+    Serializer.log("Return Type: " + typeFactory.getAnnotatedType(node));
+    if(Serializer.logActivation){
+      // Check receiver, if receiver is tainted, we should not make it untainted.
+      ExpressionTree receiver1 = TreeUtils.getReceiverTree(node);
+      Serializer.log("Receiver: " + receiver1);
+      boolean hasValidReceiver =
+              receiver1 == null || calledMethod.isStatic() || typeFactory.isPolyOrUntainted(receiver1);
+      Serializer.log("Has Valid Receiver: " + hasValidReceiver);
+      // Check passed arguments, if any of them is tainted, we should not make it untainted.
+      boolean noTaintedParams =
+              node.getArguments().stream()
+                      .allMatch(expressionTree -> polyOrUntaintedParameter(expressionTree, typeFactory));
+      for (ExpressionTree argument : node.getArguments()) {
+        Serializer.log("Argument: " + argument + ", type: " + typeFactory.getAnnotatedType(argument) + ", isPolyOrUntainted: " + typeFactory.isPolyOrUntainted(argument));
+      }
+      Serializer.log("No Tainted Params: " + noTaintedParams);
+    }
     if (hasPolyTaintedAnnotation) {
       Set<Fix> polyFixes = node.accept(new PolyMethodVisitor(context, typeFactory, this), pair);
       if (!polyFixes.isEmpty()) {

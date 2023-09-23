@@ -14,8 +14,10 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import javax.annotation.Nullable;
 import org.json.JSONObject;
 
@@ -175,5 +177,19 @@ public class Serializer {
 
   public boolean isActive() {
     return config.serializationEnabled();
+  }
+
+  public static boolean logActivation = false;
+  public static void log(String msg) {
+    msg += "\n";
+    if(!logActivation){
+      return;
+    }
+    String path = "/home/nima/Developer/taint-benchmarks/struts/annotator-out/core/log.txt";
+    try {
+      Files.write(Paths.get(path), msg.getBytes(), StandardOpenOption.APPEND);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }
