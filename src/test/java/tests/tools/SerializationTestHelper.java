@@ -1,5 +1,6 @@
 package tests.tools;
 
+import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -164,6 +165,7 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
    * @return true if the two JSON objects are equal, false otherwise.
    */
   private static boolean isEqualJSON(Object r1, Object r2) {
+    final ImmutableSet<String> ignoreFields = ImmutableSet.of("path", "offset", "index", "pair");
     if (r1 == null || r2 == null) {
       return false;
     }
@@ -177,7 +179,7 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
         return false;
       }
       for (String key : json1.keySet()) {
-        if (!key.equals("path") && !key.equals("offset") && !key.equals("index")) {
+        if (!ignoreFields.contains(key)) {
           if (json1.get(key) instanceof JSONObject || json1.get(key) instanceof JSONArray) {
             if (!isEqualJSON(json1.get(key), json2.get(key))) {
               return false;

@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableSet;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
-import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import java.util.Set;
 import javax.annotation.Nullable;
 import org.json.JSONArray;
@@ -32,16 +31,13 @@ public class Error implements JSONSerializable {
   /** Offset of program point where this error is reported. */
   public final int offset;
 
-  public final FoundRequired pair;
-
-  public Error(String messageKey, Set<Fix> resolvingFixes, TreePath path, FoundRequired pair) {
+  public Error(String messageKey, Set<Fix> resolvingFixes, TreePath path) {
     this.messageKey = messageKey;
     this.resolvingFixes =
         resolvingFixes == null ? ImmutableSet.of() : ImmutableSet.copyOf(resolvingFixes);
     this.regionClass = Utility.findRegionClassSymbol(path);
     this.regionSymbol = Utility.findRegionMemberSymbol(this.regionClass, path);
     this.offset = ((JCTree) path.getLeaf()).getStartPosition();
-    this.pair = pair;
   }
 
   @Override
@@ -54,10 +50,6 @@ public class Error implements JSONSerializable {
     region.put("symbol", Serializer.serializeSymbol(regionSymbol));
     ans.put("region", region);
     ans.put("fixes", new JSONArray(this.resolvingFixes.stream().map(Fix::toJSON).toArray()));
-    JSONObject pair = new JSONObject();
-    pair.put("found", this.pair.found.toString());
-    pair.put("required", this.pair.required.toString());
-    ans.put("pair", pair);
     return ans;
   }
 }

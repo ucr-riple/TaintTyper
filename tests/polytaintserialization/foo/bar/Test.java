@@ -118,6 +118,17 @@ public class Test {
     }
   }
 
+  Object fieldInNonPoly;
+
+  public Object nonPolyMethod(Object f1, Object f2) {
+    return fieldInNonPoly;
+  }
+
+  public void inferUntaintedForNonPolyMethod() {
+    // :: error: assignment
+    @RUntainted Object o = nonPolyMethod(null, null);
+  }
+
   class EncodingParsedValueEvaluator implements TextParseUtil.ParsedValueEvaluator {
     @Override
     public Object evaluate(Object parsedValue) {

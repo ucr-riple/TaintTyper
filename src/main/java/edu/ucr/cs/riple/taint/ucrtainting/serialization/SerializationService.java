@@ -69,8 +69,7 @@ public class SerializationService {
       resolvingFixes = ImmutableSet.of();
       e.printStackTrace();
     }
-    Error error =
-        new Error(messageKey, resolvingFixes, checker.getVisitor().getCurrentPath(), pair);
+    Error error = new Error(messageKey, resolvingFixes, checker.getVisitor().getCurrentPath());
     serializer.serializeError(error);
   }
 
