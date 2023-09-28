@@ -54,14 +54,8 @@ public class SerializationService {
    * @param pair the pair of found and required annotated type mirrors.
    */
   public void serializeError(Object source, String messageKey, FoundRequired pair) {
-    Serializer.logActivation = false;
     if (!serializer.isActive()) {
       return;
-    }
-    Symbol.ClassSymbol classSymbol = Utility.findRegionClassSymbol(checker.getVisitor().getCurrentPath());
-    Symbol symbol = Utility.findRegionMemberSymbol(classSymbol, checker.getVisitor().getCurrentPath());
-    if(symbol != null && symbol.toString().startsWith("conditionalParse(") && classSymbol.flatname.toString().equals("org.apache.struts2.result.StrutsResultSupport")){
-      Serializer.logActivation = true;
     }
     Set<Fix> resolvingFixes;
     try {
@@ -75,7 +69,8 @@ public class SerializationService {
       resolvingFixes = ImmutableSet.of();
       e.printStackTrace();
     }
-    Error error = new Error(messageKey, resolvingFixes, checker.getVisitor().getCurrentPath(), pair);
+    Error error =
+        new Error(messageKey, resolvingFixes, checker.getVisitor().getCurrentPath(), pair);
     serializer.serializeError(error);
   }
 

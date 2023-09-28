@@ -1,10 +1,10 @@
 package foo.bar;
 
+import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.util.TextParseUtil;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.util.*;
 import javax.servlet.http.*;
-import com.opensymphony.xwork2.util.TextParseUtil;
-import com.opensymphony.xwork2.ActionInvocation;
 
 public class Test {
 
@@ -107,12 +107,12 @@ public class Test {
   }
 
   public boolean parse;
-  protected @RPolyTainted String conditionalParse2(@RPolyTainted String param, @RPolyTainted ActionInvocation invocation) {
+
+  protected @RPolyTainted String conditionalParse2(
+      @RPolyTainted String param, @RPolyTainted ActionInvocation invocation) {
     if (parse && param != null && invocation != null) {
       return TextParseUtil.translateVariables(
-              param,
-              invocation.getStack(),
-              new EncodingParsedValueEvaluator());
+          param, invocation.getStack(), new EncodingParsedValueEvaluator());
     } else {
       return param;
     }

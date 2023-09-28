@@ -31,6 +31,7 @@ public class Error implements JSONSerializable {
   @Nullable public final Symbol regionSymbol;
   /** Offset of program point where this error is reported. */
   public final int offset;
+
   public final FoundRequired pair;
 
   public Error(String messageKey, Set<Fix> resolvingFixes, TreePath path, FoundRequired pair) {
