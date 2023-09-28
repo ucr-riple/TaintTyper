@@ -201,7 +201,7 @@ public class BasicVisitor extends SpecializedFixComputer {
    * @return True if the fix is required, false otherwise.
    */
   protected boolean requireFix(FoundRequired pair) {
-    if (pair == null || pair.found == null || pair.required == null) {
+    if (pair == null) {
       return true;
     }
     AnnotatedTypeMirror widenedValueType = typeFactory.getWidenedType(pair.found, pair.required);
