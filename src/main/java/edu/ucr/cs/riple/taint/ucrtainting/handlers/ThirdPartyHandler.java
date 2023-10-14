@@ -86,7 +86,12 @@ public class ThirdPartyHandler extends AbstractHandler {
       // e.g. "bar".equals()
       return true;
     }
-    Element receiverElement = TreeUtils.elementFromUse(receiver);
+    Element receiverElement;
+    try {
+      receiverElement = TreeUtils.elementFromUse(receiver);
+    } catch (Exception e) {
+      return true;
+    }
     return Utility.getType(receiverElement).tsym.type.getTypeArguments().stream()
         .noneMatch(type -> Utility.containsTypeArgument(returnType, (Type.TypeVar) type));
   }
