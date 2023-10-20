@@ -3,6 +3,7 @@ package com.test;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Foo {
   Map<String, String> onRerurn() {
@@ -25,4 +26,9 @@ public class Foo {
   }
 
   void bar(Map<String, String> param) {}
+
+  private void testOnTypeArgReceiverEmpty(Map<String, @RUntainted String> config) {
+    // :: error: assignment
+    Set<Map.Entry<String, String>> entrySet = config.entrySet();
+  }
 }

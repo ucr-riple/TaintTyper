@@ -156,6 +156,10 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
       }
     }
     List<List<Integer>> indexes = computeIndices(element, typeMatchVisitor, pair);
+    if (indexes.isEmpty()) {
+      // No fix found.
+      return null;
+    }
     location.setTypeVariablePositions(indexes);
     return new Fix(location);
   }
@@ -335,6 +339,9 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
             .map(Type::toString)
             .collect(Collectors.toList());
     for (int i = 0; i < requiredTypeVariables.size(); i++) {
+      if (typeVarMap.get(requiredTypeVariables.get(i)) == null) {
+        continue;
+      }
       int regionTypeVariableIndex =
           foundTypeVariables.indexOf(typeVarMap.get(requiredTypeVariables.get(i)));
       AnnotatedTypeMirror regionTypeArgument =
