@@ -225,35 +225,31 @@ public class SerializationService {
     if (overridingMethod == null) {
       return ImmutableSet.of();
     }
-    SymbolLocation onChild = SymbolLocation.createLocationFromSymbol(overridingMethod, context);
-    if (onChild == null) {
-      return ImmutableSet.of();
-    }
-    AnnotatedTypeMirror overridingReturnType =
-        typeFactory.getAnnotatedType(overridingMethod).getReturnType();
     // On parent
     Symbol.MethodSymbol overriddenMethod =
-            Utility.getClosestOverriddenMethod(overridingMethod, types);
+        Utility.getClosestOverriddenMethod(overridingMethod, types);
     AnnotatedTypeMirror overriddenReturnType =
-            typeFactory.getAnnotatedType(overriddenMethod).getReturnType();
-    boolean missMatchOnOverriding = overridingReturnType.equals(pair.found);
-    if (missMatchOnOverriding) {
-      List<List<Integer>> differences =
-          typeMatchVisitor.visit(overridingReturnType, pair.required, null);
-      if (!differences.isEmpty()) {
-        onChild.setTypeVariablePositions(differences);
-        ans.add(new Fix(onChild));
+        typeFactory.getAnnotatedType(overriddenMethod).getReturnType();
+    AnnotatedTypeMirror overridingReturnType =
+        typeFactory.getAnnotatedType(overridingMethod).getReturnType();
+    List<List<Integer>> differences =
+        typeMatchVisitor.visit(overriddenReturnType, overridingReturnType, null);
+    if (!differences.isEmpty()) {
+      SymbolLocation location = SymbolLocation.createLocationFromSymbol(overriddenMethod, context);
+      if (location == null) {
+        return ImmutableSet.of();
       }
-    } else {
-      SymbolLocation onParent = SymbolLocation.createLocationFromSymbol(overriddenMethod, context);
-      if (onParent != null) {
-        List<List<Integer>> differences =
-            typeMatchVisitor.visit(overridingReturnType, pair.required, null);
-        if (!differences.isEmpty()) {
-          onParent.setTypeVariablePositions(differences);
-          ans.add(new Fix(onParent));
-        }
+      location.setTypeVariablePositions(differences);
+      ans.add(new Fix(location));
+    }
+    differences = typeMatchVisitor.visit(overridingReturnType, overriddenReturnType, null);
+    if (!differences.isEmpty()) {
+      SymbolLocation location = SymbolLocation.createLocationFromSymbol(overridingMethod, context);
+      if (location == null) {
+        return ImmutableSet.of();
       }
+      location.setTypeVariablePositions(differences);
+      ans.add(new Fix(location));
     }
     return ans.build();
   }
