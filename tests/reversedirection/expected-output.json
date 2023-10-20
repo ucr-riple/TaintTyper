@@ -1,0 +1,112 @@
+{
+  "errors": [
+    {
+      "messageKey": "return",
+      "offset": 259,
+      "index": 1,
+      "region": {
+        "symbol": "onRerurn()",
+        "class": "com.test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "onRerurn()",
+            "kind": "METHOD",
+            "class": "com.test.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 392,
+      "index": 2,
+      "region": {
+        "symbol": "onAssigment()",
+        "class": "com.test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+            "varName": "var",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "onAssigment()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "com.test.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 457,
+      "index": 3,
+      "region": {
+        "symbol": "onAssigment()",
+        "class": "com.test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+            "varName": "var",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "onAssigment()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "com.test.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "argument",
+      "offset": 559,
+      "index": 4,
+      "region": {
+        "symbol": "onPassing(java.util.Map)",
+        "class": "com.test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "bar(java.util.Map)",
+            "kind": "PARAMETER",
+            "name": "param",
+            "index": 0,
+            "class": "com.test.Foo"
+          }
+        }
+      ]
+    }
+  ]
+}

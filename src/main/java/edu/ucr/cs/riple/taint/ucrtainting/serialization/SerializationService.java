@@ -1,8 +1,12 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import com.google.common.collect.ImmutableSet;
+import com.sun.source.tree.AssignmentTree;
 import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.Tree;
+import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Types;
@@ -14,8 +18,11 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisitor;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** This class is used to serialize the errors and the fixes for the errors. */
@@ -78,6 +85,7 @@ public class SerializationService {
    *
    * @param tree The given tree.
    * @param messageKey The key of the error message.
+   * @param path
    */
   public Set<Fix> generateFixesForError(Tree tree, String messageKey, FoundRequired pair) {
     TreePath path = checker.getVisitor().getCurrentPath();
@@ -96,8 +104,79 @@ public class SerializationService {
         if (!Utility.isInAnnotatedPackage(encClass, typeFactory)) {
           return ImmutableSet.of();
         }
-        return tree.accept(fixComputer, pair);
+        Set<Fix> fixes = new HashSet<>();
+        // On Right Hand Side
+        fixes.addAll(tree.accept(fixComputer, pair));
+        // On Left Hand Side
+        fixes.addAll(generateLeftHandSideFixes(tree, messageKey, path, pair));
+        return fixes;
     }
+  }
+
+  private ImmutableSet<Fix> generateLeftHandSideFixes(
+      Tree tree, String messageKey, TreePath path, FoundRequired pair) {
+    if (!(pair.found instanceof AnnotatedTypeMirror.AnnotatedDeclaredType
+        && pair.required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
+      return ImmutableSet.of();
+    }
+    Element toAnnotate = null;
+    switch (messageKey) {
+      case "assignment":
+        if (path.getLeaf() instanceof VariableTree) {
+          toAnnotate = TreeUtils.elementFromTree((path.getLeaf()));
+        }
+        if (path.getLeaf() instanceof AssignmentTree) {
+          toAnnotate = TreeUtils.elementFromTree(((AssignmentTree) path.getLeaf()).getVariable());
+        }
+        break;
+      case "return":
+        MethodTree enclosingMethod = Utility.findEnclosingNode(path, MethodTree.class);
+        if (enclosingMethod == null) {
+          return ImmutableSet.of();
+        }
+        toAnnotate = TreeUtils.elementFromDeclaration(enclosingMethod);
+        break;
+      case "argument":
+        MethodInvocationTree invocationTree = (MethodInvocationTree) path.getLeaf();
+        int index = -1;
+        for (int i = 0; i < invocationTree.getArguments().size(); i++) {
+          if (invocationTree.getArguments().get(i).equals(tree)) {
+            index = i;
+            break;
+          }
+        }
+        if (index == -1) {
+          return ImmutableSet.of();
+        }
+        toAnnotate =
+            ((Symbol.MethodSymbol) TreeUtils.elementFromUse(invocationTree))
+                .getParameters()
+                .get(index);
+        break;
+      default:
+        return ImmutableSet.of();
+    }
+    if (toAnnotate == null) {
+      return ImmutableSet.of();
+    }
+    TypeMatchVisitor visitor = new TypeMatchVisitor(typeFactory);
+    List<List<Integer>> differences;
+    try {
+      differences = visitor.visit(pair.required, pair.found, null);
+    } catch (Exception e) {
+      return ImmutableSet.of();
+    }
+
+    if (!differences.isEmpty() && differences.get(0).equals(List.of(0))) {
+      differences.remove(0);
+    }
+    if (differences.isEmpty()) {
+      return ImmutableSet.of();
+    }
+    Fix fixOnLeftHandSide =
+        new Fix(SymbolLocation.createLocationFromSymbol((Symbol) toAnnotate, context));
+    fixOnLeftHandSide.location.setTypeVariablePositions(differences);
+    return ImmutableSet.of(fixOnLeftHandSide);
   }
 
   /**
