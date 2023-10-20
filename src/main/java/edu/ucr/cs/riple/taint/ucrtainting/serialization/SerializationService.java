@@ -39,8 +39,10 @@ public class SerializationService {
   private final UCRTaintingChecker checker;
   /** Javac context instance. */
   private final Context context;
+
   private final FixComputer fixComputer;
   private final TypeMatchVisitor typeMatchVisitor;
+  private final Types types;
 
   public SerializationService(UCRTaintingChecker checker) {
     this.checker = checker;
@@ -49,6 +51,7 @@ public class SerializationService {
     this.context = ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext();
     this.fixComputer = new FixComputer(context, typeFactory);
     this.typeMatchVisitor = new TypeMatchVisitor(typeFactory);
+    this.types = Types.instance(context);
   }
 
   /**
@@ -215,13 +218,44 @@ public class SerializationService {
    */
   private ImmutableSet<Fix> handleReturnOverrideError(
       Tree overridingMethodTree, FoundRequired pair) {
+    ImmutableSet.Builder<Fix> ans = new ImmutableSet.Builder<>();
+    // On child
     Symbol.MethodSymbol overridingMethod =
         (Symbol.MethodSymbol) TreeUtils.elementFromTree(overridingMethodTree);
-    SymbolLocation location = SymbolLocation.createLocationFromSymbol(overridingMethod, context);
-    if (location != null) {
-      location.setTypeVariablePositions(typeMatchVisitor.visit(pair.found, pair.required, null));
+    if (overridingMethod == null) {
+      return ImmutableSet.of();
     }
-    return ImmutableSet.of(new Fix(location));
+    SymbolLocation onChild = SymbolLocation.createLocationFromSymbol(overridingMethod, context);
+    if (onChild == null) {
+      return ImmutableSet.of();
+    }
+    AnnotatedTypeMirror overridingReturnType =
+        typeFactory.getAnnotatedType(overridingMethod).getReturnType();
+    // On parent
+    Symbol.MethodSymbol overriddenMethod =
+            Utility.getClosestOverriddenMethod(overridingMethod, types);
+    AnnotatedTypeMirror overriddenReturnType =
+            typeFactory.getAnnotatedType(overriddenMethod).getReturnType();
+    boolean missMatchOnOverriding = overridingReturnType.equals(pair.found);
+    if (missMatchOnOverriding) {
+      List<List<Integer>> differences =
+          typeMatchVisitor.visit(overridingReturnType, pair.required, null);
+      if (!differences.isEmpty()) {
+        onChild.setTypeVariablePositions(differences);
+        ans.add(new Fix(onChild));
+      }
+    } else {
+      SymbolLocation onParent = SymbolLocation.createLocationFromSymbol(overriddenMethod, context);
+      if (onParent != null) {
+        List<List<Integer>> differences =
+            typeMatchVisitor.visit(overridingReturnType, pair.required, null);
+        if (!differences.isEmpty()) {
+          onParent.setTypeVariablePositions(differences);
+          ans.add(new Fix(onParent));
+        }
+      }
+    }
+    return ans.build();
   }
 
   /**

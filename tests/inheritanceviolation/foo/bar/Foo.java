@@ -13,11 +13,15 @@ public class Foo {
     return;
   }
 
-  public List<@RUntainted String> untaintedStringListSuper(){
+  public List<@RUntainted String> untaintedStringListSuper() {
     return null;
   }
 
-  public List<String> untaintedStringListChild(){
+  public List<String> untaintedStringListChild() {
+    return null;
+  }
+
+  public @RUntainted List<@RUntainted String> mix() {
     return null;
   }
 }

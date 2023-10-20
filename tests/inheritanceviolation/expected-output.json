@@ -2,7 +2,7 @@
   "errors": [
     {
       "messageKey": "override.return",
-      "offset": 156,
+      "offset": 160,
       "index": 1,
       "region": {
         "symbol": "getUntainted()",
@@ -27,7 +27,7 @@
     },
     {
       "messageKey": "override.param",
-      "offset": 243,
+      "offset": 255,
       "index": 2,
       "region": {
         "symbol": "getUntainted(java.lang.Object)",
@@ -48,6 +48,67 @@
             "name": "pFoo",
             "index": 0,
             "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "override.return",
+      "offset": 363,
+      "index": 3,
+      "region": {
+        "symbol": "untaintedStringListSuper()",
+        "class": "foo.bar.Bar"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "untaintedStringListSuper()",
+            "kind": "METHOD",
+            "class": "foo.bar.Bar"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "override.return",
+      "offset": 469,
+      "index": 4,
+      "region": {
+        "symbol": "untaintedStringListChild()",
+        "class": "foo.bar.Bar"
+      },
+      "fixes": []
+    },
+    {
+      "messageKey": "override.return",
+      "offset": 587,
+      "index": 5,
+      "region": {
+        "symbol": "mix()",
+        "class": "foo.bar.Bar"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "mix()",
+            "kind": "METHOD",
+            "class": "foo.bar.Bar"
           }
         }
       ]
