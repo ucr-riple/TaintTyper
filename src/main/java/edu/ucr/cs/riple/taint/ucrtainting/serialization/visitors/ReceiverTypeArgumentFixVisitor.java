@@ -158,6 +158,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     List<List<Integer>> indexes = computeIndices(element, typeMatchVisitor, pair);
     if (indexes.isEmpty()) {
       // No fix found.
+      // todo: hacky for now, check again later.
       return null;
     }
     location.setTypeVariablePositions(indexes);
@@ -340,6 +341,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
             .collect(Collectors.toList());
     for (int i = 0; i < requiredTypeVariables.size(); i++) {
       if (typeVarMap.get(requiredTypeVariables.get(i)) == null) {
+        // todo: hacky for now, check again later.
         continue;
       }
       int regionTypeVariableIndex =
