@@ -12,4 +12,12 @@ public class Foo {
   public void getUntainted(Object pFoo) {
     return;
   }
+
+  public List<@RUntainted String> untaintedStringListSuper(){
+    return null;
+  }
+
+  public List<String> untaintedStringListChild(){
+    return null;
+  }
 }

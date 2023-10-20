@@ -39,7 +39,6 @@ public class SerializationService {
   private final UCRTaintingChecker checker;
   /** Javac context instance. */
   private final Context context;
-
   private final FixComputer fixComputer;
   private final TypeMatchVisitor typeMatchVisitor;
 
@@ -85,7 +84,6 @@ public class SerializationService {
    *
    * @param tree The given tree.
    * @param messageKey The key of the error message.
-   * @param path
    */
   public Set<Fix> generateFixesForError(Tree tree, String messageKey, FoundRequired pair) {
     TreePath path = checker.getVisitor().getCurrentPath();
