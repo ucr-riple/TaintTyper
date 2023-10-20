@@ -56,9 +56,11 @@ public class Foo {
     @RUntainted Entry<@RUntainted String, @RUntainted String> entry = itEntries.next();
   }
 
-  public void newTest(Map<String, List<String>> headers) {
-    //        Iterator<Map.Entry<@RUntainted String, @RUntainted List<String>>> i =
+  public void enhancedForLeftHandSide(Set<Map.Entry<String, @RUntainted String>> entrySet) {
+    //    Iterator<Map.Entry<@RUntainted String, @RUntainted List<String>>> i =
     // headers.entrySet().iterator();
+    // :: error: enhancedfor
+    for (Map.Entry<String, String> entry : entrySet) {}
   }
 
   static class GenericFoo<T, K> {

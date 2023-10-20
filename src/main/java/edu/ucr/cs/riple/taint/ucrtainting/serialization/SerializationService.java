@@ -3,6 +3,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.AssignmentTree;
 import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.EnhancedForLoopTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.Tree;
@@ -94,7 +95,7 @@ public class SerializationService {
       case "override.param":
         return handleParamOverrideError(tree, pair);
       case "override.return":
-        return handleReturnOverrideError(path.getLeaf(), pair);
+        return handleReturnOverrideError(path.getLeaf());
       default:
         ClassTree classTree = Utility.findEnclosingNode(path, ClassTree.class);
         if (classTree == null) {
@@ -122,6 +123,10 @@ public class SerializationService {
     }
     Element toAnnotate = null;
     switch (messageKey) {
+      case "enhancedfor":
+        toAnnotate =
+            TreeUtils.elementFromDeclaration(((EnhancedForLoopTree) path.getLeaf()).getVariable());
+        break;
       case "assignment":
         if (path.getLeaf() instanceof VariableTree) {
           toAnnotate = TreeUtils.elementFromTree((path.getLeaf()));
@@ -216,8 +221,7 @@ public class SerializationService {
    *
    * @return the set of required fixes to resolve errors of type="override.return".
    */
-  private ImmutableSet<Fix> handleReturnOverrideError(
-      Tree overridingMethodTree, FoundRequired pair) {
+  private ImmutableSet<Fix> handleReturnOverrideError(Tree overridingMethodTree) {
     ImmutableSet.Builder<Fix> ans = new ImmutableSet.Builder<>();
     // On child
     Symbol.MethodSymbol overridingMethod =
