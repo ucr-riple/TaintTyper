@@ -162,6 +162,7 @@ public class SerializationService {
     TypeMatchVisitor visitor = new TypeMatchVisitor(typeFactory);
     List<List<Integer>> differences;
     try {
+      // todo: for now we ignore the possible exceptions thrown by the visitor.
       differences = visitor.visit(pair.required, pair.found, null);
     } catch (Exception e) {
       return ImmutableSet.of();
