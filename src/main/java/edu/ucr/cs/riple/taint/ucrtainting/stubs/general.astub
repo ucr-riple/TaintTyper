@@ -109,3 +109,9 @@ public class EntityManager {
 	public Query createQuery(@RUntainted CriteriaUpdate updateQuery);
 	public Query createQuery(@RUntainted String qlString);
 }
+
+package java.lang;
+
+public final class Class<T> {
+    public @RUntainted String getName();
+}
