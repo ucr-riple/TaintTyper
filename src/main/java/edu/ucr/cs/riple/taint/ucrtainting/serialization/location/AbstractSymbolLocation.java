@@ -2,7 +2,6 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
 import com.google.common.collect.ImmutableList;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import java.net.URI;
 import java.nio.file.Path;
@@ -19,8 +18,6 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   public final Path path;
   /** Enclosing class of the symbol. */
   public final Symbol.ClassSymbol enclosingClass;
-  /** Declaration tree of the symbol. */
-  public final JCTree declarationTree;
   /** Target symbol. */
   public final Symbol target;
   /** List of indexes to locate the type variable. */
@@ -28,7 +25,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
 
   public static final ImmutableList<List<Integer>> ON_TYPE = ImmutableList.of(List.of(0));
 
-  public AbstractSymbolLocation(LocationKind kind, Symbol target, JCTree tree) {
+  public AbstractSymbolLocation(LocationKind kind, Symbol target) {
     this.kind = kind;
     this.enclosingClass = target.enclClass();
     URI pathInURI =
@@ -36,7 +33,6 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
             ? enclosingClass.sourcefile.toUri()
             : (enclosingClass.classfile != null ? enclosingClass.classfile.toUri() : null);
     this.path = Serializer.pathToSourceFileFromURI(pathInURI);
-    this.declarationTree = tree;
     this.target = target;
     this.typeVariablePositions = ON_TYPE;
   }
@@ -78,15 +74,13 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
     return getKind() == that.getKind()
         && Objects.equals(path, that.path)
         && Objects.equals(enclosingClass, that.enclosingClass)
-        && Objects.equals(declarationTree, that.declarationTree)
         && Objects.equals(target, that.target)
         && Objects.equals(typeVariablePositions, that.typeVariablePositions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(
-        getKind(), path, enclosingClass, declarationTree, target, typeVariablePositions);
+    return Objects.hash(getKind(), path, enclosingClass, target, typeVariablePositions);
   }
 
   @Override

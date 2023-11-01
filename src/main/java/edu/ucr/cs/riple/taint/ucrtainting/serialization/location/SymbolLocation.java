@@ -20,15 +20,15 @@ public interface SymbolLocation {
    */
   @Nullable
   static SymbolLocation createLocationFromSymbol(Symbol target, Context context) {
-    JCTree declarationTree = Utility.locateDeclaration(target, context);
     switch (target.getKind()) {
       case PARAMETER:
-        return new MethodParameterLocation(target, declarationTree);
+        return new MethodParameterLocation(target);
       case METHOD:
-        return new MethodLocation(target, declarationTree);
+        return new MethodLocation(target);
       case FIELD:
-        return new FieldLocation(target, declarationTree);
+        return new FieldLocation(target);
       case LOCAL_VARIABLE:
+        JCTree declarationTree = Utility.locateDeclaration(target, context);
         return new LocalVariableLocation(target, declarationTree);
       case EXCEPTION_PARAMETER:
         // currently not supported / desired.

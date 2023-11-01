@@ -1,7 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
 import java.util.Objects;
 
@@ -11,8 +10,8 @@ public class FieldLocation extends AbstractSymbolLocation {
   /** Symbol of targeted class field */
   public final Symbol.VarSymbol variableSymbol;
 
-  public FieldLocation(Symbol target, JCTree declarationTree) {
-    super(LocationKind.FIELD, target, declarationTree);
+  public FieldLocation(Symbol target) {
+    super(LocationKind.FIELD, target);
     variableSymbol = (Symbol.VarSymbol) target;
   }
 

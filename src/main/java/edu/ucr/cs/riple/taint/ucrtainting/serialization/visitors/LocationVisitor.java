@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.FieldLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.LocalVariableLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
@@ -58,4 +59,13 @@ public interface LocationVisitor<R, P> {
    * @return a visitor-specified result
    */
   R visitPolyMethod(PolyMethodLocation polyMethodLocation, P p);
+
+  /**
+   * Visits a location for a class declaration.
+   *
+   * @param classDeclarationLocation the location for a class declaration.
+   * @param p a visitor-specified parameter
+   * @return a visitor-specified result
+   */
+  R visitClassDeclaration(ClassDeclarationLocation classDeclarationLocation, P p);
 }

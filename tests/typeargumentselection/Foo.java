@@ -63,6 +63,25 @@ public class Foo {
     for (Map.Entry<String, String> entry : entrySet) {}
   }
 
+  public void testOnClassDeclarationChange() {
+    // :: error: assignment
+    @RUntainted String s = AccessController.doPrivileged(new SystemPropertyAction());
+  }
+
+  public static String getProperty() {
+    return AccessController.doPrivileged(new SystemPropertyAction());
+  }
+
+  static class AccessController {
+    public static <T> T doPrivileged(PrivilegedAction<T> action) {
+      return null;
+    }
+  }
+
+  static class SystemPropertyAction implements PrivilegedAction<String> {}
+
+  static interface PrivilegedAction<T> {}
+
   static class GenericFoo<T, K> {
     GenericBar<T, T> bar;
 
