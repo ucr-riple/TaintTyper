@@ -5,6 +5,7 @@ public enum LocationKind {
   PARAMETER,
   LOCAL_VARIABLE,
   METHOD,
+  CLASS_DECLARATION,
   POLY_METHOD;
 
   public boolean isField() {
@@ -25,5 +26,9 @@ public enum LocationKind {
 
   public boolean isLocalVariable() {
     return this == LOCAL_VARIABLE;
+  }
+
+  public boolean isClassDeclaration() {
+    return this == CLASS_DECLARATION;
   }
 }

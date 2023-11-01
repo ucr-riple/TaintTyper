@@ -83,6 +83,19 @@ public class Utility {
   }
 
   /**
+   * Checks if the given element is a constructor.
+   *
+   * @param element The element to check.
+   * @return true if the given element is a constructor, false otherwise.
+   */
+  public static boolean isConstructor(Element element) {
+    if (!(element instanceof Symbol.MethodSymbol)) {
+      return false;
+    }
+    return ((Symbol.MethodSymbol) element).name.toString().equals("<init>");
+  }
+
+  /**
    * Gets the type of the given element. If the given element is a method, then the return type of
    * the method is returned.
    *
@@ -90,6 +103,9 @@ public class Utility {
    * @return The type of the given element.
    */
   public static Type getType(Element element) {
+    if (isConstructor(element)) {
+      return ((Symbol.MethodSymbol) element).enclClass().type;
+    }
     return element instanceof Symbol.MethodSymbol
         ? ((Symbol.MethodSymbol) element).getReturnType()
         : ((Symbol) element).type;

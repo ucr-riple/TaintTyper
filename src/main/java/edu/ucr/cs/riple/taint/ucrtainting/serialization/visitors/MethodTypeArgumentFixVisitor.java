@@ -1,16 +1,23 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
+import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.Tree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import javax.lang.model.element.Element;
+import javax.lang.model.type.TypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.util.AnnotatedTypes;
@@ -22,9 +29,12 @@ import org.checkerframework.javacutil.TreeUtils;
  */
 public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
 
+  private final Types types;
+
   public MethodTypeArgumentFixVisitor(
       Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
     super(context, factory, fixComputer);
+    this.types = Types.instance(context);
   }
 
   @Override
@@ -47,13 +57,27 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
           Type paramType = calledMethod.getParameters().get(i).type;
           boolean changed = updateAnnotatedTypeMirror(requiredParam, paramType, typeVar);
           if (changed) {
+            ExpressionTree arg = node.getArguments().get(i);
+            AnnotatedTypeMirror paramAnnotatedType = typeFactory.getAnnotatedType(arg);
+            FoundRequired newPair =
+                new FoundRequired(paramAnnotatedType, requiredParam, pair.depth);
+            TypeMirror paramTypeMirror = paramAnnotatedType.getUnderlyingType();
+            if ((paramTypeMirror instanceof Type.ClassType)
+                && (requiredParam.getUnderlyingType() instanceof Type.ClassType)) {
+              Type.ClassType nodeClassType = (Type.ClassType) paramTypeMirror;
+              Type.ClassType requiredClassType = (Type.ClassType) requiredParam.getUnderlyingType();
+              // check we are type matching a raw type on a class with type.
+              if (nodeClassType.tsym.type.getTypeArguments().isEmpty()
+                  && !requiredClassType.tsym.type.getTypeArguments().isEmpty()) {
+                Set<Fix> onDeclaration =
+                    computeFixesOnClassDeclarationForRawType(arg, newPair, typeVar);
+                if (!onDeclaration.isEmpty()) {
+                  return onDeclaration;
+                }
+              }
+            }
             fixes.addAll(
-                node.getArguments()
-                    .get(i)
-                    .accept(
-                        new FixComputer(context, typeFactory),
-                        new FoundRequired(
-                            paramsAnnotatedTypeMirrors.get(i), requiredParam, pair.depth)));
+                node.getArguments().get(i).accept(new FixComputer(context, typeFactory), newPair));
           }
         }
       }
@@ -180,5 +204,41 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
           updateAnnotatedTypeMirror(arrayType.getComponentType(), array.getComponentType(), var);
     }
     return updated;
+  }
+
+  public Set<Fix> computeFixesOnClassDeclarationForRawType(
+      Tree node, FoundRequired pair, Type.TypeVar typeVar) {
+    Type type = Utility.getType(TreeUtils.elementFromTree(node));
+    if (!(type.tsym instanceof Symbol.ClassSymbol)) {
+      return Set.of();
+    }
+    Symbol.ClassSymbol classType = (Symbol.ClassSymbol) type.tsym;
+    if (!typeFactory.isAnnotatedPackage(type.tsym.packge().fullname.toString())
+        || !(pair.required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
+      return Set.of();
+    }
+    AnnotatedTypeMirror.AnnotatedDeclaredType required =
+        (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.required;
+    Type.ClassType requiredType =
+        (Type.ClassType) ((Type.ClassType) required.getUnderlyingType()).tsym.type;
+    Type.ClassType inheritedType = locateInheritedTypeOnExtendOrImplement(classType, requiredType);
+    if(inheritedType == null){
+      return Set.of();
+    }
+
+    // We intentionally limit the search to only the first level of inheritance. The type must
+    // either extend or implement the required type explicitly at the declaration.
+    throw new RuntimeException("Not implemented");
+    //        return Set.of();
+  }
+
+  private Type.ClassType locateInheritedTypeOnExtendOrImplement(Symbol.ClassSymbol classType, Type.ClassType requiredType) {
+    // Look for interfaces
+    for (Type type : ((Type.ClassType) classType.type).interfaces_field) {
+      if(type.tsym.equals(requiredType.tsym)){
+        return (Type.ClassType) type;
+      }
+    }
+    return null;
   }
 }
