@@ -11,11 +11,11 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
@@ -221,21 +221,31 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
         (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.required;
     Type.ClassType requiredType =
         (Type.ClassType) ((Type.ClassType) required.getUnderlyingType()).tsym.type;
-    Type.ClassType inheritedType = locateInheritedTypeOnExtendOrImplement(classType, requiredType);
-    if(inheritedType == null){
-      return Set.of();
-    }
-
     // We intentionally limit the search to only the first level of inheritance. The type must
     // either extend or implement the required type explicitly at the declaration.
-    throw new RuntimeException("Not implemented");
-    //        return Set.of();
+    Type.ClassType inheritedType = locateInheritedTypeOnExtendOrImplement(classType, requiredType);
+    if (inheritedType == null) {
+      return Set.of();
+    }
+    int index =
+        inheritedType.tsym.type.getTypeArguments().stream()
+            .map(Type::toString)
+            .collect(Collectors.toList())
+            .indexOf(typeVar.toString());
+    if (index < 0) {
+      return Set.of();
+    }
+    ClassDeclarationLocation classDeclarationLocation =
+        new ClassDeclarationLocation(classType, inheritedType);
+    classDeclarationLocation.setTypeVariablePositions(List.of(List.of(index + 1, 0)));
+    return Set.of(new Fix(classDeclarationLocation));
   }
 
-  private Type.ClassType locateInheritedTypeOnExtendOrImplement(Symbol.ClassSymbol classType, Type.ClassType requiredType) {
+  private Type.ClassType locateInheritedTypeOnExtendOrImplement(
+      Symbol.ClassSymbol classType, Type.ClassType requiredType) {
     // Look for interfaces
     for (Type type : ((Type.ClassType) classType.type).interfaces_field) {
-      if(type.tsym.equals(requiredType.tsym)){
+      if (type.tsym.equals(requiredType.tsym)) {
         return (Type.ClassType) type;
       }
     }

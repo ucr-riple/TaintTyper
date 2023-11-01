@@ -266,8 +266,30 @@
   },
   {
     "messageKey": "assignment",
-    "offset": 2575,
+    "offset": 2114,
     "index": 12,
+    "region": {
+      "symbol": "testOnClassDeclarationChange()",
+      "class": "test.Foo"
+    },
+    "fixes": [{
+      "annotation": "untainted",
+      "location": {
+        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+        "type-variable-position": [[
+          1,
+          0
+        ]],
+        "kind": "CLASS_DECLARATION",
+        "class": "test.Foo$SystemPropertyAction",
+        "target": "test.Foo.PrivilegedAction"
+      }
+    }]
+  },
+  {
+    "messageKey": "assignment",
+    "offset": 2575,
+    "index": 13,
     "region": {
       "symbol": "internal()",
       "class": "test.Foo$GenericBar"

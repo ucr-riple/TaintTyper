@@ -12,7 +12,7 @@ public class LocalVariableLocation extends AbstractSymbolLocation {
   public final Symbol.MethodSymbol enclosingMethod;
 
   public LocalVariableLocation(Symbol target, JCTree declarationTree) {
-    super(LocationKind.LOCAL_VARIABLE, target, declarationTree);
+    super(LocationKind.LOCAL_VARIABLE, target);
     // TODO: Rewrite the enclosing method. This is a hack to make the serialization work for now.
     this.enclosingMethod =
         (Symbol.MethodSymbol)

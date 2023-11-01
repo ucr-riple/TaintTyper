@@ -1,7 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
 import java.util.Objects;
 
@@ -11,8 +10,8 @@ public class MethodLocation extends AbstractSymbolLocation {
   /** Symbol of the targeted method. */
   public final Symbol.MethodSymbol enclosingMethod;
 
-  public MethodLocation(Symbol target, JCTree declarationTree) {
-    super(LocationKind.METHOD, target, declarationTree);
+  public MethodLocation(Symbol target) {
+    super(LocationKind.METHOD, target);
     enclosingMethod = (Symbol.MethodSymbol) target;
   }
 

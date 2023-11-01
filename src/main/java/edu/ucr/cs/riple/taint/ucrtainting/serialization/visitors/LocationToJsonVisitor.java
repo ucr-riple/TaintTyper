@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.AbstractSymbolLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.FieldLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.LocalVariableLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
@@ -70,6 +71,13 @@ public class LocationToJsonVisitor implements LocationVisitor<JSONObject, Void> 
             polyMethodLocation.arguments.stream()
                 .map(methodParameterLocation -> methodParameterLocation.index)
                 .collect(Collectors.toSet())));
+    return ans;
+  }
+
+  @Override
+  public JSONObject visitClassDeclaration(ClassDeclarationLocation location, Void unused) {
+    JSONObject ans = defaultAction(location);
+    ans.put("target", location.toChange.tsym.toString());
     return ans;
   }
 }
