@@ -354,14 +354,36 @@
           ]],
           "kind": "CLASS_DECLARATION",
           "class": "test.Foo$SystemPropertyAction",
-          "target": "test.Foo.PrivilegedAction"
+          "target": "test.Foo.PrivilegedActionInterface"
+        }
+      }]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 2353,
+      "index": 14,
+      "region": {
+        "symbol": "testOnClassDeclarationChange()",
+        "class": "test.Foo"
+      },
+      "fixes": [{
+        "annotation": "untainted",
+        "location": {
+          "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+          "type-variable-position": [[
+            1,
+            0
+          ]],
+          "kind": "CLASS_DECLARATION",
+          "class": "test.Foo$SystemPropertyAction",
+          "target": "test.Foo.PrivilegedActionSuperClass"
         }
       }]
     },
     {
       "messageKey": "assignment",
       "offset": 2575,
-      "index": 14,
+      "index": 15,
       "region": {
         "symbol": "internal()",
         "class": "test.Foo$GenericBar"

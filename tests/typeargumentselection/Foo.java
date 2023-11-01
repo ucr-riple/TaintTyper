@@ -65,22 +65,27 @@ public class Foo {
 
   public void testOnClassDeclarationChange() {
     // :: error: assignment
-    @RUntainted String s = AccessController.doPrivileged(new SystemPropertyAction());
-  }
-
-  public static String getProperty() {
-    return AccessController.doPrivileged(new SystemPropertyAction());
+    @RUntainted String s1 = AccessController.doPrivilegedInterface(new SystemPropertyAction());
+    // :: error: assignment
+    @RUntainted String s2 = AccessController.doPrivilegedSuperClass(new SystemPropertyAction());
   }
 
   static class AccessController {
-    public static <T> T doPrivileged(PrivilegedAction<T> action) {
+    public static <T> T doPrivilegedInterface(PrivilegedActionInterface<T> action) {
+      return null;
+    }
+
+    public static <T> T doPrivilegedSuperClass(PrivilegedActionSuperClass<T> action) {
       return null;
     }
   }
 
-  static class SystemPropertyAction implements PrivilegedAction<String> {}
+  static class SystemPropertyAction extends PrivilegedActionSuperClass<String>
+      implements PrivilegedActionInterface<String> {}
 
-  static interface PrivilegedAction<T> {}
+  static interface PrivilegedActionInterface<T> {}
+
+  static class PrivilegedActionSuperClass<T> {}
 
   static class GenericFoo<T, K> {
     GenericBar<T, T> bar;

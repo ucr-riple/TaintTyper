@@ -208,46 +208,66 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
 
   public Set<Fix> computeFixesOnClassDeclarationForRawType(
       Tree node, FoundRequired pair, Type.TypeVar typeVar) {
-    Type type = Utility.getType(TreeUtils.elementFromTree(node));
-    if (!(type.tsym instanceof Symbol.ClassSymbol)) {
+    try {
+      Type type = Utility.getType(TreeUtils.elementFromTree(node));
+      if (!(type.tsym instanceof Symbol.ClassSymbol)) {
+        return Set.of();
+      }
+      Symbol.ClassSymbol classType = (Symbol.ClassSymbol) type.tsym;
+      if (!typeFactory.isAnnotatedPackage(type.tsym.packge().fullname.toString())
+          || !(pair.required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
+        return Set.of();
+      }
+      AnnotatedTypeMirror.AnnotatedDeclaredType required =
+          (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.required;
+      Type.ClassType requiredType =
+          (Type.ClassType) ((Type.ClassType) required.getUnderlyingType()).tsym.type;
+      // We intentionally limit the search to only the first level of inheritance. The type must
+      // either extend or implement the required type explicitly at the declaration.
+      Type.ClassType inheritedType =
+          locateInheritedTypeOnExtendOrImplement(classType, requiredType);
+      if (inheritedType == null) {
+        return Set.of();
+      }
+      int index =
+          inheritedType.tsym.type.getTypeArguments().stream()
+              .map(Type::toString)
+              .collect(Collectors.toList())
+              .indexOf(typeVar.toString());
+      if (index < 0) {
+        return Set.of();
+      }
+      ClassDeclarationLocation classDeclarationLocation =
+          new ClassDeclarationLocation(classType, inheritedType);
+      classDeclarationLocation.setTypeVariablePositions(List.of(List.of(index + 1, 0)));
+      return Set.of(new Fix(classDeclarationLocation));
+    } catch (Exception e) {
       return Set.of();
     }
-    Symbol.ClassSymbol classType = (Symbol.ClassSymbol) type.tsym;
-    if (!typeFactory.isAnnotatedPackage(type.tsym.packge().fullname.toString())
-        || !(pair.required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
-      return Set.of();
-    }
-    AnnotatedTypeMirror.AnnotatedDeclaredType required =
-        (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.required;
-    Type.ClassType requiredType =
-        (Type.ClassType) ((Type.ClassType) required.getUnderlyingType()).tsym.type;
-    // We intentionally limit the search to only the first level of inheritance. The type must
-    // either extend or implement the required type explicitly at the declaration.
-    Type.ClassType inheritedType = locateInheritedTypeOnExtendOrImplement(classType, requiredType);
-    if (inheritedType == null) {
-      return Set.of();
-    }
-    int index =
-        inheritedType.tsym.type.getTypeArguments().stream()
-            .map(Type::toString)
-            .collect(Collectors.toList())
-            .indexOf(typeVar.toString());
-    if (index < 0) {
-      return Set.of();
-    }
-    ClassDeclarationLocation classDeclarationLocation =
-        new ClassDeclarationLocation(classType, inheritedType);
-    classDeclarationLocation.setTypeVariablePositions(List.of(List.of(index + 1, 0)));
-    return Set.of(new Fix(classDeclarationLocation));
   }
 
+  /**
+   * Locates the inherited type on the given class type that extends or implements the required
+   *
+   * @param classSymbol The class type to check.
+   * @param requiredType The required type to check.
+   * @return The inherited type on the given class type that extends or implements the required.
+   */
   private Type.ClassType locateInheritedTypeOnExtendOrImplement(
-      Symbol.ClassSymbol classType, Type.ClassType requiredType) {
+      Symbol.ClassSymbol classSymbol, Type.ClassType requiredType) {
     // Look for interfaces
-    for (Type type : ((Type.ClassType) classType.type).interfaces_field) {
+    for (Type type : ((Type.ClassType) classSymbol.type).interfaces_field) {
       if (type.tsym.equals(requiredType.tsym)) {
         return (Type.ClassType) type;
       }
+    }
+    // Look for extended class
+    Type superType = ((Type.ClassType) classSymbol.type).supertype_field;
+    if (superType == null) {
+      return null;
+    }
+    if (superType.tsym.equals(requiredType.tsym)) {
+      return (Type.ClassType) superType;
     }
     return null;
   }
