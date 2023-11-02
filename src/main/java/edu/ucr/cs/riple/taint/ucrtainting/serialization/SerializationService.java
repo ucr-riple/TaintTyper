@@ -16,6 +16,7 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingVisitor;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisitor;
@@ -23,8 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.framework.util.AnnotatedTypes;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** This class is used to serialize the errors and the fixes for the errors. */
@@ -230,13 +231,21 @@ public class SerializationService {
     if (overridingMethod == null) {
       return ImmutableSet.of();
     }
-    AnnotatedTypeMirror.AnnotatedExecutableType overriddenMethodType =
-            AnnotatedTypes.asMemberOf(types, typeFactory, overriddenType, overriddenMethodElt);
     // On parent
     Symbol.MethodSymbol overriddenMethod =
         Utility.getClosestOverriddenMethod(overridingMethod, types);
-    AnnotatedTypeMirror overriddenReturnType =
-        typeFactory.getAnnotatedType(overriddenMethod).getReturnType();
+    ExecutableElement methodElement =
+        TreeUtils.elementFromDeclaration((MethodTree) overridingMethodTree);
+    ((UCRTaintingVisitor) checker.getVisitor())
+        .getAnnotatedTypeOfOverriddenMethod(methodElement)
+        .getReturnType();
+    AnnotatedTypeMirror.AnnotatedExecutableType overriddenType =
+        ((UCRTaintingVisitor) checker.getVisitor())
+            .getAnnotatedTypeOfOverriddenMethod(methodElement);
+    if (overriddenType == null) {
+      overriddenType = typeFactory.getAnnotatedType(overriddenMethod);
+    }
+    AnnotatedTypeMirror overriddenReturnType = overriddenType.getReturnType();
     AnnotatedTypeMirror overridingReturnType =
         typeFactory.getAnnotatedType(overridingMethod).getReturnType();
     List<List<Integer>> differences =

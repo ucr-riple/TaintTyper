@@ -1,12 +1,14 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.Tree;
+import java.util.Map;
 import javax.lang.model.element.ExecutableElement;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
 import org.checkerframework.common.accumulation.AccumulationVisitor;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
+import org.checkerframework.framework.util.AnnotatedTypes;
 import org.checkerframework.org.plumelib.util.ArraysPlume;
 
 /** Visitor for the {@link UCRTaintingChecker}. */
@@ -53,5 +55,19 @@ public class UCRTaintingVisitor extends AccumulationVisitor {
               ArraysPlume.concatenate(extraArgs, valueTypeString, varTypeString));
     }
     return success;
+  }
+
+  public AnnotatedExecutableType getAnnotatedTypeOfOverriddenMethod(
+      ExecutableElement methodElement) {
+    // Find which methods this method overrides
+    Map<AnnotatedTypeMirror.AnnotatedDeclaredType, ExecutableElement> overriddenMethods =
+        AnnotatedTypes.overriddenMethods(elements, atypeFactory, methodElement);
+    for (Map.Entry<AnnotatedTypeMirror.AnnotatedDeclaredType, ExecutableElement> pair :
+        overriddenMethods.entrySet()) {
+      AnnotatedTypeMirror.AnnotatedDeclaredType overriddenType = pair.getKey();
+      ExecutableElement overriddenMethodElt = pair.getValue();
+      return AnnotatedTypes.asMemberOf(types, atypeFactory, overriddenType, overriddenMethodElt);
+    }
+    return null;
   }
 }

@@ -344,19 +344,23 @@
         "symbol": "testOnClassDeclarationChange()",
         "class": "test.Foo"
       },
-      "fixes": [{
-        "annotation": "untainted",
-        "location": {
-          "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-          "type-variable-position": [[
-            1,
-            0
-          ]],
-          "kind": "CLASS_DECLARATION",
-          "class": "test.Foo$SystemPropertyAction",
-          "target": "test.Foo.PrivilegedActionInterface"
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "kind": "CLASS_DECLARATION",
+            "class": "test.Foo$SystemPropertyAction",
+            "target": "test.Foo.PrivilegedActionInterface"
+          }
         }
-      }]
+      ]
     },
     {
       "messageKey": "assignment",
@@ -366,19 +370,23 @@
         "symbol": "testOnClassDeclarationChange()",
         "class": "test.Foo"
       },
-      "fixes": [{
-        "annotation": "untainted",
-        "location": {
-          "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-          "type-variable-position": [[
-            1,
-            0
-          ]],
-          "kind": "CLASS_DECLARATION",
-          "class": "test.Foo$SystemPropertyAction",
-          "target": "test.Foo.PrivilegedActionSuperClass"
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "kind": "CLASS_DECLARATION",
+            "class": "test.Foo$SystemPropertyAction",
+            "target": "test.Foo.PrivilegedActionSuperClass"
+          }
         }
-      }]
+      ]
     },
     {
       "messageKey": "assignment",
@@ -403,6 +411,31 @@
             "method": "internal()",
             "kind": "LOCAL_VARIABLE",
             "class": "test.Foo$GenericBar"
+          }
+        }
+      ]
+    },
+    {
+      "messageKey": "override.return",
+      "offset": 4280,
+      "index": 16,
+      "region": {
+        "symbol": "run()",
+        "class": "test.Foo$SystemPropertyActionThirdParty"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "run()",
+            "kind": "METHOD",
+            "class": "test.Foo$SystemPropertyActionThirdParty"
           }
         }
       ]
