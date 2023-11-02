@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.util.AnnotatedTypes;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** This class is used to serialize the errors and the fixes for the errors. */
@@ -229,6 +230,8 @@ public class SerializationService {
     if (overridingMethod == null) {
       return ImmutableSet.of();
     }
+    AnnotatedTypeMirror.AnnotatedExecutableType overriddenMethodType =
+            AnnotatedTypes.asMemberOf(types, typeFactory, overriddenType, overriddenMethodElt);
     // On parent
     Symbol.MethodSymbol overriddenMethod =
         Utility.getClosestOverriddenMethod(overridingMethod, types);
