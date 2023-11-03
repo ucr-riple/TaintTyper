@@ -95,4 +95,9 @@ public class Foo {
       return fileName.toString();
     }
   }
+
+  public void vargarsMultipleArguments(String SQL_CLEAR_PROPERTY, String table, String keyColumn) {
+    // :: error: assignment
+    @RUntainted String b = String.format(SQL_CLEAR_PROPERTY, table, keyColumn);
+  }
 }

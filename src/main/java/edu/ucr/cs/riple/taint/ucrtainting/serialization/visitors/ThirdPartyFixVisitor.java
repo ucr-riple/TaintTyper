@@ -51,15 +51,14 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
     // Add a fix for each passed argument.
     for (int i = 0; i < node.getArguments().size(); i++) {
       ExpressionTree argument = node.getArguments().get(i);
-      Symbol.VarSymbol formalParameter = calledMethod.params().get(i);
       AnnotatedTypeMirror formalParameterType =
-          typeFactory.getAnnotatedType(formalParameter).deepCopy(true);
+          extractFormalParameterAnnotatedTypeMirror(calledMethod, i).deepCopy(true);
       makeUntainted(formalParameterType, typeFactory);
       AnnotatedTypeMirror actualParameterType = typeFactory.getAnnotatedType(argument);
       FoundRequired argFoundRequired = null;
       // check for varargs of called method, if the formal parameter is an array and the actual is
       // only a single element, we should match with the component type.
-      if (i == node.getArguments().size() - 1 && calledMethod.isVarArgs()) {
+      if (i >= calledMethod.getParameters().size() - 1 && calledMethod.isVarArgs()) {
         if (formalParameterType instanceof AnnotatedTypeMirror.AnnotatedArrayType
             && !(actualParameterType instanceof AnnotatedTypeMirror.AnnotatedArrayType)) {
           argFoundRequired =
@@ -101,5 +100,13 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
     } else {
       type.replaceAnnotation(factory.rUntainted);
     }
+  }
+
+  private AnnotatedTypeMirror extractFormalParameterAnnotatedTypeMirror(
+      Symbol.MethodSymbol methodSymbol, int i) {
+    return methodSymbol.isVarArgs() && i >= methodSymbol.getParameters().size()
+        ? typeFactory.getAnnotatedType(
+            methodSymbol.getParameters().get(methodSymbol.getParameters().size() - 1))
+        : typeFactory.getAnnotatedType(methodSymbol.getParameters().get(i));
   }
 }

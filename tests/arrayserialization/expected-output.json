@@ -196,6 +196,53 @@
           "class": "Foo"
         }
       }]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 3467,
+      "index": 8,
+      "region": {
+        "symbol": "vargarsMultipleArguments(java.lang.String,java.lang.String,java.lang.String)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [[0]],
+            "method": "vargarsMultipleArguments(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "keyColumn",
+            "index": 2,
+            "class": "Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [[0]],
+            "method": "vargarsMultipleArguments(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "SQL_CLEAR_PROPERTY",
+            "index": 0,
+            "class": "Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [[0]],
+            "method": "vargarsMultipleArguments(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "table",
+            "index": 1,
+            "class": "Foo"
+          }
+        }
+      ]
     }
   ]
 }
