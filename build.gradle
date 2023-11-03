@@ -82,6 +82,7 @@ publishing {
 }
 
 test {
+    maxParallelForks = Runtime.getRuntime().availableProcessors()
     inputs.files("tests/ucrtainting")
     if (!JavaVersion.current().java9Compatible) {
         jvmArgs "-Xbootclasspath/p:${configurations.errorproneJavac.asPath}"
