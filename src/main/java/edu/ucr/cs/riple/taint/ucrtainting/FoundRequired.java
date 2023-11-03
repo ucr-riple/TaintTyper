@@ -55,4 +55,9 @@ public class FoundRequired {
   public void decrementDepth() {
     this.depth--;
   }
+
+  @Override
+  public String toString() {
+    return "found='" + foundString + '\'' + ", required='" + requiredString;
+  }
 }

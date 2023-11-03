@@ -134,4 +134,9 @@ class Foo {
     // :: error: compound.assignment
     s += op1;
   }
+
+  public void testBinaryEqual(@RUntainted String a, String b) {
+    // :: error: assignment
+    @RUntainted boolean c = (a == b);
+  }
 }

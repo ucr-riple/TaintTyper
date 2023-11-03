@@ -22,8 +22,8 @@ ext.versions = [
 ]
 
 
-sourceCompatibility = 1.9
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_9
+targetCompatibility = JavaVersion.VERSION_1_9
 def checkerframework_local = false  // Set this variable to [true] while using local version of checker framework.
 
 dependencies {
@@ -135,4 +135,3 @@ sourceSets {
         }
     }
 }
-targetCompatibility = JavaVersion.VERSION_1_9

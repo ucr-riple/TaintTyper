@@ -151,8 +151,22 @@ public class BasicVisitor extends SpecializedFixComputer {
     ExpressionTree right = node.getRightOperand();
     AnnotatedTypeMirror leftType = typeFactory.getAnnotatedType(left);
     AnnotatedTypeMirror rightType = typeFactory.getAnnotatedType(right);
-    fixes.addAll(left.accept(fixComputer, FoundRequired.of(leftType, pair.required, pair.depth)));
-    fixes.addAll(right.accept(fixComputer, FoundRequired.of(rightType, pair.required, pair.depth)));
+    FoundRequired leftPair;
+    FoundRequired rightPair;
+    JCTree.Tag tag = ((JCTree.JCBinary) node).getTag();
+    if (tag == JCTree.Tag.EQ || tag == JCTree.Tag.NE) {
+      AnnotatedTypeMirror leftCopy = leftType.deepCopy(true);
+      typeFactory.makeUntainted(leftCopy);
+      AnnotatedTypeMirror rightCopy = rightType.deepCopy(true);
+      typeFactory.makeUntainted(rightCopy);
+      leftPair = FoundRequired.of(leftType, leftCopy, pair.depth);
+      rightPair = FoundRequired.of(rightType, rightCopy, pair.depth);
+    } else {
+      leftPair = FoundRequired.of(leftType, pair.required, pair.depth);
+      rightPair = FoundRequired.of(rightType, pair.required, pair.depth);
+    }
+    fixes.addAll(left.accept(fixComputer, leftPair));
+    fixes.addAll(right.accept(fixComputer, rightPair));
     return fixes;
   }
 

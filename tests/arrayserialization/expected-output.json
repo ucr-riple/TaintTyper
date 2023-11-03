@@ -176,6 +176,26 @@
           }
         }
       ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 974,
+      "index": 7,
+      "region": {
+        "symbol": "createNewSplitSegmentFile(java.lang.Integer)",
+        "class": "Foo"
+      },
+      "fixes": [{
+        "annotation": "untainted",
+        "location": {
+          "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+          "varName": "extension",
+          "type-variable-position": [[0]],
+          "method": "createNewSplitSegmentFile(java.lang.Integer)",
+          "kind": "LOCAL_VARIABLE",
+          "class": "Foo"
+        }
+      }]
     }
   ]
 }

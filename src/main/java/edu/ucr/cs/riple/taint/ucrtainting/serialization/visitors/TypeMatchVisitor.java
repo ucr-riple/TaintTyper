@@ -1,8 +1,10 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
+import com.sun.tools.javac.code.Type;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import java.util.ArrayList;
 import java.util.List;
+import javax.lang.model.type.TypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.visitor.AbstractAtmComboVisitor;
 
@@ -141,5 +143,19 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
       AnnotatedTypeMirror.AnnotatedArrayType required,
       Void unused) {
     return this.visit(found.getComponentType(), required.getComponentType(), unused);
+  }
+
+  @Override
+  public List<List<Integer>> visitPrimitive_Declared(
+      AnnotatedTypeMirror.AnnotatedPrimitiveType found,
+      AnnotatedTypeMirror.AnnotatedDeclaredType required,
+      Void unused) {
+    TypeMirror requiredType = required.getUnderlyingType();
+    if (!(requiredType instanceof Type.ClassType)) {
+      return defaultAction(found, required, unused);
+    }
+    return ((Type.ClassType) requiredType).tsym.name.toString().equals("String")
+        ? supportedDefault(found, required)
+        : defaultAction(found, required, unused);
   }
 }

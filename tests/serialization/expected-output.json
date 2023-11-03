@@ -589,6 +589,33 @@
           }
         }
       ]
+    },
+    {
+      "messageKey": "assignment",
+      "offset": 3983,
+      "index": 20,
+      "region": {
+        "symbol": "testBinaryEqual(java.lang.String,java.lang.String)",
+        "class": "Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testBinaryEqual(java.lang.String,java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "b",
+            "index": 1,
+            "class": "Foo"
+          }
+        }
+      ]
     }
   ]
 }
