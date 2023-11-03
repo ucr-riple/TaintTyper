@@ -292,6 +292,7 @@ public class SerializationService {
       case "compound.assignment":
       case "enhancedfor":
       case "array.initializer":
+      case "enum.declaration":
         return true;
       default:
         // TODO: investigate if there are other cases where the error is fixable.

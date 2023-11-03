@@ -13,7 +13,7 @@ public class CmsUUID {
   /** Constant for the null UUID. */
   private static final @RUntainted CmsUUID NULL_UUID = new CmsUUID(UUID.getNullUUID());
 
-  private static CmsUUID cms;
+  private static @RUntainted CmsUUID cms;
 
   private static final String BAZ = "property";
   private static final String PATH = "/";
@@ -74,7 +74,6 @@ public class CmsUUID {
   }
 
   public enum BundleType {
-    // :: error: assignment
     PROPERTY(cms);
 
     BundleType(CmsUUID s) {}
@@ -107,7 +106,6 @@ public class CmsUUID {
       // some code
     } catch (Exception e) {
       // Should not try to annotate "e" here.
-      // :: error: assignment
       @RUntainted Exception dup = e;
     }
   }

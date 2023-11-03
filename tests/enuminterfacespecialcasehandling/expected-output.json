@@ -1,7 +1,7 @@
 {
   "errors": [
     {
-      "messageKey": "assignment",
+      "messageKey": "enum.declaration",
       "offset": 1147,
       "index": 1,
       "region": {

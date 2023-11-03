@@ -2,7 +2,7 @@
   "errors": [
     {
       "messageKey": "return",
-      "offset": 1222,
+      "offset": 1234,
       "index": 1,
       "region": {
         "symbol": "castTest()",
@@ -27,7 +27,7 @@
     },
     {
       "messageKey": "assignment",
-      "offset": 1334,
+      "offset": 1346,
       "index": 2,
       "region": {
         "symbol": "binaryExpressionTest()",
@@ -52,13 +52,29 @@
     },
     {
       "messageKey": "return",
-      "offset": 1631,
+      "offset": 1643,
       "index": 3,
       "region": {
         "symbol": "staticCallTest(org.safehaus.uuid.UUID)",
         "class": "test.CmsUUID"
       },
       "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "staticCallTest(org.safehaus.uuid.UUID)",
+            "kind": "PARAMETER",
+            "name": "uid",
+            "index": 0,
+            "class": "test.CmsUUID"
+          }
+        },
         {
           "annotation": "poly",
           "location": {
@@ -75,28 +91,12 @@
             ],
             "class": "test.CmsUUID"
           }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "method": "staticCallTest(org.safehaus.uuid.UUID)",
-            "kind": "PARAMETER",
-            "name": "uid",
-            "index": 0,
-            "class": "test.CmsUUID"
-          }
         }
       ]
     },
     {
       "messageKey": "return",
-      "offset": 1813,
+      "offset": 1825,
       "index": 4,
       "region": {
         "symbol": "decode(java.lang.String,java.lang.String)",
@@ -139,33 +139,8 @@
     },
     {
       "messageKey": "assignment",
-      "offset": 2108,
+      "offset": 2554,
       "index": 5,
-      "region": {
-        "symbol": "PROPERTY",
-        "class": "test.CmsUUID$BundleType"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "field": "cms",
-            "kind": "FIELD",
-            "class": "test.CmsUUID"
-          }
-        }
-      ]
-    },
-    {
-      "messageKey": "assignment",
-      "offset": 2570,
-      "index": 6,
       "region": {
         "symbol": "testConstantForThirdpartyArgument()",
         "class": "test.CmsUUID"
@@ -191,18 +166,8 @@
     },
     {
       "messageKey": "assignment",
-      "offset": 2877,
-      "index": 7,
-      "region": {
-        "symbol": "bar()",
-        "class": "test.CmsUUID"
-      },
-      "fixes": []
-    },
-    {
-      "messageKey": "assignment",
-      "offset": 3207,
-      "index": 8,
+      "offset": 3161,
+      "index": 6,
       "region": {
         "symbol": "multipleAdditionTest()",
         "class": "test.CmsUUID"
@@ -227,8 +192,8 @@
     },
     {
       "messageKey": "assignment",
-      "offset": 3285,
-      "index": 9,
+      "offset": 3239,
+      "index": 7,
       "region": {
         "symbol": "multipleAdditionTest()",
         "class": "test.CmsUUID"
@@ -267,8 +232,8 @@
     },
     {
       "messageKey": "argument",
-      "offset": 4575,
-      "index": 10,
+      "offset": 4529,
+      "index": 8,
       "region": {
         "symbol": "splitAsMap(java.lang.String,java.lang.String,java.lang.String)",
         "class": "test.CmsUUID"
@@ -293,8 +258,8 @@
     },
     {
       "messageKey": "argument",
-      "offset": 4575,
-      "index": 11,
+      "offset": 4529,
+      "index": 9,
       "region": {
         "symbol": "splitAsMap(java.lang.String,java.lang.String,java.lang.String)",
         "class": "test.CmsUUID"
@@ -319,8 +284,8 @@
     },
     {
       "messageKey": "argument",
-      "offset": 5578,
-      "index": 12,
+      "offset": 5532,
+      "index": 10,
       "region": {
         "symbol": "recentCrash()",
         "class": "test.CmsUUID"
@@ -346,8 +311,8 @@
     },
     {
       "messageKey": "argument",
-      "offset": 5852,
-      "index": 13,
+      "offset": 5806,
+      "index": 11,
       "region": {
         "symbol": "zeroArgMethodCall(javax.servlet.http.HttpServletRequest)",
         "class": "test.CmsUUID"
@@ -371,8 +336,8 @@
     },
     {
       "messageKey": "argument",
-      "offset": 7276,
-      "index": 14,
+      "offset": 7230,
+      "index": 12,
       "region": {
         "symbol": "checkToArrayForCustomList()",
         "class": "test.CmsUUID"
