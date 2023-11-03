@@ -147,8 +147,12 @@ public class BasicVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitBinary(BinaryTree node, FoundRequired pair) {
     Set<Fix> fixes = new HashSet<>();
-    fixes.addAll(node.getLeftOperand().accept(fixComputer, pair));
-    fixes.addAll(node.getRightOperand().accept(fixComputer, pair));
+    ExpressionTree left = node.getLeftOperand();
+    ExpressionTree right = node.getRightOperand();
+    AnnotatedTypeMirror leftType = typeFactory.getAnnotatedType(left);
+    AnnotatedTypeMirror rightType = typeFactory.getAnnotatedType(right);
+    fixes.addAll(left.accept(fixComputer, FoundRequired.of(leftType, pair.required, pair.depth)));
+    fixes.addAll(right.accept(fixComputer, FoundRequired.of(rightType, pair.required, pair.depth)));
     return fixes;
   }
 

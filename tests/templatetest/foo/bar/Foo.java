@@ -1,25 +1,43 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
-import java.util.Collections;
 
 public class Foo {
 
-  private static final String BASIC_BUILDER =
-      "org.apache.commons.configuration2.builder.BasicConfigurationBuilder";
+  private int currentSplitSegmentIndex;
+  private @RUntainted Path zipFile;
 
-  /** Constant for the provider for JNDI sources. */
-  private static final BaseConfigurationBuilderProvider JNDI_PROVIDER =
-      new BaseConfigurationBuilderProvider(
-          BASIC_BUILDER,
-          null,
-          "org.apache.commons.configuration2.JNDIConfiguration",
-          Collections.singletonList(
-              "org.apache.commons.configuration2.builder.JndiBuilderParametersImpl"));
+  private @RUntainted Path createNewSplitSegmentFile(final Integer zipSplitSegmentSuffixIndex)
+      throws IOException {
+    final int newZipSplitSegmentSuffixIndex =
+        zipSplitSegmentSuffixIndex == null
+            ? (currentSplitSegmentIndex + 2)
+            : zipSplitSegmentSuffixIndex;
+    final String baseName = FileNameUtils.getBaseName(zipFile);
+    @RUntainted String extension = ".z";
+    if (newZipSplitSegmentSuffixIndex <= 9) {
+      extension += "0" + newZipSplitSegmentSuffixIndex;
+    } else {
+      extension += newZipSplitSegmentSuffixIndex;
+    }
 
-  static class BaseConfigurationBuilderProvider {
-    public BaseConfigurationBuilderProvider(
-        String BASIC_BUILDER, Object object, String s, List<String> singletonList) {}
+    final Path parent = zipFile.getParent();
+    final String dir = Objects.nonNull(parent) ? parent.toAbsolutePath().toString() : ".";
+    // :: error: assignment
+    final @RUntainted Path newFile = zipFile.getFileSystem().getPath(dir, baseName + extension);
+    return newFile;
+  }
+
+  static class FileNameUtils {
+    public static @RPolyTainted String getBaseName(final @RPolyTainted Path path) {
+      if (path == null) {
+        return null;
+      }
+      final Path fileName = path.getFileName();
+      return fileName.toString();
+    }
   }
 }

@@ -56,9 +56,24 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
           typeFactory.getAnnotatedType(formalParameter).deepCopy(true);
       makeUntainted(formalParameterType, typeFactory);
       AnnotatedTypeMirror actualParameterType = typeFactory.getAnnotatedType(argument);
-      fixes.addAll(
-          argument.accept(
-              fixComputer, FoundRequired.of(actualParameterType, formalParameterType, pair.depth)));
+      FoundRequired argFoundRequired = null;
+      // check for varargs of called method, if the formal parameter is an array and the actual is
+      // only a single element, we should match with the component type.
+      if (i == node.getArguments().size() - 1 && calledMethod.isVarArgs()) {
+        if (formalParameterType instanceof AnnotatedTypeMirror.AnnotatedArrayType
+            && !(actualParameterType instanceof AnnotatedTypeMirror.AnnotatedArrayType)) {
+          argFoundRequired =
+              FoundRequired.of(
+                  actualParameterType,
+                  ((AnnotatedTypeMirror.AnnotatedArrayType) formalParameterType).getComponentType(),
+                  pair.depth);
+        }
+      }
+      argFoundRequired =
+          argFoundRequired == null
+              ? FoundRequired.of(actualParameterType, formalParameterType, pair.depth)
+              : argFoundRequired;
+      fixes.addAll(argument.accept(fixComputer, argFoundRequired));
     }
     // Add the fix for the receiver if not static.
     if (calledMethod.isStatic()) {
