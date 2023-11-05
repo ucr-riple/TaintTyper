@@ -16,6 +16,7 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingVisitor;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisitor;
@@ -23,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ExecutableElement;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
@@ -230,10 +232,13 @@ public class SerializationService {
       return ImmutableSet.of();
     }
     // On parent
+    ExecutableElement methodElement =
+        TreeUtils.elementFromDeclaration((MethodTree) overridingMethodTree);
+    AnnotatedTypeMirror.AnnotatedExecutableType overriddenType =
+        ((UCRTaintingVisitor) checker.getVisitor())
+            .getAnnotatedTypeOfOverriddenMethod(methodElement);
     Symbol.MethodSymbol overriddenMethod =
         Utility.getClosestOverriddenMethod(overridingMethod, types);
-    AnnotatedTypeMirror.AnnotatedExecutableType overriddenType =
-        typeFactory.getAnnotatedType(overriddenMethod);
     if (overriddenType == null) {
       overriddenType = typeFactory.getAnnotatedType(overriddenMethod);
     }

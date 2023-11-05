@@ -1,6 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.Tree;
+import com.sun.tools.javac.code.Symbol;
 import java.util.Map;
 import javax.lang.model.element.ExecutableElement;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
@@ -59,6 +60,7 @@ public class UCRTaintingVisitor extends AccumulationVisitor {
 
   public AnnotatedExecutableType getAnnotatedTypeOfOverriddenMethod(
       ExecutableElement methodElement) {
+    AnnotatedExecutableType firsAnswer = null;
     // Find which methods this method overrides
     Map<AnnotatedTypeMirror.AnnotatedDeclaredType, ExecutableElement> overriddenMethods =
         AnnotatedTypes.overriddenMethods(elements, atypeFactory, methodElement);
@@ -66,8 +68,14 @@ public class UCRTaintingVisitor extends AccumulationVisitor {
         overriddenMethods.entrySet()) {
       AnnotatedTypeMirror.AnnotatedDeclaredType overriddenType = pair.getKey();
       ExecutableElement overriddenMethodElt = pair.getValue();
-      return AnnotatedTypes.asMemberOf(types, atypeFactory, overriddenType, overriddenMethodElt);
+      if (firsAnswer == null) {
+        firsAnswer =
+            AnnotatedTypes.asMemberOf(types, atypeFactory, overriddenType, overriddenMethodElt);
+      }
+      if (((Symbol.MethodSymbol) overriddenMethodElt).enclClass().sourcefile != null) {
+        return firsAnswer;
+      }
     }
-    return null;
+    return firsAnswer;
   }
 }
