@@ -14,6 +14,7 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import java.net.URI;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -60,6 +61,7 @@ public class Utility {
    */
   public static Symbol.MethodSymbol getClosestOverriddenMethod(
       Symbol.MethodSymbol method, Types types) {
+    List<Symbol.MethodSymbol> ans = new ArrayList<>();
     // taken from Error Prone MethodOverrides check
     Symbol.ClassSymbol owner = method.enclClass();
     for (Type s : types.closure(owner.type)) {
@@ -75,11 +77,25 @@ public class Utility {
           continue;
         }
         if (method.overrides(memberSymbol, owner, types, /*checkReturn*/ false)) {
-          return memberSymbol;
+          ans.add(memberSymbol);
+          if (ans.size() > 1) {
+            break;
+          }
         }
       }
     }
-    return null;
+    // in case one method is inherited by an interface and a super class, we have to choose one that
+    // is inside source.
+    if (ans.isEmpty()) {
+      return null;
+    }
+    if (ans.size() == 1 || ans.get(0).enclClass().sourcefile != null) {
+      return ans.get(0);
+    }
+    if (ans.get(1).enclClass().sourcefile != null) {
+      return ans.get(1);
+    }
+    return ans.get(0);
   }
 
   /**
