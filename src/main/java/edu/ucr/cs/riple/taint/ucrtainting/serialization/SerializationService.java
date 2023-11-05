@@ -20,6 +20,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingVisitor;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisitor;
+import java.io.FileWriter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -232,13 +233,14 @@ public class SerializationService {
       return ImmutableSet.of();
     }
     // On parent
-    Symbol.MethodSymbol overriddenMethod =
-        Utility.getClosestOverriddenMethod(overridingMethod, types);
     ExecutableElement methodElement =
         TreeUtils.elementFromDeclaration((MethodTree) overridingMethodTree);
     AnnotatedTypeMirror.AnnotatedExecutableType overriddenType =
         ((UCRTaintingVisitor) checker.getVisitor())
             .getAnnotatedTypeOfOverriddenMethod(methodElement);
+    append("overriddenType: " + overriddenType);
+    Symbol.MethodSymbol overriddenMethod =
+        Utility.getClosestOverriddenMethod(overridingMethod, types);
     if (overriddenType == null) {
       overriddenType = typeFactory.getAnnotatedType(overriddenMethod);
     }
@@ -295,6 +297,18 @@ public class SerializationService {
         // TODO: investigate if there are other cases where the error is fixable.
         // For all other cases, return false.
         return false;
+    }
+  }
+
+  public void append(String s) {
+    try {
+      FileWriter fw =
+          new FileWriter(
+              "/home/nima/Developer/taint-benchmarks/commons-compress/annotator-out/log.txt", true);
+      fw.write(s + "\n");
+      fw.close();
+    } catch (Exception e) {
+
     }
   }
 }

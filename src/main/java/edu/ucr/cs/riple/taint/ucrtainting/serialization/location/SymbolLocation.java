@@ -19,7 +19,10 @@ public interface SymbolLocation {
    * @return subtype of {@link SymbolLocation} matching target's type.
    */
   @Nullable
-  static SymbolLocation createLocationFromSymbol(Symbol target, Context context) {
+  static SymbolLocation createLocationFromSymbol(@Nullable Symbol target, Context context) {
+    if (target == null) {
+      return null;
+    }
     switch (target.getKind()) {
       case PARAMETER:
         return new MethodParameterLocation(target);
