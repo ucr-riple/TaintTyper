@@ -236,9 +236,6 @@ public class SerializationService {
         Utility.getClosestOverriddenMethod(overridingMethod, types);
     ExecutableElement methodElement =
         TreeUtils.elementFromDeclaration((MethodTree) overridingMethodTree);
-    ((UCRTaintingVisitor) checker.getVisitor())
-        .getAnnotatedTypeOfOverriddenMethod(methodElement)
-        .getReturnType();
     AnnotatedTypeMirror.AnnotatedExecutableType overriddenType =
         ((UCRTaintingVisitor) checker.getVisitor())
             .getAnnotatedTypeOfOverriddenMethod(methodElement);
