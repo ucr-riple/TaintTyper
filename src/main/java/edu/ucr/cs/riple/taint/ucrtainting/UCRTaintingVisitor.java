@@ -68,12 +68,13 @@ public class UCRTaintingVisitor extends AccumulationVisitor {
         overriddenMethods.entrySet()) {
       AnnotatedTypeMirror.AnnotatedDeclaredType overriddenType = pair.getKey();
       ExecutableElement overriddenMethodElt = pair.getValue();
+      AnnotatedExecutableType current =
+          AnnotatedTypes.asMemberOf(types, atypeFactory, overriddenType, overriddenMethodElt);
       if (firsAnswer == null) {
-        firsAnswer =
-            AnnotatedTypes.asMemberOf(types, atypeFactory, overriddenType, overriddenMethodElt);
+        firsAnswer = current;
       }
       if (((Symbol.MethodSymbol) overriddenMethodElt).enclClass().sourcefile != null) {
-        return firsAnswer;
+        return current;
       }
     }
     return firsAnswer;
