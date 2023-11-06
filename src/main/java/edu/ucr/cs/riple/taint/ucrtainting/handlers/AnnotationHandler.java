@@ -22,7 +22,7 @@ public class AnnotationHandler extends AbstractHandler {
     if (receiver == null) {
       return;
     }
-    Element receiverElem = TreeUtils.elementFromUse(receiver);
+    Element receiverElem = TreeUtils.elementFromTree(receiver);
     if (!(receiverElem instanceof Symbol.VarSymbol)) {
       return;
     }
