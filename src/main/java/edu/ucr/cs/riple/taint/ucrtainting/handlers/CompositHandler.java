@@ -20,7 +20,8 @@ public class CompositHandler implements Handler {
                 new StaticFinalFieldHandler(typeFactory),
                 new EnumHandler(typeFactory),
                 new ThirdPartyHandler(typeFactory),
-                new CollectionHandler(typeFactory, context))
+                new CollectionHandler(typeFactory, context),
+                new AnnotationHandler(typeFactory))
             .build();
   }
 
