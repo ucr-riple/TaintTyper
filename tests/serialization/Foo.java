@@ -2,6 +2,10 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -138,5 +142,15 @@ class Foo {
   public void testBinaryEqual(@RUntainted String a, String b) {
     // :: error: assignment
     @RUntainted boolean c = (a == b);
+  }
+
+  public void testUntaintedForAnnotationMethodCalls(InputConfig annot) {
+    @RUntainted String a = annot.methodName();
+  }
+
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.METHOD})
+  public @interface InputConfig {
+    String methodName() default "";
   }
 }
