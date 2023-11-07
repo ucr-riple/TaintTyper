@@ -471,4 +471,36 @@ public class Utility {
     }
     return false;
   }
+
+  /**
+   * Returns the arguments of a callable tree. A callable tree is either a method invocation or a
+   * new class.
+   *
+   * @param tree the tree to get the arguments from.
+   * @return the arguments of the callable tree.
+   */
+  public static List<? extends ExpressionTree> getCallableArguments(Tree tree) {
+    if (tree instanceof MethodInvocationTree) {
+      return ((MethodInvocationTree) tree).getArguments();
+    }
+    if (tree instanceof NewClassTree) {
+      return ((NewClassTree) tree).getArguments();
+    }
+    return null;
+  }
+
+  /**
+   * Returns the arguments of a callable tree. A callable tree is either a method invocation or a
+   * new class.
+   *
+   * @param tree the tree to get the arguments from.
+   * @return the arguments of the callable tree.
+   */
+  public static List<Symbol.VarSymbol> getCallableArgumentsSymbol(Tree tree) {
+    Element element = TreeUtils.elementFromTree(tree);
+    if (element instanceof Symbol.MethodSymbol) {
+      return ((Symbol.MethodSymbol) element).params();
+    }
+    return null;
+  }
 }

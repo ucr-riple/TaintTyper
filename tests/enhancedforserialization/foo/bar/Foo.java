@@ -1,8 +1,12 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.lang.annotation.*;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang3.reflect.MethodUtils;
 
 public class Foo {
   public void testFor() {
@@ -11,6 +15,20 @@ public class Foo {
     for (Map.Entry<@RUntainted String, @RUntainted String> entry : headers.entrySet()) {
       String key = entry.getKey();
       String value = entry.getValue();
+    }
+  }
+
+  public void enhancedForLoopOnList(@RUntainted Object action) {
+    List<Method> methods =
+        new ArrayList<Method>(
+            MethodUtils.getMethodsListWithAnnotation(action.getClass(), null, true, true));
+    // :: error: enhancedfor
+    for (@RUntainted Method m : methods) {
+      try {
+        MethodUtils.invokeMethod(action, true, m.getName());
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 }

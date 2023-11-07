@@ -202,6 +202,12 @@ public class UCRTaintingChecker extends AccumulationChecker {
           return !typeFactory.hasUntaintedAnnotation(required)
               || typeFactory.hasUntaintedAnnotation(found);
         }
+      case "argument":
+        if (!(tree instanceof MethodInvocationTree)) {
+          return false;
+        }
+        return ThirdPartyHandler.checkHeuristicApplicability(
+            (MethodInvocationTree) tree, typeFactory);
       default:
         return false;
     }

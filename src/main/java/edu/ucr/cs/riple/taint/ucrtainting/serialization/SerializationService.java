@@ -1,10 +1,12 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
+import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getAnnotatedTypeMirrorOfTypeArgumentAt;
+
 import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.AssignmentTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.EnhancedForLoopTree;
-import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
@@ -20,7 +22,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingVisitor;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisitor;
-import java.io.FileWriter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -99,6 +100,13 @@ public class SerializationService {
         return handleParamOverrideError(tree, pair);
       case "override.return":
         return handleReturnOverrideError(path.getLeaf());
+      case "enhancedfor":
+        {
+          ImmutableSet<Fix> fixes = handleEnhancedForLoop(tree, pair);
+          if (!fixes.isEmpty()) {
+            return fixes;
+          }
+        }
       default:
         ClassTree classTree = Utility.findEnclosingNode(path, ClassTree.class);
         if (classTree == null) {
@@ -146,10 +154,10 @@ public class SerializationService {
         toAnnotate = TreeUtils.elementFromDeclaration(enclosingMethod);
         break;
       case "argument":
-        MethodInvocationTree invocationTree = (MethodInvocationTree) path.getLeaf();
+        List<? extends ExpressionTree> args = Utility.getCallableArguments(path.getLeaf());
         int index = -1;
-        for (int i = 0; i < invocationTree.getArguments().size(); i++) {
-          if (invocationTree.getArguments().get(i).equals(tree)) {
+        for (int i = 0; i < args.size(); i++) {
+          if (args.get(i).equals(tree)) {
             index = i;
             break;
           }
@@ -157,10 +165,7 @@ public class SerializationService {
         if (index == -1) {
           return ImmutableSet.of();
         }
-        toAnnotate =
-            ((Symbol.MethodSymbol) TreeUtils.elementFromUse(invocationTree))
-                .getParameters()
-                .get(index);
+        toAnnotate = Utility.getCallableArgumentsSymbol(path.getLeaf()).get(index);
         break;
       default:
         return ImmutableSet.of();
@@ -187,6 +192,31 @@ public class SerializationService {
         new Fix(SymbolLocation.createLocationFromSymbol((Symbol) toAnnotate, context));
     fixOnLeftHandSide.location.setTypeVariablePositions(differences);
     return ImmutableSet.of(fixOnLeftHandSide);
+  }
+
+  private ImmutableSet<Fix> handleEnhancedForLoop(Tree tree, FoundRequired pair) {
+    Element element = TreeUtils.elementFromTree(tree);
+    if (!(element instanceof Symbol.VarSymbol)) {
+      return ImmutableSet.of();
+    }
+    Symbol.VarSymbol varSymbol = (Symbol.VarSymbol) element;
+    if (!varSymbol.type.tsym.name.toString().equals("List")) {
+      return ImmutableSet.of();
+    }
+    List<Integer> effectiveTypeArgumentRegion = List.of(1);
+    AnnotatedTypeMirror typeArgumentRegion =
+        getAnnotatedTypeMirrorOfTypeArgumentAt(
+            typeFactory.getAnnotatedType(element), effectiveTypeArgumentRegion);
+    if (typeFactory.hasUntaintedAnnotation(pair.required)
+        && !typeFactory.hasUntaintedAnnotation(typeArgumentRegion)) {
+      SymbolLocation location = SymbolLocation.createLocationFromSymbol(varSymbol, context);
+      if (location == null) {
+        return ImmutableSet.of();
+      }
+      location.setTypeVariablePositions(List.of(List.of(1, 0)));
+      return ImmutableSet.of(new Fix(location));
+    }
+    return ImmutableSet.of();
   }
 
   /**
@@ -238,7 +268,6 @@ public class SerializationService {
     AnnotatedTypeMirror.AnnotatedExecutableType overriddenType =
         ((UCRTaintingVisitor) checker.getVisitor())
             .getAnnotatedTypeOfOverriddenMethod(methodElement);
-    append("overriddenType: " + overriddenType);
     Symbol.MethodSymbol overriddenMethod =
         Utility.getClosestOverriddenMethod(overridingMethod, types);
     if (overriddenType == null) {
@@ -297,18 +326,6 @@ public class SerializationService {
         // TODO: investigate if there are other cases where the error is fixable.
         // For all other cases, return false.
         return false;
-    }
-  }
-
-  public void append(String s) {
-    try {
-      FileWriter fw =
-          new FileWriter(
-              "/home/nima/Developer/taint-benchmarks/commons-compress/annotator-out/log.txt", true);
-      fw.write(s + "\n");
-      fw.close();
-    } catch (Exception e) {
-
     }
   }
 }
