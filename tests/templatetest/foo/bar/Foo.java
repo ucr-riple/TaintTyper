@@ -8,6 +8,8 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 
 public class Foo {
 
+  private final JavaLogLevelHandlers javaLogLevelHandlers = JavaLogLevelHandlers.SEVERE;
+
   public void enhancedForLoopOnList(@RUntainted Object action) {
     List<@RUntainted Method> methods =
         new ArrayList<@RUntainted Method>(

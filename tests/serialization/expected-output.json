@@ -540,20 +540,6 @@
                 0
               ]
             ],
-            "field": "PATTERN_CRLF",
-            "kind": "FIELD",
-            "class": "Foo"
-          }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
             "method": "sanitize(java.lang.String)",
             "kind": "PARAMETER",
             "name": "redirectUrl",

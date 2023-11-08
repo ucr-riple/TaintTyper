@@ -458,6 +458,16 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   /**
+   * Checks if the given tree has the {@link RUntainted} annotation.
+   *
+   * @param tree The given tree
+   * @return True if the given tree has the {@link RUntainted} annotation, false otherwise.
+   */
+  public boolean hasUntaintedAnnotation(Tree tree) {
+    return hasUntaintedAnnotation(getAnnotatedType(tree));
+  }
+
+  /**
    * Checks if the given annotated type mirror has the {@link RUntainted} annotation.
    *
    * @param type The given annotated type mirror
