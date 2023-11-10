@@ -139,6 +139,8 @@ public class UCRTaintingChecker extends AccumulationChecker {
   private boolean shouldBeSkipped(Object source, String messageKey, FoundRequired pair) {
     Tree tree = (Tree) source;
     switch (messageKey) {
+      case "enum.declaration":
+        return true;
         // Skip errors that are caused by third-party code.
       case "override.return":
         {
