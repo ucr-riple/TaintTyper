@@ -83,7 +83,15 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     String annotatedPackagesFlagValue =
         givenAnnotatedPackages.equals("\"\"") ? "" : givenAnnotatedPackages;
     this.listOfAnnotatedPackageNames = Arrays.asList(annotatedPackagesFlagValue.split(","));
-    print("Annotated Packages: " + listOfAnnotatedPackageNames);
+    print(
+        "Configuration: Annotated Packages: "
+            + listOfAnnotatedPackageNames
+            + ", Library Check Activation: "
+            + enableLibraryCheck
+            + ", Validation Check Activation: "
+            + enableValidationCheck
+            + ", Side Effect Activation: "
+            + enableSideEffect);
     this.rUntainted = AnnotationBuilder.fromClass(elements, RUntainted.class);
     this.rTainted = AnnotationBuilder.fromClass(elements, RTainted.class);
     this.rPolyTainted = AnnotationBuilder.fromClass(elements, RPolyTainted.class);
