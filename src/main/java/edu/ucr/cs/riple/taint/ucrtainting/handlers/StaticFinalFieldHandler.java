@@ -46,6 +46,10 @@ public class StaticFinalFieldHandler extends AbstractHandler {
           if (isUntaintedInitializer(initializer)) {
             staticFinalFields.add(element);
             typeFactory.makeUntainted(type);
+            if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+              typeFactory.makeDeepUntainted(
+                  ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
+            }
           }
         }
       }

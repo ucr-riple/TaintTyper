@@ -243,6 +243,28 @@
           }
         }
       ]
+    },
+    {
+      "messageKey": "argument",
+      "offset": 4487,
+      "index": 9,
+      "region": {
+        "symbol": "matchOnArgTypeArg()",
+        "class": "Foo"
+      },
+      "fixes": [{
+        "annotation": "untainted",
+        "location": {
+          "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+          "type-variable-position": [[
+            1,
+            0
+          ]],
+          "method": "getArrayConnections(java.lang.Object,int)",
+          "kind": "METHOD",
+          "class": "Foo"
+        }
+      }]
     }
   ]
 }

@@ -43,7 +43,6 @@ public class Foo {
 
   public enum CodeMirrorLanguage {
     CSS("css", new String[] {"css"}),
-    // :: error: enum.declaration
     XML("application/xml", new String[] {"xml", taintedStatic});
     private final String m_languageName;
     private Set<String> m_supportedFileTypes;

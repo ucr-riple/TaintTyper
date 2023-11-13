@@ -1,5 +1,3 @@
-package foo.bar;
-
 import java.util.logging.Logger;
 
 /**

@@ -1,11 +1,14 @@
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.io.IOException;
+import java.lang.annotation.*;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.apache.commons.lang3.reflect.MethodUtils;
 
 public class Foo {
 
@@ -99,5 +102,44 @@ public class Foo {
   public void vargarsMultipleArguments(String SQL_CLEAR_PROPERTY, String table, String keyColumn) {
     // :: error: assignment
     @RUntainted String b = String.format(SQL_CLEAR_PROPERTY, table, keyColumn);
+  }
+
+  private final JavaLogLevelHandlers javaLogLevelHandlers = JavaLogLevelHandlers.SEVERE;
+
+  public void enhancedForLoopOnList(@RUntainted Object action) {
+    List<@RUntainted Method> methods =
+        new ArrayList<@RUntainted Method>(
+            MethodUtils.getMethodsListWithAnnotation(
+                action.getClass(), BeforeResult.class, true, true));
+    for (@RUntainted Method m : methods) {
+      try {
+        MethodUtils.invokeMethod(action, true, m.getName());
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ElementType.METHOD})
+  @interface BeforeResult {
+    int priority() default 10;
+  }
+
+  public void matchOnArgTypeArg() {
+    // :: error: (argument)
+    add(getArrayConnections(null, -1));
+  }
+
+  public static List<String> getArrayConnections(Object array, int id) {
+    final java.util.ArrayList<java.lang.String> connections = new ArrayList<String>();
+    connections.add("");
+    return connections;
+  }
+
+  public Foo add(java.util.Collection<@RUntainted String> lines) {
+    for (final java.lang.String line : lines) {}
+
+    return this;
   }
 }
