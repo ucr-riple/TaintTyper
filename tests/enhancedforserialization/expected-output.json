@@ -1,62 +1,56 @@
-{
-  "errors": [
+{"errors": [
     {
-      "messageKey": "enhancedfor",
-      "offset": 246,
-      "index": 1,
-      "region": {
-        "symbol": "testFor()",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
-            "varName": "headers",
-            "type-variable-position": [
-              [
-                1,
-                0
-              ],
-              [
-                2,
-                0
-              ]
-            ],
-            "method": "testFor()",
-            "kind": "LOCAL_VARIABLE",
+        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+        "messageKey": "enhancedfor",
+        "offset": 383,
+        "index": 1,
+        "region": {
+            "symbol": "testFor()",
             "class": "foo.bar.Foo"
-          }
-        }
-      ]
+        },
+        "fixes": [{
+            "annotation": "untainted",
+            "location": {
+                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+                "varName": "headers",
+                "type-variable-position": [
+                    [
+                        1,
+                        0
+                    ],
+                    [
+                        2,
+                        0
+                    ]
+                ],
+                "method": "testFor()",
+                "kind": "LOCAL_VARIABLE",
+                "class": "foo.bar.Foo"
+            }
+        }]
     },
     {
-      "messageKey": "enhancedfor",
-      "offset": 842,
-      "index": 2,
-      "region": {
-        "symbol": "enhancedForLoopOnList(java.lang.Object)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
-            "varName": "methods",
-            "type-variable-position": [
-              [
-                1,
-                0
-              ]
-            ],
-            "method": "enhancedForLoopOnList(java.lang.Object)",
-            "kind": "LOCAL_VARIABLE",
+        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+        "messageKey": "enhancedfor",
+        "offset": 801,
+        "index": 2,
+        "region": {
+            "symbol": "enhancedForLoopOnList(java.lang.Object)",
             "class": "foo.bar.Foo"
-          }
-        }
-      ]
+        },
+        "fixes": [{
+            "annotation": "untainted",
+            "location": {
+                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+                "varName": "methods",
+                "type-variable-position": [[
+                    1,
+                    0
+                ]],
+                "method": "enhancedForLoopOnList(java.lang.Object)",
+                "kind": "LOCAL_VARIABLE",
+                "class": "foo.bar.Foo"
+            }
+        }]
     }
-  ]
-}
+]}

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
+import java.nio.file.Path;
 import java.util.Set;
 import javax.annotation.Nullable;
 import org.json.JSONArray;
@@ -31,6 +32,8 @@ public class Error implements JSONSerializable {
   /** Offset of program point where this error is reported. */
   public final int offset;
 
+  public final Path path;
+
   public Error(String messageKey, Set<Fix> resolvingFixes, TreePath path) {
     this.messageKey = messageKey;
     this.resolvingFixes =
@@ -38,12 +41,15 @@ public class Error implements JSONSerializable {
     this.regionClass = Utility.findRegionClassSymbol(path);
     this.regionSymbol = Utility.findRegionMemberSymbol(this.regionClass, path);
     this.offset = ((JCTree) path.getLeaf()).getStartPosition();
+    this.path =
+        Serializer.pathToSourceFileFromURI(path.getCompilationUnit().getSourceFile().toUri());
   }
 
   @Override
   public JSONObject toJSON() {
     JSONObject ans = new JSONObject();
     ans.put("offset", offset);
+    ans.put("path", path.toString());
     ans.put("messageKey", messageKey);
     JSONObject region = new JSONObject();
     region.put("class", Serializer.serializeSymbol(regionClass));

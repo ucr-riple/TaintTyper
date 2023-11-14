@@ -1,31 +1,24 @@
-{
-  "errors": [
-    {
-      "messageKey": "assignment",
-      "offset": 265,
-      "index": 1,
-      "region": {
+{"errors": [{
+    "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartytypeargumenthandling/Foo.java",
+    "messageKey": "assignment",
+    "offset": 265,
+    "index": 1,
+    "region": {
         "symbol": "errorOnReadingFromTaintedList()",
         "class": "test.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/thirdpartytypeargumenthandling/Foo.java",
+    },
+    "fixes": [{
+        "annotation": "untainted",
+        "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartytypeargumenthandling/Foo.java",
             "varName": "taintedList",
-            "type-variable-position": [
-              [
+            "type-variable-position": [[
                 1,
                 0
-              ]
-            ],
+            ]],
             "method": "errorOnReadingFromTaintedList()",
             "kind": "LOCAL_VARIABLE",
             "class": "test.Foo"
-          }
         }
-      ]
-    }
-  ]
-}
+    }]
+}]}
