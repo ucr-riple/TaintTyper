@@ -99,6 +99,7 @@ public class BasicVisitor extends SpecializedFixComputer {
     if (methodDecl.getBody() == null) {
       return Set.of(onMethod);
     }
+    Serializer.log("Still here");
     Set<Fix> fixesOnDecl = new HashSet<>(methodDecl.accept(returnVisitor, pair));
     Set<Fix> onActualParameters = new HashSet<>();
     fixesOnDecl.forEach(
