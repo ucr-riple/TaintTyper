@@ -321,6 +321,7 @@ public class SerializationService {
       case "enhancedfor":
       case "array.initializer":
       case "enum.declaration":
+      case "switch.expression":
         return true;
       default:
         // TODO: investigate if there are other cases where the error is fixable.
