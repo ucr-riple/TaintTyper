@@ -92,6 +92,7 @@ public class BasicVisitor extends SpecializedFixComputer {
     }
     JCTree decl = Utility.locateDeclaration(calledMethod, checker);
     if (decl == null || decl.getKind() != Tree.Kind.METHOD) {
+      Serializer.log("returned from here: " + node);
       return Set.of(onMethod);
     }
     JCTree.JCMethodDecl methodDecl = (JCTree.JCMethodDecl) decl;
