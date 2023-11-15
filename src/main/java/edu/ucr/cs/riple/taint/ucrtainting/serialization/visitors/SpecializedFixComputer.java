@@ -2,9 +2,9 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
@@ -17,8 +17,6 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
 public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
 
-  /** The javac context. */
-  protected final Context context;
   /**
    * The type factory of the checker. Used to get the type of the tree and generate a fix only if is
    * {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}.
@@ -28,10 +26,13 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
   protected final FixComputer fixComputer;
 
   protected final TypeMatchVisitor typeMatchVisitor;
+  protected final UCRTaintingChecker checker;
 
   public SpecializedFixComputer(
-      Context context, UCRTaintingAnnotatedTypeFactory typeFactory, FixComputer fixComputer) {
-    this.context = context;
+      UCRTaintingAnnotatedTypeFactory typeFactory,
+      FixComputer fixComputer,
+      UCRTaintingChecker checker) {
+    this.checker = checker;
     this.typeFactory = typeFactory;
     this.fixComputer = fixComputer;
     this.typeMatchVisitor = new TypeMatchVisitor(typeFactory);
@@ -77,6 +78,6 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
     if (element == null) {
       return null;
     }
-    return SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+    return SymbolLocation.createLocationFromSymbol((Symbol) element, checker);
   }
 }

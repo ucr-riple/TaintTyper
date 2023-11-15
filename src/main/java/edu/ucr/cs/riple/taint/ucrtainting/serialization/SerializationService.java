@@ -11,6 +11,7 @@ import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
+import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
@@ -48,15 +49,17 @@ public class SerializationService {
   private final FixComputer fixComputer;
   private final TypeMatchVisitor typeMatchVisitor;
   private final Types types;
+  private final Trees trees;
 
   public SerializationService(UCRTaintingChecker checker) {
     this.checker = checker;
     this.serializer = new Serializer(checker);
     this.typeFactory = (UCRTaintingAnnotatedTypeFactory) checker.getTypeFactory();
     this.context = ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext();
-    this.fixComputer = new FixComputer(context, typeFactory);
-    this.typeMatchVisitor = new TypeMatchVisitor(typeFactory);
+    this.trees = Trees.instance(checker.getProcessingEnvironment());
     this.types = Types.instance(context);
+    this.typeMatchVisitor = new TypeMatchVisitor(typeFactory);
+    this.fixComputer = new FixComputer(typeFactory, types, checker);
   }
 
   /**
@@ -189,7 +192,7 @@ public class SerializationService {
       return ImmutableSet.of();
     }
     Fix fixOnLeftHandSide =
-        new Fix(SymbolLocation.createLocationFromSymbol((Symbol) toAnnotate, context));
+        new Fix(SymbolLocation.createLocationFromSymbol((Symbol) toAnnotate, checker));
     fixOnLeftHandSide.location.setTypeVariablePositions(differences);
     return ImmutableSet.of(fixOnLeftHandSide);
   }
@@ -211,7 +214,7 @@ public class SerializationService {
             typeFactory.getAnnotatedType(element), effectiveTypeArgumentRegion);
     if (typeFactory.hasUntaintedAnnotation(pair.required)
         && !typeFactory.hasUntaintedAnnotation(typeArgumentRegion)) {
-      SymbolLocation location = SymbolLocation.createLocationFromSymbol(varSymbol, context);
+      SymbolLocation location = SymbolLocation.createLocationFromSymbol(varSymbol, checker);
       if (location == null) {
         return ImmutableSet.of();
       }
@@ -244,7 +247,7 @@ public class SerializationService {
     }
     int paramIndex = overridingMethod.getParameters().indexOf((Symbol.VarSymbol) treeElement);
     Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
-    SymbolLocation location = SymbolLocation.createLocationFromSymbol(toBeAnnotated, context);
+    SymbolLocation location = SymbolLocation.createLocationFromSymbol(toBeAnnotated, checker);
     if (location != null) {
       location.setTypeVariablePositions(typeMatchVisitor.visit(pair.found, pair.required, null));
     }
@@ -281,7 +284,7 @@ public class SerializationService {
     List<List<Integer>> differences =
         typeMatchVisitor.visit(overriddenReturnType, overridingReturnType, null);
     if (!differences.isEmpty()) {
-      SymbolLocation location = SymbolLocation.createLocationFromSymbol(overriddenMethod, context);
+      SymbolLocation location = SymbolLocation.createLocationFromSymbol(overriddenMethod, checker);
       if (location == null) {
         return ImmutableSet.of();
       }
@@ -290,7 +293,7 @@ public class SerializationService {
     }
     differences = typeMatchVisitor.visit(overridingReturnType, overriddenReturnType, null);
     if (!differences.isEmpty()) {
-      SymbolLocation location = SymbolLocation.createLocationFromSymbol(overridingMethod, context);
+      SymbolLocation location = SymbolLocation.createLocationFromSymbol(overridingMethod, checker);
       if (location == null) {
         return ImmutableSet.of();
       }

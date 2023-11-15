@@ -2,16 +2,13 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
 import com.sun.source.tree.*;
 import com.sun.source.util.TreePath;
+import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
-import com.sun.tools.javac.comp.AttrContext;
-import com.sun.tools.javac.comp.Enter;
-import com.sun.tools.javac.comp.Env;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.TreeInfo;
-import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -40,15 +37,12 @@ public class Utility {
    * @return the declaration tree or null if the declaration cannot be found.
    */
   @Nullable
-  public static JCTree locateDeclaration(Symbol sym, Context context) {
-    if (sym == null) {
+  public static JCTree locateDeclaration(Symbol sym, UCRTaintingChecker checker) {
+    TreePath path = Trees.instance(checker.getProcessingEnvironment()).getPath(sym);
+    if (path == null) {
       return null;
     }
-    Env<AttrContext> enterEnv = Enter.instance(context).getEnv(sym.enclClass());
-    if (enterEnv == null) {
-      return null;
-    }
-    return TreeInfo.declarationFor(sym, enterEnv.tree);
+    return (JCTree) path.getLeaf();
   }
 
   /**

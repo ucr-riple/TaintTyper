@@ -5,10 +5,9 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.code.Types;
-import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
@@ -29,12 +28,11 @@ import org.checkerframework.javacutil.TreeUtils;
  */
 public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
 
-  private final Types types;
-
   public MethodTypeArgumentFixVisitor(
-      Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
-    super(context, factory, fixComputer);
-    this.types = Types.instance(context);
+      UCRTaintingAnnotatedTypeFactory factory,
+      FixComputer fixComputer,
+      UCRTaintingChecker checker) {
+    super(factory, fixComputer, checker);
   }
 
   @Override
@@ -76,8 +74,7 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
                 }
               }
             }
-            fixes.addAll(
-                node.getArguments().get(i).accept(new FixComputer(context, typeFactory), newPair));
+            fixes.addAll(node.getArguments().get(i).accept(fixComputer, newPair));
           }
         }
       }

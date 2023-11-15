@@ -2,7 +2,6 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
@@ -17,21 +16,21 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
 
   private final Handler handler;
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
-  private final Context context;
+  private final UCRTaintingChecker checker;
   private final Map<Symbol, Tree> symbolToDeclarationMap;
 
   /**
    * UCRTaintingTreeAnnotator
    *
    * @param typeFactory the type factory
-   * @param context The javac context.
+   * @param env The p
    */
   protected UCRTaintingTreeAnnotator(
-      UCRTaintingAnnotatedTypeFactory typeFactory, Handler handler, Context context) {
+      UCRTaintingAnnotatedTypeFactory typeFactory, Handler handler, UCRTaintingChecker checker) {
     super(typeFactory);
     this.typeFactory = typeFactory;
     this.handler = handler;
-    this.context = context;
+    this.checker = checker;
     this.symbolToDeclarationMap = new HashMap<>();
   }
 
@@ -84,7 +83,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
       Tree selected =
           symbolToDeclarationMap.containsKey(symbol)
               ? symbolToDeclarationMap.get(symbol)
-              : Utility.locateDeclaration(symbol, context);
+              : Utility.locateDeclaration(symbol, checker);
       symbolToDeclarationMap.putIfAbsent(symbol, selected);
       if (selected != null && !typeFactory.mayBeTainted(selected)) {
         typeFactory.makeUntainted(annotatedTypeMirror);

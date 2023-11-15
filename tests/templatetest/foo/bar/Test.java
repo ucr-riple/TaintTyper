@@ -6,7 +6,10 @@ import java.util.List;
 
 public class Test {
 
-  List<@RUntainted String> devices = new ArrayList<>();
-  // :: error: assignment
-  java.lang.@RUntainted String selection = Download.chooseBoard(devices);
+  List<String> devices = new ArrayList<>();
+
+  public void test() {
+    // :: error: assignment
+    @RUntainted String s = Download.chooseBoard(devices);
+  }
 }

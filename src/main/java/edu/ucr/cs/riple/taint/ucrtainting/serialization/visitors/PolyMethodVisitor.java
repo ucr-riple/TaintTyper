@@ -4,9 +4,9 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.HashSet;
@@ -16,14 +16,16 @@ import org.checkerframework.javacutil.TreeUtils;
 
 public class PolyMethodVisitor extends SpecializedFixComputer {
   public PolyMethodVisitor(
-      Context context, UCRTaintingAnnotatedTypeFactory typeFactory, FixComputer fixComputer) {
-    super(context, typeFactory, fixComputer);
+      UCRTaintingAnnotatedTypeFactory typeFactory,
+      FixComputer fixComputer,
+      UCRTaintingChecker checker) {
+    super(typeFactory, fixComputer, checker);
   }
 
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
-    JCTree decl = Utility.locateDeclaration(calledMethod, context);
+    JCTree decl = Utility.locateDeclaration(calledMethod, checker);
     if (decl == null || decl.getKind() != Tree.Kind.METHOD) {
       return Set.of();
     }

@@ -6,9 +6,9 @@ import com.sun.source.tree.ReturnTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreeScanner;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
@@ -24,8 +24,10 @@ import org.checkerframework.javacutil.TreeUtils;
 /** Fix visitor for method return statements. */
 public class MethodReturnVisitor extends SpecializedFixComputer {
   public MethodReturnVisitor(
-      Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
-    super(context, factory, fixComputer);
+      UCRTaintingAnnotatedTypeFactory factory,
+      FixComputer fixComputer,
+      UCRTaintingChecker checker) {
+    super(factory, fixComputer, checker);
   }
 
   @Override

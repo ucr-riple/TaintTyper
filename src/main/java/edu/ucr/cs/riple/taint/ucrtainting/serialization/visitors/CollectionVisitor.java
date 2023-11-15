@@ -4,9 +4,9 @@ import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getType;
 
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
@@ -19,8 +19,10 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 public class CollectionVisitor extends ReceiverTypeArgumentFixVisitor {
 
   public CollectionVisitor(
-      Context context, UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer) {
-    super(context, factory, fixComputer);
+      UCRTaintingAnnotatedTypeFactory factory,
+      FixComputer fixComputer,
+      UCRTaintingChecker checker) {
+    super(factory, fixComputer, checker);
   }
 
   @Nullable
@@ -48,7 +50,7 @@ public class CollectionVisitor extends ReceiverTypeArgumentFixVisitor {
       Set<Fix> fixes =
           receivers
               .get(receivers.size() - 1)
-              .accept(new BasicVisitor(context, typeFactory, fixComputer), null);
+              .accept(new BasicVisitor(typeFactory, fixComputer, checker), null);
       if (fixes != null && !fixes.isEmpty()) {
         return fixes.iterator().next();
       }
