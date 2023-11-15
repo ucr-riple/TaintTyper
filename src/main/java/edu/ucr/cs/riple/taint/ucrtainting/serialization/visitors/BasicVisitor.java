@@ -83,8 +83,11 @@ public class BasicVisitor extends SpecializedFixComputer {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
     Fix onMethod = buildFixForElement(calledMethod, pair);
     Serializer.log("Fix: " + onMethod);
-    if (onMethod == null || !requireFix(pair) || pair.isMaxDepth()) {
+    if (onMethod == null || !requireFix(pair)) {
       return Set.of();
+    }
+    if (pair.isMaxDepth()) {
+      return Set.of(onMethod);
     }
     if (calledMethod.getParameters().isEmpty()) {
       // no parameters, make untainted
@@ -99,7 +102,7 @@ public class BasicVisitor extends SpecializedFixComputer {
     if (methodDecl.getBody() == null) {
       return Set.of(onMethod);
     }
-    if(methodDecl.params.isEmpty()){
+    if (methodDecl.params.isEmpty()) {
       return Set.of(onMethod);
     }
     Set<Fix> fixesOnDecl = new HashSet<>(methodDecl.accept(returnVisitor, pair));
