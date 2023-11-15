@@ -199,8 +199,10 @@ public class SerializationService {
     if (!(element instanceof Symbol.VarSymbol)) {
       return ImmutableSet.of();
     }
+    // todo: check for all subtypes.
     Symbol.VarSymbol varSymbol = (Symbol.VarSymbol) element;
-    if (!varSymbol.type.tsym.name.toString().equals("List")) {
+    if (!(varSymbol.type.tsym.name.toString().equals("List")
+        || varSymbol.type.tsym.name.toString().equals("ArrayList"))) {
       return ImmutableSet.of();
     }
     List<Integer> effectiveTypeArgumentRegion = List.of(1);
