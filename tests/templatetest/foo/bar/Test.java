@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Test {
 
-  List<String> devices = new ArrayList<>();
+  List<@RUntainted String> devices = new ArrayList<>();
 
   public void test() {
     // :: error: assignment
