@@ -11,7 +11,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Set;
 import javax.lang.model.element.Element;
@@ -86,19 +85,6 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     boolean hasPolyTaintedAnnotation =
         typeFactory.hasPolyTaintedAnnotation(calledMethod.getReturnType());
     boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();
-    Serializer.log(
-        "Method: "
-            + calledMethod
-            + " "
-            + methodHasTypeArgs
-            + " "
-            + hasReceiver
-            + " "
-            + isTypeVar
-            + " "
-            + hasPolyTaintedAnnotation
-            + " "
-            + isInAnnotatedPackage);
     if (hasPolyTaintedAnnotation) {
       Set<Fix> polyFixes = node.accept(new PolyMethodVisitor(typeFactory, this, checker), pair);
       if (!polyFixes.isEmpty()) {

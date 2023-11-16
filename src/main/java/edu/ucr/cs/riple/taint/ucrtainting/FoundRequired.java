@@ -13,7 +13,7 @@ public class FoundRequired {
   public final AnnotatedTypeMirror found;
   public final AnnotatedTypeMirror required;
   public int depth;
-  public static final int MAX_DEPTH = 10;
+  public static final int MAX_DEPTH = 5;
 
   public FoundRequired(
       @Nonnull AnnotatedTypeMirror found, @Nonnull AnnotatedTypeMirror required, int depth) {
@@ -58,6 +58,6 @@ public class FoundRequired {
 
   @Override
   public String toString() {
-    return "found='" + foundString + '\'' + ", required='" + requiredString;
+    return "found='" + foundString + '\'' + ", required='" + requiredString + ", depth: " + depth;
   }
 }

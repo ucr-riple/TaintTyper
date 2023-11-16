@@ -2,7 +2,6 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.LambdaExpressionTree;
-import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
@@ -82,8 +81,12 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
       return fixes;
     }
     // Build the fix for the receiver.
+    ExpressionTree receiver = TreeUtils.getReceiverTree(node);
+    AnnotatedTypeMirror receiverType = typeFactory.getAnnotatedType(receiver);
+    AnnotatedTypeMirror required = receiverType.deepCopy(true);
+    typeFactory.makeUntainted(required);
     fixes.addAll(
-        ((MemberSelectTree) node.getMethodSelect()).getExpression().accept(fixComputer, pair));
+        receiver.accept(fixComputer, new FoundRequired(receiverType, required, pair.depth)));
     return fixes;
   }
 

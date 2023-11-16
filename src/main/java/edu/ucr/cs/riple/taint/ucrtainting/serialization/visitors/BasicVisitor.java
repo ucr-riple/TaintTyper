@@ -7,7 +7,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
 import java.util.HashSet;
@@ -78,11 +77,9 @@ public class BasicVisitor extends SpecializedFixComputer {
 
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
-    Serializer.log("Came here for: " + node);
     Element element = TreeUtils.elementFromUse(node);
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
     Fix onMethod = buildFixForElement(calledMethod, pair);
-    Serializer.log("Fix: " + onMethod);
     if (onMethod == null || !requireFix(pair)) {
       return Set.of();
     }
@@ -95,7 +92,6 @@ public class BasicVisitor extends SpecializedFixComputer {
     }
     JCTree decl = Utility.locateDeclaration(calledMethod, checker);
     if (decl == null || decl.getKind() != Tree.Kind.METHOD) {
-      Serializer.log("returned from here: " + node);
       return Set.of(onMethod);
     }
     JCTree.JCMethodDecl methodDecl = (JCTree.JCMethodDecl) decl;
@@ -235,6 +231,10 @@ public class BasicVisitor extends SpecializedFixComputer {
       return true;
     }
     AnnotatedTypeMirror widenedValueType = typeFactory.getWidenedType(pair.found, pair.required);
-    return !typeFactory.getTypeHierarchy().isSubtype(widenedValueType, pair.required);
+    try {
+      return !typeFactory.getTypeHierarchy().isSubtype(widenedValueType, pair.required);
+    } catch (Exception e) {
+      return true;
+    }
   }
 }

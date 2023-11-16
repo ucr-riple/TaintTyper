@@ -38,11 +38,8 @@ public class Utility {
    */
   @Nullable
   public static JCTree locateDeclaration(Symbol sym, UCRTaintingChecker checker) {
-    TreePath path = Trees.instance(checker.getProcessingEnvironment()).getPath(sym);
-    if (path == null) {
-      return null;
-    }
-    return (JCTree) path.getLeaf();
+    JCTree ans = (JCTree) Trees.instance(checker.getProcessingEnvironment()).getTree(sym);
+    return ans;
   }
 
   /**

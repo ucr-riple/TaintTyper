@@ -45,4 +45,9 @@ public class PolyMethodLocation extends AbstractSymbolLocation {
   public int hashCode() {
     return Objects.hash(super.hashCode(), arguments);
   }
+
+  @Override
+  public String toString() {
+    return super.toString() + ", arguments=" + arguments;
+  }
 }
