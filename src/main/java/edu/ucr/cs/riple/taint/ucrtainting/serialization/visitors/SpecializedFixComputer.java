@@ -2,9 +2,9 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
@@ -26,13 +26,11 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
   protected final FixComputer fixComputer;
 
   protected final TypeMatchVisitor typeMatchVisitor;
-  protected final UCRTaintingChecker checker;
+  protected final Context context;
 
   public SpecializedFixComputer(
-      UCRTaintingAnnotatedTypeFactory typeFactory,
-      FixComputer fixComputer,
-      UCRTaintingChecker checker) {
-    this.checker = checker;
+      UCRTaintingAnnotatedTypeFactory typeFactory, FixComputer fixComputer, Context context) {
+    this.context = context;
     this.typeFactory = typeFactory;
     this.fixComputer = fixComputer;
     this.typeMatchVisitor = new TypeMatchVisitor(typeFactory);
@@ -78,6 +76,6 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
     if (element == null) {
       return null;
     }
-    return SymbolLocation.createLocationFromSymbol((Symbol) element, checker);
+    return SymbolLocation.createLocationFromSymbol((Symbol) element, context);
   }
 }

@@ -6,9 +6,9 @@ import com.sun.source.tree.Tree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Types;
+import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
@@ -29,20 +29,19 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   protected final UCRTaintingAnnotatedTypeFactory typeFactory;
 
   protected final Types types;
-  UCRTaintingChecker checker;
+  protected final Context context;
   protected final BasicVisitor basicVisitor;
   protected final SpecializedFixComputer thirdPartyFixVisitor;
   protected final SpecializedFixComputer methodTypeArgumentFixVisitor;
 
-  public FixComputer(
-      UCRTaintingAnnotatedTypeFactory factory, Types types, UCRTaintingChecker checker) {
+  public FixComputer(UCRTaintingAnnotatedTypeFactory factory, Types types, Context context) {
     this.typeFactory = factory;
-    this.checker = checker;
+    this.context = context;
     this.types = types;
-    this.basicVisitor = new BasicVisitor(factory, this, checker);
-    this.thirdPartyFixVisitor = new ThirdPartyFixVisitor(typeFactory, this, checker);
+    this.basicVisitor = new BasicVisitor(factory, this, context);
+    this.thirdPartyFixVisitor = new ThirdPartyFixVisitor(typeFactory, this, context);
     this.methodTypeArgumentFixVisitor =
-        new MethodTypeArgumentFixVisitor(typeFactory, this, checker);
+        new MethodTypeArgumentFixVisitor(typeFactory, this, context);
   }
 
   @Override
@@ -86,13 +85,13 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
         typeFactory.hasPolyTaintedAnnotation(calledMethod.getReturnType());
     boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();
     if (hasPolyTaintedAnnotation) {
-      Set<Fix> polyFixes = node.accept(new PolyMethodVisitor(typeFactory, this, checker), pair);
+      Set<Fix> polyFixes = node.accept(new PolyMethodVisitor(typeFactory, this, context), pair);
       if (!polyFixes.isEmpty()) {
         return polyFixes;
       }
     }
     if (CollectionHandler.isToArrayWithTypeArgMethod(calledMethod, types)) {
-      return node.accept(new CollectionVisitor(typeFactory, this, checker), pair);
+      return node.accept(new CollectionVisitor(typeFactory, this, context), pair);
     }
     if (methodHasTypeArgs) {
       return node.accept(methodTypeArgumentFixVisitor, pair);
@@ -106,7 +105,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     // receiver and leave the called method untouched. Annotation on the declaration on the type
     // argument, will be added on the method automatically.
     if (isTypeVar && hasReceiver) {
-      return node.accept(new ReceiverTypeArgumentFixVisitor(typeFactory, this, checker), pair);
+      return node.accept(new ReceiverTypeArgumentFixVisitor(typeFactory, this, context), pair);
     } else {
       return defaultAction(node, pair);
     }
