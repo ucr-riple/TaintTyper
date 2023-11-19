@@ -1,15 +1,12 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import org.apache.commons.cli.Option;
 
 public class Test {
 
-  List<@RUntainted String> devices = new ArrayList<>();
-
-  public void test() {
-    // :: error: assignment
-    @RUntainted String s = Download.chooseBoard(devices);
+  public void test(@RUntainted Option opt) {
+    final @RUntainted File fileB = new File(opt.getValues()[1]);
   }
 }

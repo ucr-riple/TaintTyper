@@ -23,6 +23,9 @@ public class ThirdPartyHandler extends AbstractHandler {
       return;
     }
     typeFactory.makeUntainted(type);
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      typeFactory.makeUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
+    }
   }
 
   /**
