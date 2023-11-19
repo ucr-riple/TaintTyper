@@ -6,9 +6,10 @@ import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
+import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -37,12 +38,8 @@ public class Utility {
    * @return the declaration tree or null if the declaration cannot be found.
    */
   @Nullable
-  public static JCTree locateDeclaration(Symbol sym, UCRTaintingChecker checker) {
-    TreePath path = Trees.instance(checker.getProcessingEnvironment()).getPath(sym);
-    if (path == null) {
-      return null;
-    }
-    return (JCTree) path.getLeaf();
+  public static JCTree locateDeclaration(Symbol sym, Context context) {
+    return (JCTree) Trees.instance(JavacProcessingEnvironment.instance(context)).getTree(sym);
   }
 
   /**

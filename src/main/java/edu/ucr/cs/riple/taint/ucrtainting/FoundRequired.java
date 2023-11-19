@@ -58,6 +58,6 @@ public class FoundRequired {
 
   @Override
   public String toString() {
-    return "found='" + foundString + '\'' + ", required='" + requiredString;
+    return "found='" + foundString + '\'' + ", required='" + requiredString + ", depth: " + depth;
   }
 }

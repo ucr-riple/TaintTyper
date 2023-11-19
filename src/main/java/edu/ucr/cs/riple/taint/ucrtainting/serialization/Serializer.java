@@ -176,10 +176,4 @@ public class Serializer {
   public boolean isActive() {
     return config.serializationEnabled();
   }
-
-  public static void log(String s) {
-    if (UCRTaintingChecker.index + 1 == 11) {
-      System.out.println(s);
-    }
-  }
 }

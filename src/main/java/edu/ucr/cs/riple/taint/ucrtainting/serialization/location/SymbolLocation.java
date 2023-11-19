@@ -2,7 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
+import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
 import java.util.List;
@@ -15,12 +15,11 @@ public interface SymbolLocation {
    * returns the appropriate subtype of {@link SymbolLocation} based on the target kind.
    *
    * @param target Target element.
-   * @param trees Trees instance.
+   * @param context Context instance.
    * @return subtype of {@link SymbolLocation} matching target's type.
    */
   @Nullable
-  static SymbolLocation createLocationFromSymbol(
-      @Nullable Symbol target, UCRTaintingChecker checker) {
+  static SymbolLocation createLocationFromSymbol(@Nullable Symbol target, Context context) {
     if (target == null) {
       return null;
     }
@@ -32,7 +31,7 @@ public interface SymbolLocation {
       case FIELD:
         return new FieldLocation(target);
       case LOCAL_VARIABLE:
-        JCTree declarationTree = Utility.locateDeclaration(target, checker);
+        JCTree declarationTree = Utility.locateDeclaration(target, context);
         return new LocalVariableLocation(target, declarationTree);
       case EXCEPTION_PARAMETER:
         // currently not supported / desired.

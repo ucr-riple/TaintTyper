@@ -10,9 +10,9 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
@@ -38,10 +38,8 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
   protected List<ExpressionTree> receivers;
 
   public ReceiverTypeArgumentFixVisitor(
-      UCRTaintingAnnotatedTypeFactory factory,
-      FixComputer fixComputer,
-      UCRTaintingChecker checker) {
-    super(factory, fixComputer, checker);
+      UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
+    super(factory, fixComputer, context);
   }
 
   @Override
