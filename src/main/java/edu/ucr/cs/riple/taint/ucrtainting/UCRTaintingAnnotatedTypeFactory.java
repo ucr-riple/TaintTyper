@@ -459,7 +459,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     if (type == null) {
       return true;
     }
-    return !hasUntaintedAnnotation(type);
+    return !hasUntaintedAnnotation(type) && !hasPolyTaintedAnnotation(type);
   }
 
   /**
