@@ -16,7 +16,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Set;
 import javax.lang.model.element.Element;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 /**
@@ -56,22 +55,17 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   public Set<Fix> visitMemberSelect(MemberSelectTree tree, FoundRequired pair) {
     if (tree instanceof JCTree.JCFieldAccess) {
       ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
-      if (receiver == null) {
-        return defaultAction(tree, pair);
-      }
-      Symbol symbol = (Symbol) TreeUtils.elementFromUse(receiver);
-      if(!symbol.getKind().isField()){
-        return defaultAction(tree, pair);
-      }
-      String packageName = symbol.type.tsym.packge().toString();
-      if (packageName.equals("unnamed package")) {
-        packageName = "";
-      }
-      if (!typeFactory.isAnnotatedPackage(packageName)) {
-        AnnotatedTypeMirror receiverType = typeFactory.getAnnotatedType(receiver);
-        AnnotatedTypeMirror requiredType = receiverType.deepCopy(true);
-        typeFactory.makeUntainted(requiredType);
-        return defaultAction(receiver, new FoundRequired(receiverType, requiredType, pair.depth));
+      if (receiver != null) {
+        Symbol symbol = (Symbol) TreeUtils.elementFromUse(tree);
+        if (symbol.getKind().isField()) {
+          String packageName = symbol.type.tsym.packge().toString();
+          if (packageName.equals("unnamed package")) {
+            packageName = "";
+          }
+          if (!typeFactory.isAnnotatedPackage(packageName)) {
+            return thirdPartyFixVisitor.visitMemberSelect(tree, pair);
+          }
+        }
       }
     }
     return defaultAction(tree, pair);

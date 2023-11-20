@@ -27,7 +27,14 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
   }
 
   public Set<Fix> visitMemberSelect(MemberSelectTree node, FoundRequired pair) {
-    return defaultAction(node, pair);
+    ExpressionTree receiver = TreeUtils.getReceiverTree(node);
+    if (receiver == null) {
+      return Set.of();
+    }
+    AnnotatedTypeMirror receiverType = typeFactory.getAnnotatedType(receiver);
+    AnnotatedTypeMirror requiredType = receiverType.deepCopy(true);
+    typeFactory.makeUntainted(requiredType);
+    return receiver.accept(fixComputer, new FoundRequired(receiverType, requiredType, pair.depth));
   }
 
   @Override
