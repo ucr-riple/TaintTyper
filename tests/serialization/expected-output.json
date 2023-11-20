@@ -315,26 +315,6 @@
     {
         "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
         "messageKey": "assignment",
-        "offset": 2040,
-        "index": 14,
-        "region": {
-            "symbol": "bar(java.lang.String,java.lang.String,boolean)",
-            "class": "Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Bar.java",
-                "type-variable-position": [[0]],
-                "field": "staticF",
-                "kind": "FIELD",
-                "class": "Bar"
-            }
-        }]
-    },
-    {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
-        "messageKey": "assignment",
         "offset": 2200,
         "index": 15,
         "region": {

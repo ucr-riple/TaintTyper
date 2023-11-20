@@ -10,6 +10,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
 
 public class ThirdPartyHandler extends AbstractHandler {
@@ -24,6 +25,9 @@ public class ThirdPartyHandler extends AbstractHandler {
     if (!selected.getKind().isField()) {
       // if not field and is an invocation, we should handle it in visitMethodInvocation call.
       return;
+    }
+    if (ElementUtils.isStatic(selected)) {
+      typeFactory.makeUntainted(type);
     }
     if (tree instanceof JCTree.JCFieldAccess) {
       ExpressionTree receiver = TreeUtils.getReceiverTree(tree);

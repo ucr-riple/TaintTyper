@@ -1,3 +1,5 @@
+package foo.bar;
+
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -70,8 +72,6 @@ class Foo {
         }
       }
     }
-    // :: error: assignment
-    c = bar.staticF;
   }
 
   void requireUntainted(@RUntainted Object param) {}

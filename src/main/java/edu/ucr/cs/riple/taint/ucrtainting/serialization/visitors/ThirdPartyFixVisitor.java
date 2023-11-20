@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
 
 /**
@@ -29,6 +30,10 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
   public Set<Fix> visitMemberSelect(MemberSelectTree node, FoundRequired pair) {
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
     if (receiver == null) {
+      return Set.of();
+    }
+    Element field = TreeUtils.elementFromUse(node);
+    if (field == null || ElementUtils.isStatic(field)) {
       return Set.of();
     }
     AnnotatedTypeMirror receiverType = typeFactory.getAnnotatedType(receiver);
