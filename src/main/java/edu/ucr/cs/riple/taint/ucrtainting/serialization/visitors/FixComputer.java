@@ -1,11 +1,13 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Types;
+import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
@@ -14,6 +16,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Set;
 import javax.lang.model.element.Element;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 /**
@@ -47,6 +50,28 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   @Override
   public Set<Fix> defaultAction(Tree node, FoundRequired pair) {
     return node.accept(basicVisitor, pair);
+  }
+
+  @Override
+  public Set<Fix> visitMemberSelect(MemberSelectTree tree, FoundRequired pair) {
+    if (tree instanceof JCTree.JCFieldAccess) {
+      ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
+      if (receiver == null) {
+        return defaultAction(tree, pair);
+      }
+      Symbol symbol = (Symbol) TreeUtils.elementFromUse(receiver);
+      String packageName = symbol.type.tsym.packge().toString();
+      if (packageName.equals("unnamed package")) {
+        packageName = "";
+      }
+      if (!typeFactory.isAnnotatedPackage(packageName)) {
+        AnnotatedTypeMirror receiverType = typeFactory.getAnnotatedType(receiver);
+        AnnotatedTypeMirror requiredType = receiverType.deepCopy(true);
+        typeFactory.makeUntainted(requiredType);
+        return defaultAction(receiver, new FoundRequired(receiverType, requiredType, pair.depth));
+      }
+    }
+    return defaultAction(tree, pair);
   }
 
   /**

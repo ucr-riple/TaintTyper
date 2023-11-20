@@ -23,7 +23,7 @@ public class NewTestTemplateTest extends SerializationTestHelper {
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
-        "-AannotatedPackages=\"\"",
+        "-AannotatedPackages=foo.bar",
         "-AenableLibraryCheck",
         "-nowarn");
   }

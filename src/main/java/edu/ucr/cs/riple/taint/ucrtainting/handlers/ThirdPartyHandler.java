@@ -1,6 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
 import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
@@ -15,6 +16,29 @@ public class ThirdPartyHandler extends AbstractHandler {
 
   public ThirdPartyHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
     super(typeFactory);
+  }
+
+  @Override
+  public void visitMemberSelect(MemberSelectTree tree, AnnotatedTypeMirror type) {
+    Element selected = TreeUtils.elementFromUse(tree);
+    if (!selected.getKind().isField()) {
+      // if not field and is an invocation, we should handle it in visitMethodInvocation call.
+      return;
+    }
+    if (tree instanceof JCTree.JCFieldAccess) {
+      ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
+      if (receiver == null) {
+        return;
+      }
+      Symbol symbol = (Symbol) TreeUtils.elementFromUse(receiver);
+      String packageName = symbol.type.tsym.packge().toString();
+      if (packageName.equals("unnamed package")) {
+        packageName = "";
+      }
+      if (!typeFactory.isAnnotatedPackage(packageName) && !typeFactory.mayBeTainted(receiver)) {
+        typeFactory.makeUntainted(type);
+      }
+    }
   }
 
   @Override

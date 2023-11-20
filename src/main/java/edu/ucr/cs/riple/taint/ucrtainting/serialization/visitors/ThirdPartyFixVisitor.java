@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.LambdaExpressionTree;
+import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.util.Context;
@@ -23,6 +24,10 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
   public ThirdPartyFixVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
+  }
+
+  public Set<Fix> visitMemberSelect(MemberSelectTree node, FoundRequired pair) {
+    return defaultAction(node, pair);
   }
 
   @Override

@@ -1,6 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
 import com.google.common.collect.ImmutableSet;
+import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.util.Context;
@@ -38,5 +39,10 @@ public class CompositHandler implements Handler {
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree, AnnotatedTypeMirror type) {
     this.handlers.forEach(handler -> handler.visitMethodInvocation(tree, type));
+  }
+
+  @Override
+  public void visitMemberSelect(MemberSelectTree tree, AnnotatedTypeMirror type) {
+    this.handlers.forEach(handler -> handler.visitMemberSelect(tree, type));
   }
 }

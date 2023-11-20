@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
+import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.VariableTree;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
@@ -26,6 +27,11 @@ public abstract class AbstractHandler implements Handler {
 
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree, AnnotatedTypeMirror type) {
+    // no-op
+  }
+
+  @Override
+  public void visitMemberSelect(MemberSelectTree tree, AnnotatedTypeMirror type) {
     // no-op
   }
 }
