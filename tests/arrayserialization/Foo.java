@@ -1,4 +1,5 @@
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
@@ -8,12 +9,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javax.swing.JFileChooser;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
 public class Foo {
 
   private Object field;
   private @RUntainted String[] processProperties;
+  private static final String[] PROP_NAMES = {
+    null, "user.home", "user.dir", "java.home", "java.io.tmpdir"
+  };
 
   public void bar(Object param) {
     // :: error: array.initializer
@@ -141,5 +146,29 @@ public class Foo {
     for (final java.lang.String line : lines) {}
 
     return this;
+  }
+
+  public static @RUntainted JFileChooser create() {
+    // :: error: enhancedfor
+    for (final java.lang.@RUntainted String prop : PROP_NAMES) {
+      try {
+        @RUntainted String dirname = null;
+        if (prop == null) {
+        } else {
+          dirname = System.getProperty(prop);
+        }
+        if ("".equals(dirname)) {
+          return new JFileChooser();
+        } else {
+          final java.io.File dir = new File(dirname);
+          if (dir != null) {
+            return new JFileChooser(dir);
+          }
+        }
+      } catch (RuntimeException t) {
+        throw new RuntimeException(t);
+      }
+    }
+    return null;
   }
 }

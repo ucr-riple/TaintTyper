@@ -250,20 +250,36 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
    */
   private Type.ClassType locateInheritedTypeOnExtendOrImplement(
       Symbol.ClassSymbol classSymbol, Type.ClassType requiredType) {
+    if (!(classSymbol.type instanceof Type.ClassType)) {
+      return null;
+    }
+    Type.ClassType classType = (Type.ClassType) classSymbol.type;
     // Look for interfaces
-    for (Type type : ((Type.ClassType) classSymbol.type).interfaces_field) {
-      if (type.tsym.equals(requiredType.tsym)) {
+    for (Type type : classType.interfaces_field) {
+      if (checkTypeProvidesTypeArgument(type, requiredType)) {
         return (Type.ClassType) type;
       }
     }
     // Look for extended class
-    Type superType = ((Type.ClassType) classSymbol.type).supertype_field;
+    Type superType = classType.supertype_field;
     if (superType == null) {
       return null;
     }
-    if (superType.tsym.equals(requiredType.tsym)) {
+    if (checkTypeProvidesTypeArgument(superType, requiredType)) {
       return (Type.ClassType) superType;
     }
-    return null;
+    return locateInheritedTypeOnExtendOrImplement(
+        (Symbol.ClassSymbol) superType.tsym, requiredType);
+  }
+
+  private static boolean checkTypeProvidesTypeArgument(Type type, Type target) {
+    if (!(type instanceof Type.ClassType)) {
+      return false;
+    }
+    if (type.tsym.equals(target.tsym)) {
+      return true;
+    }
+    Type.ClassType classType = (Type.ClassType) type;
+    return !classType.isRaw();
   }
 }

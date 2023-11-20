@@ -201,6 +201,17 @@ public class SerializationService {
     }
     // todo: check for all subtypes.
     Symbol.VarSymbol varSymbol = (Symbol.VarSymbol) element;
+    if (varSymbol.type.tsym.name.toString().equals("Array")) {
+      AnnotatedTypeMirror.AnnotatedArrayType arrayType =
+          (AnnotatedTypeMirror.AnnotatedArrayType) typeFactory.getAnnotatedType(element);
+      SymbolLocation location = SymbolLocation.createLocationFromSymbol(varSymbol, context);
+      if (location == null) {
+        return ImmutableSet.of();
+      }
+      location.setTypeVariablePositions(
+          typeMatchVisitor.visit(arrayType.getComponentType(), pair.required, null));
+      return ImmutableSet.of(new Fix(location));
+    }
     if (!(varSymbol.type.tsym.name.toString().equals("List")
         || varSymbol.type.tsym.name.toString().equals("ArrayList"))) {
       return ImmutableSet.of();
