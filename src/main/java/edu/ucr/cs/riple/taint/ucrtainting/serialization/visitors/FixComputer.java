@@ -60,6 +60,9 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
         return defaultAction(tree, pair);
       }
       Symbol symbol = (Symbol) TreeUtils.elementFromUse(receiver);
+      if(!symbol.getKind().isField()){
+        return defaultAction(tree, pair);
+      }
       String packageName = symbol.type.tsym.packge().toString();
       if (packageName.equals("unnamed package")) {
         packageName = "";
