@@ -22,7 +22,8 @@ public class ThirdPartyHandler extends AbstractHandler {
   @Override
   public void visitMemberSelect(MemberSelectTree tree, AnnotatedTypeMirror type) {
     Element selected = TreeUtils.elementFromUse(tree);
-    if(typeFactory.isPolyOrUntainted(type)){
+    // if already we don't have to do all the computations below.
+    if (typeFactory.isPolyOrUntainted(type)) {
       return;
     }
     if (!selected.getKind().isField()) {
@@ -34,13 +35,7 @@ public class ThirdPartyHandler extends AbstractHandler {
       if (receiver == null) {
         return;
       }
-      Symbol symbol = null;
-      try{
-        symbol = (Symbol) TreeUtils.elementFromUse(receiver);
-      }catch (Exception e){
-        System.out.println("ERROR HAPPENED FOR: " + receiver + " " + tree);
-        return;
-      }
+      Symbol symbol = (Symbol) TreeUtils.elementFromUse(receiver);
       String packageName = symbol.type.tsym.packge().toString();
       if (packageName.equals("unnamed package")) {
         packageName = "";
