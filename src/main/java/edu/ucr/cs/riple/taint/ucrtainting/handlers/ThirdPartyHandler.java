@@ -26,10 +26,6 @@ public class ThirdPartyHandler extends AbstractHandler {
       // if not field and is an invocation, we should handle it in visitMethodInvocation call.
       return;
     }
-    if (ElementUtils.isStatic(selected)) {
-      System.out.println("STATIC TREE MAKING UNTAINTED: " + tree);
-      typeFactory.makeUntainted(type);
-    }
     if (tree instanceof JCTree.JCFieldAccess) {
       ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
       if (receiver == null) {
@@ -40,7 +36,8 @@ public class ThirdPartyHandler extends AbstractHandler {
       if (packageName.equals("unnamed package")) {
         packageName = "";
       }
-      if (!typeFactory.isAnnotatedPackage(packageName) && !typeFactory.mayBeTainted(receiver)) {
+      if (!typeFactory.isAnnotatedPackage(packageName)
+          && (ElementUtils.isStatic(selected) || (!typeFactory.mayBeTainted(receiver)))) {
         typeFactory.makeUntainted(type);
       }
     }
