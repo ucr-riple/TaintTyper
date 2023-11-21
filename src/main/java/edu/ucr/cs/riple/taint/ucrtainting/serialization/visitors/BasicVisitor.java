@@ -48,8 +48,11 @@ public class BasicVisitor extends SpecializedFixComputer {
     Set<Fix> fixes = new HashSet<>();
     // Add a fix for each argument.
     for (ExpressionTree arg : node.getArguments()) {
-      // Required can be null here, since we only need the passed parameters to be untainted.
-      fixes.addAll(arg.accept(fixComputer, pair));
+      AnnotatedTypeMirror foundArgType = typeFactory.getAnnotatedType(arg);
+      AnnotatedTypeMirror requiredArgType = foundArgType.deepCopy(true);
+      typeFactory.makeUntainted(requiredArgType);
+      fixes.addAll(
+          arg.accept(fixComputer, new FoundRequired(foundArgType, requiredArgType, pair.depth)));
     }
     return fixes;
   }

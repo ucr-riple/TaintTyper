@@ -24,8 +24,7 @@ public class NewTestTemplateTest extends SerializationTestHelper {
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=foo.bar",
-        "-AenableLibraryCheck",
-        "-nowarn");
+        "-AenableLibraryCheck");
   }
 
   @Parameters
