@@ -31,7 +31,13 @@ public class ThirdPartyHandler extends AbstractHandler {
       if (receiver == null) {
         return;
       }
-      Symbol symbol = (Symbol) TreeUtils.elementFromUse(receiver);
+      Symbol symbol = null;
+      try{
+        symbol = (Symbol) TreeUtils.elementFromUse(receiver);
+      }catch (Exception e){
+        System.out.println("ERROR HAPPENED FOR: " + receiver + " " + tree);
+        return;
+      }
       String packageName = symbol.type.tsym.packge().toString();
       if (packageName.equals("unnamed package")) {
         packageName = "";
