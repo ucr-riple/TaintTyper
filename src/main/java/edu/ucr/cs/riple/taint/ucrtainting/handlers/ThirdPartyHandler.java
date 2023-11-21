@@ -27,7 +27,8 @@ public class ThirdPartyHandler extends AbstractHandler {
       return;
     }
     if (ElementUtils.isStatic(selected)) {
-//      typeFactory.makeUntainted(type);
+      System.out.println("STATIC TREE MAKING UNTAINTED: " + tree);
+      typeFactory.makeUntainted(type);
     }
     if (tree instanceof JCTree.JCFieldAccess) {
       ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
