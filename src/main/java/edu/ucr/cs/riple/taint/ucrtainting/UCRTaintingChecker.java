@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.code.Symbol;
@@ -205,6 +206,10 @@ public class UCRTaintingChecker extends AccumulationChecker {
               || typeFactory.hasUntaintedAnnotation(found);
         }
       case "argument":
+        if (source instanceof ExpressionTree
+            && TreeUtils.isExplicitThisDereference((ExpressionTree) source)) {
+          return true;
+        }
         if (!(tree instanceof MethodInvocationTree)) {
           return false;
         }

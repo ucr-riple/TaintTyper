@@ -1,6 +1,7 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.awt.Point;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -83,5 +84,16 @@ class Foo {
       WebApplicationContext context =
           WebApplicationContextUtils.getWebApplicationContext(getServletContext());
     }
+  }
+
+  Point loc;
+
+  public void testErrorForThirdPartyFieldSelectionError(Point p) {
+    // :: error: assignment
+    @RUntainted int i = p.x;
+  }
+
+  public void testErrorForThirdPartyFieldSelectionFix(@RUntainted Point p) {
+    @RUntainted int i = p.x;
   }
 }
