@@ -22,6 +22,9 @@ public class ThirdPartyHandler extends AbstractHandler {
   @Override
   public void visitMemberSelect(MemberSelectTree tree, AnnotatedTypeMirror type) {
     Element selected = TreeUtils.elementFromUse(tree);
+    if(typeFactory.isPolyOrUntainted(type)){
+      return;
+    }
     if (!selected.getKind().isField()) {
       // if not field and is an invocation, we should handle it in visitMethodInvocation call.
       return;
