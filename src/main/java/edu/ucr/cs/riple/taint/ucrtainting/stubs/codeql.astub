@@ -3,9 +3,11 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 
 package java.net;
 
-public URL(@RUntainted String spec);
-public URL(URL context, @RUntainted String spec);
-public URL(String protocol, @RUntainted String host, String file);
-public URL(URL context, @RUntainted String spec, URLStreamHandler handler);
-public URL(String protocol, @RUntainted String host, int port, String file);
-public URL(String protocol, @RUntainted String host, int port, String file, URLStreamHandler ph);
+public class URL {
+    public URL(@RUntainted String spec);
+    public URL(URL context, @RUntainted String spec);
+    public URL(String protocol, @RUntainted String host, String file);
+    public URL(URL context, @RUntainted String spec, URLStreamHandler handler);
+    public URL(String protocol, @RUntainted String host, int port, String file);
+    public URL(String protocol, @RUntainted String host, int port, String file, URLStreamHandler ph);
+}
