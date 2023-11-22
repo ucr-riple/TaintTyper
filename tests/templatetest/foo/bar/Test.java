@@ -6,8 +6,7 @@ public class Test {
 
   public void test(String redirectUri) {
     // :: error: assignment
-    @RUntainted
-    String test = OpenCms.getLinkManager().substituteLink(getCmsObject(), redirectUri, null, true);
+    @RUntainted String test = OpenCms.getLinkManager().substituteLink(getCmsObject(), redirectUri, null, true);
   }
 
   public CmsObject getCmsObject() {
@@ -21,9 +20,14 @@ public class Test {
   }
 
   static class LinkManager {
-    public String substituteLink(CmsObject cms, String link, String siteRoot, boolean forceSecure) {
-      return null;
-    }
+      public String substituteLink(CmsObject cms, String link, String siteRoot, boolean forceSecure) {
+          return substituteLink(cms, link, siteRoot, null, forceSecure);
+      }
+
+      public String substituteLink(
+              CmsObject cms, String link, String siteRoot, String targetDetailPage, boolean forceSecure) {
+          return null;
+      }
   }
 
   static class CmsObject {}
