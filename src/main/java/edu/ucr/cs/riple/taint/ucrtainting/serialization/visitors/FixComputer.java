@@ -89,7 +89,12 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
    */
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
-    Element element = TreeUtils.elementFromUse(node);
+    Element element;
+    try {
+      element = TreeUtils.elementFromUse(node);
+    } catch (Exception e) {
+      throw new RuntimeException("CALLED elementFromUse for: " + node, e);
+    }
     if (element == null) {
       return Set.of();
     }
