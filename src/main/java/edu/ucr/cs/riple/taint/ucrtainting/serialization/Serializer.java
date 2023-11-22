@@ -39,6 +39,10 @@ public class Serializer {
     initializeOutputFiles();
   }
 
+  public static void log(Object message) {
+    System.err.println(message);
+  }
+
   /**
    * Serializes the given error to the output file.
    *

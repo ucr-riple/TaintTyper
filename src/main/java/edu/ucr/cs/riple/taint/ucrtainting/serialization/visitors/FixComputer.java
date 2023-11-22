@@ -13,6 +13,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Set;
 import javax.lang.model.element.Element;
@@ -93,7 +94,8 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     try {
       element = TreeUtils.elementFromUse(node);
     } catch (Exception e) {
-      throw new RuntimeException("CALLED elementFromUse for: " + node + " " + node.getMethodSelect() + " " + node.getMethodSelect().getKind() + " " + ((JCTree.JCIdent) node.getMethodSelect()).sym, e);
+      Serializer.log("Error in finding the element from invocation: " + node);
+      return Set.of();
     }
     if (element == null) {
       return Set.of();
