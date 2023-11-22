@@ -93,7 +93,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     try {
       element = TreeUtils.elementFromUse(node);
     } catch (Exception e) {
-      throw new RuntimeException("CALLED elementFromUse for: " + node + " " + node.getMethodSelect() + " " + node.getMethodSelect().getKind(), e);
+      throw new RuntimeException("CALLED elementFromUse for: " + node + " " + node.getMethodSelect() + " " + node.getMethodSelect().getKind() + " " + ((JCTree.JCIdent) node.getMethodSelect()).sym, e);
     }
     if (element == null) {
       return Set.of();
