@@ -55,3 +55,18 @@ package android.webkit;
 public class WebResourceResponse {
     public WebResourceResponse(String mimeType, String encoding, @RUntainted InputStream data);
 }
+
+package javax.servlet.http;
+public interface HttpServletRequest {
+    public @RTainted String getHeader(String name);
+}
+
+package java.lang;
+public final class String {
+    public boolean equals(@RUntainted Object anObject);
+}
+
+package java.util;
+public class Arrays {
+    public boolean equals(@RUntainted byte[] a, @RUntainted byte[] a2);
+}
