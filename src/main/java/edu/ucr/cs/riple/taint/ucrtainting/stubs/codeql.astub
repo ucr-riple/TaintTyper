@@ -83,7 +83,6 @@ public class Thread {
 }
 
 package java.lang;
-public final class Class<T> {
-    public static Class<?> forName(@RUntainted String className);
-    public static Class<?> forName(@RUntainted String name, boolean initialize, ClassLoader loader);
+public abstract class ClassLoader {
+    public Class<?>	loadClass(@RUntainted String name);
 }
