@@ -59,6 +59,8 @@ dependencies {
     testImplementation 'org.springframework:spring-websocket:5.3.29'
     testImplementation 'com.opensymphony:xwork:2.1.2'
     testImplementation 'commons-cli:commons-cli:1.4'
+    testImplementation 'org.apache.commons:commons-lang3:3.12.0'
+    testImplementation 'org.apache.commons:commons-digester3:3.2'
 
     // errorprone
     errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"

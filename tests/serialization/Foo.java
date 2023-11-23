@@ -8,6 +8,9 @@ import java.lang.annotation.Target;
 import java.util.*;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.digester3.CallMethodRule;
+import org.apache.commons.digester3.Digester;
+import org.xml.sax.Attributes;
 
 class Foo {
 
@@ -111,5 +114,16 @@ class Foo {
   @Target({ElementType.METHOD})
   public @interface InputConfig {
     String methodName() default "";
+  }
+
+  public void shouldNotReportErrorForOptional(Digester digester) {
+    digester.addRule(
+        null,
+        new CallMethodRule(null, 15, new Class[] {}) {
+          @Override
+          public void begin(String namespace, String name, Attributes attributes) throws Exception {
+            getDigester().peekParams()[14] = Optional.empty();
+          }
+        });
   }
 }

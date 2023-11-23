@@ -168,16 +168,19 @@ public class UCRTaintingChecker extends AccumulationChecker {
       case "assignment":
         {
           Tree errorTree = visitor.getCurrentPath().getLeaf();
-          if (!(errorTree instanceof JCTree.JCVariableDecl)) {
-            return false;
+          ExpressionTree initializer = null;
+          if (errorTree instanceof JCTree.JCVariableDecl) {
+            initializer = ((JCTree.JCVariableDecl) errorTree).getInitializer();
           }
-          JCTree.JCVariableDecl errorVar = (JCTree.JCVariableDecl) errorTree;
-          if (!(errorVar.getInitializer() instanceof JCTree.JCMethodInvocation)) {
+          if (errorTree instanceof JCTree.JCAssign) {
+            initializer = ((JCTree.JCAssign) errorTree).getExpression();
+          }
+          if (!(initializer instanceof JCTree.JCMethodInvocation)) {
             return false;
           }
           boolean isApplicable =
               ThirdPartyHandler.checkHeuristicApplicability(
-                  (MethodInvocationTree) errorVar.getInitializer(), typeFactory);
+                  (MethodInvocationTree) initializer, typeFactory);
           if (!isApplicable) {
             return false;
           }

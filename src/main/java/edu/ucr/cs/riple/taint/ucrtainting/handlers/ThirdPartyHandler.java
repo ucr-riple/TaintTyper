@@ -107,6 +107,9 @@ public class ThirdPartyHandler extends AbstractHandler {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
     ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
     Type returnType = calledMethod.getReturnType();
+    if (calledMethod.isStatic() && calledMethod.params.isEmpty()) {
+      return true;
+    }
     // check method type arguments
     if (calledMethod.type.getTypeArguments().stream()
         .anyMatch(type -> Utility.containsTypeArgument(returnType, (Type.TypeVar) type))) {
