@@ -2,7 +2,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 
 package java.net;
-
 public class URL {
     public URL(@RUntainted String spec);
     public URL(URL context, @RUntainted String spec);
@@ -10,4 +9,44 @@ public class URL {
     public URL(URL context, @RUntainted String spec, URLStreamHandler handler);
     public URL(String protocol, @RUntainted String host, int port, String file);
     public URL(String protocol, @RUntainted String host, int port, String file, URLStreamHandler ph);
+}
+
+package org.springframework.scripting.bsh;
+public class BshScriptEvaluator {
+    public Object evaluate(@RUntainted ScriptSource script);
+    public Object evaluate(@RUntainted ScriptSource script, Map<String,Object> arguments);
+}
+
+package com.jcraft.jsch;
+public class ChannelExec {
+    public void setCommand(@RUntainted byte[] command);
+    public void setCommand(@RUntainted String command);
+}
+
+package jdk.jshell;
+public class JShell {
+    public List<SnippetEvent> eval(@RUntainted String input);
+}
+
+package javax.el;
+public abstract class ExpressionFactory {
+    public abstract ValueExpression createValueExpression(ELContext context,
+                                                      @RUntainted String expression,
+                                                      Class<?> expectedType);
+}
+
+package org.python.util;
+public class PythonInterpreter {
+    public PyObject	eval(@RUntainted String s);
+    public PyObject eval(@RUntainted PyObject code);
+}
+
+package javax.script;
+public interface ScriptEngine {
+    public Object eval(@RUntainted String script);
+}
+
+package jdk.nashorn.api.scripting;
+public class NashornScriptEngine {
+    public Object eval(@RUntainted String script);
 }
