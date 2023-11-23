@@ -81,3 +81,9 @@ public class Thread {
     public static void sleep(@RUntainted long millis);
     public static void sleep(@RUntainted long millis, @RUntainted int nanos);
 }
+
+package java.lang;
+public final class Class<T> {
+    public static Class<?> forName(@RUntainted String className);
+    public static Class<?> forName(@RUntainted String name, boolean initialize, ClassLoader loader);
+}
