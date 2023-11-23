@@ -70,3 +70,8 @@ package java.util;
 public class Arrays {
     public boolean equals(@RUntainted byte[] a, @RUntainted byte[] a2);
 }
+
+package java.security.cert;
+public class CertPathValidator {
+    public CertPathValidatorResult validate(@RUntainted CertPath certPath, CertPathParameters params);
+}
