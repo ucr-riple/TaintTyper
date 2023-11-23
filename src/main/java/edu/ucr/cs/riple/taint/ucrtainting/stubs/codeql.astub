@@ -75,3 +75,9 @@ package java.security.cert;
 public class CertPathValidator {
     public CertPathValidatorResult validate(@RUntainted CertPath certPath, CertPathParameters params);
 }
+
+package java.lang;
+public class Thread {
+    public static void sleep(@RUntainted long millis);
+    public static void sleep(@RUntainted long millis, @RUntainted int nanos);
+}
