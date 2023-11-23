@@ -50,3 +50,8 @@ package jdk.nashorn.api.scripting;
 public class NashornScriptEngine {
     public Object eval(@RUntainted String script);
 }
+
+package android.webkit;
+public class WebResourceResponse {
+    public WebResourceResponse(String mimeType, String encoding, @RUntainted InputStream data);
+}
