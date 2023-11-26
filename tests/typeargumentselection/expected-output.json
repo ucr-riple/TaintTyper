@@ -1,392 +1,487 @@
-{"errors": [
+{
+  "errors": [
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 319,
-        "index": 4,
-        "region": {
-            "symbol": "testMap(java.lang.String)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 319,
+      "index": 4,
+      "region": {
+        "symbol": "testMap(java.lang.String)",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "varName": "map",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "testMap(java.lang.String)",
+            "kind": "LOCAL_VARIABLE",
             "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "varName": "map",
-                "type-variable-position": [[
-                    2,
-                    0
-                ]],
-                "method": "testMap(java.lang.String)",
-                "kind": "LOCAL_VARIABLE",
-                "class": "test.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 508,
-        "index": 5,
-        "region": {
-            "symbol": "testMapOfList(java.util.List)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 508,
+      "index": 5,
+      "region": {
+        "symbol": "testMapOfList(java.util.List)",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "varName": "mapOfList",
+            "type-variable-position": [
+              [
+                2,
+                1,
+                0
+              ]
+            ],
+            "method": "testMapOfList(java.util.List)",
+            "kind": "LOCAL_VARIABLE",
             "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "varName": "mapOfList",
-                "type-variable-position": [[
-                    2,
-                    1,
-                    0
-                ]],
-                "method": "testMapOfList(java.util.List)",
-                "kind": "LOCAL_VARIABLE",
-                "class": "test.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 685,
-        "index": 6,
-        "region": {
-            "symbol": "testGenericFoo()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 685,
+      "index": 6,
+      "region": {
+        "symbol": "testGenericFoo()",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "varName": "gen",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "testGenericFoo()",
+            "kind": "LOCAL_VARIABLE",
             "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "varName": "gen",
-                "type-variable-position": [[
-                    1,
-                    0
-                ]],
-                "method": "testGenericFoo()",
-                "kind": "LOCAL_VARIABLE",
-                "class": "test.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 756,
-        "index": 7,
-        "region": {
-            "symbol": "testGenericFoo()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 756,
+      "index": 7,
+      "region": {
+        "symbol": "testGenericFoo()",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "varName": "gen",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "testGenericFoo()",
+            "kind": "LOCAL_VARIABLE",
             "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "varName": "gen",
-                "type-variable-position": [[
-                    1,
-                    0
-                ]],
-                "method": "testGenericFoo()",
-                "kind": "LOCAL_VARIABLE",
-                "class": "test.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 916,
-        "index": 8,
-        "region": {
-            "symbol": "testGenericBar()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 916,
+      "index": 8,
+      "region": {
+        "symbol": "testGenericBar()",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "varName": "gen",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "testGenericBar()",
+            "kind": "LOCAL_VARIABLE",
             "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "varName": "gen",
-                "type-variable-position": [[
-                    1,
-                    0
-                ]],
-                "method": "testGenericBar()",
-                "kind": "LOCAL_VARIABLE",
-                "class": "test.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 998,
-        "index": 9,
-        "region": {
-            "symbol": "testGenericBar()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 998,
+      "index": 9,
+      "region": {
+        "symbol": "testGenericBar()",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "varName": "gen",
+            "type-variable-position": [
+              [
+                2,
+                1,
+                0
+              ]
+            ],
+            "method": "testGenericBar()",
+            "kind": "LOCAL_VARIABLE",
             "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "varName": "gen",
-                "type-variable-position": [[
-                    2,
-                    1,
-                    0
-                ]],
-                "method": "testGenericBar()",
-                "kind": "LOCAL_VARIABLE",
-                "class": "test.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 1089,
-        "index": 10,
-        "region": {
-            "symbol": "testGenericBar()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 1089,
+      "index": 10,
+      "region": {
+        "symbol": "testGenericBar()",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "varName": "gen",
+            "type-variable-position": [
+              [
+                2,
+                2,
+                0
+              ]
+            ],
+            "method": "testGenericBar()",
+            "kind": "LOCAL_VARIABLE",
             "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "varName": "gen",
-                "type-variable-position": [[
-                    2,
-                    2,
-                    0
-                ]],
-                "method": "testGenericBar()",
-                "kind": "LOCAL_VARIABLE",
-                "class": "test.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 1180,
-        "index": 11,
-        "region": {
-            "symbol": "testGenericBar()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 1180,
+      "index": 11,
+      "region": {
+        "symbol": "testGenericBar()",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "varName": "gen",
+            "type-variable-position": [
+              [
+                2,
+                1,
+                0
+              ]
+            ],
+            "method": "testGenericBar()",
+            "kind": "LOCAL_VARIABLE",
             "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "varName": "gen",
-                "type-variable-position": [[
-                    2,
-                    1,
-                    0
-                ]],
-                "method": "testGenericBar()",
-                "kind": "LOCAL_VARIABLE",
-                "class": "test.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 1342,
-        "index": 12,
-        "region": {
-            "symbol": "rawUsedTypes(test.Foo.Item)",
-            "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "type-variable-position": [[0]],
-                "method": "getValue()",
-                "kind": "METHOD",
-                "class": "test.Foo$Property"
-            }
-        }]
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 1342,
+      "index": 12,
+      "region": {
+        "symbol": "rawUsedTypes(test.Foo.Item)",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getValue()",
+            "kind": "METHOD",
+            "class": "test.Foo$Property"
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "return",
-        "offset": 1597,
-        "index": 13,
-        "region": {
-            "symbol": "sameTypeVarWithDifferentOwners(java.lang.String)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "return",
+      "offset": 1597,
+      "index": 13,
+      "region": {
+        "symbol": "sameTypeVarWithDifferentOwners(java.lang.String)",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "varName": "m_startGalleriesSettings",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "sameTypeVarWithDifferentOwners(java.lang.String)",
+            "kind": "LOCAL_VARIABLE",
             "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "varName": "m_startGalleriesSettings",
-                "type-variable-position": [[
-                    2,
-                    0
-                ]],
-                "method": "sameTypeVarWithDifferentOwners(java.lang.String)",
-                "kind": "LOCAL_VARIABLE",
-                "class": "test.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 1799,
-        "index": 14,
-        "region": {
-            "symbol": "containingTypeParameterNotShownInReceivers()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 1799,
+      "index": 14,
+      "region": {
+        "symbol": "containingTypeParameterNotShownInReceivers()",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "varName": "itEntries",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1,
+                0
+              ],
+              [
+                2,
+                1,
+                0
+              ]
+            ],
+            "method": "containingTypeParameterNotShownInReceivers()",
+            "kind": "LOCAL_VARIABLE",
             "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "varName": "itEntries",
-                "type-variable-position": [
-                    [
-                        1,
-                        0
-                    ],
-                    [
-                        1,
-                        1,
-                        0
-                    ],
-                    [
-                        2,
-                        1,
-                        0
-                    ]
-                ],
-                "method": "containingTypeParameterNotShownInReceivers()",
-                "kind": "LOCAL_VARIABLE",
-                "class": "test.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "enhancedfor",
-        "offset": 2132,
-        "index": 15,
-        "region": {
-            "symbol": "enhancedForLeftHandSide(java.util.Set)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "enhancedfor",
+      "offset": 2132,
+      "index": 15,
+      "region": {
+        "symbol": "enhancedForLeftHandSide(java.util.Set)",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "varName": "entry",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "enhancedForLeftHandSide(java.util.Set)",
+            "kind": "LOCAL_VARIABLE",
             "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "varName": "entry",
-                "type-variable-position": [[
-                    2,
-                    0
-                ]],
-                "method": "enhancedForLeftHandSide(java.util.Set)",
-                "kind": "LOCAL_VARIABLE",
-                "class": "test.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 2268,
-        "index": 16,
-        "region": {
-            "symbol": "testOnClassDeclarationChange()",
-            "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "type-variable-position": [[
-                    1,
-                    0
-                ]],
-                "kind": "CLASS_DECLARATION",
-                "class": "test.Foo$SystemPropertyAction",
-                "target": "test.Foo.PrivilegedActionInterface"
-            }
-        }]
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 2268,
+      "index": 16,
+      "region": {
+        "symbol": "testOnClassDeclarationChange()",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "kind": "CLASS_DECLARATION",
+            "class": "test.Foo$SystemPropertyAction",
+            "target": "test.Foo.PrivilegedActionInterface"
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 2392,
-        "index": 17,
-        "region": {
-            "symbol": "testOnClassDeclarationChange()",
-            "class": "test.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "type-variable-position": [[
-                    1,
-                    0
-                ]],
-                "kind": "CLASS_DECLARATION",
-                "class": "test.Foo$SystemPropertyAction",
-                "target": "test.Foo.PrivilegedActionSuperClass"
-            }
-        }]
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 2392,
+      "index": 17,
+      "region": {
+        "symbol": "testOnClassDeclarationChange()",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "kind": "CLASS_DECLARATION",
+            "class": "test.Foo$SystemPropertyAction",
+            "target": "test.Foo.PrivilegedActionSuperClass"
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "assignment",
-        "offset": 3524,
-        "index": 18,
-        "region": {
-            "symbol": "internal()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "assignment",
+      "offset": 3524,
+      "index": 18,
+      "region": {
+        "symbol": "internal()",
+        "class": "test.Foo$GenericBar"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "varName": "gen",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "internal()",
+            "kind": "LOCAL_VARIABLE",
             "class": "test.Foo$GenericBar"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "varName": "gen",
-                "type-variable-position": [[
-                    1,
-                    0
-                ]],
-                "method": "internal()",
-                "kind": "LOCAL_VARIABLE",
-                "class": "test.Foo$GenericBar"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-        "messageKey": "override.return",
-        "offset": 3808,
-        "index": 19,
-        "region": {
-            "symbol": "run()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "override.return",
+      "offset": 3808,
+      "index": 19,
+      "region": {
+        "symbol": "run()",
+        "class": "test.Foo$SystemPropertyActionThirdParty"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "run()",
+            "kind": "METHOD",
             "class": "test.Foo$SystemPropertyActionThirdParty"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
-                "type-variable-position": [[0]],
-                "method": "run()",
-                "kind": "METHOD",
-                "class": "test.Foo$SystemPropertyActionThirdParty"
-            }
-        }]
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+      "messageKey": "return",
+      "offset": 4081,
+      "index": 17,
+      "region": {
+        "symbol": "selectByToken(java.lang.String)",
+        "class": "test.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "kind": "CLASS_DECLARATION",
+            "class": "test.UserMapper",
+            "target": "com.baomidou.mybatisplus.core.mapper.BaseMapper"
+          }
+        }
+      ]
     }
-]}
+  ]
+}

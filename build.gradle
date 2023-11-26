@@ -61,6 +61,7 @@ dependencies {
     testImplementation 'commons-cli:commons-cli:1.4'
     testImplementation 'org.apache.commons:commons-lang3:3.12.0'
     testImplementation 'org.apache.commons:commons-digester3:3.2'
+    testImplementation 'com.baomidou:mybatis-plus-core:3.5.4.1'
 
     // errorprone
     errorproneJavac "com.google.errorprone:javac:9+181-r4173-1"

@@ -1,5 +1,6 @@
 package test;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.security.PrivilegedAction;
 import java.util.*;
@@ -142,4 +143,17 @@ public class Foo {
       return null;
     }
   }
+
+  private UserMapper userMapper;
+
+  public @RUntainted User selectByToken(String token) {
+    // :: error: return
+    return userMapper.selectOne(null);
+  }
+}
+
+class User {}
+
+interface UserMapper extends BaseMapper<User> {
+  int countToday();
 }

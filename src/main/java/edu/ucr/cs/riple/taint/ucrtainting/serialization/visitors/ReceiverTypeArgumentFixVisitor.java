@@ -83,10 +83,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     }
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
     // Locate method receiver.
-    ExpressionTree receiver = null;
-    if (node.getMethodSelect() instanceof MemberSelectTree) {
-      receiver = ((MemberSelectTree) node.getMethodSelect()).getExpression();
-    }
+    ExpressionTree receiver = TreeUtils.getReceiverTree(node);
     // If method is static, or has no receiver, or receiver is "this", we must annotate the method
     // directly.
     if (calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver)) {
@@ -148,6 +145,17 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
       return null;
     }
     if (getType(element).allparams().isEmpty()) {
+      // type to check:
+      Type typeToCheck =
+          Utility.getType(TreeUtils.elementFromTree(receivers.get(receivers.size() - 1)));
+      if (typeToCheck instanceof Type.TypeVar) {
+        Set<Fix> fixes =
+            MethodTypeArgumentFixVisitor.computeFixesOnClassDeclarationForRawType(
+                Utility.getType(element), typeFactory, pair, (Type.TypeVar) typeToCheck);
+        if (!fixes.isEmpty()) {
+          return fixes.iterator().next();
+        }
+      }
       // receiver is written as a raw type and not parameterized. We cannot infer the actual types
       // and have to annotate the method directly.
       Set<Fix> fixes = receivers.get(receivers.size() - 1).accept(fixComputer.basicVisitor, pair);

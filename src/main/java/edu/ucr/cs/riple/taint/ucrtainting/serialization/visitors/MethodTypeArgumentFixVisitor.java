@@ -2,7 +2,6 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.tree.Tree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Context;
@@ -66,7 +65,11 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
               if (nodeClassType.tsym.type.getTypeArguments().isEmpty()
                   && !requiredClassType.tsym.type.getTypeArguments().isEmpty()) {
                 Set<Fix> onDeclaration =
-                    computeFixesOnClassDeclarationForRawType(arg, newPair, typeVar);
+                    computeFixesOnClassDeclarationForRawType(
+                        Utility.getType(TreeUtils.elementFromTree(arg)),
+                        typeFactory,
+                        newPair,
+                        typeVar);
                 if (!onDeclaration.isEmpty()) {
                   return onDeclaration;
                 }
@@ -201,10 +204,12 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
     return updated;
   }
 
-  public Set<Fix> computeFixesOnClassDeclarationForRawType(
-      Tree node, FoundRequired pair, Type.TypeVar typeVar) {
+  public static Set<Fix> computeFixesOnClassDeclarationForRawType(
+      Type type,
+      UCRTaintingAnnotatedTypeFactory typeFactory,
+      FoundRequired pair,
+      Type.TypeVar typeVar) {
     try {
-      Type type = Utility.getType(TreeUtils.elementFromTree(node));
       if (!(type.tsym instanceof Symbol.ClassSymbol)) {
         return Set.of();
       }
@@ -248,7 +253,7 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
    * @param requiredType The required type to check.
    * @return The inherited type on the given class type that extends or implements the required.
    */
-  private Type.ClassType locateInheritedTypeOnExtendOrImplement(
+  private static Type.ClassType locateInheritedTypeOnExtendOrImplement(
       Symbol.ClassSymbol classSymbol, Type.ClassType requiredType) {
     if (!(classSymbol.type instanceof Type.ClassType)) {
       return null;
