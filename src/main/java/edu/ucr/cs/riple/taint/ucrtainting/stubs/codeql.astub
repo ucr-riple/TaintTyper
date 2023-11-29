@@ -1,5 +1,10 @@
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.File;
+import org.xml.sax.InputSource;
+import java.net.URI;
 
 package java.net;
 public class URL {
@@ -64,6 +69,7 @@ public interface HttpServletRequest {
 package java.lang;
 public final class String {
     public boolean equals(@RUntainted Object anObject);
+    public String replaceAll(@RUntainted String regex, String replacement);
 }
 
 package java.util;
@@ -85,4 +91,127 @@ public class Thread {
 package java.lang;
 public abstract class ClassLoader {
     public Class<?>	loadClass(@RUntainted String name);
+}
+public final class System {
+    public static @RTainted String getProperty(String key);
+    public static @RTainted String getenv(String key);
+}
+
+package java.io;
+public class File {
+    public File(@RUntainted File parent, @RUntainted String child);
+    public File(@RUntainted String pathname);
+    public File(@RUntainted String parent, @RUntainted String child);
+    public File(@RUntainted URI uri);
+}
+
+public abstract class Writer {
+    public void write(@RUntainted char[] cbuf);
+    public abstract void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+public class BufferedWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+public class CharArrayWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str);
+}
+
+public class FilterWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+public class OutputStreamWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+public class FileWriter {
+    public FileWriter(@RUntainted File file);
+    public FileWriter(@RUntainted File file, boolean append);
+    public FileWriter(@RUntainted String fileName);
+    public FileWriter(@RUntainted String fileName, boolean append);
+}
+
+public class PipedWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+}
+
+public class PrintWriter {
+    public void write(@RUntainted char[] cbuf);
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+public class StringWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+public class FileOutputStream {
+    public void write(@RUntainted byte[] b);
+    public void	write(@RUntainted byte[] b, int off, int len);
+    public void	write(@RUntainted int b);
+}
+
+public class OutputStreamWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+package javax.xml.xquery;
+public interface XQConnection {
+    public XQPreparedExpression prepareExpression(@RUntainted InputStream xquery);
+    public XQPreparedExpression	prepareExpression(@RUntainted InputStream xquery, XQStaticContext properties);
+    public XQPreparedExpression	prepareExpression(@RUntainted Reader xquery);
+    public XQPreparedExpression	prepareExpression(@RUntainted Reader xquery, XQStaticContext properties);
+    public XQPreparedExpression	prepareExpression(@RUntainted String xquery);
+    public XQPreparedExpression	prepareExpression(@RUntainted String xquery, XQStaticContext properties);
+}
+
+public interface XQExpression {
+    public void	executeCommand(@RUntainted Reader cmd);
+    public void	executeCommand(@RUntainted String cmd);
+    public XQResultSequence	executeQuery(@RUntainted InputStream query);
+    public XQResultSequence	executeQuery(@RUntainted Reader query);
+    public XQResultSequence	executeQuery(@RUntainted String query);
+}
+
+package javax.xml.parsers;
+public abstract class SAXParser {
+    public void	parse(@RUntainted File f, DefaultHandler dh);
+    public void	parse(@RUntainted File f, HandlerBase hb);
+    public void	parse(@RUntainted InputSource is, DefaultHandler dh);
+    public void	parse(@RUntainted InputSource is, HandlerBase hb);
+    public void	parse(@RUntainted InputStream is, DefaultHandler dh);
+    public void	parse(@RUntainted InputStream is, DefaultHandler dh, String systemId);
+    public void	parse(@RUntainted InputStream is, HandlerBase hb);
+    public void	parse(@RUntainted InputStream is, HandlerBase hb, String systemId);
+    public void	parse(@RUntainted String uri, DefaultHandler dh);
+    public void	parse(@RUntainted String uri, HandlerBase hb);
+}
+
+public abstract class DocumentBuilder {
+    public Document	parse(@RUntainted File f);
+    public abstract Document parse(@RUntainted InputSource is);
+    public Document	parse(@RUntainted InputStream is);
+    public Document	parse(@RUntainted InputStream is, String systemId);
+    public Document	parse(@RUntainted String uri);
 }

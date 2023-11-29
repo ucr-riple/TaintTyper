@@ -30,6 +30,7 @@ public class HttpServletResponse {
 	public void addDateHeader(@RUntainted String name, long date);
 	public void addHeader(@RUntainted String name, @RUntainted String value);
 	public void setIntHeader(@RUntainted String name, int value);
+	public void addCookie(@RUntainted Cookie cookie);
 }
 
 package javax.mail.internet;
