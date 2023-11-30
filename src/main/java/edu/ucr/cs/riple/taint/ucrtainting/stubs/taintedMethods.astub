@@ -1,19 +1,6 @@
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 
 package javax.servlet.http;
-
-public class HttpServletRequest {
-	public @RTainted String getHeader(java.lang.String arg0);
-	public @RTainted String getMethod();
-	public @RTainted String getPathInfo();
-	public @RTainted String getPathTranslated();
-	public @RTainted String getContextPath();
-	public @RTainted String getQueryString();
-	public @RTainted String getRemoteUser();
-	public @RTainted StringBuffer getRequestURL();
-	public @RTainted String getParameter(java.lang.String name);
-}
-
 public class HttpServletResponse {
     public @RTainted String getCharacterEncoding();
     public @RTainted String getContentType();
