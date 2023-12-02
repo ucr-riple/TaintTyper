@@ -28,26 +28,27 @@ import org.checkerframework.javacutil.TreeUtils;
   "stubs/Files.astub",
   "stubs/taintedMethods.astub",
   "stubs/find-sec-bugs-sanitizers.astub",
-  "stubs/StringBuffer.astub"
+  "stubs/StringBuffer.astub",
+  "stubs/httpservletreq.astub",
 })
 @SupportedOptions({
   UCRTaintingChecker.ANNOTATED_PACKAGES,
   UCRTaintingChecker.ENABLE_LIBRARY_CHECKER,
   UCRTaintingChecker.ENABLE_VALIDATION_CHECKER,
   UCRTaintingChecker.ENABLE_SIDE_EFFECT,
+  UCRTaintingChecker.ENABLE_POLY_TAINT_INFERENCE,
+  UCRTaintingChecker.ENABLE_TYPE_ARGUMENT_INFERENCE,
   Config.SERIALIZATION_CONFIG_PATH,
   Config.SERIALIZATION_ACTIVATION_FLAG,
 })
 public class UCRTaintingChecker extends AccumulationChecker {
 
   public static int index = 0;
-
   public static final String ENABLE_VALIDATION_CHECKER = "enableValidationCheck";
-
   public static final String ENABLE_LIBRARY_CHECKER = "enableLibraryCheck";
-
+  public static final String ENABLE_POLY_TAINT_INFERENCE = "enablePolyTaintInference";
+  public static final String ENABLE_TYPE_ARGUMENT_INFERENCE = "enableTypeArgumentInference";
   public static final String ENABLE_SIDE_EFFECT = "enableSideEffect";
-
   public static final String ANNOTATED_PACKAGES = "annotatedPackages";
   /** Serialization service for the checker. */
   private SerializationService serializationService;

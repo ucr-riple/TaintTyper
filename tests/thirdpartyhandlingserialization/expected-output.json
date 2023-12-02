@@ -39,18 +39,7 @@
             "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
             "class": "foo.bar.Foo"
         },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-                "type-variable-position": [[0]],
-                "method": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
-                "kind": "PARAMETER",
-                "name": "request",
-                "index": 0,
-                "class": "foo.bar.Foo"
-            }
-        }]
+        "fixes": []
     },
     {
         "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",

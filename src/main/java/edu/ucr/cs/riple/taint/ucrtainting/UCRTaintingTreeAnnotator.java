@@ -46,25 +46,19 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   @Override
   public Void visitMethodInvocation(
       MethodInvocationTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customLibraryCheckIsEnabled()) {
-      handler.visitMethodInvocation(node, annotatedTypeMirror);
-    }
+    handler.visitMethodInvocation(node, annotatedTypeMirror);
     return super.visitMethodInvocation(node, annotatedTypeMirror);
   }
 
   @Override
   public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customLibraryCheckIsEnabled()) {
-      handler.visitVariable(node, annotatedTypeMirror);
-    }
+    handler.visitVariable(node, annotatedTypeMirror);
     return super.visitVariable(node, annotatedTypeMirror);
   }
 
   @Override
   public Void visitLiteral(LiteralTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customLibraryCheckIsEnabled()) {
-      typeFactory.makeUntainted(annotatedTypeMirror);
-    }
+    typeFactory.makeUntainted(annotatedTypeMirror);
     return super.visitLiteral(node, annotatedTypeMirror);
   }
 
@@ -79,21 +73,19 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
    */
   @Override
   public Void visitMemberSelect(MemberSelectTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customLibraryCheckIsEnabled()) {
-      Symbol symbol = (Symbol) TreeUtils.elementFromUse(node);
-      Tree selected =
-          symbolToDeclarationMap.containsKey(symbol)
-              ? symbolToDeclarationMap.get(symbol)
-              : Utility.locateDeclaration(symbol, context);
-      symbolToDeclarationMap.putIfAbsent(symbol, selected);
-      if (selected != null && !typeFactory.mayBeTainted(selected)) {
-        typeFactory.makeUntainted(annotatedTypeMirror);
-      }
-      // make .class untainted.
-      if (node.getIdentifier().toString().equals("class")
-          && annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-        typeFactory.makeUntainted(annotatedTypeMirror);
-      }
+    Symbol symbol = (Symbol) TreeUtils.elementFromUse(node);
+    Tree selected =
+        symbolToDeclarationMap.containsKey(symbol)
+            ? symbolToDeclarationMap.get(symbol)
+            : Utility.locateDeclaration(symbol, context);
+    symbolToDeclarationMap.putIfAbsent(symbol, selected);
+    if (selected != null && !typeFactory.mayBeTainted(selected)) {
+      typeFactory.makeUntainted(annotatedTypeMirror);
+    }
+    // make .class untainted.
+    if (node.getIdentifier().toString().equals("class")
+        && annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      typeFactory.makeUntainted(annotatedTypeMirror);
     }
     handler.visitMemberSelect(node, annotatedTypeMirror);
     return super.visitMemberSelect(node, annotatedTypeMirror);
@@ -109,17 +101,15 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
    */
   @Override
   public Void visitNewClass(NewClassTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    if (typeFactory.customLibraryCheckIsEnabled()) {
-      // if the code is part of provided annotated packages or is present
-      // in the stub files, then we don't need any custom handling for it.
-      if (typeFactory.isUnannotatedThirdParty(node)) {
-        if (!(typeFactory.hasTaintedArgument(node) || typeFactory.hasTaintedReceiver(node))) {
-          typeFactory.makeUntainted(annotatedTypeMirror);
-        }
-      } else {
-        if (!typeFactory.hasTaintedArgument(node)) {
-          typeFactory.makeUntainted(annotatedTypeMirror);
-        }
+    // if the code is part of provided annotated packages or is present
+    // in the stub files, then we don't need any custom handling for it.
+    if (typeFactory.isUnannotatedThirdParty(node)) {
+      if (!(typeFactory.hasTaintedArgument(node) || typeFactory.hasTaintedReceiver(node))) {
+        typeFactory.makeUntainted(annotatedTypeMirror);
+      }
+    } else {
+      if (!typeFactory.hasTaintedArgument(node)) {
+        typeFactory.makeUntainted(annotatedTypeMirror);
       }
     }
     return super.visitNewClass(node, annotatedTypeMirror);

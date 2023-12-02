@@ -53,7 +53,7 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
 
     // If any argument is tainted, make the receiver tainted.
     // Only perform if enableSideEffect flag is on along with enableLibraryCheck flag.
-    if (aTypeFactory.enableLibraryCheck && aTypeFactory.enableSideEffect) {
+    if (aTypeFactory.libraryCheckIsEnabled() && aTypeFactory.enableSideEffect) {
       if (isSideEffectCandidate(methodInvocationNode)) {
         // if the code is part of provided annotated packages or is present
         // in the stub files, then we don't need any custom handling for it.

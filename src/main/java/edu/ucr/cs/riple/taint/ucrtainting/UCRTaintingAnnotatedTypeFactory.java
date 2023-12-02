@@ -34,23 +34,30 @@ import org.checkerframework.javacutil.UserError;
 public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFactory {
 
   /**
-   * This option enables custom handling of third party code. By default, such handling is enabled.
-   */
-  public final boolean enableLibraryCheck;
-
-  /**
    * This option enables custom handling of validation code. By default, such handling is disabled.
    */
   public final boolean enableValidationCheck;
-
   /**
    * To respect existing annotations, leave them alone based on the provided annotated package names
    * through this option.
    */
   private final List<String> listOfAnnotatedPackageNames;
-
+  /**
+   * This option enables custom handling of side effects of calling methods with tainted arguments
+   * on the receiver. By default, such handling is disabled.
+   */
   public final boolean enableSideEffect;
-
+  /**
+   * This option enables custom handling of third party code. By default, such handling is enabled.
+   */
+  public final boolean enableLibraryCheck;
+  /**
+   * This option enables inference of {@link RPolyTainted} annotations. By default, such inference
+   * is disabled.
+   */
+  public boolean enablePolyTaintInference;
+  /** This option enables inference of type arguments. By default, such inference is disabled. */
+  public boolean enableTypeArgumentInference;
   /** AnnotationMirror for {@link RUntainted}. */
   public final AnnotationMirror rUntainted;
   /** AnnotationMirror for {@link RTainted}. */
@@ -112,9 +119,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   protected void addAnnotationsFromDefaultForType(
       @Nullable Element element, AnnotatedTypeMirror type) {
     super.addAnnotationsFromDefaultForType(element, type);
-    if (enableLibraryCheck) {
-      handler.addAnnotationsFromDefaultForType(element, type);
-    }
+    handler.addAnnotationsFromDefaultForType(element, type);
   }
 
   @Override
@@ -564,7 +569,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    *
    * @return True if custom check is enabled, false otherwise.
    */
-  public boolean customLibraryCheckIsEnabled() {
+  public boolean libraryCheckIsEnabled() {
     return enableLibraryCheck;
   }
 }
