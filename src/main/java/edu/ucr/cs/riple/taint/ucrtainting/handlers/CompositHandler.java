@@ -15,15 +15,15 @@ public class CompositHandler implements Handler {
   private final ImmutableSet<Handler> handlers;
 
   public CompositHandler(UCRTaintingAnnotatedTypeFactory typeFactory, Context context) {
-    this.handlers =
-        ImmutableSet.<Handler>builder()
-            .add(
-                new StaticFinalFieldHandler(typeFactory),
-                new EnumHandler(typeFactory),
-                new ThirdPartyHandler(typeFactory),
-                new CollectionHandler(typeFactory, context),
-                new AnnotationHandler(typeFactory))
-            .build();
+    ImmutableSet.Builder<Handler> handlerBuilder = new ImmutableSet.Builder<>();
+    handlerBuilder.add(new StaticFinalFieldHandler(typeFactory));
+    handlerBuilder.add(new EnumHandler(typeFactory));
+    if (typeFactory.libraryCheckIsEnabled()) {
+      handlerBuilder.add(new ThirdPartyHandler(typeFactory));
+    }
+    handlerBuilder.add(new CollectionHandler(typeFactory, context));
+    handlerBuilder.add(new AnnotationHandler(typeFactory));
+    this.handlers = handlerBuilder.build();
   }
 
   @Override

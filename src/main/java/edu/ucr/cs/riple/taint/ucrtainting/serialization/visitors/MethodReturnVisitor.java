@@ -35,6 +35,9 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     if (onMethod == null) {
       return Collections.emptySet();
     }
+    if (!typeFactory.polyTaintInferenceEnabled()) {
+      return Set.of(onMethod);
+    }
     Set<Fix> ans = new HashSet<>();
     Set<Fix> onReturns = node.accept(new ReturnStatementVisitor(pair), fixComputer);
     Deque<Fix> workList = new ArrayDeque<>(onReturns);

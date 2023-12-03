@@ -102,6 +102,9 @@ public class BasicVisitor extends SpecializedFixComputer {
     if (methodDecl.params.isEmpty()) {
       return Set.of(onMethod);
     }
+    if (!typeFactory.polyTaintInferenceEnabled()) {
+      return Set.of(onMethod);
+    }
     Set<Fix> fixesOnDecl = new HashSet<>(methodDecl.accept(returnVisitor, pair));
     Set<Fix> onActualParameters = new HashSet<>();
     fixesOnDecl.forEach(

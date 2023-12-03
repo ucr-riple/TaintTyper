@@ -22,12 +22,18 @@ import org.checkerframework.javacutil.TreeUtils;
  */
 public class ThirdPartyFixVisitor extends SpecializedFixComputer {
 
+  private final boolean activation;
+
   public ThirdPartyFixVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
+    this.activation = factory.libraryCheckIsEnabled();
   }
 
   public Set<Fix> visitMemberSelect(MemberSelectTree node, FoundRequired pair) {
+    if (!activation) {
+      return Set.of();
+    }
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
     if (receiver == null) {
       return Set.of();
@@ -44,6 +50,9 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
 
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
+    if (!activation) {
+      return Set.of();
+    }
     Element element = TreeUtils.elementFromUse(node);
     if (element == null) {
       return Set.of();

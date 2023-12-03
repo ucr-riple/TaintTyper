@@ -37,13 +37,19 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
    */
   protected List<ExpressionTree> receivers;
 
+  private boolean activation;
+
   public ReceiverTypeArgumentFixVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
+    this.activation = factory.typeArgumentInferenceEnabled();
   }
 
   @Override
   public Set<Fix> visitIdentifier(IdentifierTree node, FoundRequired pair) {
+    if (!activation) {
+      return Set.of();
+    }
     addReceiver(node);
     Fix fix = buildFixForElement(TreeUtils.elementFromTree(node), pair);
     return fix == null ? Set.of() : Set.of(fix);
@@ -51,6 +57,9 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
 
   @Override
   public Set<Fix> visitMemberSelect(MemberSelectTree node, FoundRequired pair) {
+    if (!activation) {
+      return Set.of();
+    }
     Element member = TreeUtils.elementFromUse(node);
     if (!(member instanceof Symbol)) {
       return Set.of();
@@ -77,6 +86,9 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
 
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
+    if (!activation) {
+      return Set.of();
+    }
     Element element = TreeUtils.elementFromUse(node);
     if (element == null) {
       return Set.of();
@@ -140,6 +152,9 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
    */
   @Nullable
   public Fix buildFixForElement(Element element, FoundRequired pair) {
+    if (!activation) {
+      return null;
+    }
     SymbolLocation location = buildLocationForElement(element);
     if (location == null) {
       return null;

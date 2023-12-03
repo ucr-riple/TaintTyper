@@ -56,6 +56,9 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
       AnnotatedTypeMirror.AnnotatedTypeVariable found,
       AnnotatedTypeMirror.AnnotatedTypeVariable required,
       Void unused) {
+    if (!typeFactory.typeArgumentInferenceEnabled()) {
+      return List.of();
+    }
     return supportedDefault(found, required);
   }
 
@@ -69,6 +72,9 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
     if (!typeFactory.hasUntaintedAnnotation(found)
         && typeFactory.hasUntaintedAnnotation(required)) {
       result.add(List.of(0));
+    }
+    if (!typeFactory.typeArgumentInferenceEnabled()) {
+      return result;
     }
     for (int i = 0; i < required.getTypeArguments().size(); i++) {
       AnnotatedTypeMirror typeArgumentFound = found.getTypeArguments().get(i);
@@ -102,6 +108,9 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
       AnnotatedTypeMirror.AnnotatedWildcardType found,
       AnnotatedTypeMirror.AnnotatedWildcardType required,
       Void unused) {
+    if (!typeFactory.typeArgumentInferenceEnabled()) {
+      return List.of();
+    }
     return this.visit(found.getExtendsBound(), required.getExtendsBound(), unused);
   }
 
@@ -110,6 +119,9 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
       AnnotatedTypeMirror.AnnotatedTypeVariable found,
       AnnotatedTypeMirror.AnnotatedWildcardType required,
       Void unused) {
+    if (!typeFactory.typeArgumentInferenceEnabled()) {
+      return List.of();
+    }
     return this.visit(found, required.getExtendsBound(), unused);
   }
 
@@ -118,6 +130,9 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
       AnnotatedTypeMirror.AnnotatedTypeVariable found,
       AnnotatedTypeMirror.AnnotatedDeclaredType required,
       Void unused) {
+    if (!typeFactory.typeArgumentInferenceEnabled()) {
+      return List.of();
+    }
     return supportedDefault(found, required);
   }
 
@@ -126,6 +141,9 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
       AnnotatedTypeMirror.AnnotatedDeclaredType found,
       AnnotatedTypeMirror.AnnotatedTypeVariable required,
       Void unused) {
+    if (!typeFactory.typeArgumentInferenceEnabled()) {
+      return List.of();
+    }
     return supportedDefault(found, required);
   }
 
@@ -134,6 +152,9 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
       AnnotatedTypeMirror.AnnotatedDeclaredType found,
       AnnotatedTypeMirror.AnnotatedWildcardType required,
       Void unused) {
+    if (!typeFactory.typeArgumentInferenceEnabled()) {
+      return List.of();
+    }
     return this.visit(found, required.getExtendsBound(), unused);
   }
 

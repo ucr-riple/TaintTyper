@@ -55,21 +55,25 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    * This option enables inference of {@link RPolyTainted} annotations. By default, such inference
    * is disabled.
    */
-  public boolean enablePolyTaintInference;
+  public final boolean enablePolyTaintInference;
   /** This option enables inference of type arguments. By default, such inference is disabled. */
-  public boolean enableTypeArgumentInference;
+  public final boolean enableTypeArgumentInference;
   /** AnnotationMirror for {@link RUntainted}. */
   public final AnnotationMirror rUntainted;
   /** AnnotationMirror for {@link RTainted}. */
   public final AnnotationMirror rTainted;
   /** AnnotationMirror for {@link RPolyTainted}. */
   public final AnnotationMirror rPolyTainted;
-
+  /** The handler for the checker. Used to handle the custom logic of the checker. */
   private final Handler handler;
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker, RPossiblyValidated.class, RUntainted.class, null);
-    enableLibraryCheck = checker.hasOption(UCRTaintingChecker.ENABLE_LIBRARY_CHECKER);
+    enableLibraryCheck = checker.getBooleanOption(UCRTaintingChecker.ENABLE_LIBRARY_CHECKER, true);
+    enablePolyTaintInference =
+        checker.getBooleanOption(UCRTaintingChecker.ENABLE_POLY_TAINT_INFERENCE, true);
+    enableTypeArgumentInference =
+        checker.getBooleanOption(UCRTaintingChecker.ENABLE_TYPE_ARGUMENT_INFERENCE, true);
     enableValidationCheck = checker.hasOption(UCRTaintingChecker.ENABLE_VALIDATION_CHECKER);
     enableSideEffect = checker.hasOption(UCRTaintingChecker.ENABLE_SIDE_EFFECT);
     String givenAnnotatedPackages = checker.getOption(UCRTaintingChecker.ANNOTATED_PACKAGES);
@@ -488,6 +492,12 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     return type.hasPrimaryAnnotation(rUntainted);
   }
 
+  /**
+   * Checks if the given tree has the {@link RTainted} annotation.
+   *
+   * @param type The given annotated type mirror
+   * @return True if the given annotated type mirror has the {@link RTainted} annotation, false.
+   */
   public boolean hasTaintedAnnotation(AnnotatedTypeMirror type) {
     if (type instanceof AnnotatedTypeMirror.AnnotatedExecutableType) {
       return hasTaintedAnnotation(
@@ -525,11 +535,23 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     return type.hasPrimaryAnnotation(rPolyTainted);
   }
 
+  /**
+   * Checks if the given tree has the {@link RPolyTainted} or {@link RUntainted} annotation.
+   *
+   * @param tree The given tree.
+   * @return True if the given tree has the {@link RPolyTainted} or {@link RUntainted} annotation.
+   */
   public boolean isPolyOrUntainted(Tree tree) {
     AnnotatedTypeMirror type = getAnnotatedType(tree);
     return isPolyOrUntainted(type);
   }
 
+  /**
+   * Checks if the given annotated type mirror is {@link RUntainted} or {@link RPolyTainted}.
+   *
+   * @param type The given annotated type mirror.
+   * @return True if the given annotated type mirror is {@link RUntainted} or {@link RPolyTainted}.
+   */
   public boolean isPolyOrUntainted(AnnotatedTypeMirror type) {
     return hasPolyTaintedAnnotation(type) || !mayBeTainted(type);
   }
@@ -561,9 +583,16 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     }
   }
 
+  /**
+   * Makes the given tree is {@link RUntainted} third party code.
+   *
+   * @param tree The given tree.
+   * @return True if the given tree is {@link RUntainted} third party code.
+   */
   public boolean isUnannotatedThirdParty(Tree tree) {
     return isInThirdPartyCode(tree) && !isPresentInStub(tree);
   }
+
   /**
    * Checks if custom check is enabled.
    *
@@ -571,5 +600,23 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    */
   public boolean libraryCheckIsEnabled() {
     return enableLibraryCheck;
+  }
+
+  /**
+   * Check if poly taint inference is enabled.
+   *
+   * @return True if poly taint inference is enabled, false otherwise.
+   */
+  public boolean polyTaintInferenceEnabled() {
+    return enablePolyTaintInference;
+  }
+
+  /**
+   * Check if type argument inference is enabled.
+   *
+   * @return True if type argument inference is enabled, false otherwise.
+   */
+  public boolean typeArgumentInferenceEnabled() {
+    return enableTypeArgumentInference;
   }
 }
