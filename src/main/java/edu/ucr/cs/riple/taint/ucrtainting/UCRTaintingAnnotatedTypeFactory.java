@@ -97,11 +97,15 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     print(
         "Configuration: Annotated Packages: "
             + listOfAnnotatedPackageNames
-            + ", Library Check Activation: "
+            + ", Library Check: "
             + enableLibraryCheck
-            + ", Validation Check Activation: "
+            + ", Poly: "
+            + enablePolyTaintInference
+            + ", Type Argument: "
+            + enableTypeArgumentInference
+            + ", Validation: "
             + enableValidationCheck
-            + ", Side Effect Activation: "
+            + ", Side Effect: "
             + enableSideEffect);
     this.rUntainted = AnnotationBuilder.fromClass(elements, RUntainted.class);
     this.rTainted = AnnotationBuilder.fromClass(elements, RTainted.class);
