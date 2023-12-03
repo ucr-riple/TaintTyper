@@ -97,7 +97,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     print(
         "Configuration: Annotated Packages: "
             + listOfAnnotatedPackageNames
-            + ", Library Check: "
+            + ", Library: "
             + enableLibraryCheck
             + ", Poly: "
             + enablePolyTaintInference
