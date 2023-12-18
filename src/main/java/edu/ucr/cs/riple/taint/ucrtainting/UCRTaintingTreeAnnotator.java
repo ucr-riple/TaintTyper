@@ -10,6 +10,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.lang.model.element.ElementKind;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.TreeUtils;
@@ -74,6 +75,10 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   @Override
   public Void visitMemberSelect(MemberSelectTree node, AnnotatedTypeMirror annotatedTypeMirror) {
     Symbol symbol = (Symbol) TreeUtils.elementFromUse(node);
+    if (symbol.getKind().equals(ElementKind.PACKAGE)) {
+      typeFactory.makeUntainted(annotatedTypeMirror);
+      return super.visitMemberSelect(node, annotatedTypeMirror);
+    }
     Tree selected =
         symbolToDeclarationMap.containsKey(symbol)
             ? symbolToDeclarationMap.get(symbol)
