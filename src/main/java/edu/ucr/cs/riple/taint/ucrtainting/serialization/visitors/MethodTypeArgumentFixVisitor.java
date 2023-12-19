@@ -81,7 +81,12 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
                 }
               }
             }
-            fixes.addAll(node.getArguments().get(i).accept(fixComputer, newPair));
+            Set<Fix> onArgument = node.getArguments().get(i).accept(fixComputer, newPair);
+            if (onArgument == null) {
+              // Could not find any fix for that.
+              return Set.of();
+            }
+            fixes.addAll(onArgument);
           }
         }
       }
