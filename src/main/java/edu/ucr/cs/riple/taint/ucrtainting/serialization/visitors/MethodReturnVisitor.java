@@ -60,7 +60,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
       involvedElementsInReturnValueCreation.add(involvedElement);
       pair.incrementDepth();
       Set<Fix> onAssignments = node.accept(assignmentScanner, fixComputer);
-      pair.decrementDepth();
+//      pair.decrementDepth();
       workList.addAll(onAssignments);
     }
     Set<MethodParameterLocation> polymorphicAnnotations = new HashSet<>();
