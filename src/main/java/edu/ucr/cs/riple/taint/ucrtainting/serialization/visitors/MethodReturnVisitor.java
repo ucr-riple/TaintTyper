@@ -33,6 +33,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
   public Set<Fix> visitMethod(MethodTree node, FoundRequired pair) {
     Element methodElement = TreeUtils.elementFromDeclaration(node);
     Serializer.log(pair);
+    Serializer.log(node);
     Serializer.log(methodElement);
     Fix onMethod = buildFixForElement(methodElement, pair);
     if (onMethod == null) {
