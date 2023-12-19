@@ -35,6 +35,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     Serializer.log(pair);
     Serializer.log(node);
     Serializer.log(methodElement.getEnclosingElement() + " " + methodElement);
+    Serializer.log("----------------------------------");
     Fix onMethod = buildFixForElement(methodElement, pair);
     if (onMethod == null) {
       return Collections.emptySet();
