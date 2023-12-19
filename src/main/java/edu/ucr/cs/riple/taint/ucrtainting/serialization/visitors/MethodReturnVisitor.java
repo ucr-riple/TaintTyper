@@ -20,6 +20,8 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Fix visitor for method return statements. */
@@ -32,10 +34,6 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitMethod(MethodTree node, FoundRequired pair) {
     Element methodElement = TreeUtils.elementFromDeclaration(node);
-    Serializer.log(pair);
-    Serializer.log(node);
-    Serializer.log(methodElement.getEnclosingElement() + " " + methodElement);
-    Serializer.log("----------------------------------");
     Fix onMethod = buildFixForElement(methodElement, pair);
     if (onMethod == null) {
       return Collections.emptySet();
@@ -61,7 +59,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
       involvedElementsInReturnValueCreation.add(involvedElement);
       pair.incrementDepth();
       Set<Fix> onAssignments = node.accept(assignmentScanner, fixComputer);
-//      pair.decrementDepth();
+      pair.decrementDepth();
       workList.addAll(onAssignments);
     }
     Set<MethodParameterLocation> polymorphicAnnotations = new HashSet<>();
@@ -152,7 +150,8 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
 
     @Override
     public Set<Fix> visitReturn(ReturnTree node, FixComputer visitor) {
-      return node.getExpression().accept(visitor, pair);
+      Set<Fix> ans = node.getExpression().accept(visitor, pair);
+      return ans;
     }
   }
 }
