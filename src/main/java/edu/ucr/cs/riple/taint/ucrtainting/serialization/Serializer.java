@@ -39,10 +39,6 @@ public class Serializer {
     initializeOutputFiles();
   }
 
-  public static void log(Object message) {
-    System.err.println(message);
-  }
-
   /**
    * Serializes the given error to the output file.
    *
@@ -179,5 +175,16 @@ public class Serializer {
 
   public boolean isActive() {
     return config.serializationEnabled();
+  }
+
+  public static void log(Object message) {
+    Path path = Paths.get("/home/nima/Developer/taint-benchmarks/commons-configuration/error.txt");
+    // append to file
+    try (OutputStream os = new FileOutputStream(path.toFile(), true)) {
+      os.write((message + "\n").getBytes(Charset.defaultCharset()), 0, (message + "\n").length());
+      os.flush();
+    } catch (IOException e) {
+      throw new RuntimeException("Error happened for writing at file: " + path, e);
+    }
   }
 }

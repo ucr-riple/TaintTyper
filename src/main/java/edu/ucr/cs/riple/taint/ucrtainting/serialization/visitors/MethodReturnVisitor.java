@@ -10,6 +10,7 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
@@ -31,6 +32,8 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitMethod(MethodTree node, FoundRequired pair) {
     Element methodElement = TreeUtils.elementFromDeclaration(node);
+    Serializer.log(pair);
+    Serializer.log(methodElement);
     Fix onMethod = buildFixForElement(methodElement, pair);
     if (onMethod == null) {
       return Collections.emptySet();
