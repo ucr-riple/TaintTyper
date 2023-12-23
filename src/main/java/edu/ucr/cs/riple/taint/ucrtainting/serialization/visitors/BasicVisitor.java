@@ -78,8 +78,7 @@ public class BasicVisitor extends SpecializedFixComputer {
 
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
-    Element element = TreeUtils.elementFromUse(node);
-    Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
+    Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
     Fix onMethod = buildFixForElement(calledMethod, pair);
     if (onMethod == null || !requireFix(pair)) {
       return Set.of();
@@ -105,12 +104,18 @@ public class BasicVisitor extends SpecializedFixComputer {
     if (!typeFactory.polyTaintInferenceEnabled()) {
       return Set.of(onMethod);
     }
+    if (returnVisitor.getState(calledMethod).equals(MethodReturnVisitor.STATE.VISITING)) {
+      // create for arguments
+      returnVisitor.addInvocation(node, pair);
+      return Set.of();
+    }
     Set<Fix> fixesOnDecl = new HashSet<>(methodDecl.accept(returnVisitor, pair));
-    Set<Fix> onActualParameters = new HashSet<>();
+    Set<Fix> onPassedArguments = new HashSet<>();
     fixesOnDecl.forEach(
         fix -> {
           if (fix.isPoly()) {
             PolyMethodLocation polyMethodLocation = (PolyMethodLocation) fix.location;
+            // make the passed arguments untainted.
             polyMethodLocation.arguments.forEach(
                 methodParameterLocation -> {
                   int index = methodParameterLocation.index;
@@ -122,7 +127,7 @@ public class BasicVisitor extends SpecializedFixComputer {
                     typeFactory.makeUntainted(formalParameterAnnotatedTypeMirror);
                     AnnotatedTypeMirror foundParameterType =
                         typeFactory.getAnnotatedType(node.getArguments().get(index));
-                    onActualParameters.addAll(
+                    onPassedArguments.addAll(
                         node.getArguments()
                             .get(index)
                             .accept(
@@ -135,7 +140,7 @@ public class BasicVisitor extends SpecializedFixComputer {
                 });
           }
         });
-    fixesOnDecl.addAll(onActualParameters);
+    fixesOnDecl.addAll(onPassedArguments);
     return fixesOnDecl;
   }
 

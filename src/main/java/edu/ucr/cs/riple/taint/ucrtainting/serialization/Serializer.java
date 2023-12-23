@@ -178,13 +178,15 @@ public class Serializer {
   }
 
   public static void log(Object message) {
-//    Path path = Paths.get("/home/nima/Developer/taint-benchmarks/commons-configuration/error.txt");
-//    // append to file
-//    try (OutputStream os = new FileOutputStream(path.toFile(), true)) {
-//      os.write((message + "\n").getBytes(Charset.defaultCharset()), 0, (message + "\n").length());
-//      os.flush();
-//    } catch (IOException e) {
-//      throw new RuntimeException("Error happened for writing at file: " + path, e);
-//    }
+    //    Path path =
+    // Paths.get("/home/nima/Developer/taint-benchmarks/commons-configuration/error.txt");
+    //    // append to file
+    //    try (OutputStream os = new FileOutputStream(path.toFile(), true)) {
+    //      os.write((message + "\n").getBytes(Charset.defaultCharset()), 0, (message +
+    // "\n").length());
+    //      os.flush();
+    //    } catch (IOException e) {
+    //      throw new RuntimeException("Error happened for writing at file: " + path, e);
+    //    }
   }
 }
