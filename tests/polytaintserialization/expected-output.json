@@ -1,289 +1,617 @@
-{"errors": [
+{
+  "errors": [
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
-        "messageKey": "assignment",
-        "offset": 1565,
-        "index": 1,
-        "region": {
-            "symbol": "test(java.lang.String)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
+      "messageKey": "assignment",
+      "offset": 1565,
+      "index": 1,
+      "region": {
+        "symbol": "test(java.lang.String)",
+        "class": "foo.bar.DepthTest"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "foo1(java.lang.String)",
+            "kind": "METHOD",
             "class": "foo.bar.DepthTest"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
-                "type-variable-position": [[0]],
-                "method": "foo1(java.lang.String)",
-                "kind": "METHOD",
-                "class": "foo.bar.DepthTest"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
-        "messageKey": "assignment",
-        "offset": 1642,
-        "index": 2,
-        "region": {
-            "symbol": "test(java.lang.String)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
+      "messageKey": "assignment",
+      "offset": 1642,
+      "index": 2,
+      "region": {
+        "symbol": "test(java.lang.String)",
+        "class": "foo.bar.DepthTest"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar3(java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
             "class": "foo.bar.DepthTest"
+          }
         },
-        "fixes": [
-            {
-                "annotation": "poly",
-                "location": {
-                    "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
-                    "type-variable-position": [[0]],
-                    "method": "bar3(java.lang.String)",
-                    "kind": "POLY_METHOD",
-                    "arguments": [0],
-                    "class": "foo.bar.DepthTest"
-                }
-            },
-            {
-                "annotation": "poly",
-                "location": {
-                    "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
-                    "type-variable-position": [[0]],
-                    "method": "bar2(java.lang.String)",
-                    "kind": "POLY_METHOD",
-                    "arguments": [0],
-                    "class": "foo.bar.DepthTest"
-                }
-            },
-            {
-                "annotation": "poly",
-                "location": {
-                    "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
-                    "type-variable-position": [[0]],
-                    "method": "bar4(java.lang.String)",
-                    "kind": "POLY_METHOD",
-                    "arguments": [0],
-                    "class": "foo.bar.DepthTest"
-                }
-            },
-            {
-                "annotation": "poly",
-                "location": {
-                    "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
-                    "type-variable-position": [[0]],
-                    "method": "bar1(java.lang.String)",
-                    "kind": "POLY_METHOD",
-                    "arguments": [0],
-                    "class": "foo.bar.DepthTest"
-                }
-            },
-            {
-                "annotation": "untainted",
-                "location": {
-                    "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
-                    "type-variable-position": [[0]],
-                    "method": "test(java.lang.String)",
-                    "kind": "PARAMETER",
-                    "name": "param",
-                    "index": 0,
-                    "class": "foo.bar.DepthTest"
-                }
-            }
-        ]
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar2(java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
+            "class": "foo.bar.DepthTest"
+          }
+        },
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar4(java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
+            "class": "foo.bar.DepthTest"
+          }
+        },
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar1(java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
+            "class": "foo.bar.DepthTest"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/DepthTest.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "test(java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "param",
+            "index": 0,
+            "class": "foo.bar.DepthTest"
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-        "messageKey": "assignment",
-        "offset": 501,
-        "index": 3,
-        "region": {
-            "symbol": "simple(java.lang.String)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "messageKey": "assignment",
+      "offset": 501,
+      "index": 3,
+      "region": {
+        "symbol": "simple(java.lang.String)",
+        "class": "foo.bar.Test"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "simple(java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "param",
+            "index": 0,
             "class": "foo.bar.Test"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-                "type-variable-position": [[0]],
-                "method": "simple(java.lang.String)",
-                "kind": "PARAMETER",
-                "name": "param",
-                "index": 0,
-                "class": "foo.bar.Test"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-        "messageKey": "assignment",
-        "offset": 619,
-        "index": 4,
-        "region": {
-            "symbol": "simple(java.lang.String)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "messageKey": "assignment",
+      "offset": 619,
+      "index": 4,
+      "region": {
+        "symbol": "simple(java.lang.String)",
+        "class": "foo.bar.Test"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "varName": "list",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "simple(java.lang.String)",
+            "kind": "LOCAL_VARIABLE",
             "class": "foo.bar.Test"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-                "varName": "list",
-                "type-variable-position": [[
-                    1,
-                    0
-                ]],
-                "method": "simple(java.lang.String)",
-                "kind": "LOCAL_VARIABLE",
-                "class": "foo.bar.Test"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-        "messageKey": "assignment",
-        "offset": 1237,
-        "index": 5,
-        "region": {
-            "symbol": "test()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "messageKey": "assignment",
+      "offset": 1237,
+      "index": 5,
+      "region": {
+        "symbol": "test()",
+        "class": "foo.bar.Test"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "inferPoly(java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
             "class": "foo.bar.Test"
-        },
-        "fixes": [{
-            "annotation": "poly",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-                "type-variable-position": [[0]],
-                "method": "inferPoly(java.lang.String)",
-                "kind": "POLY_METHOD",
-                "arguments": [0],
-                "class": "foo.bar.Test"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-        "messageKey": "assignment",
-        "offset": 1360,
-        "index": 6,
-        "region": {
-            "symbol": "inferUntainted(java.lang.String)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "messageKey": "assignment",
+      "offset": 1360,
+      "index": 6,
+      "region": {
+        "symbol": "inferUntainted(java.lang.String)",
+        "class": "foo.bar.Test"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "inferUntainted(java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "param",
+            "index": 0,
             "class": "foo.bar.Test"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-                "type-variable-position": [[0]],
-                "method": "inferUntainted(java.lang.String)",
-                "kind": "PARAMETER",
-                "name": "param",
-                "index": 0,
-                "class": "foo.bar.Test"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-        "messageKey": "assignment",
-        "offset": 1717,
-        "index": 7,
-        "region": {
-            "symbol": "inferPolyWithTypeParamAnnotationTest(java.util.List,java.util.List)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "messageKey": "assignment",
+      "offset": 1717,
+      "index": 7,
+      "region": {
+        "symbol": "inferPolyWithTypeParamAnnotationTest(java.util.List,java.util.List)",
+        "class": "foo.bar.Test"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "inferPolyWithTypeParamAnnotation(java.util.List)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
             "class": "foo.bar.Test"
+          }
         },
-        "fixes": [
-            {
-                "annotation": "poly",
-                "location": {
-                    "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-                    "type-variable-position": [[0]],
-                    "method": "inferPolyWithTypeParamAnnotation(java.util.List)",
-                    "kind": "POLY_METHOD",
-                    "arguments": [0],
-                    "class": "foo.bar.Test"
-                }
-            },
-            {
-                "annotation": "untainted",
-                "location": {
-                    "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-                    "type-variable-position": [[0]],
-                    "method": "inferPolyWithTypeParamAnnotationTest(java.util.List,java.util.List)",
-                    "kind": "PARAMETER",
-                    "name": "p2",
-                    "index": 1,
-                    "class": "foo.bar.Test"
-                }
-            }
-        ]
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "inferPolyWithTypeParamAnnotationTest(java.util.List,java.util.List)",
+            "kind": "PARAMETER",
+            "name": "p2",
+            "index": 1,
+            "class": "foo.bar.Test"
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-        "messageKey": "assignment",
-        "offset": 2784,
-        "index": 8,
-        "region": {
-            "symbol": "inferPolyForRecursiveLocalVariablesAssignment()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "messageKey": "assignment",
+      "offset": 2784,
+      "index": 8,
+      "region": {
+        "symbol": "inferPolyForRecursiveLocalVariablesAssignment()",
+        "class": "foo.bar.Test"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getFolderPath(java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
             "class": "foo.bar.Test"
+          }
         },
-        "fixes": [
-            {
-                "annotation": "poly",
-                "location": {
-                    "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-                    "type-variable-position": [[0]],
-                    "method": "getFolderPath(java.lang.String)",
-                    "kind": "POLY_METHOD",
-                    "arguments": [0],
-                    "class": "foo.bar.Test"
-                }
-            },
-            {
-                "annotation": "poly",
-                "location": {
-                    "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-                    "type-variable-position": [[0]],
-                    "method": "getPathPart(java.lang.String,int)",
-                    "kind": "POLY_METHOD",
-                    "arguments": [0],
-                    "class": "foo.bar.Test"
-                }
-            }
-        ]
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getPathPart(java.lang.String,int)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
+            "class": "foo.bar.Test"
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-        "messageKey": "assignment",
-        "offset": 2871,
-        "index": 9,
-        "region": {
-            "symbol": "inferPolyForRecursiveLocalVariablesAssignment()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "messageKey": "assignment",
+      "offset": 2871,
+      "index": 9,
+      "region": {
+        "symbol": "inferPolyForRecursiveLocalVariablesAssignment()",
+        "class": "foo.bar.Test"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "simpleLoopLocalVariableAssigment(java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
             "class": "foo.bar.Test"
-        },
-        "fixes": [{
-            "annotation": "poly",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-                "type-variable-position": [[0]],
-                "method": "simpleLoopLocalVariableAssigment(java.lang.String)",
-                "kind": "POLY_METHOD",
-                "arguments": [0],
-                "class": "foo.bar.Test"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-        "messageKey": "assignment",
-        "offset": 3522,
-        "index": 10,
-        "region": {
-            "symbol": "inferUntaintedForNonPolyMethod()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "messageKey": "assignment",
+      "offset": 3522,
+      "index": 10,
+      "region": {
+        "symbol": "inferUntaintedForNonPolyMethod()",
+        "class": "foo.bar.Test"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "nonPolyMethod(java.lang.Object,java.lang.Object)",
+            "kind": "METHOD",
             "class": "foo.bar.Test"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+      "messageKey": "assignment",
+      "offset": 303,
+      "index": 3,
+      "region": {
+        "symbol": "test()",
+        "class": "foo.bar.Recursive"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "interpolate(java.lang.Object)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
+            "class": "foo.bar.Recursive"
+          }
         },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
-                "type-variable-position": [[0]],
-                "method": "nonPolyMethod(java.lang.Object,java.lang.Object)",
-                "kind": "METHOD",
-                "class": "foo.bar.Test"
-            }
-        }]
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "extractVariableName(java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
+            "class": "foo.bar.Recursive$ConfigurationInterpolator"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "lookup(java.lang.String)",
+            "kind": "METHOD",
+            "class": "foo.bar.Recursive$Lookup"
+          }
+        },
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "interpolate(java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
+            "class": "foo.bar.Recursive"
+          }
+        },
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "interpolate(java.lang.Object)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
+            "class": "foo.bar.Recursive$ConfigurationInterpolator"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "substitutor",
+            "kind": "FIELD",
+            "class": "foo.bar.Recursive$ConfigurationInterpolator"
+          }
+        },
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "resolveSingleVariable(java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
+            "class": "foo.bar.Recursive$ConfigurationInterpolator"
+          }
+        },
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "resolve(java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
+            "class": "foo.bar.Recursive$ConfigurationInterpolator"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+      "messageKey": "assignment",
+      "offset": 2713,
+      "index": 4,
+      "region": {
+        "symbol": "testRecurs()",
+        "class": "foo.bar.Recursive"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "recurs(java.lang.Object)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0
+            ],
+            "class": "foo.bar.Recursive"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+      "messageKey": "assignment",
+      "offset": 3306,
+      "index": 5,
+      "region": {
+        "symbol": "testMutalRecursion()",
+        "class": "foo.bar.Recursive"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "pol1(java.lang.String,java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              0,
+              1
+            ],
+            "class": "foo.bar.Recursive"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "lookup(java.lang.String)",
+            "kind": "METHOD",
+            "class": "foo.bar.Recursive$Lookup"
+          }
+        },
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "pol2(java.lang.String,java.lang.String)",
+            "kind": "POLY_METHOD",
+            "arguments": [
+              1
+            ],
+            "class": "foo.bar.Recursive"
+          }
+        }
+      ]
     }
-]}
+  ]
+}
