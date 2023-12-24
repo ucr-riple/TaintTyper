@@ -25,7 +25,7 @@ public class Recursive {
     return ci != null ? ci.interpolate(value) : value;
   }
 
-  class ConfigurationInterpolator {
+  static class ConfigurationInterpolator {
 
     private final StringSubstitutor substitutor = null;
     private static final char PREFIX_SEPARATOR = ':';
