@@ -175,6 +175,35 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     }
   }
 
+  public void makeUntainted(AnnotatedTypeMirror type, List<List<Integer>> positions) {
+    if (!(type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
+      return;
+    }
+    if (positions.isEmpty()) {
+      return;
+    }
+    positions.forEach(integers -> makeUntaintedForPosition(type, integers, 0));
+  }
+
+  private void makeUntaintedForPosition(
+      AnnotatedTypeMirror type, List<Integer> position, int index) {
+    if (!(type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
+      return;
+    }
+    if (index == position.size()) {
+      return;
+    }
+    AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
+        (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
+    if (position.get(index) == 0) {
+      makeUntainted(type);
+      return;
+    }
+    int typeArgPosition = position.get(index) - 1;
+    makeUntaintedForPosition(
+        declaredType.getTypeArguments().get(typeArgPosition), position, index + 1);
+  }
+
   private class UCRTaintingQualifierHierarchy extends AccumulationQualifierHierarchy {
 
     /**

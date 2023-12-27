@@ -8,7 +8,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
 import java.util.HashSet;
 import java.util.Set;
 import javax.lang.model.element.Element;
@@ -104,44 +103,16 @@ public class BasicVisitor extends SpecializedFixComputer {
     if (!typeFactory.polyTaintInferenceEnabled()) {
       return Set.of(onMethod);
     }
+    returnVisitor.addInvocation(node, pair);
     if (returnVisitor.getState(calledMethod).equals(MethodReturnVisitor.STATE.VISITING)) {
       // create for arguments
-      returnVisitor.addInvocation(node, pair);
       return Set.of();
     }
     Set<Fix> fixesOnDecl = new HashSet<>(methodDecl.accept(returnVisitor, pair));
-    Set<Fix> onPassedArguments = new HashSet<>();
-    fixesOnDecl.forEach(
-        fix -> {
-          if (fix.isPoly()) {
-            PolyMethodLocation polyMethodLocation = (PolyMethodLocation) fix.location;
-            // make the passed arguments untainted.
-            polyMethodLocation.arguments.forEach(
-                methodParameterLocation -> {
-                  int index = methodParameterLocation.index;
-                  if (methodParameterLocation.enclosingMethod.equals(calledMethod)) {
-                    AnnotatedTypeMirror formalParameterAnnotatedTypeMirror =
-                        typeFactory
-                            .getAnnotatedType(methodDecl.getParameters().get(index))
-                            .deepCopy(true);
-                    typeFactory.makeUntainted(formalParameterAnnotatedTypeMirror);
-                    AnnotatedTypeMirror foundParameterType =
-                        typeFactory.getAnnotatedType(node.getArguments().get(index));
-                    onPassedArguments.addAll(
-                        node.getArguments()
-                            .get(index)
-                            .accept(
-                                fixComputer,
-                                FoundRequired.of(
-                                    foundParameterType,
-                                    formalParameterAnnotatedTypeMirror,
-                                    pair.depth)));
-                  }
-                });
-          }
-        });
-    fixesOnDecl.addAll(onPassedArguments);
-    return fixesOnDecl;
+    Set<Fix> tmp =
+        returnVisitor.computeFixesForArgumentsOnInferredPolyTaintedMethods(
+            calledMethod, fixesOnDecl, pair);
+    return tmp;
   }
 
   @Override

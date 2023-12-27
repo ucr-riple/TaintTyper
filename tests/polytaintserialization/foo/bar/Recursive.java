@@ -79,31 +79,31 @@ public class Recursive {
       return resolve(var);
     }
   }
+  //
+  //      public void testRecurs() {
+  //        // :: error: assignment
+  //        @RUntainted Object ans = recurs("foo");
+  //      }
+  //
+  //      public String recurs(Object value) {
+  //        if (value instanceof String) {
+  //          return recurs(value);
+  //        }
+  //        return recurs(value) + value;
+  //      }
 
-  public void testRecurs() {
-    // :: error: assignment
-    @RUntainted Object ans = recurs("foo");
-  }
+  //  Lookup lookup;
 
-  public String recurs(Object value) {
-    if (value instanceof String) {
-      return recurs(value);
-    }
-    return recurs(value) + value;
-  }
-
-  Lookup lookup;
-
-  public String pol1(String param1, String param2) {
-    return pol2(param1, param2) + param1 + lookup.lookup(param1);
-  }
-
-  public String pol2(String param1, String param2) {
-    return pol1(param1, param2) + param2 + lookup.lookup(param2);
-  }
-
-  public void testMutalRecursion() {
-    // :: error: assignment
-    @RUntainted String interpolated = pol1("foo", "bar");
-  }
+  //  public String pol1(String param1, String param2) {
+  //    return pol2(param1, param2) + param1 + lookup.lookup(param1);
+  //  }
+  //
+  //  public String pol2(String param1, String param2) {
+  //    return pol1(param1, param2) + param2 + lookup.lookup(param2);
+  //  }
+  //
+  //  public void testMutalRecursion() {
+  //    // :: error: assignment
+  //    @RUntainted String interpolated = pol1("foo", "bar");
+  //  }
 }

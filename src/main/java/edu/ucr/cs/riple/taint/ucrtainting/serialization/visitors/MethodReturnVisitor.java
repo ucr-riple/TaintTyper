@@ -1,5 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
+import static java.util.stream.Collectors.toSet;
+
 import com.sun.source.tree.AssignmentTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
@@ -7,11 +9,12 @@ import com.sun.source.tree.ReturnTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreeScanner;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
-import com.sun.tools.javac.util.Pair;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
@@ -21,8 +24,10 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javax.lang.model.element.Element;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** Fix visitor for method return statements. */
@@ -30,7 +35,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
 
   private final Map<Symbol.MethodSymbol, Set<Fix>> store;
   private final Map<Symbol.MethodSymbol, STATE> states;
-  private final Set<Pair<MethodInvocationTree, FoundRequired>> invocations;
+  private final Set<Invocation> invocations;
 
   public enum STATE {
     VISITING,
@@ -59,10 +64,10 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     this.states.put(symbol, STATE.VISITING);
     Fix onMethod = buildFixForElement(symbol, pair);
     if (onMethod == null) {
-      return prepareResult(symbol, Collections.emptySet());
+      return mergeResults(symbol, Collections.emptySet());
     }
     if (!typeFactory.polyTaintInferenceEnabled()) {
-      return prepareResult(symbol, Set.of(onMethod));
+      return mergeResults(symbol, Set.of(onMethod));
     }
     Set<Fix> ans = new HashSet<>();
     Set<Fix> onReturns = node.accept(new ReturnStatementVisitor(pair, symbol), fixComputer);
@@ -104,7 +109,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
           }
         });
     if (formalParametersUsedInReturnValueComputation.isEmpty()) {
-      return prepareResult(symbol, Set.of(onMethod));
+      return mergeResults(symbol, Set.of(onMethod));
     }
     Fix polymorphicFixOnMethod =
         new Fix(
@@ -113,7 +118,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
                     formalParametersUsedInReturnValueComputation))
             .toPoly();
     others.add(polymorphicFixOnMethod);
-    return prepareResult(symbol, others);
+    return mergeResults(symbol, others);
   }
 
   public STATE getState(Symbol.MethodSymbol symbol) {
@@ -121,12 +126,146 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
   }
 
   public void addInvocation(MethodInvocationTree node, FoundRequired pair) {
-    this.invocations.add(Pair.of(node, pair));
+    this.invocations.add(new Invocation(node, pair));
   }
 
-  private Set<Fix> prepareResult(Symbol.MethodSymbol symbol, Set<Fix> ans) {
-    this.store.put(symbol, ans);
+  private Set<Fix> mergeResults(Symbol.MethodSymbol symbol, Set<Fix> fixes) {
+    // remove on local variables
+    fixes =
+        fixes.stream().filter(fix -> !fix.location.getKind().isLocalVariable()).collect(toSet());
+    Set<PolyMethodLocation> inferredPolyMethods =
+        fixes.stream()
+            .filter(Fix::isPoly)
+            .map(fix -> (PolyMethodLocation) fix.location)
+            .collect(toSet());
+    Set<Fix> toRemove = new HashSet<>();
+    fixes.stream()
+        .filter(fix -> fix.location.getKind().isParameter())
+        .forEach(
+            fix -> {
+              MethodParameterLocation methodParameterLocation =
+                  (MethodParameterLocation) fix.location;
+              // check if the parameter is an inferred poly argument of a poly method
+              for (PolyMethodLocation inferredPolyMethod : inferredPolyMethods) {
+                if (inferredPolyMethod.target.equals(methodParameterLocation.enclosingMethod)) {
+                  // we have a poly method that matches the enclosing method of this parameter
+                  if (inferredPolyMethod.arguments.stream()
+                      .noneMatch(
+                          m ->
+                              m.index == methodParameterLocation.index
+                                  && m.typeVariablePositions.equals(
+                                      methodParameterLocation.typeVariablePositions))) {
+                    // is an untainted for non poly argument. should be considered a poly
+                    // argument.
+                    inferredPolyMethod.arguments.add(methodParameterLocation);
+                    return;
+                  }
+                } else {
+                  // is an untainted argument for a poly argument. Should be discarded.
+                  toRemove.add(fix);
+                  return;
+                }
+              }
+            });
+    fixes.removeAll(toRemove);
+    this.store.put(symbol, fixes);
     this.states.put(symbol, STATE.VISITED);
+    return fixes;
+  }
+
+  public Set<Fix> computeFixesForArgumentsOnInferredPolyTaintedMethods(
+      Symbol.MethodSymbol calledMethod, Set<Fix> fixes, FoundRequired pair) {
+    Set<Fix> onPassedArguments = new HashSet<>();
+    Set<PolyMethodLocation> inferredPolyMethods =
+        fixes.stream()
+            .filter(Fix::isPoly)
+            .map(fix -> (PolyMethodLocation) fix.location)
+            .collect(toSet());
+    fixes.forEach(
+        fix -> {
+          if (fix.isPoly()) {
+            onPassedArguments.addAll(
+                computefixesoninvocationswithinferredpolymorpichannotations(
+                    (PolyMethodLocation) fix.location, pair, inferredPolyMethods));
+          }
+        });
+    fixes.addAll(onPassedArguments);
+    return mergeResults(calledMethod, fixes);
+  }
+
+  private Set<Fix> computefixesoninvocationswithinferredpolymorpichannotations(
+      PolyMethodLocation polyMethodLocation,
+      FoundRequired pair,
+      Set<PolyMethodLocation> inferredPolyMethods) {
+    Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) polyMethodLocation.target;
+    if (!states.getOrDefault(methodSymbol, STATE.NOT_VISITED).equals(STATE.VISITED)) {
+      return Set.of();
+    }
+    Set<Invocation> processedInvocations = new HashSet<>();
+    Set<Fix> ans = new HashSet<>();
+    Set<Invocation> invocations = new HashSet<>(this.invocations);
+    invocations.forEach(
+        invocation -> {
+          if (invocation.calledMethod.equals(methodSymbol)) {
+            JCTree.JCMethodDecl decl =
+                (JCTree.JCMethodDecl) Utility.locateDeclaration(methodSymbol, context);
+            if (decl == null) {
+              return;
+            }
+            polyMethodLocation.arguments.forEach(
+                parameter -> {
+                  int index = parameter.index;
+                  AnnotatedTypeMirror formalParameterAnnotatedTypeMirror =
+                      typeFactory.getAnnotatedType(decl.getParameters().get(index)).deepCopy(true);
+                  typeFactory.makeUntainted(
+                      formalParameterAnnotatedTypeMirror, parameter.typeVariablePositions);
+                  AnnotatedTypeMirror foundParameterType =
+                      typeFactory.getAnnotatedType(invocation.node.getArguments().get(index));
+                  Set<Fix> passedArgumentOnInvocation =
+                      invocation
+                          .node
+                          .getArguments()
+                          .get(index)
+                          .accept(
+                              fixComputer,
+                              FoundRequired.of(
+                                  foundParameterType,
+                                  formalParameterAnnotatedTypeMirror,
+                                  pair.depth));
+                  // filter ones on arguments of a poly method to avoid making an argument untainted
+                  // for poly method e.g. @Poly foo(@Untainted @Poly bar);
+                  passedArgumentOnInvocation =
+                      passedArgumentOnInvocation.stream()
+                          .filter(
+                              fix -> {
+                                if (!fix.location.getKind().isParameter()) {
+                                  return true;
+                                }
+                                MethodParameterLocation methodParameterLocation =
+                                    (MethodParameterLocation) fix.location;
+                                // check if the parameter is an inferred poly argument on of the
+                                // inferred poly methods
+                                for (PolyMethodLocation inferredPolyMethod : inferredPolyMethods) {
+                                  if (inferredPolyMethod.target.equals(
+                                      methodParameterLocation.enclosingMethod)) {
+                                    return inferredPolyMethod.arguments.stream()
+                                        .noneMatch(
+                                            m ->
+                                                m.index == methodParameterLocation.index
+                                                    && m.typeVariablePositions.equals(
+                                                        methodParameterLocation
+                                                            .typeVariablePositions));
+                                  }
+                                }
+                                return true;
+                              })
+                          .collect(toSet());
+                  ans.addAll(passedArgumentOnInvocation);
+                });
+            processedInvocations.add(invocation);
+          }
+        });
+    this.invocations.removeAll(processedInvocations);
     return ans;
   }
 
@@ -197,6 +336,43 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     @Override
     public Set<Fix> visitReturn(ReturnTree node, FixComputer visitor) {
       return node.getExpression().accept(visitor, pair);
+    }
+  }
+
+  static class Invocation {
+
+    public final MethodInvocationTree node;
+    public final FoundRequired pair;
+    public final Symbol.MethodSymbol calledMethod;
+
+    public Invocation(MethodInvocationTree node, FoundRequired pair) {
+      this.node = node;
+      this.pair = pair;
+      this.calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof Invocation)) {
+        return false;
+      }
+      Invocation that = (Invocation) o;
+      return Objects.equals(node, that.node)
+          && Objects.equals(pair, that.pair)
+          && Objects.equals(calledMethod, that.calledMethod);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(node, pair, calledMethod);
+    }
+
+    @Override
+    public String toString() {
+      return node.toString();
     }
   }
 }
