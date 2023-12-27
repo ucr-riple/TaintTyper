@@ -71,6 +71,7 @@ public class SerializationService {
     if (!serializer.isActive()) {
       return;
     }
+    fixComputer.reset();
     Set<Fix> resolvingFixes;
     try {
       resolvingFixes =

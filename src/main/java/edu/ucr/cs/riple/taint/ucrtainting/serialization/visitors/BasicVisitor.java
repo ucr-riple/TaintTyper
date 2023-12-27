@@ -212,4 +212,8 @@ public class BasicVisitor extends SpecializedFixComputer {
       return true;
     }
   }
+
+  public void reset() {
+    returnVisitor.reset();
+  }
 }

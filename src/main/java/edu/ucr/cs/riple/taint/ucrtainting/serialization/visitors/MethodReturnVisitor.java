@@ -33,13 +33,22 @@ import org.checkerframework.javacutil.TreeUtils;
 /** Fix visitor for method return statements. */
 public class MethodReturnVisitor extends SpecializedFixComputer {
 
+  /**
+   * A map from method to the required fixes to make the method return type match the required type.
+   */
   private final Map<Symbol.MethodSymbol, Set<Fix>> store;
+  /** A map from method to the state of the method. */
   private final Map<Symbol.MethodSymbol, STATE> states;
+  /** A set of invocations have been visited in the bodies invoked methods */
   private final Set<Invocation> invocations;
 
+  /** The state of the method with respect to the fix computation. */
   public enum STATE {
+    /** The method is currently being visited. */
     VISITING,
+    /** The method has been visited and the required fixes have been computed. */
     VISITED,
+    /** The method has not been visited. */
     NOT_VISITED
   }
 
@@ -54,7 +63,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitMethod(MethodTree node, FoundRequired pair) {
     Symbol.MethodSymbol symbol = (Symbol.MethodSymbol) TreeUtils.elementFromDeclaration(node);
-    STATE state = states.getOrDefault(symbol, STATE.NOT_VISITED);
+    STATE state = getState(symbol);
     if (state.equals(STATE.VISITING)) {
       return Set.of();
     }
@@ -124,53 +133,34 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     return mergeResults(symbol, nonParameterFixes);
   }
 
+  /**
+   * Get the state of the method.
+   *
+   * @param symbol The method symbol.
+   * @return The state of the method.
+   */
   public STATE getState(Symbol.MethodSymbol symbol) {
     return this.states.getOrDefault(symbol, STATE.NOT_VISITED);
   }
 
+  /**
+   * Adds an invocation that has been visited throughout the fix computation.
+   *
+   * @param node The invocation node.
+   * @param pair The required type.
+   */
   public void addInvocation(MethodInvocationTree node, FoundRequired pair) {
     this.invocations.add(new Invocation(node, pair));
   }
 
-  private Set<Fix> mergeResults(Symbol.MethodSymbol symbol, Set<Fix> fixes) {
-    fixes = new HashSet<>(fixes);
-    Set<PolyMethodLocation> inferredPolyMethods =
-        fixes.stream()
-            .filter(Fix::isPoly)
-            .map(fix -> (PolyMethodLocation) fix.location)
-            .collect(toSet());
-    Set<Fix> toRemove = new HashSet<>();
-    fixes.stream()
-        .filter(fix -> fix.location.getKind().isParameter())
-        .forEach(
-            fix -> {
-              MethodParameterLocation methodParameterLocation =
-                  (MethodParameterLocation) fix.location;
-              // check if the parameter is an inferred poly argument of a poly method
-              for (PolyMethodLocation inferredPolyMethod : inferredPolyMethods) {
-                if (inferredPolyMethod.target.equals(methodParameterLocation.enclosingMethod)) {
-                  // we have a poly method that matches the enclosing method of this parameter
-                  if (inferredPolyMethod.arguments.stream()
-                      .noneMatch(
-                          m ->
-                              m.index == methodParameterLocation.index
-                                  && m.typeVariablePositions.equals(
-                                      methodParameterLocation.typeVariablePositions))) {
-                    // is an untainted for non poly argument. should be considered a poly
-                    // argument.
-                    inferredPolyMethod.arguments.add(methodParameterLocation);
-                  }
-                  toRemove.add(fix);
-                  return;
-                }
-              }
-            });
-    fixes.removeAll(toRemove);
-    this.store.put(symbol, fixes);
-    this.states.put(symbol, STATE.VISITED);
-    return fixes;
-  }
-
+  /**
+   * Computes the fixes for the arguments of the inferred poly tainted methods for the invocations
+   * observed throughout the fix computation.
+   *
+   * @param polyMethodLocation The poly method location.
+   * @param pair The required type.
+   * @return The fixes for the arguments of the inferred poly tainted methods.
+   */
   public Set<Fix> computeFixesForArgumentsOnInferredPolyTaintedMethods(
       PolyMethodLocation polyMethodLocation, FoundRequired pair) {
     Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) polyMethodLocation.target;
@@ -214,6 +204,51 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     return ans;
   }
 
+  private Set<Fix> mergeResults(Symbol.MethodSymbol symbol, Set<Fix> fixes) {
+    fixes = new HashSet<>(fixes);
+    Set<PolyMethodLocation> inferredPolyMethods =
+        fixes.stream()
+            .filter(Fix::isPoly)
+            .map(fix -> (PolyMethodLocation) fix.location)
+            .collect(toSet());
+    Set<Fix> toRemove = new HashSet<>();
+    fixes.stream()
+        .filter(fix -> fix.location.getKind().isParameter())
+        .forEach(
+            fix -> {
+              MethodParameterLocation methodParameterLocation =
+                  (MethodParameterLocation) fix.location;
+              // check if the parameter is an inferred poly argument of a poly method
+              for (PolyMethodLocation inferredPolyMethod : inferredPolyMethods) {
+                if (inferredPolyMethod.target.equals(methodParameterLocation.enclosingMethod)) {
+                  // we have a poly method that matches the enclosing method of this parameter
+                  if (inferredPolyMethod.arguments.stream()
+                      .noneMatch(
+                          m ->
+                              m.index == methodParameterLocation.index
+                                  && m.typeVariablePositions.equals(
+                                      methodParameterLocation.typeVariablePositions))) {
+                    // is an untainted for non poly argument. should be considered a poly
+                    // argument.
+                    inferredPolyMethod.arguments.add(methodParameterLocation);
+                  }
+                  toRemove.add(fix);
+                  return;
+                }
+              }
+            });
+    fixes.removeAll(toRemove);
+    this.store.put(symbol, fixes);
+    this.states.put(symbol, STATE.VISITED);
+    return fixes;
+  }
+
+  public void reset() {
+    this.store.clear();
+    this.states.clear();
+    this.invocations.clear();
+  }
+
   abstract static class AccumulateScanner extends TreeScanner<Set<Fix>, FixComputer> {
 
     protected final FoundRequired pair;
@@ -238,7 +273,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     }
   }
 
-  static class AssignmentScanner extends AccumulateScanner {
+  private static class AssignmentScanner extends AccumulateScanner {
 
     private final Symbol variable;
 
@@ -269,7 +304,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     }
   }
 
-  static class ReturnStatementVisitor extends AccumulateScanner {
+  private static class ReturnStatementVisitor extends AccumulateScanner {
 
     Symbol.MethodSymbol symbol;
 
@@ -284,7 +319,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     }
   }
 
-  static class Invocation {
+  private static class Invocation {
 
     public final MethodInvocationTree node;
     public final FoundRequired pair;

@@ -139,4 +139,8 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       return defaultAction(node, pair);
     }
   }
+
+  public void reset() {
+    basicVisitor.reset();
+  }
 }
