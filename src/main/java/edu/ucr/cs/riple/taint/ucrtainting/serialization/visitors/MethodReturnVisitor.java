@@ -92,11 +92,11 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
       workList.addAll(onAssignments);
     }
     Set<MethodParameterLocation> formalParametersUsedInReturnValueComputation = new HashSet<>();
-    Set<Fix> others = new HashSet<>();
+    Set<Fix> nonParameterFixes = new HashSet<>();
     ans.forEach(
         fix -> {
           if (!(fix.location instanceof MethodParameterLocation)) {
-            others.add(fix);
+            nonParameterFixes.add(fix);
             return;
           }
           MethodParameterLocation param = (MethodParameterLocation) fix.location;
@@ -105,7 +105,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
             formalParametersUsedInReturnValueComputation.add(param);
           } else {
             // irrelevant to this method
-            others.add(fix);
+            nonParameterFixes.add(fix);
           }
         });
     if (formalParametersUsedInReturnValueComputation.isEmpty()) {
@@ -117,8 +117,11 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
                     (MethodLocation) onMethod.location,
                     formalParametersUsedInReturnValueComputation))
             .toPoly();
-    others.add(polymorphicFixOnMethod);
-    return mergeResults(symbol, others);
+    nonParameterFixes.add(polymorphicFixOnMethod);
+    nonParameterFixes.addAll(
+        computeFixesForArgumentsOnInferredPolyTaintedMethods(
+            (PolyMethodLocation) polymorphicFixOnMethod.location, pair));
+    return mergeResults(symbol, nonParameterFixes);
   }
 
   public STATE getState(Symbol.MethodSymbol symbol) {
@@ -158,10 +161,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
                     // is an untainted for non poly argument. should be considered a poly
                     // argument.
                     inferredPolyMethod.arguments.add(methodParameterLocation);
-                    return;
                   }
-                } else {
-                  // is an untainted argument for a poly argument. Should be discarded.
                   toRemove.add(fix);
                   return;
                 }
@@ -174,33 +174,8 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
   }
 
   public Set<Fix> computeFixesForArgumentsOnInferredPolyTaintedMethods(
-      Symbol.MethodSymbol calledMethod, Set<Fix> fixes, FoundRequired pair) {
-    Set<Fix> onPassedArguments = new HashSet<>();
-    Set<PolyMethodLocation> inferredPolyMethods =
-        fixes.stream()
-            .filter(Fix::isPoly)
-            .map(fix -> (PolyMethodLocation) fix.location)
-            .collect(toSet());
-    fixes.forEach(
-        fix -> {
-          if (fix.isPoly()) {
-            onPassedArguments.addAll(
-                computefixesoninvocationswithinferredpolymorpichannotations(
-                    (PolyMethodLocation) fix.location, pair, inferredPolyMethods));
-          }
-        });
-    fixes.addAll(onPassedArguments);
-    return mergeResults(calledMethod, fixes);
-  }
-
-  private Set<Fix> computefixesoninvocationswithinferredpolymorpichannotations(
-      PolyMethodLocation polyMethodLocation,
-      FoundRequired pair,
-      Set<PolyMethodLocation> inferredPolyMethods) {
+      PolyMethodLocation polyMethodLocation, FoundRequired pair) {
     Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) polyMethodLocation.target;
-    if (!states.getOrDefault(methodSymbol, STATE.NOT_VISITED).equals(STATE.VISITED)) {
-      return Set.of();
-    }
     Set<Invocation> processedInvocations = new HashSet<>();
     Set<Fix> ans = new HashSet<>();
     Set<Invocation> invocations = new HashSet<>(this.invocations);
@@ -232,34 +207,6 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
                                   foundParameterType,
                                   formalParameterAnnotatedTypeMirror,
                                   pair.depth));
-                  // filter ones on arguments of a poly method to avoid making an argument untainted
-                  // for poly method e.g. @Poly foo(@Untainted @Poly bar);
-                  passedArgumentOnInvocation =
-                      passedArgumentOnInvocation.stream()
-                          .filter(
-                              fix -> {
-                                if (!fix.location.getKind().isParameter()) {
-                                  return true;
-                                }
-                                MethodParameterLocation methodParameterLocation =
-                                    (MethodParameterLocation) fix.location;
-                                // check if the parameter is an inferred poly argument on of the
-                                // inferred poly methods
-                                for (PolyMethodLocation inferredPolyMethod : inferredPolyMethods) {
-                                  if (inferredPolyMethod.target.equals(
-                                      methodParameterLocation.enclosingMethod)) {
-                                    return inferredPolyMethod.arguments.stream()
-                                        .noneMatch(
-                                            m ->
-                                                m.index == methodParameterLocation.index
-                                                    && m.typeVariablePositions.equals(
-                                                        methodParameterLocation
-                                                            .typeVariablePositions));
-                                  }
-                                }
-                                return true;
-                              })
-                          .collect(toSet());
                   ans.addAll(passedArgumentOnInvocation);
                 });
             processedInvocations.add(invocation);

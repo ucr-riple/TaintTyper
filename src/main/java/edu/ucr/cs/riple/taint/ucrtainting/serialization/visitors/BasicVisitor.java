@@ -105,14 +105,9 @@ public class BasicVisitor extends SpecializedFixComputer {
     }
     returnVisitor.addInvocation(node, pair);
     if (returnVisitor.getState(calledMethod).equals(MethodReturnVisitor.STATE.VISITING)) {
-      // create for arguments
       return Set.of();
     }
-    Set<Fix> fixesOnDecl = new HashSet<>(methodDecl.accept(returnVisitor, pair));
-    Set<Fix> tmp =
-        returnVisitor.computeFixesForArgumentsOnInferredPolyTaintedMethods(
-            calledMethod, fixesOnDecl, pair);
-    return tmp;
+    return new HashSet<>(methodDecl.accept(returnVisitor, pair));
   }
 
   @Override
