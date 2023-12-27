@@ -133,9 +133,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
   }
 
   private Set<Fix> mergeResults(Symbol.MethodSymbol symbol, Set<Fix> fixes) {
-    // remove on local variables
-    fixes =
-        fixes.stream().filter(fix -> !fix.location.getKind().isLocalVariable()).collect(toSet());
+    fixes = new HashSet<>(fixes);
     Set<PolyMethodLocation> inferredPolyMethods =
         fixes.stream()
             .filter(Fix::isPoly)
