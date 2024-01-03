@@ -97,9 +97,6 @@ public class BasicVisitor extends SpecializedFixComputer {
     if (methodDecl.getBody() == null) {
       return Set.of(onMethod);
     }
-    if (methodDecl.params.isEmpty()) {
-      return Set.of(onMethod);
-    }
     if (!typeFactory.polyTaintInferenceEnabled()) {
       return Set.of(onMethod);
     }
