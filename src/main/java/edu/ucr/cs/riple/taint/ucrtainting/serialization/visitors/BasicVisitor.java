@@ -101,9 +101,6 @@ public class BasicVisitor extends SpecializedFixComputer {
       return Set.of(onMethod);
     }
     returnVisitor.addInvocation(node, pair);
-    if (returnVisitor.getState(calledMethod).equals(MethodReturnVisitor.STATE.VISITING)) {
-      return Set.of();
-    }
     return new HashSet<>(methodDecl.accept(returnVisitor, pair));
   }
 

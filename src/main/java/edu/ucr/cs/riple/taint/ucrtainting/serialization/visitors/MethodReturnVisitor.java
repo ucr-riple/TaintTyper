@@ -79,7 +79,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
       return mergeResults(symbol, Set.of(onMethod));
     }
     Set<Fix> ans = new HashSet<>();
-    Set<Fix> onReturns = node.accept(new ReturnStatementVisitor(pair, symbol), fixComputer);
+    Set<Fix> onReturns = node.accept(new ReturnStatementVisitor(pair), fixComputer);
     Deque<Fix> workList = new ArrayDeque<>(onReturns);
     Set<Symbol.VarSymbol> involvedElementsInReturnValueCreation = new HashSet<>();
     while (!workList.isEmpty()) {
@@ -306,11 +306,8 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
 
   private static class ReturnStatementVisitor extends AccumulateScanner {
 
-    Symbol.MethodSymbol symbol;
-
-    public ReturnStatementVisitor(FoundRequired pair, Symbol.MethodSymbol symbol) {
+    public ReturnStatementVisitor(FoundRequired pair) {
       super(pair);
-      this.symbol = symbol;
     }
 
     @Override
