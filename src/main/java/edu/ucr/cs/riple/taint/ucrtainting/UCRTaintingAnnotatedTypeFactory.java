@@ -119,8 +119,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   @Override
   protected TreeAnnotator createTreeAnnotator() {
     return new ListTreeAnnotator(
-        super.createTreeAnnotator(),
-        new UCRTaintingTreeAnnotator(this, handler, (UCRTaintingChecker) checker));
+        super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this, handler));
   }
 
   @Override

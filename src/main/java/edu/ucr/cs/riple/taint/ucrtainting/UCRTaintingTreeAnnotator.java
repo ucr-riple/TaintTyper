@@ -2,14 +2,10 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import com.sun.tools.javac.util.Context;
+import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.lang.model.element.ElementKind;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
@@ -19,21 +15,16 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
 
   private final Handler handler;
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
-  private final Context context;
-  private final Map<Symbol, Tree> symbolToDeclarationMap;
 
   /**
    * UCRTaintingTreeAnnotator
    *
    * @param typeFactory the type factory
    */
-  protected UCRTaintingTreeAnnotator(
-      UCRTaintingAnnotatedTypeFactory typeFactory, Handler handler, UCRTaintingChecker checker) {
+  protected UCRTaintingTreeAnnotator(UCRTaintingAnnotatedTypeFactory typeFactory, Handler handler) {
     super(typeFactory);
     this.typeFactory = typeFactory;
     this.handler = handler;
-    this.context = ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext();
-    this.symbolToDeclarationMap = new HashMap<>();
   }
 
   /**
@@ -79,20 +70,19 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
       typeFactory.makeUntainted(annotatedTypeMirror);
       return super.visitMemberSelect(node, annotatedTypeMirror);
     }
-    Tree selected =
-        symbolToDeclarationMap.containsKey(symbol)
-            ? symbolToDeclarationMap.get(symbol)
-            : Utility.locateDeclaration(symbol, context);
-    symbolToDeclarationMap.putIfAbsent(symbol, selected);
-    if (selected != null && !typeFactory.mayBeTainted(selected)) {
-      typeFactory.makeUntainted(annotatedTypeMirror);
+    if (symbol.getKind().isField() && node instanceof JCTree.JCFieldAccess) {
+      JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) node;
+      if (typeFactory.isUnannotatedThirdParty(fieldAccess)
+          && !typeFactory.hasTaintedReceiver(fieldAccess)) {
+        typeFactory.makeUntainted(annotatedTypeMirror);
+        return super.visitMemberSelect(node, annotatedTypeMirror);
+      }
     }
-    // make .class untainted.
+    // make .class untainted
     if (node.getIdentifier().toString().equals("class")
         && annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       typeFactory.makeUntainted(annotatedTypeMirror);
     }
-    handler.visitMemberSelect(node, annotatedTypeMirror);
     return super.visitMemberSelect(node, annotatedTypeMirror);
   }
 
