@@ -19,17 +19,20 @@ import org.checkerframework.framework.source.SupportedOptions;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
+
 /** This is the entry point for pluggable type-checking. */
 @StubFiles({
-  "stubs/Connection.astub",
   "stubs/apache.commons.io.astub",
   "stubs/apache.commons.lang.astub",
-  "stubs/general.astub",
+  "stubs/codeql.astub",
+  "stubs/Connection.astub",
   "stubs/Files.astub",
-  "stubs/taintedMethods.astub",
   "stubs/find-sec-bugs-sanitizers.astub",
-  "stubs/StringBuffer.astub",
+  "stubs/general.astub",
   "stubs/httpservletreq.astub",
+  "stubs/StringBuffer.astub",
+  "stubs/taintedMethods.astub",
+  "stubs/tdmljp.astub"
 })
 @SupportedOptions({
   UCRTaintingChecker.ANNOTATED_PACKAGES,
