@@ -66,6 +66,24 @@ public interface HttpServletRequest {
     public @RTainted String getHeader(String name);
 }
 
+package javax.servlet;
+public abstract class ServletOutputStream {
+    public void print(@RUntainted boolean s);
+    public void print(@RUntainted char s);
+    public void print(@RUntainted double s);
+    public void print(@RUntainted float s);
+    public void print(@RUntainted int s);
+    public void print(@RUntainted long s);
+    public void print(@RUntainted String s);
+    public void println(@RUntainted boolean s);
+    public void println(@RUntainted char s);
+    public void println(@RUntainted double s);
+    public void println(@RUntainted float s);
+    public void println(@RUntainted int s);
+    public void println(@RUntainted long s);
+    public void println(@RUntainted String s);
+}
+
 package java.lang;
 public final class String {
     public boolean equals(@RUntainted Object anObject);
@@ -76,6 +94,34 @@ package java.util;
 public class Arrays {
     public boolean equals(@RUntainted byte[] a, @RUntainted byte[] a2);
 }
+
+package java.nio.file;
+public final class Paths {
+    public static Path get(@RUntainted String first, @RUntainted String... more);
+    public static Path get(@RUntainted URI uri);
+}
+
+package java.util.regex;
+public final class Pattern {
+    public Matcher matcher(@RUntainted CharSequence input);
+    public Matcher matcher(@RUntainted String input);
+    public static boolean matches(@RUntainted String regex, @RUntainted CharSequence input);
+    public static boolean matches(@RUntainted String regex, @RUntainted String input);
+    public static Pattern compile(@RUntainted String regex);
+    public static Pattern compile(@RUntainted String regex, int flags);
+}
+
+package javax.naming;
+public interface Context {
+    public Object lookup(@RUntainted String name);
+}
+
+package org.xml.sax;
+public interface XMLReader {
+    public void parse(@RUntainted String systemId);
+    public void parse(@RUntainted InputSource systemId);
+}
+
 
 package java.security.cert;
 public class CertPathValidator {
@@ -214,4 +260,9 @@ public abstract class DocumentBuilder {
     public Document	parse(@RUntainted InputStream is);
     public Document	parse(@RUntainted InputStream is, String systemId);
     public Document	parse(@RUntainted String uri);
+}
+
+package org.apache.commons.jexl2;
+public interface Expression {
+    public Object evaluate(@RUntainted JexlContext context);
 }
