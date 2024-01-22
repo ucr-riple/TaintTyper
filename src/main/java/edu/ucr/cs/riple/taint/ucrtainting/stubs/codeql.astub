@@ -86,7 +86,6 @@ public abstract class ServletOutputStream {
 
 package java.lang;
 public final class String {
-    public boolean equals(@RUntainted Object anObject);
     public String replaceAll(@RUntainted String regex, String replacement);
 }
 
@@ -99,16 +98,6 @@ package java.nio.file;
 public final class Paths {
     public static Path get(@RUntainted String first, @RUntainted String... more);
     public static Path get(@RUntainted URI uri);
-}
-
-package java.util.regex;
-public final class Pattern {
-    public Matcher matcher(@RUntainted CharSequence input);
-    public Matcher matcher(@RUntainted String input);
-    public static boolean matches(@RUntainted String regex, @RUntainted CharSequence input);
-    public static boolean matches(@RUntainted String regex, @RUntainted String input);
-    public static Pattern compile(@RUntainted String regex);
-    public static Pattern compile(@RUntainted String regex, int flags);
 }
 
 package javax.naming;

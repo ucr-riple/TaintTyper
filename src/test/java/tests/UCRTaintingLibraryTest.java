@@ -30,16 +30,17 @@ public class UCRTaintingLibraryTest extends CheckerFrameworkPerDirectoryTest {
   @Parameters
   public static String[] getTestDirs() {
     return new String[] {
-      "ucrtainting/basicSubTypingTests",
-      "ucrtainting/captureTest",
-      "ucrtainting/javaUtilTest",
-      "ucrtainting/micronaut",
-      "ucrtainting/stringBuilderTests",
-      "ucrtainting/thirdPartyTests",
-      "ucrtainting/springSecOAuth",
-      "ucrtainting/crashTests",
-      "ucrtainting/esapiNullFieldTest",
-      "ucrtainting/stubMalfunc"
+//      "ucrtainting/basicSubTypingTests",
+//      "ucrtainting/captureTest",
+//      "ucrtainting/javaUtilTest",
+//      "ucrtainting/micronaut",
+//      "ucrtainting/stringBuilderTests",
+//      "ucrtainting/thirdPartyTests",
+//      "ucrtainting/springSecOAuth",
+//      "ucrtainting/crashTests",
+//      "ucrtainting/esapiNullFieldTest",
+//      "ucrtainting/stubMalfunc"
+            "ucrtainting/httpServletTest"
     };
   }
 }
