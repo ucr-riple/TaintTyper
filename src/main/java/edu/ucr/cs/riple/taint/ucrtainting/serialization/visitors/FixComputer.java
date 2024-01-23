@@ -58,14 +58,9 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
       if (receiver != null) {
         Symbol symbol = (Symbol) TreeUtils.elementFromUse(tree);
-        if (symbol.getKind().isField()) {
-          String packageName = symbol.type.tsym.packge().toString();
-          if (packageName.equals("unnamed package")) {
-            packageName = "";
-          }
-          if (!typeFactory.isAnnotatedPackage(packageName)) {
-            return thirdPartyFixVisitor.visitMemberSelect(tree, pair);
-          }
+        typeFactory.isInThirdPartyCode(receiver);
+        if (symbol.getKind().isField() && typeFactory.isInThirdPartyCode(receiver)) {
+          return thirdPartyFixVisitor.visitMemberSelect(tree, pair);
         }
       }
     }

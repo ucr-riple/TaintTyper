@@ -1,113 +1,131 @@
-{"errors": [
+{
+  "errors": [
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-        "messageKey": "assignment",
-        "offset": 699,
-        "index": 1,
-        "region": {
-            "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
-            "class": "foo.bar.Foo"
-        },
-        "fixes": []
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 699,
+      "index": 1,
+      "region": {
+        "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": []
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-        "messageKey": "assignment",
-        "offset": 801,
-        "index": 2,
-        "region": {
-            "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 801,
+      "index": 2,
+      "region": {
+        "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "path",
+            "kind": "FIELD",
             "class": "foo.bar.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-                "type-variable-position": [[0]],
-                "field": "path",
-                "kind": "FIELD",
-                "class": "foo.bar.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-        "messageKey": "argument",
-        "offset": 1382,
-        "index": 3,
-        "region": {
-            "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
-            "class": "foo.bar.Foo"
-        },
-        "fixes": []
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "messageKey": "argument",
+      "offset": 1382,
+      "index": 3,
+      "region": {
+        "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": []
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-        "messageKey": "argument",
-        "offset": 1457,
-        "index": 4,
-        "region": {
-            "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
-            "class": "foo.bar.Foo"
-        },
-        "fixes": []
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "messageKey": "argument",
+      "offset": 1457,
+      "index": 4,
+      "region": {
+        "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": []
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-        "messageKey": "return",
-        "offset": 1835,
-        "index": 5,
-        "region": {
-            "symbol": "testOnStreamLambda(java.util.List)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "messageKey": "return",
+      "offset": 1835,
+      "index": 5,
+      "region": {
+        "symbol": "testOnStreamLambda(java.util.List)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "testOnStreamLambda(java.util.List)",
+            "kind": "PARAMETER",
+            "name": "s",
+            "index": 0,
             "class": "foo.bar.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-                "type-variable-position": [[
-                    1,
-                    0
-                ]],
-                "method": "testOnStreamLambda(java.util.List)",
-                "kind": "PARAMETER",
-                "name": "s",
-                "index": 0,
-                "class": "foo.bar.Foo"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-        "messageKey": "assignment",
-        "offset": 2306,
-        "index": 6,
-        "region": {
-            "symbol": "testCheckTypeForArgumentsBeforeCallingFixVisitor(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
-            "class": "foo.bar.Foo"
-        },
-        "fixes": []
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 2306,
+      "index": 6,
+      "region": {
+        "symbol": "testCheckTypeForArgumentsBeforeCallingFixVisitor(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": []
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-        "messageKey": "assignment",
-        "offset": 2928,
-        "index": 7,
-        "region": {
-            "symbol": "testErrorForThirdPartyFieldSelectionError(java.awt.Point)",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 2928,
+      "index": 7,
+      "region": {
+        "symbol": "testErrorForThirdPartyFieldSelectionError(java.awt.Point)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testErrorForThirdPartyFieldSelectionError(java.awt.Point)",
+            "kind": "PARAMETER",
+            "name": "p",
+            "index": 0,
             "class": "foo.bar.Foo"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-                "type-variable-position": [[0]],
-                "method": "testErrorForThirdPartyFieldSelectionError(java.awt.Point)",
-                "kind": "PARAMETER",
-                "name": "p",
-                "index": 0,
-                "class": "foo.bar.Foo"
-            }
-        }]
+          }
+        }
+      ]
     }
-]}
+  ]
+}
