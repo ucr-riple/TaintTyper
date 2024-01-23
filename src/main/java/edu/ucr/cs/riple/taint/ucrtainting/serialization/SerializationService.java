@@ -109,15 +109,6 @@ public class SerializationService {
           }
         }
       default:
-        ClassTree classTree = Utility.findEnclosingNode(path, ClassTree.class);
-        if (classTree == null) {
-          return ImmutableSet.of();
-        }
-        Symbol.ClassSymbol encClass =
-            (Symbol.ClassSymbol) TreeUtils.elementFromDeclaration(classTree);
-        if (!Utility.isInAnnotatedPackage(encClass, typeFactory)) {
-          return ImmutableSet.of();
-        }
         Set<Fix> fixes = new HashSet<>();
         // On Right Hand Side
         fixes.addAll(tree.accept(fixComputer, pair));
