@@ -433,6 +433,34 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   /**
+   * Checks if the passed method is in third party code.
+   * @param symbol Method symbol to check for.
+   *
+   * @return true if in third party code, false otherwise
+   */
+  public boolean isThirdPartyMethod(Symbol.MethodSymbol symbol){
+    if(symbol == null){
+      return false;
+    }
+    if(isFromStubFile(symbol)){
+      return false;
+    }
+    String packageName = symbol.packge().getQualifiedName().toString();
+    return !Utility.isInAnnotatedPackage(packageName, this);
+  }
+
+  public boolean isThirdPartyField(Symbol.VarSymbol symbol){
+    if(symbol == null){
+      return false;
+    }
+    if(isFromStubFile(symbol)){
+      return false;
+    }
+    String packageName = symbol.packge().getQualifiedName().toString();
+    return !Utility.isInAnnotatedPackage(packageName, this);
+  }
+
+  /**
    * Checks if the tree is annotated in the stub files
    *
    * @param node to check for

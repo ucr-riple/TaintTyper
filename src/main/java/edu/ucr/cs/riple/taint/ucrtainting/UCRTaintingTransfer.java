@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.tools.javac.code.Symbol;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RThis;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import org.checkerframework.dataflow.cfg.node.*;
 import org.checkerframework.dataflow.expression.JavaExpression;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.AnnotationMirrorSet;
+import org.checkerframework.javacutil.TreeUtils;
 
 public class UCRTaintingTransfer extends AccumulationTransfer {
   private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
@@ -70,12 +72,13 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
   }
 
   private void handleSideEffect(
-      ExpressionTree tree,
+      MethodInvocationTree tree,
       TransferResult<AccumulationValue, AccumulationStore> result,
       MethodInvocationNode node,
       boolean isTainted) {
     AnnotatedTypeMirror rAnno = aTypeFactory.getAnnotatedType(node.getTree());
-    if (aTypeFactory.isUnannotatedThirdParty(tree) || rAnno.hasPrimaryAnnotation(RThis.class)) {
+    Symbol.MethodSymbol symbol = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
+    if (aTypeFactory.isThirdPartyMethod(symbol) || rAnno.hasPrimaryAnnotation(RThis.class)) {
       if (node.getTarget().getReceiver() instanceof MethodInvocationNode) {
         handleSideEffect(
             tree,

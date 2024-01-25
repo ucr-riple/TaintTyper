@@ -72,7 +72,7 @@ public class ThirdPartyHandler extends AbstractHandler {
     if (Utility.hasUntaintedAnnotation(calledMethod.getReturnType())) {
       return true;
     }
-    if (!factory.isInThirdPartyCode(calledMethod)) {
+    if (!factory.isThirdPartyMethod(calledMethod)) {
       return false;
     }
     if (factory.isSource(calledMethod)) {

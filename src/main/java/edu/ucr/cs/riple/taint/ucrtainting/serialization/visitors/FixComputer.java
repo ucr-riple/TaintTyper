@@ -101,7 +101,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     }
     // Locate method receiver.
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
-    boolean isInAnnotatedPackage = Utility.isInAnnotatedPackage(calledMethod, typeFactory);
+    boolean isInAnnotatedPackage = typeFactory.isThirdPartyMethod(calledMethod);
     boolean isTypeVar = Utility.containsTypeArgument(calledMethod.getReturnType());
     boolean hasReceiver =
         !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));
