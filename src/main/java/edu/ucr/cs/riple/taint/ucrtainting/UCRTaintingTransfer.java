@@ -1,6 +1,5 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RThis;

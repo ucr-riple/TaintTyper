@@ -1,4 +1,4 @@
-package test;
+package foo.bar;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;

@@ -414,46 +414,33 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   /**
-   * Checks if the package for the node is present in already annotated according to provided
-   * option.
-   *
-   * @param tree to check for
-   * @return true if present, false otherwise
-   */
-  public boolean isInThirdPartyCode(Tree tree) {
-    return isInThirdPartyCode(TreeUtils.elementFromTree(tree));
-  }
-
-  public boolean isInThirdPartyCode(Element element) {
-    if (element == null) {
-      return false;
-    }
-    Symbol symbol = (Symbol) element;
-    return !Utility.isInAnnotatedPackage(symbol, this);
-  }
-
-  /**
    * Checks if the passed method is in third party code.
-   * @param symbol Method symbol to check for.
    *
+   * @param symbol Method symbol to check for.
    * @return true if in third party code, false otherwise
    */
-  public boolean isThirdPartyMethod(Symbol.MethodSymbol symbol){
-    if(symbol == null){
+  public boolean isThirdPartyMethod(Symbol.MethodSymbol symbol) {
+    if (symbol == null) {
       return false;
     }
-    if(isFromStubFile(symbol)){
+    if (isFromStubFile(symbol)) {
       return false;
     }
     String packageName = symbol.packge().getQualifiedName().toString();
     return !Utility.isInAnnotatedPackage(packageName, this);
   }
 
-  public boolean isThirdPartyField(Symbol.VarSymbol symbol){
-    if(symbol == null){
+  /**
+   * Checks if the passed field is in third party code.
+   *
+   * @param symbol Field symbol to check for.
+   * @return true if in third party code, false otherwise
+   */
+  public boolean isThirdPartyField(Symbol.VarSymbol symbol) {
+    if (symbol == null) {
       return false;
     }
-    if(isFromStubFile(symbol)){
+    if (isFromStubFile(symbol)) {
       return false;
     }
     String packageName = symbol.packge().getQualifiedName().toString();
@@ -641,16 +628,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
           (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
       declaredType.getTypeArguments().forEach(this::makeDeepUntainted);
     }
-  }
-
-  /**
-   * Makes the given tree is {@link RUntainted} third party code.
-   *
-   * @param tree The given tree.
-   * @return True if the given tree is {@link RUntainted} third party code.
-   */
-  public boolean isUnannotatedThirdParty(Tree tree) {
-    return isInThirdPartyCode(tree) && !isPresentInStub(tree);
   }
 
   /**

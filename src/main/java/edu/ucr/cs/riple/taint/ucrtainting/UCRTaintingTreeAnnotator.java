@@ -72,7 +72,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
     }
     if (symbol.getKind().isField() && node instanceof JCTree.JCFieldAccess) {
       JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) node;
-      if (typeFactory.isUnannotatedThirdParty(fieldAccess)
+      if (typeFactory.isThirdPartyField((Symbol.VarSymbol) symbol)
           && !typeFactory.hasTaintedReceiver(fieldAccess)) {
         typeFactory.makeUntainted(annotatedTypeMirror);
         return super.visitMemberSelect(node, annotatedTypeMirror);

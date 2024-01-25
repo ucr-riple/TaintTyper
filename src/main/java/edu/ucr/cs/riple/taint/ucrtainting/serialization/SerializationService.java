@@ -4,7 +4,6 @@ import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getAnnota
 
 import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.AssignmentTree;
-import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.EnhancedForLoopTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodTree;

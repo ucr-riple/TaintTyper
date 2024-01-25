@@ -1,110 +1,138 @@
-{"errors": [
+{
+  "errors": [
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
-        "messageKey": "override.return",
-        "offset": 156,
-        "index": 1,
-        "region": {
-            "symbol": "getUntainted()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+      "messageKey": "override.return",
+      "offset": 156,
+      "index": 1,
+      "region": {
+        "symbol": "getUntainted()",
+        "class": "foo.bar.Bar"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getUntainted()",
+            "kind": "METHOD",
             "class": "foo.bar.Bar"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
-                "type-variable-position": [[0]],
-                "method": "getUntainted()",
-                "kind": "METHOD",
-                "class": "foo.bar.Bar"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
-        "messageKey": "override.param",
-        "offset": 243,
-        "index": 2,
-        "region": {
-            "symbol": "getUntainted(java.lang.Object)",
-            "class": "foo.bar.Bar"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Foo.java",
-                "type-variable-position": [[0]],
-                "method": "getUntainted(java.lang.Object)",
-                "kind": "PARAMETER",
-                "name": "pFoo",
-                "index": 0,
-                "class": "foo.bar.Foo"
-            }
-        }]
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+      "messageKey": "override.param",
+      "offset": 243,
+      "index": 2,
+      "region": {
+        "symbol": "getUntainted(java.lang.Object)",
+        "class": "foo.bar.Bar"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getUntainted(java.lang.Object)",
+            "kind": "PARAMETER",
+            "name": "pFoo",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
-        "messageKey": "override.return",
-        "offset": 347,
-        "index": 3,
-        "region": {
-            "symbol": "untaintedStringListSuper()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+      "messageKey": "override.return",
+      "offset": 347,
+      "index": 3,
+      "region": {
+        "symbol": "untaintedStringListSuper()",
+        "class": "foo.bar.Bar"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "untaintedStringListSuper()",
+            "kind": "METHOD",
             "class": "foo.bar.Bar"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
-                "type-variable-position": [[
-                    1,
-                    0
-                ]],
-                "method": "untaintedStringListSuper()",
-                "kind": "METHOD",
-                "class": "foo.bar.Bar"
-            }
-        }]
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
-        "messageKey": "override.return",
-        "offset": 453,
-        "index": 4,
-        "region": {
-            "symbol": "untaintedStringListChild()",
-            "class": "foo.bar.Bar"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Foo.java",
-                "type-variable-position": [[
-                    1,
-                    0
-                ]],
-                "method": "untaintedStringListChild()",
-                "kind": "METHOD",
-                "class": "foo.bar.Foo"
-            }
-        }]
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+      "messageKey": "override.return",
+      "offset": 453,
+      "index": 4,
+      "region": {
+        "symbol": "untaintedStringListChild()",
+        "class": "foo.bar.Bar"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "untaintedStringListChild()",
+            "kind": "METHOD",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     },
     {
-        "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
-        "messageKey": "override.return",
-        "offset": 571,
-        "index": 5,
-        "region": {
-            "symbol": "mix()",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+      "messageKey": "override.return",
+      "offset": 571,
+      "index": 5,
+      "region": {
+        "symbol": "mix()",
+        "class": "foo.bar.Bar"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "mix()",
+            "kind": "METHOD",
             "class": "foo.bar.Bar"
-        },
-        "fixes": [{
-            "annotation": "untainted",
-            "location": {
-                "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
-                "type-variable-position": [[0]],
-                "method": "mix()",
-                "kind": "METHOD",
-                "class": "foo.bar.Bar"
-            }
-        }]
+          }
+        }
+      ]
     }
-]}
+  ]
+}

@@ -10,7 +10,6 @@ import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -346,6 +345,7 @@ public class Utility {
 
   /**
    * Checks if the passed element is an enum constant.
+   *
    * @param element the element to check.
    * @return true if the element is an enum constant, false otherwise.
    */
@@ -406,6 +406,7 @@ public class Utility {
 
   /**
    * Checks if the passed type has an untainted annotation.
+   *
    * @param type the type to check.
    * @return true if the type has an untainted annotation, false otherwise.
    */

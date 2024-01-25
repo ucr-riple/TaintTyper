@@ -58,8 +58,8 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
       if (receiver != null) {
         Symbol symbol = (Symbol) TreeUtils.elementFromUse(tree);
-        typeFactory.isInThirdPartyCode(receiver);
-        if (symbol.getKind().isField() && typeFactory.isInThirdPartyCode(receiver)) {
+        if (symbol.getKind().isField()
+            && typeFactory.isThirdPartyField((Symbol.VarSymbol) symbol)) {
           return thirdPartyFixVisitor.visitMemberSelect(tree, pair);
         }
       }
@@ -101,7 +101,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     }
     // Locate method receiver.
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
-    boolean isInAnnotatedPackage = typeFactory.isThirdPartyMethod(calledMethod);
+    boolean isInAnnotatedPackage = !typeFactory.isThirdPartyMethod(calledMethod);
     boolean isTypeVar = Utility.containsTypeArgument(calledMethod.getReturnType());
     boolean hasReceiver =
         !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));

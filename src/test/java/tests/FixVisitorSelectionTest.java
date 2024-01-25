@@ -21,7 +21,7 @@ public class FixVisitorSelectionTest extends SerializationTestHelper {
         UCRTaintingChecker.class,
         "ucrtainting",
         "-Anomsgtext",
-        "-AannotatedPackages=\"\"",
+        "-AannotatedPackages=foo.bar",
         "-AenableLibraryCheck",
         "-nowarn");
   }

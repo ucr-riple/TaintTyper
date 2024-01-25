@@ -1,3 +1,5 @@
+package foo.bar;
+
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
