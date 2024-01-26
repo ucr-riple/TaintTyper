@@ -3,7 +3,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 699,
+      "offset": 722,
       "index": 1,
       "region": {
         "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
@@ -14,7 +14,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 801,
+      "offset": 824,
       "index": 2,
       "region": {
         "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
@@ -40,7 +40,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1382,
+      "offset": 1405,
       "index": 3,
       "region": {
         "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
@@ -51,7 +51,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1457,
+      "offset": 1480,
       "index": 4,
       "region": {
         "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
@@ -62,7 +62,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "return",
-      "offset": 1835,
+      "offset": 1858,
       "index": 5,
       "region": {
         "symbol": "testOnStreamLambda(java.util.List)",
@@ -91,7 +91,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 2306,
+      "offset": 2329,
       "index": 6,
       "region": {
         "symbol": "testCheckTypeForArgumentsBeforeCallingFixVisitor(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
@@ -102,7 +102,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 2928,
+      "offset": 2922,
       "index": 7,
       "region": {
         "symbol": "testErrorForThirdPartyFieldSelectionError(java.awt.Point)",

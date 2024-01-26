@@ -482,6 +482,33 @@
           }
         }
       ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/foo/bar/Foo.java",
+      "messageKey": "return",
+      "offset": 4241,
+      "index": 18,
+      "region": {
+        "symbol": "testThisIdentifier()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "field": "tokens",
+            "kind": "FIELD",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     }
   ]
 }

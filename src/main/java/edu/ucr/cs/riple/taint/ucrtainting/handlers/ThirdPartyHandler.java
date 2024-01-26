@@ -40,7 +40,7 @@ public class ThirdPartyHandler extends AbstractHandler {
       if (packageName.equals("unnamed package")) {
         packageName = "";
       }
-      if (!typeFactory.isAnnotatedPackage(packageName)
+      if (typeFactory.isUnAnnotatedPackageName(packageName)
           && (ElementUtils.isStatic(selected) || (!typeFactory.mayBeTainted(receiver)))) {
         typeFactory.makeUntainted(type);
       }
@@ -73,9 +73,6 @@ public class ThirdPartyHandler extends AbstractHandler {
       return true;
     }
     if (!factory.isThirdPartyMethod(calledMethod)) {
-      return false;
-    }
-    if (factory.isSource(calledMethod)) {
       return false;
     }
     // Check receiver, if receiver is tainted, we should not make it untainted.

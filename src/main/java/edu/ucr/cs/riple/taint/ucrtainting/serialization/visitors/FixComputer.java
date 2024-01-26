@@ -96,9 +96,6 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       return Set.of();
     }
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
-    if (typeFactory.isPresentInStub(node.getMethodSelect())) {
-      return Set.of();
-    }
     // Locate method receiver.
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
     boolean isInAnnotatedPackage = !typeFactory.isThirdPartyMethod(calledMethod);

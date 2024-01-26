@@ -78,6 +78,9 @@ public class BasicVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
+    if (typeFactory.isFromStubFile(calledMethod)) {
+      return Set.of();
+    }
     Fix onMethod = buildFixForElement(calledMethod, pair);
     if (onMethod == null || !requireFix(pair)) {
       return Set.of();

@@ -9,7 +9,6 @@ import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -327,20 +326,6 @@ public class Utility {
   public static boolean isThisIdentifier(Tree tree) {
     return tree instanceof IdentifierTree
         && ((IdentifierTree) tree).getName().contentEquals("this");
-  }
-
-  /**
-   * Checks if the passed package name is in an annotated package.
-   *
-   * @param typeFactory the type factory, used to retrieve the annotated packages names.
-   * @return true if the passed package name is in an annotated package, false otherwise.
-   */
-  public static boolean isInAnnotatedPackage(
-      String packageName, UCRTaintingAnnotatedTypeFactory typeFactory) {
-    if (packageName.equals("unnamed package")) {
-      packageName = "";
-    }
-    return typeFactory.isAnnotatedPackage(packageName);
   }
 
   /**
