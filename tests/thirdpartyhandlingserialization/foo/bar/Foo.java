@@ -29,6 +29,7 @@ class Foo {
     // :: error: (assignment)
     @RUntainted String param = request.getHeader("BenchmarkTest00175");
     // :: error: (assignment)
+    // :: error: (argument)
     @RUntainted File file = new File(path);
     try {
       @RUntainted Path tmpFile = Files.createTempFile("jar_cache", null);

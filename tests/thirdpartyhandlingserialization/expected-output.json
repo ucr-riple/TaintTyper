@@ -14,7 +14,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 824,
+      "offset": 852,
       "index": 2,
       "region": {
         "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
@@ -40,18 +40,33 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1405,
+      "offset": 876,
       "index": 3,
       "region": {
-        "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
         "class": "foo.bar.Foo"
       },
-      "fixes": []
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "path",
+            "kind": "FIELD",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     },
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1480,
+      "offset": 1433,
       "index": 4,
       "region": {
         "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
@@ -61,9 +76,31 @@
     },
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-      "messageKey": "return",
-      "offset": 1858,
+      "messageKey": "argument",
+      "offset": 1508,
       "index": 5,
+      "region": {
+        "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": []
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "messageKey": "argument",
+      "offset": 1529,
+      "index": 6,
+      "region": {
+        "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": []
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "messageKey": "return",
+      "offset": 1886,
+      "index": 7,
       "region": {
         "symbol": "testOnStreamLambda(java.util.List)",
         "class": "foo.bar.Foo"
@@ -91,8 +128,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 2329,
-      "index": 6,
+      "offset": 2357,
+      "index": 8,
       "region": {
         "symbol": "testCheckTypeForArgumentsBeforeCallingFixVisitor(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
         "class": "foo.bar.Foo"
@@ -102,8 +139,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 2922,
-      "index": 7,
+      "offset": 2950,
+      "index": 9,
       "region": {
         "symbol": "testErrorForThirdPartyFieldSelectionError(java.awt.Point)",
         "class": "foo.bar.Foo"

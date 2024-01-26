@@ -4,8 +4,6 @@ import java.util.List;
 import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
 import org.junit.runners.Parameterized.Parameters;
 
-
-
 /**
  * Test runner for tests of the UCR Tainting Checker.
  *

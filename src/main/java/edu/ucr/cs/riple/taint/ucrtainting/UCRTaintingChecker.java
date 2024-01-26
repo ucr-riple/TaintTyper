@@ -19,7 +19,6 @@ import org.checkerframework.framework.source.SupportedOptions;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
-
 /** This is the entry point for pluggable type-checking. */
 @StubFiles({
   "stubs/apache.commons.io.astub",
