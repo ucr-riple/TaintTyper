@@ -151,7 +151,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
         {
           Symbol.MethodSymbol overridingMethod =
               (Symbol.MethodSymbol) TreeUtils.elementFromTree(visitor.getCurrentPath().getLeaf());
-          return overridingMethod == null || typeFactory.isInThirdPartyCode(overridingMethod);
+          return overridingMethod == null || typeFactory.isThirdPartyMethod(overridingMethod);
         }
         // Skip errors that are caused by third-party code.
       case "override.param":
@@ -167,7 +167,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
           }
           Symbol.MethodSymbol overriddenMethod =
               Utility.getClosestOverriddenMethod(overridingMethod, types);
-          return overriddenMethod == null || typeFactory.isInThirdPartyCode(overriddenMethod);
+          return overriddenMethod == null || typeFactory.isThirdPartyMethod(overriddenMethod);
         }
       case "assignment":
         {

@@ -4,7 +4,6 @@ import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getAnnota
 
 import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.AssignmentTree;
-import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.EnhancedForLoopTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodTree;
@@ -109,15 +108,6 @@ public class SerializationService {
           }
         }
       default:
-        ClassTree classTree = Utility.findEnclosingNode(path, ClassTree.class);
-        if (classTree == null) {
-          return ImmutableSet.of();
-        }
-        Symbol.ClassSymbol encClass =
-            (Symbol.ClassSymbol) TreeUtils.elementFromDeclaration(classTree);
-        if (!Utility.isInAnnotatedPackage(encClass, typeFactory)) {
-          return ImmutableSet.of();
-        }
         Set<Fix> fixes = new HashSet<>();
         // On Right Hand Side
         fixes.addAll(tree.accept(fixComputer, pair));

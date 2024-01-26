@@ -12,7 +12,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.lang.annotation.Annotation;
 import java.util.*;
 import javax.lang.model.element.AnnotationMirror;
@@ -414,51 +413,59 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   /**
-   * Checks if the package for the node is present in already annotated according to provided
-   * option.
+   * Checks if the passed method is in third party code.
    *
-   * @param tree to check for
-   * @return true if present, false otherwise
+   * @param symbol Method symbol to check for.
+   * @return true if in third party code, false otherwise
    */
-  public boolean isInThirdPartyCode(Tree tree) {
-    return isInThirdPartyCode(TreeUtils.elementFromTree(tree));
+  public boolean isThirdPartyMethod(Symbol.MethodSymbol symbol) {
+    return isThirdPartySymbol(symbol);
   }
 
-  public boolean isInThirdPartyCode(Element element) {
-    if (element == null) {
+  /**
+   * Checks if the passed field is in third party code.
+   *
+   * @param symbol Field symbol to check for.
+   * @return true if in third party code, false otherwise
+   */
+  public boolean isThirdPartyField(Symbol.VarSymbol symbol) {
+    return isThirdPartySymbol(symbol);
+  }
+
+  /**
+   * Method to check if the passed symbol is in third party code. The method is private
+   * intentionally to make sure the symbol is either a method or a field.
+   *
+   * @param symbol Symbol to check for.
+   * @return true if in third party code, false otherwise
+   */
+  private boolean isThirdPartySymbol(Symbol symbol) {
+    if (symbol == null) {
       return false;
     }
-    Symbol symbol = (Symbol) element;
-    return !Utility.isInAnnotatedPackage(symbol, this);
-  }
-
-  /**
-   * Checks if the tree is annotated in the stub files
-   *
-   * @param node to check for
-   * @return true if annotated, false otherwise
-   */
-  public boolean isPresentInStub(Tree node) {
-    if (node != null) {
-      Element elem = TreeUtils.elementFromTree(node);
-      return elem != null && isFromStubFile(elem);
+    if (isFromStubFile(symbol)) {
+      return false;
     }
-    return false;
+    String packageName = symbol.packge().getQualifiedName().toString();
+    if (packageName.equals("unnamed package")) {
+      packageName = "";
+    }
+    return isUnAnnotatedPackageName(packageName);
   }
 
   /**
-   * Checks if the package name matches any of the annotated packages
+   * Checks if the package name matches any of the annotated packages.
    *
    * @param packageName to check for
-   * @return true if matches, false otherwise
+   * @return false if the package name matches any of the annotated packages, true otherwise.
    */
-  public boolean isAnnotatedPackage(String packageName) {
+  public boolean isUnAnnotatedPackageName(String packageName) {
     for (String annotatedPackageName : listOfAnnotatedPackageNames) {
       if (packageName.startsWith(annotatedPackageName)) {
-        return true;
+        return false;
       }
     }
-    return false;
+    return true;
   }
 
   /**
@@ -470,23 +477,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   public boolean mayBeTainted(Tree tree) {
     AnnotatedTypeMirror type = getAnnotatedType(tree);
     return mayBeTainted(type);
-  }
-
-  /**
-   * Checks if the given element is a source of taint.
-   *
-   * @param element The given element.
-   * @return True if the given element is a source of taint, false otherwise.
-   */
-  public boolean isSource(Element element) {
-    if (!isFromStubFile(element)) {
-      return false;
-    }
-    AnnotatedTypeMirror typeMirror = stubTypes.getAnnotatedTypeMirror(element);
-    if (typeMirror == null) {
-      return false;
-    }
-    return hasTaintedAnnotation(typeMirror);
   }
 
   /**
@@ -613,16 +603,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
           (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
       declaredType.getTypeArguments().forEach(this::makeDeepUntainted);
     }
-  }
-
-  /**
-   * Makes the given tree is {@link RUntainted} third party code.
-   *
-   * @param tree The given tree.
-   * @return True if the given tree is {@link RUntainted} third party code.
-   */
-  public boolean isUnannotatedThirdParty(Tree tree) {
-    return isInThirdPartyCode(tree) && !isPresentInStub(tree);
   }
 
   /**

@@ -1,4 +1,4 @@
-package test;
+package foo.bar;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 import javax.servlet.http.*;
 
 public class Foo {
+
+  private List<String> tokens;
 
   public void testMap(String param) {
     Map<String, String> map = new HashMap<>();
@@ -149,6 +151,11 @@ public class Foo {
   public @RUntainted User selectByToken(String token) {
     // :: error: return
     return userMapper.selectOne(null);
+  }
+
+  public List<@RUntainted String> testThisIdentifier() {
+    // :: error: return
+    return this.tokens;
   }
 }
 

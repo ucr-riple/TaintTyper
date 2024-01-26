@@ -58,14 +58,9 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
       if (receiver != null) {
         Symbol symbol = (Symbol) TreeUtils.elementFromUse(tree);
-        if (symbol.getKind().isField()) {
-          String packageName = symbol.type.tsym.packge().toString();
-          if (packageName.equals("unnamed package")) {
-            packageName = "";
-          }
-          if (!typeFactory.isAnnotatedPackage(packageName)) {
-            return thirdPartyFixVisitor.visitMemberSelect(tree, pair);
-          }
+        if (symbol.getKind().isField()
+            && typeFactory.isThirdPartyField((Symbol.VarSymbol) symbol)) {
+          return thirdPartyFixVisitor.visitMemberSelect(tree, pair);
         }
       }
     }
@@ -101,12 +96,9 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       return Set.of();
     }
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
-    if (typeFactory.isPresentInStub(node.getMethodSelect())) {
-      return Set.of();
-    }
     // Locate method receiver.
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
-    boolean isInAnnotatedPackage = Utility.isInAnnotatedPackage(calledMethod, typeFactory);
+    boolean isInAnnotatedPackage = !typeFactory.isThirdPartyMethod(calledMethod);
     boolean isTypeVar = Utility.containsTypeArgument(calledMethod.getReturnType());
     boolean hasReceiver =
         !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));

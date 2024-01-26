@@ -228,7 +228,7 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
         return Set.of();
       }
       Symbol.ClassSymbol classType = (Symbol.ClassSymbol) type.tsym;
-      if (!typeFactory.isAnnotatedPackage(type.tsym.packge().fullname.toString())
+      if (typeFactory.isUnAnnotatedPackageName(type.tsym.packge().fullname.toString())
           || !(pair.required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
         return Set.of();
       }

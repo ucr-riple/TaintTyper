@@ -3,6 +3,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
+import com.sun.tools.javac.code.Symbol;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.HashMap;
@@ -37,7 +38,7 @@ public class StaticFinalFieldHandler extends AbstractHandler {
       return;
     }
     if (Utility.isStaticAndFinalField(element)) {
-      if (typeFactory.isInThirdPartyCode(element)) {
+      if (typeFactory.isThirdPartyField((Symbol.VarSymbol) element)) {
         typeFactory.makeUntainted(type);
       } else {
         Tree decl = typeFactory.declarationFromElement(element);

@@ -72,7 +72,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
     }
     if (symbol.getKind().isField() && node instanceof JCTree.JCFieldAccess) {
       JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess) node;
-      if (typeFactory.isUnannotatedThirdParty(fieldAccess)
+      if (typeFactory.isThirdPartyField((Symbol.VarSymbol) symbol)
           && !typeFactory.hasTaintedReceiver(fieldAccess)) {
         typeFactory.makeUntainted(annotatedTypeMirror);
         return super.visitMemberSelect(node, annotatedTypeMirror);
@@ -96,16 +96,8 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
    */
   @Override
   public Void visitNewClass(NewClassTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    // if the code is part of provided annotated packages or is present
-    // in the stub files, then we don't need any custom handling for it.
-    if (typeFactory.isUnannotatedThirdParty(node)) {
-      if (!(typeFactory.hasTaintedArgument(node) || typeFactory.hasTaintedReceiver(node))) {
-        typeFactory.makeUntainted(annotatedTypeMirror);
-      }
-    } else {
-      if (!typeFactory.hasTaintedArgument(node)) {
-        typeFactory.makeUntainted(annotatedTypeMirror);
-      }
+    if (!typeFactory.hasTaintedArgument(node)) {
+      typeFactory.makeUntainted(annotatedTypeMirror);
     }
     return super.visitNewClass(node, annotatedTypeMirror);
   }

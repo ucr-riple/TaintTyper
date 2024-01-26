@@ -9,8 +9,6 @@ import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -331,51 +329,11 @@ public class Utility {
   }
 
   /**
-   * Checks if the passed symbol is in an annotated package.
+   * Checks if the passed element is an enum constant.
    *
-   * @param symbol the symbol to check.
-   * @param typeFactory the type factory, used to retrieve the annotated packages names.
-   * @return true if the symbol is in an annotated package, false otherwise.
+   * @param element the element to check.
+   * @return true if the element is an enum constant, false otherwise.
    */
-  public static boolean isInAnnotatedPackage(
-      Symbol symbol, UCRTaintingAnnotatedTypeFactory typeFactory) {
-    if (symbol == null) {
-      return false;
-    }
-    Symbol.ClassSymbol encClass =
-        symbol instanceof Symbol.ClassSymbol ? (Symbol.ClassSymbol) symbol : symbol.enclClass();
-    if (encClass == null) {
-      return false;
-    }
-    String packageName = encClass.packge().toString();
-    if (packageName.equals("unnamed package")) {
-      packageName = "";
-    }
-    boolean fromAnnotatedPackage = typeFactory.isAnnotatedPackage(packageName);
-    if (!fromAnnotatedPackage) {
-      return false;
-    }
-    URI pathInURI =
-        encClass.sourcefile != null
-            ? encClass.sourcefile.toUri()
-            : (encClass.classfile != null ? encClass.classfile.toUri() : null);
-    return Serializer.pathToSourceFileFromURI(pathInURI) != null;
-  }
-
-  /**
-   * Returns true if the passed tree is an enum constant.
-   *
-   * @param tree the tree to check.
-   * @return true if the tree is an enum constant.
-   */
-  public static boolean isEnumConstant(Tree tree) {
-    Element element = TreeUtils.elementFromTree(tree);
-    if (element == null) {
-      return false;
-    }
-    return isEnumConstant(element);
-  }
-
   public static boolean isEnumConstant(Element element) {
     if (element instanceof Symbol.VarSymbol) {
       return ((Symbol.VarSymbol) element).isEnum();
@@ -408,6 +366,12 @@ public class Utility {
     }
   }
 
+  /**
+   * Checks if the passed element is a static and final field.
+   *
+   * @param element the element to check.
+   * @return true if the element is a static and final field, false otherwise.
+   */
   public static boolean isStaticAndFinalField(Element element) {
     if (element == null || !element.getKind().isField()) {
       return false;
@@ -425,6 +389,12 @@ public class Utility {
     return ElementUtils.isFinal(element) && ElementUtils.isStatic(element);
   }
 
+  /**
+   * Checks if the passed type has an untainted annotation.
+   *
+   * @param type the type to check.
+   * @return true if the type has an untainted annotation, false otherwise.
+   */
   public static boolean hasUntaintedAnnotation(Type type) {
     if (type == null) {
       return false;

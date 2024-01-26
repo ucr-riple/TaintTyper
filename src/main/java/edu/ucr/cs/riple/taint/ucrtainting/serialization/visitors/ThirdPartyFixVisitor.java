@@ -59,10 +59,7 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
     }
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
     // check if the call is to a method defined in a third party library.
-
-    // Check if the method is source defined in stubs.
-    if (typeFactory.isSource(calledMethod)) {
-      // We cannot do any fix here
+    if (!typeFactory.isThirdPartyMethod(calledMethod)) {
       return Set.of();
     }
     Set<Fix> fixes = new HashSet<>();
