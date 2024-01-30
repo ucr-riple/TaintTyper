@@ -14,6 +14,8 @@ public class URL {
     public URL(URL context, @RUntainted String spec, URLStreamHandler handler);
     public URL(String protocol, @RUntainted String host, int port, String file);
     public URL(String protocol, @RUntainted String host, int port, String file, URLStreamHandler ph);
+    public @RTainted URLConnection openConnection();
+    public @RTainted java.io.InputStream openStream();
 }
 
 package org.springframework.scripting.bsh;
@@ -63,7 +65,18 @@ public class WebResourceResponse {
 
 package javax.servlet.http;
 public interface HttpServletRequest {
-    public @RTainted String getHeader(String name);
+    public @RTainted String getHeader(java.lang.String arg0);
+    public @RTainted String getMethod();
+    public @RTainted String getPathInfo();
+    public @RTainted String getPathTranslated();
+    public @RTainted String getContextPath();
+    public @RTainted String getQueryString();
+    public @RTainted String getRemoteUser();
+    public @RTainted StringBuffer getRequestURL();
+    public @RTainted StringBuffer getRequestURI();
+    public @RTainted String getParameter(java.lang.String name);
+    public @RTainted java.io.BufferedReader	getReader();
+    public @RTainted javax.servlet.ServletInputStream getInputStream();
 }
 
 package javax.servlet;
