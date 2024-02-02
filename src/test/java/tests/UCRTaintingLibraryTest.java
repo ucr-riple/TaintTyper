@@ -37,7 +37,8 @@ public class UCRTaintingLibraryTest extends CheckerFrameworkPerDirectoryTest {
       "ucrtainting/springSecOAuth",
       "ucrtainting/crashTests",
       "ucrtainting/esapiNullFieldTest",
-      "ucrtainting/stubMalfunc"
+      "ucrtainting/stubMalfunc",
+      "ucrtainting/xmlStreamTest",
     };
   }
 }
