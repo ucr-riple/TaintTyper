@@ -9,6 +9,8 @@ import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import java.net.URI;
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -463,5 +465,21 @@ public class Utility {
       return ((Symbol.MethodSymbol) element).params();
     }
     return null;
+  }
+
+  /**
+   * Returns the path to the source file of the given symbol.
+   *
+   * @param symbol the symbol to get the source file for.
+   * @return the path to the source file of the given symbol.
+   */
+  public static Path getPathFromSymbol(Symbol symbol) {
+    Symbol.ClassSymbol enclosingClass =
+        symbol instanceof Symbol.ClassSymbol ? (Symbol.ClassSymbol) symbol : symbol.enclClass();
+    URI pathInURI =
+        enclosingClass.sourcefile != null
+            ? enclosingClass.sourcefile.toUri()
+            : (enclosingClass.classfile != null ? enclosingClass.classfile.toUri() : null);
+    return Serializer.pathToSourceFileFromURI(pathInURI);
   }
 }

@@ -12,6 +12,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.lang.annotation.Annotation;
 import java.util.*;
 import javax.lang.model.element.AnnotationMirror;
@@ -450,7 +451,11 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     if (packageName.equals("unnamed package")) {
       packageName = "";
     }
-    return isUnAnnotatedPackageName(packageName);
+    boolean isUnAnnotatedPackage = isUnAnnotatedPackageName(packageName);
+    if (isUnAnnotatedPackage) {
+      return true;
+    }
+    return Utility.getPathFromSymbol(symbol) == null;
   }
 
   /**
