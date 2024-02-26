@@ -39,6 +39,7 @@ public class UCRTaintingLibraryTest extends CheckerFrameworkPerDirectoryTest {
       "ucrtainting/esapiNullFieldTest",
       "ucrtainting/stubMalfunc",
       "ucrtainting/xmlStreamTest",
+      "ucrtainting/localTaint"
     };
   }
 }
