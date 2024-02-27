@@ -49,6 +49,8 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
         + target
         + ", typeVariablePositions="
         + typeVariablePositions
+        + ", path="
+        + path
         + '}';
   }
 

@@ -23,6 +23,7 @@ public class CompositHandler implements Handler {
     }
     handlerBuilder.add(new CollectionHandler(typeFactory, context));
     handlerBuilder.add(new AnnotationHandler(typeFactory));
+    handlerBuilder.add(new SanitizerHandler(typeFactory));
     this.handlers = handlerBuilder.build();
   }
 
