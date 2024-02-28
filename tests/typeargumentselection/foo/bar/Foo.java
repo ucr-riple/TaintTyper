@@ -157,6 +157,11 @@ public class Foo {
     // :: error: return
     return this.tokens;
   }
+
+  public void wildCardDeclaredTest(Map<String, ?> map) {
+    // :: error: (enhancedfor)
+    for (@RUntainted Object o : map.values()) {}
+  }
 }
 
 class User {}

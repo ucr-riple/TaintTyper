@@ -24,7 +24,7 @@ public class NewTestTemplateTest extends SerializationTestHelper {
         "ucrtainting",
         "-nowarn",
         "-Anomsgtext",
-        "-AannotatedPackages=org.owasp.esapi",
+        "-AannotatedPackages=foo.bar",
         "-AenableLibraryCheck");
   }
 
