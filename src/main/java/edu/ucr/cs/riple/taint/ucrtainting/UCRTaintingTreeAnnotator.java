@@ -119,4 +119,11 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
     }
     return super.visitNewArray(node, mirror);
   }
+
+  @Override
+  public Void visitLambdaExpression(
+      LambdaExpressionTree node, AnnotatedTypeMirror annotatedTypeMirror) {
+    typeFactory.makeUntainted(annotatedTypeMirror);
+    return super.visitLambdaExpression(node, annotatedTypeMirror);
+  }
 }

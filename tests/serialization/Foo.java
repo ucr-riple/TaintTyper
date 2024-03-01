@@ -126,4 +126,20 @@ class Foo {
           }
         });
   }
+
+  @RUntainted
+  ExpectInetrfaceTestForLambda testLambdasAreUntaintedUsedArguments() {
+    return new ExpectInetrfaceTestForLambda(
+        o -> {
+          System.out.println(o);
+        });
+  }
+
+  class ExpectInetrfaceTestForLambda {
+    ExpectInetrfaceTestForLambda(InetrfaceTestForLambda i) {}
+  }
+
+  interface InetrfaceTestForLambda {
+    void m(Object o);
+  }
 }
