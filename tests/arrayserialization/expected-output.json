@@ -322,6 +322,83 @@
           }
         }
       ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "messageKey": "assignment",
+      "offset": 5748,
+      "index": 11,
+      "region": {
+        "symbol": "inferParamToBeUntainted(java.lang.String)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "inferPolyOnComponentType(java.lang.String,boolean)",
+            "kind": "POLY_METHOD",
+            "arguments": {
+              "0": [
+                [
+                  0
+                ]
+              ]
+            },
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "inferParamToBeUntainted(java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "line",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "messageKey": "assignment",
+      "offset": 6035,
+      "index": 12,
+      "region": {
+        "symbol": "inferForPolyComponent(java.lang.String)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "inferForPolyComponent(java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "line",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     }
   ]
 }

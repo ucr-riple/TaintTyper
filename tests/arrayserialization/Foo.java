@@ -173,4 +173,23 @@ public class Foo {
     }
     return null;
   }
+
+  public void inferParamToBeUntainted(String line) {
+    // :: error: assignment
+    final @RUntainted String[] property = inferPolyOnComponentType(line, false);
+  }
+
+  static String[] inferPolyOnComponentType(final String line, final boolean trimValue) {
+    return line.split(" ");
+  }
+
+  public void inferForPolyComponent(String line) {
+    // :: error: assignment
+    final @RUntainted String[] property = inferedPolyOnComponentType(line, false);
+  }
+
+  static @RPolyTainted String[] inferedPolyOnComponentType(
+      final @RPolyTainted String line, final boolean trimValue) {
+    return line.split(" ");
+  }
 }

@@ -155,6 +155,10 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
           .getTypeArguments()
           .forEach(this::replacePolyWithUntainted);
     }
+    if (annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      replacePolyWithUntainted(
+          ((AnnotatedTypeMirror.AnnotatedArrayType) annotatedTypeMirror).getComponentType());
+    }
   }
 
   public void replacePolyWithUntainted(
@@ -546,6 +550,9 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   public boolean hasPolyTaintedAnnotation(Type type) {
+    if (type instanceof Type.ArrayType) {
+      return hasPolyTaintedAnnotation(((Type.ArrayType) type).getComponentType());
+    }
     return type.getAnnotationMirrors().stream()
         .anyMatch(typeCompound -> typeCompound.type.tsym.name.toString().equals("RPolyTainted"));
   }
