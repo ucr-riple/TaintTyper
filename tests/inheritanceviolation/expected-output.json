@@ -133,6 +133,39 @@
           }
         }
       ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+      "messageKey": "override.return",
+      "offset": 668,
+      "index": 6,
+      "region": {
+        "symbol": "polyDiff(java.lang.Object)",
+        "class": "foo.bar.Bar"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/inheritanceviolation/foo/bar/Bar.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "polyDiff(java.lang.Object)",
+            "kind": "POLY_METHOD",
+            "arguments": {
+              "0": [
+                [
+                  0
+                ]
+              ]
+            },
+            "class": "foo.bar.Bar"
+          }
+        }
+      ]
     }
   ]
 }

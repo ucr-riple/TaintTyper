@@ -18,8 +18,12 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingVisitor;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.PolyTypeMatchVisitor;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisitor;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +50,7 @@ public class SerializationService {
 
   private final FixComputer fixComputer;
   private final TypeMatchVisitor typeMatchVisitor;
+  private final TypeMatchVisitor polyTypeMatchVisitor;
   private final Types types;
 
   public SerializationService(UCRTaintingChecker checker) {
@@ -55,6 +60,7 @@ public class SerializationService {
     this.context = ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext();
     this.types = Types.instance(context);
     this.typeMatchVisitor = new TypeMatchVisitor(typeFactory);
+    this.polyTypeMatchVisitor = new PolyTypeMatchVisitor(typeFactory);
     this.fixComputer = new FixComputer(typeFactory, types, context);
   }
 
@@ -248,6 +254,10 @@ public class SerializationService {
     Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
     SymbolLocation location = SymbolLocation.createLocationFromSymbol(toBeAnnotated, context);
     if (location != null) {
+      List<List<Integer>> differences = typeMatchVisitor.visit(pair.found, pair.required, null);
+      if (differences.isEmpty()) {
+        return ImmutableSet.of();
+      }
       location.setTypeVariablePositions(typeMatchVisitor.visit(pair.found, pair.required, null));
     }
     return ImmutableSet.of(new Fix(location));
@@ -298,6 +308,45 @@ public class SerializationService {
       }
       location.setTypeVariablePositions(differences);
       ans.add(new Fix(location));
+    } else {
+      List<List<Integer>> onPoly =
+          polyTypeMatchVisitor.visit(overridingReturnType, overriddenReturnType, null);
+      if (!onPoly.isEmpty()) {
+        Set<MethodParameterLocation> methodParameterLocations = new HashSet<>();
+        MethodLocation location =
+            (MethodLocation) SymbolLocation.createLocationFromSymbol(overridingMethod, context);
+        if (location == null) {
+          return ImmutableSet.of();
+        }
+        location.setTypeVariablePositions(onPoly);
+        for (int i = 0;
+            i < typeFactory.getAnnotatedType(overridingMethod).getParameterTypes().size();
+            i++) {
+          AnnotatedTypeMirror typeVariable = overriddenType.getParameterTypes().get(i);
+          List<List<Integer>> differencesOnParam =
+              polyTypeMatchVisitor.visit(
+                  typeFactory.getAnnotatedType(overridingMethod).getParameterTypes().get(i),
+                  typeVariable,
+                  null);
+          if (!differencesOnParam.isEmpty()) {
+            MethodParameterLocation methodParameterLocation =
+                (MethodParameterLocation)
+                    SymbolLocation.createLocationFromSymbol(
+                        overridingMethod.getParameters().get(i), context);
+            if (methodParameterLocation == null) {
+              continue;
+            }
+            methodParameterLocation.setTypeVariablePositions(differencesOnParam);
+            methodParameterLocations.add(methodParameterLocation);
+          }
+        }
+        if (!methodParameterLocations.isEmpty()) {
+          PolyMethodLocation polyMethodLocation =
+              new PolyMethodLocation(location, methodParameterLocations);
+          Fix polyFix = new Fix(polyMethodLocation);
+          ans.add(polyFix.toPoly());
+        }
+      }
     }
     return ans.build();
   }

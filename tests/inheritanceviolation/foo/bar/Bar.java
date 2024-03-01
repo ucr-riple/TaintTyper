@@ -29,4 +29,9 @@ public class Bar extends Foo {
   public List<@RUntainted String> mix() {
     return null;
   }
+
+  // :: error: (override.return)
+  Object polyDiff(Object o) {
+    return o;
+  }
 }

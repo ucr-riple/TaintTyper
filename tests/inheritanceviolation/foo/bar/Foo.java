@@ -24,4 +24,9 @@ public class Foo {
   public @RUntainted List<@RUntainted String> mix() {
     return null;
   }
+
+  @RPolyTainted
+  Object polyDiff(@RPolyTainted Object o) {
+    return o;
+  }
 }

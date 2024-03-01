@@ -14,7 +14,7 @@ import org.checkerframework.framework.type.visitor.AbstractAtmComboVisitor;
  */
 public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>>, Void> {
 
-  private final UCRTaintingAnnotatedTypeFactory typeFactory;
+  protected final UCRTaintingAnnotatedTypeFactory typeFactory;
 
   public TypeMatchVisitor(UCRTaintingAnnotatedTypeFactory typeFactory) {
     super();
