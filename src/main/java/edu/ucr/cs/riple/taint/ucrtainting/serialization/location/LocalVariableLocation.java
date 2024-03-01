@@ -18,7 +18,11 @@ public class LocalVariableLocation extends AbstractSymbolLocation {
     this.enclosingMethod =
         (Symbol.MethodSymbol)
             ((Symbol) Objects.requireNonNull(TreeUtils.elementFromTree(declarationTree))).owner;
-    System.out.println("The enclosing method is: " + enclosingMethod + " " + Serializer.serializeSymbol(enclosingMethod).equals("<clinit>"));
+    Serializer.log(
+        "The enclosing method is: "
+            + enclosingMethod
+            + " "
+            + Serializer.serializeSymbol(enclosingMethod).equals("<clinit>"));
   }
 
   @Override
