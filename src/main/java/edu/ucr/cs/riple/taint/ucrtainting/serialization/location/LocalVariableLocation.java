@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
 import java.util.Objects;
 import org.checkerframework.javacutil.TreeUtils;
@@ -17,6 +18,7 @@ public class LocalVariableLocation extends AbstractSymbolLocation {
     this.enclosingMethod =
         (Symbol.MethodSymbol)
             ((Symbol) Objects.requireNonNull(TreeUtils.elementFromTree(declarationTree))).owner;
+    System.out.println("The enclosing method is: " + enclosingMethod + " " + Serializer.serializeSymbol(enclosingMethod).equals("<clinit>"));
   }
 
   @Override
