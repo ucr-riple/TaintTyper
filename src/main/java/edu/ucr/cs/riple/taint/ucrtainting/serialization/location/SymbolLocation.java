@@ -26,7 +26,8 @@ public interface SymbolLocation {
     }
     switch (target.getKind()) {
       case PARAMETER:
-        return new MethodParameterLocation(target);
+        MethodParameterLocation methodParameterLocation = new MethodParameterLocation(target);
+        return methodParameterLocation.index == -1 ? null : methodParameterLocation;
       case METHOD:
         return new MethodLocation(target);
       case FIELD:

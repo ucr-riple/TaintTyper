@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization;
 
+import com.google.common.base.Preconditions;
 import com.sun.source.tree.*;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
@@ -481,5 +482,12 @@ public class Utility {
             ? enclosingClass.sourcefile.toUri()
             : (enclosingClass.classfile != null ? enclosingClass.classfile.toUri() : null);
     return Serializer.pathToSourceFileFromURI(pathInURI);
+  }
+
+  public static Symbol.MethodSymbol getFunctionalInterfaceMethod(ExpressionTree tree, Types types) {
+    Preconditions.checkArgument(
+        (tree instanceof LambdaExpressionTree) || (tree instanceof MemberReferenceTree));
+    Type funcInterfaceType = ((JCTree.JCFunctionalExpression) tree).type;
+    return (Symbol.MethodSymbol) types.findDescriptorSymbol(funcInterfaceType.tsym);
   }
 }

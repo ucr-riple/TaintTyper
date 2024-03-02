@@ -76,7 +76,7 @@ public class SerializationService {
     if (!serializer.isActive()) {
       return;
     }
-    fixComputer.reset();
+    fixComputer.reset(checker.getVisitor().getCurrentPath());
     Set<Fix> resolvingFixes;
     try {
       resolvingFixes =

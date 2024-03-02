@@ -1,0 +1,32 @@
+{
+  "errors": [
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/lambdainference/foo/bar/Foo.java",
+      "messageKey": "argument",
+      "offset": 487,
+      "index": 1,
+      "region": {
+        "symbol": "testSerializationOfParameterForLambda()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/lambdainference/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "m(java.lang.Object)",
+            "kind": "PARAMETER",
+            "name": "o",
+            "index": 0,
+            "class": "foo.bar.Foo$IBar"
+          }
+        }
+      ]
+    }
+  ]
+}

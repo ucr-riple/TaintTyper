@@ -29,12 +29,14 @@ public class MethodParameterLocation extends AbstractSymbolLocation {
     Preconditions.checkArgument(cursor instanceof Symbol.MethodSymbol);
     this.enclosingMethod = (Symbol.MethodSymbol) cursor;
     int i;
+    boolean success = false;
     for (i = 0; i < this.enclosingMethod.getParameters().size(); i++) {
       if (this.enclosingMethod.getParameters().get(i).equals(target)) {
+        success = true;
         break;
       }
     }
-    index = i;
+    this.index = success ? i : -1;
   }
 
   @Override

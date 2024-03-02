@@ -1,7 +1,9 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.tree.*;
+import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
@@ -18,6 +20,7 @@ import org.checkerframework.javacutil.TreeUtils;
 public class BasicVisitor extends SpecializedFixComputer {
 
   protected final MethodReturnVisitor returnVisitor;
+  protected TreePath currentPath;
 
   public BasicVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
@@ -28,8 +31,48 @@ public class BasicVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitIdentifier(IdentifierTree node, FoundRequired pair) {
     if (requireFix(pair)) {
-      Fix fix = buildFixForElement(TreeUtils.elementFromTree(node), pair);
-      return fix == null ? Set.of() : Set.of(fix);
+      Element element = TreeUtils.elementFromUse(node);
+      Fix fix = buildFixForElement(element, pair);
+      if (fix == null) {
+        // TODO Hacky , fix later.
+        // Check if the created method has the parameter with the same name as the identifier.
+        // We might be inside a lambda expression, so we need to check the parameters of the method
+        if (!(element instanceof Symbol.VarSymbol)) {
+          return Set.of();
+        }
+        Symbol.VarSymbol varSymbol = (Symbol.VarSymbol) element;
+        currentPath = TreePath.getPath(currentPath, node);
+        while (!currentPath.getLeaf().getKind().equals(Tree.Kind.LAMBDA_EXPRESSION)
+            && !currentPath.getLeaf().getKind().equals(Tree.Kind.METHOD)) {
+          currentPath = currentPath.getParentPath();
+          if (currentPath == null) {
+            return Set.of();
+          }
+        }
+        if (currentPath.getLeaf().getKind().equals(Tree.Kind.LAMBDA_EXPRESSION)) {
+          LambdaExpressionTree lambdaExpressionTree = (LambdaExpressionTree) currentPath.getLeaf();
+          int index = 0;
+          for (VariableTree variableTree : lambdaExpressionTree.getParameters()) {
+            if (varSymbol.getSimpleName().equals(variableTree.getName())) {
+              Symbol.MethodSymbol methodSymbol =
+                  Utility.getFunctionalInterfaceMethod(
+                      lambdaExpressionTree, Types.instance(context));
+              if (methodSymbol == null) {
+                return Set.of();
+              }
+              if (index >= methodSymbol.getParameters().size()) {
+                return Set.of();
+              }
+              Fix onSuperMethodParameter =
+                  buildFixForElement(methodSymbol.getParameters().get(index), pair);
+              return onSuperMethodParameter == null ? Set.of() : Set.of(onSuperMethodParameter);
+            }
+            index++;
+          }
+        }
+      } else {
+        return Set.of(fix);
+      }
     }
     return Set.of();
   }
@@ -210,7 +253,8 @@ public class BasicVisitor extends SpecializedFixComputer {
     }
   }
 
-  public void reset() {
-    returnVisitor.reset();
+  public void reset(TreePath currentPath) {
+    this.returnVisitor.reset();
+    this.currentPath = currentPath;
   }
 }
