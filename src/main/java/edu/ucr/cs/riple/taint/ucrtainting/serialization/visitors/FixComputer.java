@@ -115,7 +115,10 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       return node.accept(new CollectionVisitor(typeFactory, this, context), pair);
     }
     if (methodHasTypeArgs) {
-      return node.accept(methodTypeArgumentFixVisitor, pair);
+      Set<Fix> fixes = node.accept(methodTypeArgumentFixVisitor, pair);
+      if (!fixes.isEmpty()) {
+        return fixes;
+      }
     }
     // check if the call is to a method defined in a third party library. If the method has a type
     // var return type and has a receiver, we should annotate the receiver.

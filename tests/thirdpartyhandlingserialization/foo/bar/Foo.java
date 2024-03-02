@@ -97,4 +97,12 @@ class Foo {
   public void testErrorForThirdPartyFieldSelectionFix(@RUntainted Point p) {
     @RUntainted int i = p.x;
   }
+
+  public @RUntainted String testDeepUntaintedFoFieldAccess() {
+    return convert(String.class);
+  }
+
+  private <T> T convert(final Class<T> cls) {
+    return null;
+  }
 }
