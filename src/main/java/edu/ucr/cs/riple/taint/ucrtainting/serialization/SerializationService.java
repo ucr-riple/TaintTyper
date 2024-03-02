@@ -209,8 +209,8 @@ public class SerializationService {
           typeMatchVisitor.visit(arrayType.getComponentType(), pair.required, null));
       return ImmutableSet.of(new Fix(location));
     }
-    if (!(varSymbol.type.tsym.name.toString().equals("List")
-        || varSymbol.type.tsym.name.toString().equals("ArrayList"))) {
+    final ImmutableSet<String> supportedTypes = ImmutableSet.of("List", "ArrayList", "Collection");
+    if (!supportedTypes.contains(varSymbol.type.tsym.name.toString())) {
       return ImmutableSet.of();
     }
     List<Integer> effectiveTypeArgumentRegion = List.of(1);

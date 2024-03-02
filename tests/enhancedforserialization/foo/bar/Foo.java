@@ -31,4 +31,10 @@ public class Foo {
       }
     }
   }
+
+  public void enhancedForLoopCollectionSupport() {
+    final @RUntainted Collection<String> files = new ArrayList<>();
+    // :: error: (enhancedfor)
+    for (final @RUntainted String f : files) {}
+  }
 }
