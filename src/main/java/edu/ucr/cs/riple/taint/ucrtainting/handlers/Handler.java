@@ -15,4 +15,6 @@ public interface Handler {
   void visitMethodInvocation(MethodInvocationTree tree, AnnotatedTypeMirror type);
 
   void visitMemberSelect(MemberSelectTree tree, AnnotatedTypeMirror type);
+
+  LambdaHandler getLambdaHandler();
 }

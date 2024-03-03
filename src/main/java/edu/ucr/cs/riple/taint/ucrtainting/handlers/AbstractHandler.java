@@ -34,4 +34,9 @@ public abstract class AbstractHandler implements Handler {
   public void visitMemberSelect(MemberSelectTree tree, AnnotatedTypeMirror type) {
     // no-op
   }
+
+  @Override
+  public LambdaHandler getLambdaHandler() {
+    return null;
+  }
 }

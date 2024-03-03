@@ -13,7 +13,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/lambdainference/foo/bar/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/lambdainference/foo/bar/IBar.java",
             "type-variable-position": [
               [
                 0
@@ -23,7 +23,7 @@
             "kind": "PARAMETER",
             "name": "o",
             "index": 0,
-            "class": "foo.bar.Foo$IBar"
+            "class": "foo.bar.IBar"
           }
         }
       ]

@@ -2,10 +2,12 @@ package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 import java.util.*;
+import org.apache.commons.text.lookup.StringLookup;
 
 public class Foo {
-
-  void sink(@RUntainted Object o) {}
+  String sink(@RUntainted Object o) {
+    return null;
+  }
 
   @RUntainted
   ExpectInetrfaceTestForLambda testLambdasAreUntaintedUsedArguments() {
@@ -14,6 +16,12 @@ public class Foo {
           System.out.println(o);
         });
   }
+
+  void testParametersInLambdaExpressionForThirdPartyMethodAreUntainted() {
+    expectStringLookup(key -> sink(key));
+  }
+
+  void expectStringLookup(StringLookup lookup) {}
 
   void testSerializationOfParameterForLambda() {
     new ExpectInetrfaceTestForLambda(
@@ -25,9 +33,5 @@ public class Foo {
 
   class ExpectInetrfaceTestForLambda {
     ExpectInetrfaceTestForLambda(IBar i) {}
-  }
-
-  interface IBar {
-    void m(Object o);
   }
 }

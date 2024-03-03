@@ -2,9 +2,12 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.List;
 import javax.lang.model.element.ElementKind;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -15,16 +18,20 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
 
   private final Handler handler;
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
+  private final Types types;
 
   /**
    * UCRTaintingTreeAnnotator
    *
    * @param typeFactory the type factory
+   * @param context
    */
-  protected UCRTaintingTreeAnnotator(UCRTaintingAnnotatedTypeFactory typeFactory, Handler handler) {
+  protected UCRTaintingTreeAnnotator(
+      UCRTaintingAnnotatedTypeFactory typeFactory, Handler handler, Context context) {
     super(typeFactory);
     this.typeFactory = typeFactory;
     this.handler = handler;
+    this.types = Types.instance(context);
   }
 
   /**
@@ -124,6 +131,16 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   public Void visitLambdaExpression(
       LambdaExpressionTree node, AnnotatedTypeMirror annotatedTypeMirror) {
     typeFactory.makeUntainted(annotatedTypeMirror);
+    Symbol.MethodSymbol overriddenMethod = Utility.getFunctionalInterfaceMethod(node, types);
+    if (overriddenMethod != null && typeFactory.isThirdPartyMethod(overriddenMethod)) {
+      node.getParameters()
+          .forEach(
+              variableTree ->
+                  handler
+                      .getLambdaHandler()
+                      .addLambdaParameter(
+                          (Symbol.VarSymbol) TreeUtils.elementFromDeclaration(variableTree)));
+    }
     return super.visitLambdaExpression(node, annotatedTypeMirror);
   }
 }
