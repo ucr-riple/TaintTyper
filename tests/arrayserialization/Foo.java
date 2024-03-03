@@ -192,4 +192,9 @@ public class Foo {
       final @RPolyTainted String line, final boolean trimValue) {
     return line.split(" ");
   }
+
+  void testVarArgsForArraysAsList(@RUntainted String a, String b) {
+    // :: error: assignment
+    List<@RUntainted String> list = Arrays.asList(a, b);
+  }
 }

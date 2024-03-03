@@ -210,6 +210,10 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
         declaredType.getTypeArguments().get(typeArgPosition), position, index + 1);
   }
 
+  public void makePolyTainted(AnnotatedTypeMirror type) {
+    type.replaceAnnotation(rPolyTainted);
+  }
+
   private class UCRTaintingQualifierHierarchy extends AccumulationQualifierHierarchy {
 
     /**

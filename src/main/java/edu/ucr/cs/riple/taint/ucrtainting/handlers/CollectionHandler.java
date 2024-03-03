@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.NewClassTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
@@ -44,6 +45,9 @@ public class CollectionHandler extends AbstractHandler {
       throw new RuntimeException("CollectionHandler: receiver is not a class type");
     }
     AnnotatedTypeMirror receiverType = typeFactory.getReceiverType(tree);
+    if (receiverType == null) {
+      return;
+    }
     Type collectionType = getCollectionTypeFromType(receiverType);
     if (collectionType == null) {
       return;
@@ -53,6 +57,38 @@ public class CollectionHandler extends AbstractHandler {
     }
     if (Utility.hasUntaintedAnnotation(((Type.ClassType) collectionType).typarams_field.get(0))) {
       typeFactory.makeUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
+    }
+  }
+
+  @Override
+  public void visitNewClass(NewClassTree tree, AnnotatedTypeMirror type) {
+    super.visitNewClass(tree, type);
+    if (tree.getArguments().isEmpty()) {
+      return;
+    }
+    boolean implementsCollection =
+        implementsCollectionInterface((Type) type.getUnderlyingType(), types);
+    if (!implementsCollection) {
+      return;
+    }
+    ExpressionTree arg = tree.getArguments().get(0);
+    if (!(arg instanceof JCTree.JCIdent)) {
+      return;
+    }
+    Type argType = ((JCTree.JCIdent) arg).type;
+    implementsCollection = implementsCollectionInterface(argType, types);
+    if (!implementsCollection) {
+      return;
+    }
+    AnnotatedTypeMirror.AnnotatedDeclaredType argAnnotatedType =
+        (AnnotatedTypeMirror.AnnotatedDeclaredType) typeFactory.getAnnotatedType(arg);
+    AnnotatedTypeMirror.AnnotatedDeclaredType newClassType =
+        (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
+    if (typeFactory.hasUntaintedAnnotation(argAnnotatedType.getTypeArguments().get(0))) {
+      typeFactory.makeUntainted(newClassType.getTypeArguments().get(0));
+    }
+    if (typeFactory.hasPolyTaintedAnnotation(argAnnotatedType.getTypeArguments().get(0))) {
+      typeFactory.makePolyTainted(newClassType.getTypeArguments().get(0));
     }
   }
 
@@ -159,15 +195,5 @@ public class CollectionHandler extends AbstractHandler {
    */
   public static Type getCollectionTypeFromType(AnnotatedTypeMirror mirror) {
     return getCollectionTypeFromType((Type) mirror.getUnderlyingType());
-  }
-
-  /**
-   * Retrieve the symbolic {@link java.util.Collection} type from the given type.
-   *
-   * @param mirror The type to retrieve the symbolic {@link java.util.Collection} type from.
-   * @return The symbolic {@link java.util.Collection} type from the given type.
-   */
-  public static Type getSymbolicCollectionTypeFromType(AnnotatedTypeMirror mirror) {
-    return getCollectionTypeFromType(((Type) mirror.getUnderlyingType()).tsym.type);
   }
 }

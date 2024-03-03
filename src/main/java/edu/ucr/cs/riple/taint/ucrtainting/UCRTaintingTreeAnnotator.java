@@ -106,6 +106,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
     if (!typeFactory.hasTaintedArgument(node)) {
       typeFactory.makeUntainted(annotatedTypeMirror);
     }
+    handler.visitNewClass(node, annotatedTypeMirror);
     return super.visitNewClass(node, annotatedTypeMirror);
   }
 

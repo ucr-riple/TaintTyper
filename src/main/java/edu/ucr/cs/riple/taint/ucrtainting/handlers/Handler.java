@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.VariableTree;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -15,6 +16,8 @@ public interface Handler {
   void visitMethodInvocation(MethodInvocationTree tree, AnnotatedTypeMirror type);
 
   void visitMemberSelect(MemberSelectTree tree, AnnotatedTypeMirror type);
+
+  void visitNewClass(NewClassTree tree, AnnotatedTypeMirror type);
 
   LambdaHandler getLambdaHandler();
 }

@@ -399,6 +399,34 @@
           }
         }
       ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "messageKey": "assignment",
+      "offset": 6378,
+      "index": 13,
+      "region": {
+        "symbol": "testVarArgsForArraysAsList(java.lang.String,java.lang.String)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testVarArgsForArraysAsList(java.lang.String,java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "b",
+            "index": 1,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     }
   ]
 }

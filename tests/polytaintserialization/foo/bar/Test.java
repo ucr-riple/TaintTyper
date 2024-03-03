@@ -142,4 +142,16 @@ public class Test {
     }
     return Collections.unmodifiableCollection(new ArrayList<>(p));
   }
+
+  public void testPolyOnTypeArgIsAdapted(Collection<@RUntainted String> p) {
+    Collection<@RUntainted String> l = inferredPolyOnCollectionTypeArgument(p);
+  }
+
+  private static Collection<@RPolyTainted String> inferredPolyOnCollectionTypeArgument(
+      final Collection<@RPolyTainted String> p) {
+    if (p == null) {
+      return Collections.emptySet();
+    }
+    return Collections.unmodifiableCollection(new ArrayList<>(p));
+  }
 }

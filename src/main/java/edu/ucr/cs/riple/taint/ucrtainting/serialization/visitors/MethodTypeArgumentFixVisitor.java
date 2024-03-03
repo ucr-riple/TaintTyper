@@ -55,7 +55,10 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
             AnnotatedTypes.adaptParameters(typeFactory, invokedMethod, node.getArguments());
         for (int i = 0; i < node.getArguments().size(); i++) {
           AnnotatedTypeMirror requiredParam = paramsAnnotatedTypeMirrors.get(i).deepCopy(true);
-          Type paramType = calledMethod.getParameters().get(i).type;
+          Type paramType =
+              calledMethod.isVarArgs()
+                  ? calledMethod.getParameters().get(0).type
+                  : calledMethod.getParameters().get(i).type;
           boolean changed = updateAnnotatedTypeMirror(requiredParam, paramType, typeVar);
           if (changed) {
             ExpressionTree arg = node.getArguments().get(i);
@@ -205,7 +208,8 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
         updated = updateAnnotatedTypeMirror(extendsBound, wildcard.getExtendsBound(), var);
       }
     }
-    if (elementType instanceof Type.ArrayType) {
+    if (elementType instanceof Type.ArrayType
+        && typeMirror instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
       AnnotatedTypeMirror.AnnotatedArrayType arrayType =
           (AnnotatedTypeMirror.AnnotatedArrayType) typeMirror;
       Type.ArrayType array = (Type.ArrayType) elementType;
