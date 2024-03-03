@@ -6,6 +6,7 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
+import java.nio.file.Path;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -65,4 +66,6 @@ public interface SymbolLocation {
   LocationKind getKind();
 
   Symbol getTarget();
+
+  Path path();
 }

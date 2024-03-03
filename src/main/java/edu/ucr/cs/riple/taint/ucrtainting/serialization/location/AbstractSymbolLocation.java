@@ -84,4 +84,9 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   public Symbol getTarget() {
     return target;
   }
+
+  @Override
+  public Path path() {
+    return path;
+  }
 }

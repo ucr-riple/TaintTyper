@@ -11,6 +11,7 @@ import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.util.Context;
@@ -18,6 +19,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingVisitor;
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
@@ -40,7 +42,7 @@ public class SerializationService {
   private final Serializer serializer;
   /**
    * The type factory of the checker. Used to get the type of the tree and generate a fix only if
-   * the tree is {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}
+   * the tree is {@link RTainted}
    */
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
   /** Using checker instance. */
@@ -193,16 +195,22 @@ public class SerializationService {
 
   private ImmutableSet<Fix> handleEnhancedForLoop(Tree tree, FoundRequired pair) {
     Element element = TreeUtils.elementFromTree(tree);
-    if (!(element instanceof Symbol.VarSymbol)) {
+    Type type = null;
+    if (element instanceof Symbol.VarSymbol) {
+      type = ((Symbol.VarSymbol) element).type;
+    }
+    if (element instanceof Symbol.MethodSymbol) {
+      type = ((Symbol.MethodSymbol) element).getReturnType();
+    }
+    if (type == null) {
       return ImmutableSet.of();
     }
     // todo: check for all subtypes.
-    Symbol.VarSymbol varSymbol = (Symbol.VarSymbol) element;
-    if (varSymbol.type.tsym.name.toString().equals("Array")) {
+    if (type.tsym.name.toString().equals("Array")) {
       AnnotatedTypeMirror.AnnotatedArrayType arrayType =
           (AnnotatedTypeMirror.AnnotatedArrayType) typeFactory.getAnnotatedType(element);
-      SymbolLocation location = SymbolLocation.createLocationFromSymbol(varSymbol, context);
-      if (location == null) {
+      SymbolLocation location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+      if (location == null || location.path() == null) {
         return ImmutableSet.of();
       }
       location.setTypeVariablePositions(
@@ -210,7 +218,7 @@ public class SerializationService {
       return ImmutableSet.of(new Fix(location));
     }
     final ImmutableSet<String> supportedTypes = ImmutableSet.of("List", "ArrayList", "Collection");
-    if (!supportedTypes.contains(varSymbol.type.tsym.name.toString())) {
+    if (!supportedTypes.contains(type.tsym.name.toString())) {
       return ImmutableSet.of();
     }
     List<Integer> effectiveTypeArgumentRegion = List.of(1);
@@ -219,8 +227,8 @@ public class SerializationService {
             typeFactory.getAnnotatedType(element), effectiveTypeArgumentRegion);
     if (typeFactory.hasUntaintedAnnotation(pair.required)
         && !typeFactory.hasUntaintedAnnotation(typeArgumentRegion)) {
-      SymbolLocation location = SymbolLocation.createLocationFromSymbol(varSymbol, context);
-      if (location == null) {
+      SymbolLocation location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+      if (location == null || location.path() == null) {
         return ImmutableSet.of();
       }
       location.setTypeVariablePositions(List.of(List.of(1, 0)));

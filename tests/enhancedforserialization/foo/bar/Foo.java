@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
 public class Foo {
+
   public void testFor() {
     Map<String, String> headers = new HashMap<>();
     // :: error: enhancedfor
@@ -36,5 +37,19 @@ public class Foo {
     final @RUntainted Collection<String> files = new ArrayList<>();
     // :: error: (enhancedfor)
     for (final @RUntainted String f : files) {}
+  }
+
+  public void enhancedForLoopOnMethodReturnTypeTest() {
+    // :: error: enhancedfor
+    for (final @RUntainted String paramcls : getParameterClasses()) {}
+  }
+
+  public Collection<String> getParameterClasses() {
+    return null;
+  }
+
+  public void wildCardDeclaredTest(Map<String, ?> map) {
+    // :: error: (enhancedfor)
+    for (@RUntainted Object o : map.values()) {}
   }
 }
