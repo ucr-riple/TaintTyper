@@ -10,6 +10,7 @@ public class PolyMethodLocation extends AbstractSymbolLocation {
 
   public PolyMethodLocation(MethodLocation location, Set<MethodParameterLocation> arguments) {
     super(LocationKind.POLY_METHOD, location.target);
+    this.setTypeVariablePositions(location.typeVariablePositions);
     this.arguments = arguments;
     if (arguments.isEmpty()) {
       throw new RuntimeException("PolyMethodLocation must have at least one argument");

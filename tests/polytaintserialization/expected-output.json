@@ -776,6 +776,7 @@
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "type-variable-position": [
               [
+                1,
                 0
               ]
             ],
