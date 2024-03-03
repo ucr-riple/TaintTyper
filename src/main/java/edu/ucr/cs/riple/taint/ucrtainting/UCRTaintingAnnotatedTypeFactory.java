@@ -523,6 +523,13 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    *     otherwise.
    */
   public boolean hasUntaintedAnnotation(AnnotatedTypeMirror type) {
+    if (type instanceof AnnotatedTypeMirror.AnnotatedWildcardType) {
+      AnnotatedTypeMirror.AnnotatedWildcardType wildcardType =
+          (AnnotatedTypeMirror.AnnotatedWildcardType) type;
+      if (hasUntaintedAnnotation(wildcardType.getExtendsBound())) {
+        return true;
+      }
+    }
     return type.hasPrimaryAnnotation(rUntainted);
   }
 

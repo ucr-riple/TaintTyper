@@ -130,4 +130,16 @@ public class Test {
       return parsedValue;
     }
   }
+
+  public void inferPolyWithNewCollectionTest(Collection<String> p) {
+    // :: error: assignment
+    Collection<@RUntainted String> l = init(p);
+  }
+
+  private static Collection<String> init(final Collection<String> p) {
+    if (p == null) {
+      return Collections.emptySet();
+    }
+    return Collections.unmodifiableCollection(new ArrayList<>(p));
+  }
 }

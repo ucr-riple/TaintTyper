@@ -759,6 +759,57 @@
           }
         }
       ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "messageKey": "assignment",
+      "offset": 3756,
+      "index": 14,
+      "region": {
+        "symbol": "inferPolyWithNewCollectionTest(java.util.Collection)",
+        "class": "foo.bar.Test"
+      },
+      "fixes": [
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "init(java.util.Collection)",
+            "kind": "POLY_METHOD",
+            "arguments": {
+              "0": [
+                [
+                  1,
+                  0
+                ]
+              ]
+            },
+            "class": "foo.bar.Test"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "inferPolyWithNewCollectionTest(java.util.Collection)",
+            "kind": "PARAMETER",
+            "name": "p",
+            "index": 0,
+            "class": "foo.bar.Test"
+          }
+        }
+      ]
     }
   ]
 }
