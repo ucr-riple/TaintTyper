@@ -2,8 +2,7 @@ package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 
-public class Test {
+public interface I {
 
-  String field;
-  String param;
+  //    @RUntainted String foo();
 }

@@ -207,6 +207,14 @@ public class Utility {
       return getAnnotatedTypeMirrorOfTypeArgumentAt(
           declaredType.getTypeArguments().get(index - 1), position);
     }
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      if (position.isEmpty() || (position.size() == 1 && position.getFirst() == 0)) {
+        return type;
+      }
+      if (position.size() == 2 && position.containsAll(List.of(1, 0))) {
+        return ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
+      }
+    }
     throw new IllegalArgumentException("Type " + type + " does not have type arguments.");
   }
 

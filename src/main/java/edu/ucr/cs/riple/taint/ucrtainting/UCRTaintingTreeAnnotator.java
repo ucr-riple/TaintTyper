@@ -7,6 +7,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.List;
 import javax.lang.model.element.ElementKind;
@@ -82,13 +83,14 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
       if (typeFactory.isThirdPartyField((Symbol.VarSymbol) symbol)
           && !typeFactory.hasTaintedReceiver(fieldAccess)) {
         typeFactory.makeUntainted(annotatedTypeMirror);
-        return super.visitMemberSelect(node, annotatedTypeMirror);
       }
     }
     // make .class untainted
     if (node.getIdentifier().toString().equals("class")
         && annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-      typeFactory.makeUntainted(annotatedTypeMirror);
+      Serializer.log("Applying for: " + node + " " + annotatedTypeMirror);
+      typeFactory.makeDeepUntainted(annotatedTypeMirror);
+      Serializer.log("After: " + annotatedTypeMirror);
     }
     return super.visitMemberSelect(node, annotatedTypeMirror);
   }

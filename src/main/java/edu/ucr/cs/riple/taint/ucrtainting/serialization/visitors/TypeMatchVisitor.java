@@ -171,7 +171,21 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
       AnnotatedTypeMirror.AnnotatedArrayType found,
       AnnotatedTypeMirror.AnnotatedArrayType required,
       Void unused) {
-    return this.visit(found.getComponentType(), required.getComponentType(), unused);
+    List<List<Integer>> list = new ArrayList<>(supportedDefault(found, required));
+    List<List<Integer>> onComponentType =
+        visit(found.getComponentType(), required.getComponentType(), unused);
+    if (onComponentType.isEmpty()) {
+      return list;
+    }
+    onComponentType.forEach(
+        l -> {
+          if (!l.isEmpty()) {
+            List<Integer> updated = new ArrayList<>(l);
+            updated.add(0, 1);
+            list.add(updated);
+          }
+        });
+    return list;
   }
 
   @Override

@@ -156,9 +156,19 @@ public class BasicVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitNewArray(NewArrayTree node, FoundRequired pair) {
     Set<Fix> fixes = new HashSet<>();
-    // Add a fix for each argument.
-    if (node.getInitializers() != null) {
-      node.getInitializers().forEach(arg -> fixes.addAll(arg.accept(fixComputer, pair)));
+    if (pair.found instanceof AnnotatedTypeMirror.AnnotatedArrayType
+        && pair.required instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      AnnotatedTypeMirror.AnnotatedArrayType foundArrayType =
+          (AnnotatedTypeMirror.AnnotatedArrayType) pair.found;
+      AnnotatedTypeMirror.AnnotatedArrayType requiredArrayType =
+          (AnnotatedTypeMirror.AnnotatedArrayType) pair.required;
+      FoundRequired newPair =
+          new FoundRequired(
+              foundArrayType.getComponentType(), requiredArrayType.getComponentType(), pair.depth);
+      // Add a fix for each argument.
+      if (node.getInitializers() != null) {
+        node.getInitializers().forEach(arg -> fixes.addAll(arg.accept(fixComputer, newPair)));
+      }
     }
     return fixes;
   }

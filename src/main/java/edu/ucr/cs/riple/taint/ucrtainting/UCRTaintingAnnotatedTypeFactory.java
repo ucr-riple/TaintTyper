@@ -621,6 +621,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    */
   public void makeDeepUntainted(AnnotatedTypeMirror type) {
     makeUntainted(type);
+    // don't do it.
     //    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
     //      makeDeepUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
     //    }
