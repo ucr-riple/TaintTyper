@@ -129,6 +129,14 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   protected void addAnnotationsFromDefaultForType(
       @Nullable Element element, AnnotatedTypeMirror type) {
     super.addAnnotationsFromDefaultForType(element, type);
+    // make reference type for var args untainted.
+    if (element instanceof Symbol.VarSymbol) {
+      if (((Symbol.VarSymbol) element).type instanceof Type.ArrayType) {
+        if (((Type.ArrayType) ((Symbol.VarSymbol) element).type).isVarargs()) {
+          makeUntainted(type);
+        }
+      }
+    }
     handler.addAnnotationsFromDefaultForType(element, type);
   }
 
@@ -164,9 +172,18 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     }
   }
 
+  /**
+   * Replaces all existing {@link RPolyTainted} annotations with {@link RUntainted} annotation
+   * according to the typeWithPoly. (e.g. {@code List<String>} as toAdaptType and {@code
+   * List<@RPolyTainted String>} as typeWithPoly will be converted to {@code List<@RUntainted
+   * String>})
+   *
+   * @param toAdaptType The type to be adapted.
+   * @param typeWithPoly The type with {@link RPolyTainted} annotations.
+   */
   public void replacePolyWithUntainted(
       AnnotatedTypeMirror toAdaptType, AnnotatedTypeMirror typeWithPoly) {
-    if (typeWithPoly.hasPrimaryAnnotation(rPolyTainted)) {
+    if (hasPolyTaintedAnnotation(typeWithPoly)) {
       toAdaptType.replaceAnnotation(rUntainted);
     }
     if (toAdaptType instanceof AnnotatedTypeMirror.AnnotatedDeclaredType
@@ -181,6 +198,12 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     }
   }
 
+  /**
+   * Makes the type argument at the given position untainted.
+   *
+   * @param type The type to be adapted.
+   * @param positions The positions of the type arguments to be adapted.
+   */
   public void makeUntainted(AnnotatedTypeMirror type, List<List<Integer>> positions) {
     if (!(type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
       return;
@@ -191,8 +214,16 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     positions.forEach(integers -> makeUntaintedForPosition(type, integers, 0));
   }
 
+  /**
+   * Makes the type argument at the given position untainted.
+   *
+   * @param type The type to be adapted.
+   * @param position The position of the type argument to be adapted.
+   * @param index The index of the position.
+   */
   private void makeUntaintedForPosition(
       AnnotatedTypeMirror type, List<Integer> position, int index) {
+    // TODO: This method can be rewritten to remove index parameter.
     if (!(type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
       return;
     }
@@ -210,8 +241,271 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
         declaredType.getTypeArguments().get(typeArgPosition), position, index + 1);
   }
 
+  /**
+   * Makes the given type poly-tainted.
+   *
+   * @param type The type to be adapted.
+   */
   public void makePolyTainted(AnnotatedTypeMirror type) {
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      // We don't want to make the array type poly-tainted, but rather the component type.
+      type = ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
+    }
     type.replaceAnnotation(rPolyTainted);
+  }
+
+  /**
+   * Checks if any of the arguments of the node has been annotated with {@link RTainted}
+   *
+   * @param node to check for
+   * @return true if any argument is annotated with {@link RTainted}, false otherwise
+   */
+  public boolean hasTaintedArgument(ExpressionTree node) {
+    List<? extends ExpressionTree> argumentsList = null;
+    if (node instanceof MethodInvocationTree) {
+      argumentsList = ((MethodInvocationTree) node).getArguments();
+    } else if (node instanceof NewClassTree) {
+      argumentsList = ((NewClassTree) node).getArguments();
+    }
+    if (node instanceof TypeCastTree) {
+      argumentsList = Collections.singletonList(((TypeCastTree) node).getExpression());
+    }
+    if (argumentsList != null) {
+      for (ExpressionTree eTree : argumentsList) {
+        if (mayBeTainted(getAnnotatedType(eTree))) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if the receiver tree has been annotated with {@link RTainted}
+   *
+   * @param node to check for
+   * @return true if annotated with {@link RTainted}, false otherwise
+   */
+  public boolean hasTaintedReceiver(ExpressionTree node) {
+    if (node != null) {
+      ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
+      if (receiverTree != null) {
+        Element element = TreeUtils.elementFromTree(node);
+        if (element != null) {
+          Set<Modifier> modifiers = element.getModifiers();
+          return modifiers != null
+              && !modifiers.contains(Modifier.STATIC)
+              && getAnnotatedType(receiverTree).hasPrimaryAnnotation(rTainted);
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Checks if the passed method is in third party code.
+   *
+   * @param symbol Method symbol to check for.
+   * @return true if in third party code, false otherwise
+   */
+  public boolean isThirdPartyMethod(Symbol.MethodSymbol symbol) {
+    return isThirdPartySymbol(symbol);
+  }
+
+  /**
+   * Checks if the passed field is in third party code.
+   *
+   * @param symbol Field symbol to check for.
+   * @return true if in third party code, false otherwise
+   */
+  public boolean isThirdPartyField(Symbol.VarSymbol symbol) {
+    return isThirdPartySymbol(symbol);
+  }
+
+  /**
+   * Method to check if the passed symbol is in third party code. The method is private
+   * intentionally to make sure the symbol is either a method or a field.
+   *
+   * @param symbol Symbol to check for.
+   * @return true if in third party code, false otherwise
+   */
+  private boolean isThirdPartySymbol(Symbol symbol) {
+    if (symbol == null) {
+      return false;
+    }
+    if (isFromStubFile(symbol)) {
+      return false;
+    }
+    String packageName = symbol.packge().getQualifiedName().toString();
+    if (packageName.equals("unnamed package")) {
+      packageName = "";
+    }
+    boolean isUnAnnotatedPackage = isUnAnnotatedPackageName(packageName);
+    if (isUnAnnotatedPackage) {
+      return true;
+    }
+    return Utility.getPathFromSymbol(symbol) == null;
+  }
+
+  /**
+   * Checks if the package name matches any of the annotated packages.
+   *
+   * @param packageName to check for
+   * @return false if the package name matches any of the annotated packages, true otherwise.
+   */
+  public boolean isUnAnnotatedPackageName(String packageName) {
+    for (String annotatedPackageName : listOfAnnotatedPackageNames) {
+      if (packageName.startsWith(annotatedPackageName)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Checks if the given tree may be tainted.
+   *
+   * @param tree The given tree.
+   * @return True if the given tree is tainted, false otherwise.
+   */
+  public boolean mayBeTainted(Tree tree) {
+    AnnotatedTypeMirror type = getAnnotatedType(tree);
+    return mayBeTainted(type);
+  }
+
+  /**
+   * Checks if the given type may be tainted
+   *
+   * @param type The given type
+   * @return True if the given type may be tainted, false otherwise.
+   */
+  public boolean mayBeTainted(AnnotatedTypeMirror type) {
+    // If type is null, we should be conservative and assume it may be tainted.
+    if (type == null) {
+      return true;
+    }
+    return !hasUntaintedAnnotation(type) && !hasPolyTaintedAnnotation(type);
+  }
+
+  /**
+   * Checks if the given tree has the {@link RUntainted} annotation.
+   *
+   * @param tree The given tree
+   * @return True if the given tree has the {@link RUntainted} annotation, false otherwise.
+   */
+  public boolean hasUntaintedAnnotation(Tree tree) {
+    return hasUntaintedAnnotation(getAnnotatedType(tree));
+  }
+
+  /**
+   * Checks if the given annotated type mirror has the {@link RUntainted} annotation.
+   *
+   * @param type The given annotated type mirror
+   * @return True if the given annotated type mirror has the {@link RUntainted} annotation, false
+   *     otherwise.
+   */
+  public boolean hasUntaintedAnnotation(AnnotatedTypeMirror type) {
+    if (type instanceof AnnotatedTypeMirror.AnnotatedWildcardType) {
+      AnnotatedTypeMirror.AnnotatedWildcardType wildcardType =
+          (AnnotatedTypeMirror.AnnotatedWildcardType) type;
+      type = wildcardType.getExtendsBound();
+    }
+    return type.hasPrimaryAnnotation(rUntainted);
+  }
+
+  public boolean hasPolyTaintedAnnotation(Type type) {
+    if (type instanceof Type.ArrayType) {
+      return hasPolyTaintedAnnotation(((Type.ArrayType) type).getComponentType());
+    }
+    return type.getAnnotationMirrors().stream()
+        .anyMatch(typeCompound -> typeCompound.type.tsym.name.toString().equals("RPolyTainted"));
+  }
+
+  /**
+   * Checks if the given annotated type mirror has the {@link
+   * edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotation.
+   *
+   * @param type The given annotated type mirror
+   * @return True if the given annotated type mirror has the {@link
+   *     edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotation, false otherwise.
+   */
+  public boolean hasPolyTaintedAnnotation(AnnotatedTypeMirror type) {
+    return type.hasPrimaryAnnotation(rPolyTainted);
+  }
+
+  /**
+   * Checks if the given tree has the {@link RPolyTainted} or {@link RUntainted} annotation.
+   *
+   * @param tree The given tree.
+   * @return True if the given tree has the {@link RPolyTainted} or {@link RUntainted} annotation.
+   */
+  public boolean isPolyOrUntainted(Tree tree) {
+    AnnotatedTypeMirror type = getAnnotatedType(tree);
+    return isPolyOrUntainted(type);
+  }
+
+  /**
+   * Checks if the given annotated type mirror is {@link RUntainted} or {@link RPolyTainted}.
+   *
+   * @param type The given annotated type mirror.
+   * @return True if the given annotated type mirror is {@link RUntainted} or {@link RPolyTainted}.
+   */
+  public boolean isPolyOrUntainted(AnnotatedTypeMirror type) {
+    return hasPolyTaintedAnnotation(type) || !mayBeTainted(type);
+  }
+
+  /**
+   * Makes the given type {@link RUntainted}.
+   *
+   * @param type The given type.
+   */
+  public void makeUntainted(AnnotatedTypeMirror type) {
+    type.replaceAnnotation(rUntainted);
+  }
+
+  /**
+   * Makes the given type and all it's including parameter types {@link RUntainted} recursively. If
+   * the given type is an array type, the component type will also be made {@link RUntainted}.
+   *
+   * @param type The given type.
+   */
+  public void makeDeepUntainted(AnnotatedTypeMirror type) {
+    makeUntainted(type);
+    //    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+    //      makeDeepUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
+    //    }
+    if (type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
+          (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
+      declaredType.getTypeArguments().forEach(this::makeDeepUntainted);
+    }
+  }
+
+  /**
+   * Checks if custom check is enabled.
+   *
+   * @return True if custom check is enabled, false otherwise.
+   */
+  public boolean libraryCheckIsEnabled() {
+    return enableLibraryCheck;
+  }
+
+  /**
+   * Check if poly taint inference is enabled.
+   *
+   * @return True if poly taint inference is enabled, false otherwise.
+   */
+  public boolean polyTaintInferenceEnabled() {
+    return enablePolyTaintInference;
+  }
+
+  /**
+   * Check if type argument inference is enabled.
+   *
+   * @return True if type argument inference is enabled, false otherwise.
+   */
+  public boolean typeArgumentInferenceEnabled() {
+    return enableTypeArgumentInference;
   }
 
   private class UCRTaintingQualifierHierarchy extends AccumulationQualifierHierarchy {
@@ -374,287 +668,5 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
       List<String> superVal = getAccumulatedValues(superAnno);
       return subVal.containsAll(superVal);
     }
-  }
-
-  /**
-   * Checks if any of the arguments of the node has been annotated with {@link RTainted}
-   *
-   * @param node to check for
-   * @return true if any argument is annotated with {@link RTainted}, false otherwise
-   */
-  public boolean hasTaintedArgument(ExpressionTree node) {
-    List<? extends ExpressionTree> argumentsList = null;
-    if (node instanceof MethodInvocationTree) {
-      argumentsList = ((MethodInvocationTree) node).getArguments();
-    } else if (node instanceof NewClassTree) {
-      argumentsList = ((NewClassTree) node).getArguments();
-    }
-    if (node instanceof TypeCastTree) {
-      argumentsList = Collections.singletonList(((TypeCastTree) node).getExpression());
-    }
-    if (argumentsList != null) {
-      for (ExpressionTree eTree : argumentsList) {
-        if (mayBeTainted(getAnnotatedType(eTree))) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Checks if the receiver tree has been annotated with {@link RTainted}
-   *
-   * @param node to check for
-   * @return true if annotated with {@link RTainted}, false otherwise
-   */
-  public boolean hasTaintedReceiver(ExpressionTree node) {
-    if (node != null) {
-      ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
-      if (receiverTree != null) {
-        Element element = TreeUtils.elementFromTree(node);
-        if (element != null) {
-          Set<Modifier> modifiers = element.getModifiers();
-          return modifiers != null
-              && !modifiers.contains(Modifier.STATIC)
-              && getAnnotatedType(receiverTree).hasPrimaryAnnotation(rTainted);
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Checks if the passed method is in third party code.
-   *
-   * @param symbol Method symbol to check for.
-   * @return true if in third party code, false otherwise
-   */
-  public boolean isThirdPartyMethod(Symbol.MethodSymbol symbol) {
-    return isThirdPartySymbol(symbol);
-  }
-
-  /**
-   * Checks if the passed field is in third party code.
-   *
-   * @param symbol Field symbol to check for.
-   * @return true if in third party code, false otherwise
-   */
-  public boolean isThirdPartyField(Symbol.VarSymbol symbol) {
-    return isThirdPartySymbol(symbol);
-  }
-
-  /**
-   * Method to check if the passed symbol is in third party code. The method is private
-   * intentionally to make sure the symbol is either a method or a field.
-   *
-   * @param symbol Symbol to check for.
-   * @return true if in third party code, false otherwise
-   */
-  private boolean isThirdPartySymbol(Symbol symbol) {
-    if (symbol == null) {
-      return false;
-    }
-    if (isFromStubFile(symbol)) {
-      return false;
-    }
-    String packageName = symbol.packge().getQualifiedName().toString();
-    if (packageName.equals("unnamed package")) {
-      packageName = "";
-    }
-    boolean isUnAnnotatedPackage = isUnAnnotatedPackageName(packageName);
-    if (isUnAnnotatedPackage) {
-      return true;
-    }
-    return Utility.getPathFromSymbol(symbol) == null;
-  }
-
-  /**
-   * Checks if the package name matches any of the annotated packages.
-   *
-   * @param packageName to check for
-   * @return false if the package name matches any of the annotated packages, true otherwise.
-   */
-  public boolean isUnAnnotatedPackageName(String packageName) {
-    for (String annotatedPackageName : listOfAnnotatedPackageNames) {
-      if (packageName.startsWith(annotatedPackageName)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Checks if the given tree may be tainted.
-   *
-   * @param tree The given tree.
-   * @return True if the given tree is tainted, false otherwise.
-   */
-  public boolean mayBeTainted(Tree tree) {
-    AnnotatedTypeMirror type = getAnnotatedType(tree);
-    return mayBeTainted(type);
-  }
-
-  /**
-   * Checks if the given type may be tainted
-   *
-   * @param type The given type
-   * @return True if the given type may be tainted, false otherwise.
-   */
-  public boolean mayBeTainted(AnnotatedTypeMirror type) {
-    // If type is null, we should be conservative and assume it may be tainted.
-    if (type == null) {
-      return true;
-    }
-    return !hasUntaintedAnnotation(type) && !hasPolyTaintedAnnotation(type);
-  }
-
-  /**
-   * Checks if the given tree has the {@link RUntainted} annotation.
-   *
-   * @param tree The given tree
-   * @return True if the given tree has the {@link RUntainted} annotation, false otherwise.
-   */
-  public boolean hasUntaintedAnnotation(Tree tree) {
-    return hasUntaintedAnnotation(getAnnotatedType(tree));
-  }
-
-  /**
-   * Checks if the given annotated type mirror has the {@link RUntainted} annotation.
-   *
-   * @param type The given annotated type mirror
-   * @return True if the given annotated type mirror has the {@link RUntainted} annotation, false
-   *     otherwise.
-   */
-  public boolean hasUntaintedAnnotation(AnnotatedTypeMirror type) {
-    if (type instanceof AnnotatedTypeMirror.AnnotatedWildcardType) {
-      AnnotatedTypeMirror.AnnotatedWildcardType wildcardType =
-          (AnnotatedTypeMirror.AnnotatedWildcardType) type;
-      if (hasUntaintedAnnotation(wildcardType.getExtendsBound())) {
-        return true;
-      }
-    }
-    return type.hasPrimaryAnnotation(rUntainted);
-  }
-
-  /**
-   * Checks if the given tree has the {@link RTainted} annotation.
-   *
-   * @param type The given annotated type mirror
-   * @return True if the given annotated type mirror has the {@link RTainted} annotation, false.
-   */
-  public boolean hasTaintedAnnotation(AnnotatedTypeMirror type) {
-    if (type instanceof AnnotatedTypeMirror.AnnotatedExecutableType) {
-      return hasTaintedAnnotation(
-          ((AnnotatedTypeMirror.AnnotatedExecutableType) type).getReturnType());
-    }
-    return type.hasPrimaryAnnotation(rTainted);
-  }
-
-  /**
-   * Checks if the given tree has the {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted}
-   * annotation.
-   *
-   * @param tree The given tree
-   * @return True if the given tree has the {@link
-   *     edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotation, false otherwise.
-   */
-  public boolean hasPolyTaintedAnnotation(Tree tree) {
-    return hasPolyTaintedAnnotation(getAnnotatedType(tree));
-  }
-
-  public boolean hasPolyTaintedAnnotation(Type type) {
-    if (type instanceof Type.ArrayType) {
-      return hasPolyTaintedAnnotation(((Type.ArrayType) type).getComponentType());
-    }
-    return type.getAnnotationMirrors().stream()
-        .anyMatch(typeCompound -> typeCompound.type.tsym.name.toString().equals("RPolyTainted"));
-  }
-
-  /**
-   * Checks if the given annotated type mirror has the {@link
-   * edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotation.
-   *
-   * @param type The given annotated type mirror
-   * @return True if the given annotated type mirror has the {@link
-   *     edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotation, false otherwise.
-   */
-  public boolean hasPolyTaintedAnnotation(AnnotatedTypeMirror type) {
-    return type.hasPrimaryAnnotation(rPolyTainted);
-  }
-
-  /**
-   * Checks if the given tree has the {@link RPolyTainted} or {@link RUntainted} annotation.
-   *
-   * @param tree The given tree.
-   * @return True if the given tree has the {@link RPolyTainted} or {@link RUntainted} annotation.
-   */
-  public boolean isPolyOrUntainted(Tree tree) {
-    AnnotatedTypeMirror type = getAnnotatedType(tree);
-    return isPolyOrUntainted(type);
-  }
-
-  /**
-   * Checks if the given annotated type mirror is {@link RUntainted} or {@link RPolyTainted}.
-   *
-   * @param type The given annotated type mirror.
-   * @return True if the given annotated type mirror is {@link RUntainted} or {@link RPolyTainted}.
-   */
-  public boolean isPolyOrUntainted(AnnotatedTypeMirror type) {
-    return hasPolyTaintedAnnotation(type) || !mayBeTainted(type);
-  }
-
-  /**
-   * Makes the given type {@link RUntainted}.
-   *
-   * @param type The given type.
-   */
-  public void makeUntainted(AnnotatedTypeMirror type) {
-    type.replaceAnnotation(rUntainted);
-  }
-
-  /**
-   * Makes the given type and all it's including parameter types {@link RUntainted} recursively. If
-   * the given type is an array type, the component type will also be made {@link RUntainted}.
-   *
-   * @param type The given type.
-   */
-  public void makeDeepUntainted(AnnotatedTypeMirror type) {
-    makeUntainted(type);
-    //    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-    //      makeDeepUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
-    //    }
-    if (type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-      AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
-          (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
-      declaredType.getTypeArguments().forEach(this::makeDeepUntainted);
-    }
-  }
-
-  /**
-   * Checks if custom check is enabled.
-   *
-   * @return True if custom check is enabled, false otherwise.
-   */
-  public boolean libraryCheckIsEnabled() {
-    return enableLibraryCheck;
-  }
-
-  /**
-   * Check if poly taint inference is enabled.
-   *
-   * @return True if poly taint inference is enabled, false otherwise.
-   */
-  public boolean polyTaintInferenceEnabled() {
-    return enablePolyTaintInference;
-  }
-
-  /**
-   * Check if type argument inference is enabled.
-   *
-   * @return True if type argument inference is enabled, false otherwise.
-   */
-  public boolean typeArgumentInferenceEnabled() {
-    return enableTypeArgumentInference;
   }
 }

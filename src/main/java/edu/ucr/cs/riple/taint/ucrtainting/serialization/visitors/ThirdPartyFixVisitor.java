@@ -1,7 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.LambdaExpressionTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
@@ -63,13 +62,6 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
       return Set.of();
     }
     Set<Fix> fixes = new HashSet<>();
-    // Check if any of the argument is a lambda expression.
-    for (ExpressionTree argument : node.getArguments()) {
-      if (argument instanceof LambdaExpressionTree) {
-        // We cannot do any fix here
-        return Set.of();
-      }
-    }
     // Add a fix for each passed argument.
     for (int i = 0; i < node.getArguments().size(); i++) {
       ExpressionTree argument = node.getArguments().get(i);

@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
@@ -51,6 +52,13 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
 
   @Override
   public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
+    JCTree.JCVariableDecl variableDecl = (JCTree.JCVariableDecl) node;
+    if (variableDecl.sym.type instanceof Type.ArrayType) {
+      if (((Type.ArrayType) variableDecl.sym.type).isVarargs()) {
+        // Arrays reference is always untainted
+        typeFactory.makeUntainted(annotatedTypeMirror);
+      }
+    }
     handler.visitVariable(node, annotatedTypeMirror);
     return super.visitVariable(node, annotatedTypeMirror);
   }
@@ -82,13 +90,12 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
       if (typeFactory.isThirdPartyField((Symbol.VarSymbol) symbol)
           && !typeFactory.hasTaintedReceiver(fieldAccess)) {
         typeFactory.makeUntainted(annotatedTypeMirror);
-        return super.visitMemberSelect(node, annotatedTypeMirror);
       }
     }
     // make .class untainted
     if (node.getIdentifier().toString().equals("class")
         && annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-      typeFactory.makeUntainted(annotatedTypeMirror);
+      typeFactory.makeDeepUntainted(annotatedTypeMirror);
     }
     return super.visitMemberSelect(node, annotatedTypeMirror);
   }
