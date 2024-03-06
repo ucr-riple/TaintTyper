@@ -2,12 +2,12 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.List;
 import javax.lang.model.element.ElementKind;
@@ -52,6 +52,13 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
 
   @Override
   public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
+    JCTree.JCVariableDecl variableDecl = (JCTree.JCVariableDecl) node;
+    if (variableDecl.sym.type instanceof Type.ArrayType) {
+      if (((Type.ArrayType) variableDecl.sym.type).isVarargs()) {
+        // Arrays reference is always untainted
+        typeFactory.makeUntainted(annotatedTypeMirror);
+      }
+    }
     handler.visitVariable(node, annotatedTypeMirror);
     return super.visitVariable(node, annotatedTypeMirror);
   }
@@ -88,9 +95,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
     // make .class untainted
     if (node.getIdentifier().toString().equals("class")
         && annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-      Serializer.log("Applying for: " + node + " " + annotatedTypeMirror);
       typeFactory.makeDeepUntainted(annotatedTypeMirror);
-      Serializer.log("After: " + annotatedTypeMirror);
     }
     return super.visitMemberSelect(node, annotatedTypeMirror);
   }

@@ -197,4 +197,12 @@ public class Foo {
     // :: error: assignment
     List<@RUntainted String> list = Arrays.asList(a, b);
   }
+
+  public void testReferenceTypeForVarArgsIsUntainted(Object... param) {
+    convert(Object[].class, param);
+  }
+
+  private <T> T convert(final Class<T> cls, final T defValue) {
+    return null;
+  }
 }
