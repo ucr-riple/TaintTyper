@@ -138,6 +138,10 @@ public class ThirdPartyHandler extends AbstractHandler {
   public static boolean polyOrUntaintedParameter(
       ExpressionTree argument, UCRTaintingAnnotatedTypeFactory typeFactory) {
     AnnotatedTypeMirror type = typeFactory.getAnnotatedType(argument);
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      // For third party heuristics, we only care about the component type of the array.
+      type = ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
+    }
     if (typeFactory.isPolyOrUntainted(type)) {
       return true;
     }

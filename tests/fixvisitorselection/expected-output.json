@@ -70,7 +70,6 @@
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/fixvisitorselection/foo/bar/Foo.java",
             "type-variable-position": [
               [
-                1,
                 0
               ]
             ],

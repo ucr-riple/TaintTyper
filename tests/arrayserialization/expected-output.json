@@ -112,7 +112,6 @@
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
-                1,
                 0
               ]
             ],
@@ -340,7 +339,6 @@
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
-                1,
                 0
               ]
             ],
@@ -446,7 +444,6 @@
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
-                1,
                 0
               ]
             ],

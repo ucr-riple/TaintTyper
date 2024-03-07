@@ -197,6 +197,10 @@ public class Utility {
           (AnnotatedTypeMirror.AnnotatedExecutableType) type;
       return getAnnotatedTypeMirrorOfTypeArgumentAt(declaredType.getReturnType(), position);
     }
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      return getAnnotatedTypeMirrorOfTypeArgumentAt(
+          ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType(), position);
+    }
     int index = position.poll();
     if (index == 0) {
       return type;
@@ -206,14 +210,6 @@ public class Utility {
           (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
       return getAnnotatedTypeMirrorOfTypeArgumentAt(
           declaredType.getTypeArguments().get(index - 1), position);
-    }
-    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-      if (position.isEmpty()) {
-        return type;
-      }
-      if (position.size() == 1 && position.contains(0)) {
-        return ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
-      }
     }
     throw new IllegalArgumentException("Type " + type + " does not have type arguments.");
   }
