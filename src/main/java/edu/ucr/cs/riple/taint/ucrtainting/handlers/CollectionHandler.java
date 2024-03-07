@@ -84,6 +84,9 @@ public class CollectionHandler extends AbstractHandler {
         (AnnotatedTypeMirror.AnnotatedDeclaredType) typeFactory.getAnnotatedType(arg);
     AnnotatedTypeMirror.AnnotatedDeclaredType newClassType =
         (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
+    if(argAnnotatedType.getTypeArguments().size() == 0){
+      System.out.println("argAnnotatedType.getTypeArguments().size() == 0 " + tree);
+    }
     if (typeFactory.hasUntaintedAnnotation(argAnnotatedType.getTypeArguments().get(0))) {
       typeFactory.makeUntainted(newClassType.getTypeArguments().get(0));
     }
