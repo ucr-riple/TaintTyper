@@ -213,3 +213,6 @@ public class Foo {
     @RUntainted String s = simpleArrayAccess[1];
   }
 }
+
+// CASES THAT ARE NOT COVERED
+// 1. sink(list.get(0)[0]);

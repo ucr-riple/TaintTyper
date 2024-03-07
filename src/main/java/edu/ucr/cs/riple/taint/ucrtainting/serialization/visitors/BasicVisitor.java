@@ -253,7 +253,7 @@ public class BasicVisitor extends SpecializedFixComputer {
     Element element = TreeUtils.elementFromUse(node);
     AnnotatedTypeMirror.AnnotatedArrayType arrayType =
         (AnnotatedTypeMirror.AnnotatedArrayType)
-            typeFactory.getAnnotatedType(element).deepCopy(true);
+            effectiveAnnotatedTypeMirror(typeFactory.getAnnotatedType(element)).deepCopy(true);
     AnnotatedTypeMirror.AnnotatedArrayType requiredArrayType = arrayType.deepCopy(true);
     if (typeFactory.hasUntaintedAnnotation(pair.required)) {
       typeFactory.makeUntainted(requiredArrayType.getComponentType());
