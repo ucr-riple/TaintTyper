@@ -429,6 +429,33 @@
           }
         }
       ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "messageKey": "assignment",
+      "offset": 6738,
+      "index": 14,
+      "region": {
+        "symbol": "simpleArrayAccessTest()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "field": "simpleArrayAccess",
+            "kind": "FIELD",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     }
   ]
 }

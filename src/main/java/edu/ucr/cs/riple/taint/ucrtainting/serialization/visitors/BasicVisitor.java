@@ -250,8 +250,24 @@ public class BasicVisitor extends SpecializedFixComputer {
 
   @Override
   public Set<Fix> visitArrayAccess(ArrayAccessTree node, FoundRequired pair) {
+    Element element = TreeUtils.elementFromUse(node);
+    AnnotatedTypeMirror.AnnotatedArrayType arrayType =
+        (AnnotatedTypeMirror.AnnotatedArrayType)
+            typeFactory.getAnnotatedType(element).deepCopy(true);
+    AnnotatedTypeMirror.AnnotatedArrayType requiredArrayType = arrayType.deepCopy(true);
+    if (typeFactory.hasUntaintedAnnotation(pair.required)) {
+      typeFactory.makeUntainted(requiredArrayType.getComponentType());
+    }
+    if (typeFactory.hasPolyTaintedAnnotation(pair.required)) {
+      typeFactory.makePolyTainted(requiredArrayType.getComponentType());
+    }
+    FoundRequired newPair = new FoundRequired(arrayType, requiredArrayType, pair.depth);
     // only the expression is enough, we do not need to annotate the index.
-    return node.getExpression().accept(fixComputer, pair);
+    if (requireFix(newPair)) {
+      Fix onArray = buildFixForElement(element, newPair);
+      return onArray == null ? Set.of() : Set.of(onArray);
+    }
+    return Set.of();
   }
 
   @Override

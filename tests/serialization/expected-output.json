@@ -1,7 +1,7 @@
 {
   "errors": [
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 844,
       "index": 1,
@@ -13,7 +13,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 906,
       "index": 2,
@@ -39,7 +39,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -55,7 +55,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 945,
       "index": 3,
@@ -67,7 +67,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -83,7 +83,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 992,
       "index": 4,
@@ -95,7 +95,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -111,7 +111,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 1035,
       "index": 5,
@@ -123,7 +123,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "varName": "localVar",
             "type-variable-position": [
               [
@@ -138,7 +138,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -154,7 +154,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 1110,
       "index": 6,
@@ -166,7 +166,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Bar.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Bar.java",
             "type-variable-position": [
               [
                 0
@@ -180,7 +180,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 1179,
       "index": 7,
@@ -192,7 +192,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Bar.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Bar.java",
             "type-variable-position": [
               [
                 0
@@ -206,7 +206,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 1230,
       "index": 8,
@@ -218,7 +218,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -234,7 +234,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 1273,
       "index": 9,
@@ -246,7 +246,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "varName": "localVar",
             "type-variable-position": [
               [
@@ -261,7 +261,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 1323,
       "index": 10,
@@ -273,7 +273,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Baz.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Baz.java",
             "type-variable-position": [
               [
                 0
@@ -287,7 +287,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 1480,
       "index": 11,
@@ -299,7 +299,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "varName": "finalLocalVar",
             "type-variable-position": [
               [
@@ -314,7 +314,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 1543,
       "index": 12,
@@ -326,7 +326,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -340,7 +340,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 1757,
       "index": 13,
@@ -352,7 +352,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "varName": "localVar",
             "type-variable-position": [
               [
@@ -367,10 +367,11 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "varName": "argsArray",
             "type-variable-position": [
               [
+                1,
                 0
               ]
             ],
@@ -382,7 +383,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "varName": "argsList",
             "type-variable-position": [
               [
@@ -398,7 +399,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 1992,
       "index": 14,
@@ -410,7 +411,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -426,7 +427,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -442,7 +443,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 2060,
       "index": 15,
@@ -454,7 +455,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -470,7 +471,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -486,7 +487,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 2249,
       "index": 16,
@@ -498,7 +499,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "varName": "param",
             "type-variable-position": [
               [
@@ -514,7 +515,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "return",
       "offset": 2508,
       "index": 17,
@@ -526,7 +527,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -542,7 +543,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "compound.assignment",
       "offset": 2704,
       "index": 18,
@@ -554,7 +555,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -570,7 +571,7 @@
       ]
     },
     {
-      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
       "offset": 2815,
       "index": 19,
@@ -582,7 +583,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "type-variable-position": [
               [
                 0

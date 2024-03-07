@@ -27,6 +27,8 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
+import org.checkerframework.framework.type.typeannotator.DefaultForTypeAnnotator;
+import org.checkerframework.framework.type.typeannotator.DefaultQualifierForUseTypeAnnotator;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.TreeUtils;
@@ -141,8 +143,18 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   @Override
+  protected DefaultQualifierForUseTypeAnnotator createDefaultForUseTypeAnnotator() {
+    return super.createDefaultForUseTypeAnnotator();
+  }
+
+  @Override
   protected QualifierHierarchy createQualifierHierarchy() {
     return new UCRTaintingQualifierHierarchy(this.getSupportedTypeQualifiers(), this.elements);
+  }
+
+  @Override
+  protected DefaultForTypeAnnotator createDefaultForTypeAnnotator() {
+    return new UCRTaintingTypeAnnotator(this);
   }
 
   public AnnotationMirror rPossiblyValidatedAM(List<String> calledMethods) {

@@ -205,4 +205,11 @@ public class Foo {
   private <T> T convert(final Class<T> cls, final T defValue) {
     return null;
   }
+
+  String[] simpleArrayAccess;
+
+  public void simpleArrayAccessTest() {
+    // :: error: assignment
+    @RUntainted String s = simpleArrayAccess[1];
+  }
 }
