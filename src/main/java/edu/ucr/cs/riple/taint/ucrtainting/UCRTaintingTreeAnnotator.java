@@ -95,7 +95,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
     // make .class untainted
     if (node.getIdentifier().toString().equals("class")
         && annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-      typeFactory.makeDeepUntainted(annotatedTypeMirror);
+      typeFactory.makeUntainted(annotatedTypeMirror);
     }
     return super.visitMemberSelect(node, annotatedTypeMirror);
   }
