@@ -3,6 +3,8 @@ package thirdPartyTests.com.test.thirdparty;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 
 public class LibraryCodeTestSupport {
+
+  public static final LibraryCodeTestSupport singleTon = new LibraryCodeTestSupport("");
   private String str;
 
   public LibraryCodeTestSupport(String str) {
@@ -11,6 +13,10 @@ public class LibraryCodeTestSupport {
 
   public String getVal() {
     return this.str;
+  }
+
+  public <T> T getVal(Class<T> c, Object o) {
+    return c.cast(o);
   }
 
   public void setVal(@RTainted String y) {
