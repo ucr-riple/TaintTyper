@@ -19,6 +19,10 @@ public class LibraryCodeTestSupport {
     return c.cast(o);
   }
 
+  public String getVal(Class<?> c, Object o, boolean flag) {
+    return o.toString();
+  }
+
   public void setVal(@RTainted String y) {
     this.str = y;
   }
