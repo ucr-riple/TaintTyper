@@ -2,6 +2,10 @@ package thirdPartyTests.com.test.thirdparty;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class LibraryCodeTestSupport {
 
   public static final LibraryCodeTestSupport singleTon = new LibraryCodeTestSupport("");
@@ -25,5 +29,10 @@ public class LibraryCodeTestSupport {
 
   public void setVal(@RTainted String y) {
     this.str = y;
+  }
+
+  public List<String> list(String s) {
+    String[] listStr = s.split(",");
+    return Arrays.asList(listStr);
   }
 }
