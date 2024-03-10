@@ -34,6 +34,7 @@ public interface SymbolLocation {
       case FIELD:
         return new FieldLocation(target);
       case LOCAL_VARIABLE:
+      case RESOURCE_VARIABLE:
         JCTree declarationTree = Utility.locateDeclaration(target, context);
         LocalVariableLocation location = new LocalVariableLocation(target, declarationTree);
         // TODO: add support for making a local variable in a lambda static. For now let's skip.

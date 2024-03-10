@@ -596,6 +596,33 @@
           }
         }
       ]
+    },
+    {
+      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+      "messageKey": "argument",
+      "offset": 3829,
+      "index": 20,
+      "region": {
+        "symbol": "testResourceVariableSerialization()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/serialization/Foo.java",
+            "varName": "writer",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testResourceVariableSerialization()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     }
   ]
 }

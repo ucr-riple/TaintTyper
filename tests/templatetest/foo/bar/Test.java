@@ -1,16 +1,8 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
-import java.util.List;
+import java.io.*;
+import java.nio.charset.*;
+import java.nio.file.*;
 
-public class Test {
-//
-//    public List<String> getURIList(final String key, final List<String> defaultValue) {
-//        // :: error: return
-//        // :: error: argument
-//        return getList(String.class, key, defaultValue);
-//    }
-//    public <T> List<T> getList(final Class<T> cls, final String key, final List<T> defaultValue) {
-//        return null;
-//    }
-}
+public class Test {}

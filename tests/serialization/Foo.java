@@ -1,10 +1,13 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.io.*;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.nio.charset.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletResponse;
@@ -126,4 +129,17 @@ class Foo {
           }
         });
   }
+
+  public void testResourceVariableSerialization() {
+    Path outputFilePath = Paths.get("output.txt");
+    Charset charset = StandardCharsets.UTF_8;
+    try (BufferedWriter writer = Files.newBufferedWriter(outputFilePath, charset)) {
+      // :: error: argument
+      sink(writer);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  void sink(@RUntainted Object o) {}
 }
