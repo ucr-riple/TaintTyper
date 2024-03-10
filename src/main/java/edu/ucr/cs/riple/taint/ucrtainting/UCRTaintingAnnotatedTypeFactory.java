@@ -476,16 +476,14 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   /**
-   * Makes the given type and all it's including parameter types {@link RUntainted} recursively. If
-   * the given type is an array type, the component type will also be made {@link RUntainted}.
+   * Makes the given type and all it's including type arguments {@link RUntainted} recursively.
+   * Please note that this method does not make component types of arrays untainted. Making that
+   * untainted will introduce huge number of false positives.
    *
-   * @param type The given type.
+   * @param type The given type to make untainted.
    */
   public void makeDeepUntainted(AnnotatedTypeMirror type) {
     makeUntainted(type);
-    //    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-    //      makeDeepUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
-    //    }
     if (type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
       AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
           (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
