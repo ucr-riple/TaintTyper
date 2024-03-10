@@ -78,18 +78,4 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
     }
     return SymbolLocation.createLocationFromSymbol((Symbol) element, context);
   }
-
-  /**
-   * Returns the effective type of the given type. If the given type is a method, returns the return
-   * type.
-   *
-   * @param type The given type.
-   * @return The effective type of the given type.
-   */
-  protected AnnotatedTypeMirror effectiveAnnotatedTypeMirror(AnnotatedTypeMirror type) {
-    if (type instanceof AnnotatedTypeMirror.AnnotatedExecutableType) {
-      return ((AnnotatedTypeMirror.AnnotatedExecutableType) type).getReturnType();
-    }
-    return type;
-  }
 }

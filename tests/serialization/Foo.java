@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.digester3.CallMethodRule;
 import org.apache.commons.digester3.Digester;
+import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.xml.sax.Attributes;
 
 class Foo {
@@ -142,4 +143,11 @@ class Foo {
   }
 
   void sink(@RUntainted Object o) {}
+}
+
+abstract class StreamContent extends AbstractWebScript {
+
+  void exec(Map<String, @RUntainted Object> map) {
+    createScriptParameters(null, null, null, map);
+  }
 }

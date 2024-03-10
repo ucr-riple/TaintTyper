@@ -518,6 +518,40 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     return enableTypeArgumentInference;
   }
 
+  public boolean allTypeArgumentsAreSubType(
+      AnnotatedTypeMirror found, AnnotatedTypeMirror required) {
+    if (found instanceof AnnotatedTypeMirror.AnnotatedDeclaredType
+        && required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      AnnotatedTypeMirror.AnnotatedDeclaredType foundType =
+          (AnnotatedTypeMirror.AnnotatedDeclaredType) found;
+      AnnotatedTypeMirror.AnnotatedDeclaredType requiredType =
+          (AnnotatedTypeMirror.AnnotatedDeclaredType) required;
+      if (foundType.getTypeArguments().isEmpty() && requiredType.getTypeArguments().isEmpty()) {
+        AnnotatedTypeMirror widenedValueType = getWidenedType(found, required);
+        try {
+          return getTypeHierarchy().isSubtype(widenedValueType, required);
+        } catch (Exception e) {
+          return false;
+        }
+      }
+
+      List<AnnotatedTypeMirror> foundTypeArgs =
+          ((AnnotatedTypeMirror.AnnotatedDeclaredType) found).getTypeArguments();
+      List<AnnotatedTypeMirror> requiredTypeArgs =
+          ((AnnotatedTypeMirror.AnnotatedDeclaredType) required).getTypeArguments();
+      if (foundTypeArgs.size() != requiredTypeArgs.size()) {
+        return false;
+      }
+      for (int i = 0; i < foundTypeArgs.size(); i++) {
+        if (!allTypeArgumentsAreSubType(foundTypeArgs.get(i), requiredTypeArgs.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
   private class UCRTaintingQualifierHierarchy extends AccumulationQualifierHierarchy {
 
     /**

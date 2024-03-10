@@ -217,6 +217,35 @@ public class UCRTaintingChecker extends AccumulationChecker {
             && TreeUtils.isExplicitThisDereference((ExpressionTree) source)) {
           return true;
         }
+        // Check if the tree is a argument of a method invocation which the invocation is a third
+        // party
+        if (visitor.getCurrentPath().getLeaf() instanceof JCTree.JCMethodInvocation) {
+          JCTree.JCMethodInvocation methodInvocation =
+              (JCTree.JCMethodInvocation) visitor.getCurrentPath().getLeaf();
+          Symbol.MethodSymbol methodSymbol =
+              (Symbol.MethodSymbol) TreeUtils.elementFromUse(methodInvocation);
+          if (methodSymbol != null && typeFactory.isThirdPartyMethod(methodSymbol)) {
+            // we want to silence errors where the mismatch is found: List<@RUntainted String> and
+            // required: List<@Tainted String>
+            if (pair != null) {
+              if (typeFactory.mayBeTainted(pair.found)
+                  && !typeFactory.mayBeTainted(pair.required)) {
+                return false;
+              }
+              if (pair.found instanceof AnnotatedTypeMirror.AnnotatedDeclaredType
+                  && pair.required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+                AnnotatedTypeMirror.AnnotatedDeclaredType found =
+                    (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.found;
+                AnnotatedTypeMirror.AnnotatedDeclaredType required =
+                    (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.required;
+                boolean isSubtype = typeFactory.allTypeArgumentsAreSubType(found, required);
+                if (isSubtype) {
+                  return true;
+                }
+              }
+            }
+          }
+        }
         if (!(tree instanceof MethodInvocationTree)) {
           return false;
         }
