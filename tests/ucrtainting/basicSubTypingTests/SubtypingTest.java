@@ -2,6 +2,11 @@ package basicSubTypingTests;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 // Test basic subtyping relationships for the UCR Tainting Checker.
 class SubtypeTest {
   void allSubtypingRelationships(int x, @RUntainted int y) {
@@ -20,5 +25,10 @@ class SubtypeTest {
 
   public @RPolyTainted String polyTest(@RPolyTainted String arg) {
     return arg;
+  }
+
+  public void createTempDirFP(@RUntainted File f) throws IOException {
+    // :: error: assignment
+    @RUntainted Path path = Files.createTempDirectory(f.toPath(), "random-suffx");
   }
 }
