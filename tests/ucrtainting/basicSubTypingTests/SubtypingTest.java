@@ -27,8 +27,8 @@ class SubtypeTest {
     return arg;
   }
 
-  public void createTempDirFP(@RUntainted File f) throws IOException {
-    // :: error: assignment
-    @RUntainted Path path = Files.createTempDirectory(f.toPath(), "random-suffx");
+  public void createTempDirFP(@RUntainted Path f) throws IOException {
+    // correctly not report error
+    @RUntainted Path path = Files.createTempDirectory(f, "random-suffx");
   }
 }
