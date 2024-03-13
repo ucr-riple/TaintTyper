@@ -37,7 +37,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
    */
   protected List<ExpressionTree> receivers;
 
-  private boolean activation;
+  private final boolean activation;
 
   public ReceiverTypeArgumentFixVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {

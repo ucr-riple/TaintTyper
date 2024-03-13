@@ -14,7 +14,6 @@ class CustomLibraryWithClassTest {
   }
 
   List<@RUntainted String> testList1(@RUntainted String s) {
-    // :: error: return
     return LibraryCodeTestSupport.singleTon.list(s);
   }
 

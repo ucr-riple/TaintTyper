@@ -10,8 +10,6 @@ import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.ThirdPartyHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.SerializationService;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import javax.lang.model.element.Element;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
 import org.checkerframework.common.accumulation.AccumulationChecker;
 import org.checkerframework.framework.qual.StubFiles;
@@ -74,7 +72,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
   @Override
   public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
     pair = pair == null ? retrievePair(messageKey, args) : pair;
-    if (shouldBeSkipped(source, messageKey, pair)) {
+    if (shouldBeSkipped(source, messageKey, pair, args)) {
       return;
     }
     if (serialize) {
@@ -86,7 +84,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
 
   public void detailedReportError(
       Object source, @CompilerMessageKey String messageKey, FoundRequired pair, Object... args) {
-    if (shouldBeSkipped(source, messageKey, pair)) {
+    if (shouldBeSkipped(source, messageKey, pair, args)) {
       return;
     }
     this.serializationService.serializeError(source, messageKey, pair);
@@ -138,9 +136,11 @@ public class UCRTaintingChecker extends AccumulationChecker {
    * @param source The source of the error.
    * @param messageKey The message key of the error.
    * @param pair The pair of found and required annotated type mirrors.
+   * @param args Arguments passed to checker to create the error message
    * @return True if the error should be skipped, false otherwise.
    */
-  private boolean shouldBeSkipped(Object source, String messageKey, FoundRequired pair) {
+  private boolean shouldBeSkipped(
+      Object source, String messageKey, FoundRequired pair, Object[] args) {
     Tree tree = (Tree) source;
     switch (messageKey) {
       case "lambda.param":
@@ -156,23 +156,22 @@ public class UCRTaintingChecker extends AccumulationChecker {
         // Skip errors that are caused by third-party code.
       case "override.param":
         {
-          Element treeElement = TreeUtils.elementFromTree(tree);
-          if (treeElement == null) {
-            return true;
+          if (!(args[6] instanceof AnnotatedTypeMirror.AnnotatedExecutableType)) {
+            return false;
           }
-          Symbol.MethodSymbol overridingMethod =
-              (Symbol.MethodSymbol) treeElement.getEnclosingElement();
-          if (overridingMethod == null) {
-            return true;
-          }
-          Symbol.MethodSymbol overriddenMethod =
-              Utility.getClosestOverriddenMethod(overridingMethod, types);
-          return overriddenMethod == null || typeFactory.isThirdPartyMethod(overriddenMethod);
+          AnnotatedTypeMirror.AnnotatedExecutableType overriddenType =
+              (AnnotatedTypeMirror.AnnotatedExecutableType) args[6];
+          Symbol.MethodSymbol overrideMethod = (Symbol.MethodSymbol) overriddenType.getElement();
+          return overrideMethod == null || typeFactory.isThirdPartyMethod(overrideMethod);
         }
       case "assignment":
+      case "return":
         {
           Tree errorTree = visitor.getCurrentPath().getLeaf();
           ExpressionTree initializer = null;
+          if (errorTree instanceof JCTree.JCReturn) {
+            initializer = ((JCTree.JCReturn) errorTree).getExpression();
+          }
           if (errorTree instanceof JCTree.JCVariableDecl) {
             initializer = ((JCTree.JCVariableDecl) errorTree).getInitializer();
           }
