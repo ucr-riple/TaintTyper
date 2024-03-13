@@ -1,7 +1,6 @@
 package thirdPartyTests.com.test.thirdparty;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,6 +34,5 @@ public class LibraryCodeTestSupport {
     return Arrays.asList(listStr);
   }
 
-  public void typeArgSinkTester(List<String> l) {
-  }
+  public void typeArgSinkTester(List<String> l) {}
 }

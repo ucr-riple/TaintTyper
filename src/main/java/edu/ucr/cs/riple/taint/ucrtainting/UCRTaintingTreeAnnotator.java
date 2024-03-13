@@ -46,6 +46,13 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   @Override
   public Void visitMethodInvocation(
       MethodInvocationTree node, AnnotatedTypeMirror annotatedTypeMirror) {
+    // Make getClass() and this.getClass() untainted
+    ExpressionTree receiver = TreeUtils.getReceiverTree(node);
+    boolean hasThisReceiver = receiver == null || Utility.isThisIdentifier(receiver);
+    Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
+    if (methodSymbol.getSimpleName().contentEquals("getClass") && hasThisReceiver) {
+      typeFactory.makeUntainted(annotatedTypeMirror);
+    }
     handler.visitMethodInvocation(node, annotatedTypeMirror);
     return super.visitMethodInvocation(node, annotatedTypeMirror);
   }

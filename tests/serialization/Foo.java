@@ -143,6 +143,14 @@ class Foo {
   }
 
   void sink(@RUntainted Object o) {}
+
+  public void testThisGetClassIsUntaintedWithThis() {
+    @RUntainted Class<?> clazz = this.getClass();
+  }
+
+  public void testThisGetClassIsUntaintedWithoutThis() {
+    @RUntainted Class<?> clazz1 = getClass();
+  }
 }
 
 abstract class StreamContent extends AbstractWebScript {

@@ -1,8 +1,6 @@
 package basicSubTypingTests;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
-
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
