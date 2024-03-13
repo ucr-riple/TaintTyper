@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.servlet.http.*;
+import org.apache.xml.resolver.tools.CatalogResolver;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -96,5 +97,14 @@ class Foo {
 
   public void testErrorForThirdPartyFieldSelectionFix(@RUntainted Point p) {
     @RUntainted int i = p.x;
+  }
+
+  public void testSuperCallIsUntainted() {
+    new CatalogResolver(null) {
+      public String getResolvedEntity(@RUntainted String publicId, @RUntainted String systemId) {
+        @RUntainted String s = super.getResolvedEntity(publicId, systemId);
+        return s;
+      }
+    };
   }
 }

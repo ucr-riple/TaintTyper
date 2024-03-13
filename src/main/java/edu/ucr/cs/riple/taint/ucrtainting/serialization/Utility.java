@@ -336,6 +336,17 @@ public class Utility {
   }
 
   /**
+   * Returns true if the passed tree is the {@code super} identifier.
+   *
+   * @param tree Tree to check.
+   * @return true, it the tree is {@code super} identifier.
+   */
+  public static boolean isSuperIdentifier(Tree tree) {
+    return tree instanceof IdentifierTree
+        && ((IdentifierTree) tree).getName().contentEquals("super");
+  }
+
+  /**
    * Checks if the passed element is an enum constant.
    *
    * @param element the element to check.

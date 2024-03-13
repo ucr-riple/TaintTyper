@@ -78,7 +78,10 @@ public class ThirdPartyHandler extends AbstractHandler {
     // Check receiver, if receiver is tainted, we should not make it untainted.
     ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
     boolean hasValidReceiver =
-        receiver == null || calledMethod.isStatic() || factory.isPolyOrUntainted(receiver);
+        receiver == null
+            || calledMethod.isStatic()
+            || factory.isPolyOrUntainted(receiver)
+            || Utility.isSuperIdentifier(receiver);
     if (!hasValidReceiver) {
       return false;
     }
