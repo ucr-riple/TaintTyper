@@ -1,7 +1,6 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
-import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
@@ -11,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.swing.JFileChooser;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
 public class Foo {
@@ -150,29 +148,29 @@ public class Foo {
     return this;
   }
 
-  public static @RUntainted JFileChooser create() {
-    // :: error: enhancedfor
-    for (final java.lang.@RUntainted String prop : PROP_NAMES) {
-      try {
-        @RUntainted String dirname = null;
-        if (prop == null) {
-        } else {
-          dirname = System.getProperty(prop);
-        }
-        if ("".equals(dirname)) {
-          return new JFileChooser();
-        } else {
-          final java.io.File dir = new File(dirname);
-          if (dir != null) {
-            return new JFileChooser(dir);
-          }
-        }
-      } catch (RuntimeException t) {
-        throw new RuntimeException(t);
-      }
-    }
-    return null;
-  }
+  //  public static @RUntainted JFileChooser create() {
+  //    // :: error: enhancedfor
+  //    for (final java.lang.@RUntainted String prop : PROP_NAMES) {
+  //      try {
+  //        @RUntainted String dirname = null;
+  //        if (prop == null) {
+  //        } else {
+  //          dirname = System.getProperty(prop);
+  //        }
+  //        if ("".equals(dirname)) {
+  //          return new JFileChooser();
+  //        } else {
+  //          final java.io.File dir = new File(dirname);
+  //          if (dir != null) {
+  //            return new JFileChooser(dir);
+  //          }
+  //        }
+  //      } catch (RuntimeException t) {
+  //        throw new RuntimeException(t);
+  //      }
+  //    }
+  //    return null;
+  //  }
 
   public void inferParamToBeUntainted(String line) {
     // :: error: assignment

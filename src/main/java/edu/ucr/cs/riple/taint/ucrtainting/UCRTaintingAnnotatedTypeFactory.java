@@ -15,6 +15,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.lang.annotation.Annotation;
+import java.nio.file.Path;
 import java.util.*;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -356,7 +357,11 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     if (isUnAnnotatedPackage) {
       return true;
     }
-    return Utility.getPathFromSymbol(symbol) == null;
+    Path path = Utility.getPathFromSymbol(symbol);
+    if (path == null) {
+      return true;
+    }
+    return path.toString().contains("/generated-sources/");
   }
 
   /**

@@ -34,23 +34,19 @@ public class StaticFinalFieldHandler extends AbstractHandler {
   @Override
   public void addAnnotationsFromDefaultForType(Element element, AnnotatedTypeMirror type) {
     if (staticFinalFields.contains(element)) {
-      typeFactory.makeUntainted(type);
+      makeUntaintedCustom(type);
       return;
     }
     if (Utility.isStaticAndFinalField(element)) {
       if (typeFactory.isThirdPartyField((Symbol.VarSymbol) element)) {
-        typeFactory.makeUntainted(type);
+        makeUntaintedCustom(type);
       } else {
         Tree decl = typeFactory.declarationFromElement(element);
         if (decl instanceof VariableTree) {
           ExpressionTree initializer = ((VariableTree) decl).getInitializer();
           if (isUntaintedInitializer(initializer)) {
             staticFinalFields.add(element);
-            typeFactory.makeUntainted(type);
-            if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-              typeFactory.makeDeepUntainted(
-                  ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
-            }
+            makeUntaintedCustom(type);
           }
         }
       }
@@ -61,7 +57,7 @@ public class StaticFinalFieldHandler extends AbstractHandler {
   public void visitVariable(VariableTree tree, AnnotatedTypeMirror type) {
     Element element = TreeUtils.elementFromDeclaration(tree);
     if (staticFinalFields.contains(element)) {
-      typeFactory.makeUntainted(type);
+      makeUntaintedCustom(type);
       return;
     }
     // check if is final and static
@@ -69,7 +65,7 @@ public class StaticFinalFieldHandler extends AbstractHandler {
       ExpressionTree initializer = tree.getInitializer();
       if (isUntaintedInitializer(initializer)) {
         staticFinalFields.add(element);
-        typeFactory.makeUntainted(type);
+        makeUntaintedCustom(type);
       }
     }
   }
@@ -94,5 +90,12 @@ public class StaticFinalFieldHandler extends AbstractHandler {
         initializer,
         isUntaintedInitializer ? InitializerState.UNTAINTED : InitializerState.TAINTED);
     return isUntaintedInitializer;
+  }
+
+  private void makeUntaintedCustom(AnnotatedTypeMirror type) {
+    typeFactory.makeUntainted(type);
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      typeFactory.makeUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
+    }
   }
 }

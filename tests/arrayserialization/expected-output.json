@@ -299,32 +299,6 @@
     },
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
-      "messageKey": "enhancedfor",
-      "offset": 5099,
-      "index": 10,
-      "region": {
-        "symbol": "create()",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "field": "PROP_NAMES",
-            "kind": "FIELD",
-            "class": "foo.bar.Foo"
-          }
-        }
-      ]
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 5748,
       "index": 11,
@@ -450,6 +424,32 @@
             "field": "simpleArrayAccess",
             "kind": "FIELD",
             "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/NotPolyInference.java",
+      "messageKey": "argument",
+      "offset": 2138,
+      "index": 14,
+      "region": {
+        "symbol": "test(byte[],int,int,java.io.Writer)",
+        "class": "foo.bar.NotPolyInference"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/NotPolyInference.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "encodeChunk(byte[],int,int)",
+            "kind": "METHOD",
+            "class": "foo.bar.NotPolyInference"
           }
         }
       ]

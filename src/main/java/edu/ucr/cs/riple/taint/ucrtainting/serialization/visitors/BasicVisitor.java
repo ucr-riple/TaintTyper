@@ -45,12 +45,16 @@ public class BasicVisitor extends SpecializedFixComputer {
         }
         Symbol.VarSymbol varSymbol = (Symbol.VarSymbol) element;
         currentPath = TreePath.getPath(currentPath, node);
-        while (!currentPath.getLeaf().getKind().equals(Tree.Kind.LAMBDA_EXPRESSION)
+        while (currentPath != null
+            && !currentPath.getLeaf().getKind().equals(Tree.Kind.LAMBDA_EXPRESSION)
             && !currentPath.getLeaf().getKind().equals(Tree.Kind.METHOD)) {
           currentPath = currentPath.getParentPath();
-          if (currentPath == null) {
+          if (currentPath == null || currentPath.getLeaf() == null) {
             return Set.of();
           }
+        }
+        if (currentPath == null) {
+          return Set.of();
         }
         if (currentPath.getLeaf().getKind().equals(Tree.Kind.LAMBDA_EXPRESSION)) {
           LambdaExpressionTree lambdaExpressionTree = (LambdaExpressionTree) currentPath.getLeaf();
