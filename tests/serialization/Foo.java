@@ -153,6 +153,13 @@ class Foo {
   }
 }
 
+class MainMethodTest {
+  public static void main(String[] args) {
+    // :: error: assignment
+    @RUntainted String s = args[1];
+  }
+}
+
 abstract class StreamContent extends AbstractWebScript {
 
   void exec(Map<String, @RUntainted Object> map) {

@@ -206,9 +206,11 @@ public class Foo {
 
   String[] simpleArrayAccess;
 
-  public void simpleArrayAccessTest() {
+  public void simpleArrayAccessTest(String[] simpleArrayAccessParam) {
     // :: error: assignment
     @RUntainted String s = simpleArrayAccess[1];
+    // :: error: assignment
+    @RUntainted String s2 = simpleArrayAccessParam[1];
   }
 }
 

@@ -623,6 +623,17 @@
           }
         }
       ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+      "messageKey": "assignment",
+      "offset": 4336,
+      "index": 21,
+      "region": {
+        "symbol": "main(java.lang.String[])",
+        "class": "foo.bar.MainMethodTest"
+      },
+      "fixes": []
     }
   ]
 }

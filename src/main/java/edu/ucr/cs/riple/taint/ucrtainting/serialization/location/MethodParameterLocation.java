@@ -5,6 +5,7 @@ import com.sun.tools.javac.code.Symbol;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
 import java.util.Objects;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Modifier;
 
 /** subtype of {@link AbstractSymbolLocation} targeting a method parameter. */
 public class MethodParameterLocation extends AbstractSymbolLocation {
@@ -36,6 +37,10 @@ public class MethodParameterLocation extends AbstractSymbolLocation {
         break;
       }
     }
+    if (success) {
+      // we want to avoid where the parameter is the main method.
+      success = !isMainMethod(this.enclosingMethod);
+    }
     this.index = success ? i : -1;
   }
 
@@ -64,5 +69,37 @@ public class MethodParameterLocation extends AbstractSymbolLocation {
   @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), enclosingMethod, paramSymbol, index);
+  }
+
+  /**
+   * Checks if the given method symbol is {@code public static void main(String[])} method.
+   *
+   * @param enclosingMethod The method symbol to check.
+   * @return {@code true} if the given method symbol is {@code public static void main(String[])}
+   *     method.
+   */
+  private static boolean isMainMethod(Symbol.MethodSymbol enclosingMethod) {
+    // check if method is public
+    if (!enclosingMethod.getModifiers().contains(Modifier.PUBLIC)) {
+      return false;
+    }
+    // check if method is static
+    if (!enclosingMethod.isStatic()) {
+      return false;
+    }
+    // check if return type is void
+    if (!enclosingMethod.getReturnType().toString().equals("void")) {
+      return false;
+    }
+    // check if method name is main
+    if (!enclosingMethod.getSimpleName().toString().equals("main")) {
+      return false;
+    }
+    // check if method has a single parameter
+    if (enclosingMethod.getParameters().size() != 1) {
+      return false;
+    }
+    // check if the parameter is of type String[]
+    return enclosingMethod.getParameters().get(0).asType().toString().equals("java.lang.String[]");
   }
 }

@@ -408,7 +408,7 @@
       "offset": 6738,
       "index": 14,
       "region": {
-        "symbol": "simpleArrayAccessTest()",
+        "symbol": "simpleArrayAccessTest(java.lang.String[])",
         "class": "foo.bar.Foo"
       },
       "fixes": [
@@ -429,10 +429,38 @@
       ]
     },
     {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "messageKey": "assignment",
+      "offset": 6884,
+      "index": 14,
+      "region": {
+        "symbol": "simpleArrayAccessTest(java.lang.String[])",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "simpleArrayAccessTest(java.lang.String[])",
+            "kind": "PARAMETER",
+            "name": "simpleArrayAccessParam",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/NotPolyInference.java",
       "messageKey": "argument",
       "offset": 2138,
-      "index": 14,
+      "index": 15,
       "region": {
         "symbol": "test(byte[],int,int,java.io.Writer)",
         "class": "foo.bar.NotPolyInference"
