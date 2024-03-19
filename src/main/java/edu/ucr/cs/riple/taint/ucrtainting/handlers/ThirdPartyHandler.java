@@ -112,7 +112,7 @@ public class ThirdPartyHandler extends AbstractHandler {
     }
     // check method type arguments
     if (calledMethod.type.getTypeArguments().stream()
-        .anyMatch(type -> Utility.containsTypeArgument(returnType, (Type.TypeVar) type))) {
+        .anyMatch(type -> type.tsym.name.equals(returnType.tsym.name))) {
       return false;
     }
     if (receiver == null) {

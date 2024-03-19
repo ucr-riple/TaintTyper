@@ -107,4 +107,9 @@ class Foo {
       }
     };
   }
+
+  public void testCheckHeuristicApplicability() {
+    @RUntainted List<String> list = List.of("a");
+    @RUntainted List<String> list2 = Collections.singletonList("org");
+  }
 }
