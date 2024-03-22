@@ -20,8 +20,13 @@ public class URL {
 
 package org.springframework.scripting.bsh;
 public class BshScriptEvaluator {
-    public Object evaluate(@RUntainted ScriptSource script);
-    public Object evaluate(@RUntainted ScriptSource script, Map<String,Object> arguments);
+    public @RUntainted Object evaluate(@RUntainted ScriptSource script);
+    public @RUntainted Object evaluate(@RUntainted ScriptSource script, Map<String,Object> arguments);
+}
+
+package org.springframework.core.io;
+public interface ResourceLoader {
+    Resource @RUntainted getResource(@RUntainted String location);
 }
 
 package com.jcraft.jsch;
@@ -44,18 +49,18 @@ public abstract class ExpressionFactory {
 
 package org.python.util;
 public class PythonInterpreter {
-    public PyObject	eval(@RUntainted String s);
-    public PyObject eval(@RUntainted PyObject code);
+    public @RUntainted PyObject	eval(@RUntainted String s);
+    public @RUntainted PyObject eval(@RUntainted PyObject code);
 }
 
 package javax.script;
 public interface ScriptEngine {
-    public Object eval(@RUntainted String script);
+    public @RUntainted Object eval(@RUntainted String script);
 }
 
 package jdk.nashorn.api.scripting;
 public class NashornScriptEngine {
-    public Object eval(@RUntainted String script);
+    public @RUntainted Object eval(@RUntainted String script);
 }
 
 package android.webkit;
@@ -101,11 +106,26 @@ package java.lang;
 public final class String {
     public String replaceAll(@RUntainted String regex, String replacement);
 }
-
+q
 package java.nio.file;
 public final class Paths {
-    public static Path get(@RUntainted String first, @RUntainted String... more);
-    public static Path get(@RUntainted URI uri);
+    public static @RUntainted Path get(@RUntainted String first, @RUntainted String... more);
+    public static @RUntainted Path get(@RUntainted URI uri);
+}
+
+public final class Files {
+    public static @RUntainted InputStream newInputStream(@RUntainted Path path, OpenOption... options);
+    public static @RUntainted OutputStream newOutputStream(@RUntainted Path path, OpenOption... options);
+    public static @RUntainted BufferedWriter newBufferedWriter(@RUntainted Path path, OpenOption... options);
+    public static @RUntainted byte[] readAllBytes(@RUntainted Path path);
+    public static void delete(@RUntainted Path path);
+    public static @RUntainted Path copy(@RUntainted Path source, @RUntainted Path target, CopyOption... options);
+    public static @RUntainted Path createDirectories(@RUntainted Path dir, FileAttribute<?>... attrs);
+    public static @RUntainted Path move(@RUntainted Path source, @RUntainted Path target, CopyOption... options);
+}
+
+public class Path {
+    public @RUntainted Path resolve(@RUntainted String other);
 }
 
 package javax.naming;
@@ -134,6 +154,8 @@ public class Thread {
 package java.lang;
 public abstract class ClassLoader {
     public Class<?>	loadClass(@RUntainted String name);
+    public static @RUntainted URL getSystemResource(@RUntainted String name);
+    public static @RUntainted URL getSystemResourceAsStream(@RUntainted String name);
 }
 
 package java.io;
@@ -215,6 +237,34 @@ public class OutputStreamWriter {
     public void	write(@RUntainted String str, int off, int len);
 }
 
+package javax.xml.stream;
+public abstract class XMLInputFactory {
+    public abstract XMLStreamReader createXMLStreamReader(@RUntainted String systemId, java.io.@RUntainted InputStream stream)
+    throws XMLStreamException;
+    public abstract XMLStreamReader createXMLStreamReader(@RUntainted String systemId, java.io.@RUntainted Reader reader)
+    throws XMLStreamException;
+    public abstract XMLStreamReader createXMLStreamReader(java.io.@RUntainted Reader reader)
+    throws XMLStreamException;
+    public abstract XMLStreamReader createXMLStreamReader(@RUntainted Source source)
+    throws XMLStreamException;
+    public abstract XMLStreamReader createXMLStreamReader(java.io.@RUntainted InputStream stream)
+    throws XMLStreamException;
+    public abstract XMLStreamReader createXMLStreamReader(java.io.@RUntainted InputStream stream, @RUntainted String encoding)
+    throws XMLStreamException;
+    public abstract XMLStreamReader createXMLEventReader(@RUntainted String systemId, java.io.@RUntainted InputStream stream)
+    throws XMLStreamException;
+    public abstract XMLStreamReader createXMLEventReader(@RUntainted String systemId, java.io.@RUntainted Reader reader)
+    throws XMLStreamException;
+    public abstract XMLStreamReader createXMLEventReader(java.io.@RUntainted Reader reader)
+    throws XMLStreamException;
+    public abstract XMLStreamReader createXMLEventReader(@RUntainted Source source)
+    throws XMLStreamException;
+    public abstract XMLStreamReader createXMLEventReader(java.io.@RUntainted InputStream stream)
+    throws XMLStreamException;
+    public abstract XMLStreamReader createXMLEventReader(java.io.@RUntainted InputStream stream, @RUntainted String encoding)
+    throws XMLStreamException;
+}
+
 package javax.xml.xquery;
 public interface XQConnection {
     public XQPreparedExpression prepareExpression(@RUntainted InputStream xquery);
@@ -245,6 +295,13 @@ public abstract class SAXParser {
     public void	parse(@RUntainted InputStream is, HandlerBase hb, String systemId);
     public void	parse(@RUntainted String uri, DefaultHandler dh);
     public void	parse(@RUntainted String uri, HandlerBase hb);
+}
+
+package java.xml.xpath;
+public class XPath {
+    public @RUntainted String evaluate(@RUntainted String expression, @RUntainted InputSource source);
+    public @RUntainted Object evaluate(@RUntainted String expression, @RUntainted InputSource source, javax.xml.namespace.@RUntainted QName returnType);
+    public @RUntainted Object evaluate(@RUntainted String expression, @RUntainted Object item, javax.xml.namespace.@RUntainted QName returnType);
 }
 
 public abstract class DocumentBuilder {
