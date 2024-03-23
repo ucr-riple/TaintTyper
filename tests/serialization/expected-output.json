@@ -627,8 +627,36 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 4336,
+      "offset": 4381,
       "index": 21,
+      "region": {
+        "symbol": "test(java.lang.Class,java.lang.Object)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "test(java.lang.Class,java.lang.Object)",
+            "kind": "PARAMETER",
+            "name": "callingCls",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+      "messageKey": "assignment",
+      "offset": 4336,
+      "index": 22,
       "region": {
         "symbol": "main(java.lang.String[])",
         "class": "foo.bar.MainMethodTest"

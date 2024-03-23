@@ -151,6 +151,13 @@ class Foo {
   public void testThisGetClassIsUntaintedWithoutThis() {
     @RUntainted Class<?> clazz1 = getClass();
   }
+
+  private @RUntainted Class<?> callingCls;
+
+  public void test(Class<?> callingCls, @RUntainted Object param) {
+    // :: error: assignment
+    param = (callingCls != null) ? callingCls : getClass();
+  }
 }
 
 class MainMethodTest {

@@ -95,11 +95,13 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
     }
     // Build the fix for the receiver.
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
-    AnnotatedTypeMirror receiverType = typeFactory.getAnnotatedType(receiver);
-    AnnotatedTypeMirror required = receiverType.deepCopy(true);
-    typeFactory.makeUntainted(required);
-    fixes.addAll(
-        receiver.accept(fixComputer, new FoundRequired(receiverType, required, pair.depth)));
+    if (receiver != null) {
+      AnnotatedTypeMirror receiverType = typeFactory.getAnnotatedType(receiver);
+      AnnotatedTypeMirror required = receiverType.deepCopy(true);
+      typeFactory.makeUntainted(required);
+      fixes.addAll(
+          receiver.accept(fixComputer, new FoundRequired(receiverType, required, pair.depth)));
+    }
     return fixes;
   }
 
