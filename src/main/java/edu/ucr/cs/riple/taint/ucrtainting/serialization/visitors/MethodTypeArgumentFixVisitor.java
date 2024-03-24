@@ -85,7 +85,7 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
               }
             }
             Set<Fix> onArgument = node.getArguments().get(i).accept(fixComputer, newPair);
-            if (onArgument == null) {
+            if (onArgument == null || onArgument.isEmpty()) {
               // Could not find any fix for that.
               return Set.of();
             }

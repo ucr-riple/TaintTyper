@@ -29,7 +29,8 @@ import org.checkerframework.javacutil.TreeUtils;
   "stubs/httpservletreq.astub",
   "stubs/StringBuffer.astub",
   "stubs/taintedMethods.astub",
-  "stubs/tdmljp.astub"
+  "stubs/tdmljp.astub",
+  "stubs/inferred-poly.astub",
 })
 @SupportedOptions({
   UCRTaintingChecker.ANNOTATED_PACKAGES,
@@ -178,7 +179,45 @@ public class UCRTaintingChecker extends AccumulationChecker {
           if (errorTree instanceof JCTree.JCAssign) {
             initializer = ((JCTree.JCAssign) errorTree).getExpression();
           }
-          if (!(initializer instanceof JCTree.JCMethodInvocation)) {
+          //          if (initializer instanceof JCTree.JCMethodInvocation) {
+          //            // case where the invoked method is a generic method and the provided type
+          // argument is
+          //            // within Foo.class we should just ignore the error.
+          //            JCTree.JCMethodInvocation invocation = (JCTree.JCMethodInvocation)
+          // initializer;
+          //            Symbol.MethodSymbol calledMethod =
+          //                (Symbol.MethodSymbol) TreeUtils.elementFromUse(invocation);
+          //            if (calledMethod != null && calledMethod.type.getTypeArguments().size() ==
+          // 1) {
+          //              final String typeVariableName =
+          //                  calledMethod.type.getTypeArguments().get(0).tsym.name.toString();
+          //              for (int index = 0; index < calledMethod.getParameters().size(); index++)
+          // {
+          //                Symbol.VarSymbol param = calledMethod.getParameters().get(index);
+          //                if (param.type instanceof Type.ClassType) {
+          //                  Type.ClassType classType = (Type.ClassType) param.type;
+          //                  if
+          // (classType.tsym.getQualifiedName().contentEquals("java.lang.Class")) {
+          //                    if (typeVariableName.equals(
+          //                        classType.getTypeArguments().get(0).tsym.name.toString())) {
+          //                      // get passed argument
+          //                      ExpressionTree argument = invocation.getArguments().get(index);
+          //                      // check if is a class literal
+          //                      if (argument instanceof JCTree.JCFieldAccess) {
+          //                        JCTree.JCFieldAccess fieldAccess = (JCTree.JCFieldAccess)
+          // argument;
+          //                        if (fieldAccess.selected instanceof JCTree.JCIdent
+          //                            && fieldAccess.name.toString().equals("class")) {
+          //                          return true;
+          //                        }
+          //                      }
+          //                    }
+          //                  }
+          //                }
+          //              }
+          //            }
+          //          }
+          if (!(initializer instanceof MethodInvocationTree)) {
             return false;
           }
           boolean isApplicable =

@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
+import com.google.common.collect.ImmutableSet;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
@@ -7,13 +8,18 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import java.util.Objects;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
 
 public class ThirdPartyHandler extends AbstractHandler {
+
+  private static final ImmutableSet<MethodRef> approvedThirdPartyMethod =
+      ImmutableSet.of(new MethodRef("java.lang.Class", "cast(java.lang.Object)"));
 
   public ThirdPartyHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
     super(typeFactory);
@@ -68,6 +74,15 @@ public class ThirdPartyHandler extends AbstractHandler {
   public static boolean checkHeuristicApplicability(
       MethodInvocationTree tree, UCRTaintingAnnotatedTypeFactory factory) {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
+    // Check if the method is approved third party method.
+    MethodRef methodRef =
+        new MethodRef(
+            Serializer.serializeSymbol(calledMethod.enclClass()),
+            Serializer.serializeMethodSignature(calledMethod));
+    if (approvedThirdPartyMethod.contains(methodRef)) {
+      return true;
+    }
+
     // If already untainted, it should be acknowledged
     if (Utility.hasUntaintedAnnotation(calledMethod.getReturnType())) {
       return true;
@@ -153,5 +168,33 @@ public class ThirdPartyHandler extends AbstractHandler {
           ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
     }
     return false;
+  }
+
+  private static class MethodRef {
+    public final String method;
+    public final String className;
+
+    public MethodRef(String className, String method) {
+      this.method = method;
+      this.className = className;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof MethodRef)) {
+        return false;
+      }
+      MethodRef methodRef = (MethodRef) o;
+      return Objects.equals(method, methodRef.method)
+          && Objects.equals(className, methodRef.className);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(method, className);
+    }
   }
 }

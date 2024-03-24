@@ -18,6 +18,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.Set;
 import javax.lang.model.element.Element;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 /**
@@ -103,8 +104,11 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     boolean isTypeVar = Utility.containsTypeArgument(calledMethod.getReturnType());
     boolean hasReceiver =
         !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));
+    AnnotatedTypeMirror.AnnotatedExecutableType methodAnnotatedType =
+        typeFactory.getAnnotatedType(calledMethod);
     boolean hasPolyTaintedAnnotation =
-        typeFactory.hasPolyTaintedAnnotation(calledMethod.getReturnType());
+        methodAnnotatedType != null
+            && typeFactory.hasPolyTaintedAnnotation(methodAnnotatedType.getReturnType());
     boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();
     if (hasPolyTaintedAnnotation) {
       Set<Fix> polyFixes = node.accept(new PolyMethodVisitor(typeFactory, this, context), pair);

@@ -432,7 +432,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
 
   public boolean hasPolyTaintedAnnotation(Type type) {
     if (type instanceof Type.ArrayType) {
-      return hasPolyTaintedAnnotation(((Type.ArrayType) type).getComponentType());
+      type = ((Type.ArrayType) type).getComponentType();
     }
     return type.getAnnotationMirrors().stream()
         .anyMatch(typeCompound -> typeCompound.type.tsym.name.toString().equals("RPolyTainted"));
@@ -447,6 +447,9 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    *     edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotation, false otherwise.
    */
   public boolean hasPolyTaintedAnnotation(AnnotatedTypeMirror type) {
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      type = ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
+    }
     return type.hasPrimaryAnnotation(rPolyTainted);
   }
 
