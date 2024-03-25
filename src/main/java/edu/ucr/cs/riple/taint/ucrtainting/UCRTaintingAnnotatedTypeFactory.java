@@ -165,109 +165,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   /**
-   * Replaces all existing {@link RPolyTainted} annotations with {@link RUntainted} annotation.
-   *
-   * @param annotatedTypeMirror Annotated type mirror whose {@link RPolyTainted} annotations are to
-   *     be replaced.
-   */
-  public void replacePolyWithUntainted(AnnotatedTypeMirror annotatedTypeMirror) {
-    if (annotatedTypeMirror.hasPrimaryAnnotation(rPolyTainted)) {
-      annotatedTypeMirror.replaceAnnotation(rUntainted);
-    }
-    if (annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-      ((AnnotatedTypeMirror.AnnotatedDeclaredType) annotatedTypeMirror)
-          .getTypeArguments()
-          .forEach(this::replacePolyWithUntainted);
-    }
-    if (annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-      replacePolyWithUntainted(
-          ((AnnotatedTypeMirror.AnnotatedArrayType) annotatedTypeMirror).getComponentType());
-    }
-  }
-
-  /**
-   * Replaces all existing {@link RPolyTainted} annotations with {@link RUntainted} annotation
-   * according to the typeWithPoly. (e.g. {@code List<String>} as toAdaptType and {@code
-   * List<@RPolyTainted String>} as typeWithPoly will be converted to {@code List<@RUntainted
-   * String>})
-   *
-   * @param toAdaptType The type to be adapted.
-   * @param typeWithPoly The type with {@link RPolyTainted} annotations.
-   */
-  public void replacePolyWithUntainted(
-      AnnotatedTypeMirror toAdaptType, AnnotatedTypeMirror typeWithPoly) {
-    if (hasPolyTaintedAnnotation(typeWithPoly)) {
-      toAdaptType.replaceAnnotation(rUntainted);
-    }
-    if (toAdaptType instanceof AnnotatedTypeMirror.AnnotatedDeclaredType
-        && typeWithPoly instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-      List<AnnotatedTypeMirror> toAdaptTypeArgs =
-          ((AnnotatedTypeMirror.AnnotatedDeclaredType) toAdaptType).getTypeArguments();
-      List<AnnotatedTypeMirror> typeWithPolyArgs =
-          ((AnnotatedTypeMirror.AnnotatedDeclaredType) typeWithPoly).getTypeArguments();
-      for (int i = 0; i < toAdaptTypeArgs.size(); i++) {
-        replacePolyWithUntainted(toAdaptTypeArgs.get(i), typeWithPolyArgs.get(i));
-      }
-    }
-  }
-
-  /**
-   * Makes the type argument at the given position untainted.
-   *
-   * @param type The type to be adapted.
-   * @param positions The positions of the type arguments to be adapted.
-   */
-  public void makeUntainted(AnnotatedTypeMirror type, List<List<Integer>> positions) {
-    if (!(type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
-      return;
-    }
-    if (positions.isEmpty()) {
-      return;
-    }
-    positions.forEach(integers -> makeUntaintedForPosition(type, integers, 0));
-  }
-
-  /**
-   * Makes the type argument at the given position untainted.
-   *
-   * @param type The type to be adapted.
-   * @param position The position of the type argument to be adapted.
-   * @param index The index of the position.
-   */
-  private void makeUntaintedForPosition(
-      AnnotatedTypeMirror type, List<Integer> position, int index) {
-    // TODO: This method can be rewritten to remove index parameter.
-    if (!(type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
-      return;
-    }
-    if (index == position.size()) {
-      return;
-    }
-    AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
-        (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
-    if (position.get(index) == 0) {
-      makeUntainted(type);
-      return;
-    }
-    int typeArgPosition = position.get(index) - 1;
-    makeUntaintedForPosition(
-        declaredType.getTypeArguments().get(typeArgPosition), position, index + 1);
-  }
-
-  /**
-   * Makes the given type poly-tainted.
-   *
-   * @param type The type to be adapted.
-   */
-  public void makePolyTainted(AnnotatedTypeMirror type) {
-    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-      // We don't want to make the array type poly-tainted, but rather the component type.
-      type = ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
-    }
-    type.replaceAnnotation(rPolyTainted);
-  }
-
-  /**
    * Checks if any of the arguments of the node has been annotated with {@link RTainted}
    *
    * @param node to check for
@@ -379,6 +276,129 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     return true;
   }
 
+  private AnnotatedTypeMirror getTargetType(AnnotatedTypeMirror type) {
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      return ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
+    }
+    if (type instanceof AnnotatedTypeMirror.AnnotatedWildcardType) {
+      return ((AnnotatedTypeMirror.AnnotatedWildcardType) type).getExtendsBound();
+    }
+    return type;
+  }
+
+  private Type getTargetType(Type type) {
+    if (type instanceof Type.ArrayType) {
+      return ((Type.ArrayType) type).getComponentType();
+    }
+    if (type instanceof Type.WildcardType) {
+      return ((Type.WildcardType) type).getExtendsBound();
+    }
+    return type;
+  }
+
+  /**
+   * Replaces all existing {@link RPolyTainted} annotations with {@link RUntainted} annotation.
+   *
+   * @param annotatedTypeMirror Annotated type mirror whose {@link RPolyTainted} annotations are to
+   *     be replaced.
+   */
+  public void replacePolyWithUntainted(AnnotatedTypeMirror annotatedTypeMirror) {
+    if (hasPolyTaintedAnnotation(annotatedTypeMirror)) {
+      annotatedTypeMirror.replaceAnnotation(rUntainted);
+    }
+    if (annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      ((AnnotatedTypeMirror.AnnotatedDeclaredType) annotatedTypeMirror)
+          .getTypeArguments()
+          .forEach(this::replacePolyWithUntainted);
+    }
+    if (annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      replacePolyWithUntainted(
+          ((AnnotatedTypeMirror.AnnotatedArrayType) annotatedTypeMirror).getComponentType());
+    }
+  }
+
+  /**
+   * Replaces all existing {@link RPolyTainted} annotations with {@link RUntainted} annotation
+   * according to the typeWithPoly. (e.g. {@code List<String>} as toAdaptType and {@code
+   * List<@RPolyTainted String>} as typeWithPoly will be converted to {@code List<@RUntainted
+   * String>})
+   *
+   * @param toAdaptType The type to be adapted.
+   * @param typeWithPoly The type with {@link RPolyTainted} annotations.
+   */
+  public void replacePolyWithUntainted(
+      AnnotatedTypeMirror toAdaptType, AnnotatedTypeMirror typeWithPoly) {
+    if (hasPolyTaintedAnnotation(typeWithPoly)) {
+      toAdaptType.replaceAnnotation(rUntainted);
+    }
+    if (toAdaptType instanceof AnnotatedTypeMirror.AnnotatedDeclaredType
+        && typeWithPoly instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      List<AnnotatedTypeMirror> toAdaptTypeArgs =
+          ((AnnotatedTypeMirror.AnnotatedDeclaredType) toAdaptType).getTypeArguments();
+      List<AnnotatedTypeMirror> typeWithPolyArgs =
+          ((AnnotatedTypeMirror.AnnotatedDeclaredType) typeWithPoly).getTypeArguments();
+      for (int i = 0; i < toAdaptTypeArgs.size(); i++) {
+        replacePolyWithUntainted(toAdaptTypeArgs.get(i), typeWithPolyArgs.get(i));
+      }
+    }
+  }
+
+  /**
+   * Makes the type argument at the given position untainted.
+   *
+   * @param type The type to be adapted.
+   * @param positions The positions of the type arguments to be adapted.
+   */
+  public void makeUntainted(AnnotatedTypeMirror type, List<List<Integer>> positions) {
+    if (!(type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
+      return;
+    }
+    if (positions.isEmpty()) {
+      return;
+    }
+    positions.forEach(integers -> makeUntaintedForPosition(type, integers, 0));
+  }
+
+  /**
+   * Makes the type argument at the given position untainted.
+   *
+   * @param type The type to be adapted.
+   * @param position The position of the type argument to be adapted.
+   * @param index The index of the position.
+   */
+  private void makeUntaintedForPosition(
+      AnnotatedTypeMirror type, List<Integer> position, int index) {
+    // TODO: This method can be rewritten to remove index parameter.
+    if (!(type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
+      return;
+    }
+    if (index == position.size()) {
+      return;
+    }
+    AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
+        (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
+    if (position.get(index) == 0) {
+      makeUntainted(type);
+      return;
+    }
+    int typeArgPosition = position.get(index) - 1;
+    makeUntaintedForPosition(
+        declaredType.getTypeArguments().get(typeArgPosition), position, index + 1);
+  }
+
+  /**
+   * Makes the given type poly-tainted.
+   *
+   * @param type The type to be adapted.
+   */
+  public void makePolyTainted(AnnotatedTypeMirror type) {
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      // We don't want to make the array type poly-tainted, but rather the component type.
+      type = ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
+    }
+    type.replaceAnnotation(rPolyTainted);
+  }
+
   /**
    * Checks if the given tree may be tainted.
    *
@@ -422,21 +442,12 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    *     otherwise.
    */
   public boolean hasUntaintedAnnotation(AnnotatedTypeMirror type) {
-    if (type instanceof AnnotatedTypeMirror.AnnotatedWildcardType) {
-      AnnotatedTypeMirror.AnnotatedWildcardType wildcardType =
-          (AnnotatedTypeMirror.AnnotatedWildcardType) type;
-      type = wildcardType.getExtendsBound();
-    }
-    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-      type = ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
-    }
+    type = getTargetType(type);
     return type.hasPrimaryAnnotation(rUntainted);
   }
 
   public boolean hasPolyTaintedAnnotation(Type type) {
-    if (type instanceof Type.ArrayType) {
-      type = ((Type.ArrayType) type).getComponentType();
-    }
+    type = getTargetType(type);
     return type.getAnnotationMirrors().stream()
         .anyMatch(typeCompound -> typeCompound.type.tsym.name.toString().equals("RPolyTainted"));
   }
@@ -450,14 +461,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    *     edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotation, false otherwise.
    */
   public boolean hasPolyTaintedAnnotation(AnnotatedTypeMirror type) {
-    if (type instanceof AnnotatedTypeMirror.AnnotatedWildcardType) {
-      AnnotatedTypeMirror.AnnotatedWildcardType wildcardType =
-          (AnnotatedTypeMirror.AnnotatedWildcardType) type;
-      type = wildcardType.getExtendsBound();
-    }
-    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-      type = ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
-    }
+    type = getTargetType(type);
     return type.hasPrimaryAnnotation(rPolyTainted);
   }
 
@@ -488,6 +492,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    * @param type The given type.
    */
   public void makeUntainted(AnnotatedTypeMirror type) {
+    //    type = getTargetType(type);
     type.replaceAnnotation(rUntainted);
   }
 
