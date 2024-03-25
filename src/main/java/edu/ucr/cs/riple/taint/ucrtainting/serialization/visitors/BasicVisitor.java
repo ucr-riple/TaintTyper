@@ -13,6 +13,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.DeclaredType;
@@ -33,8 +34,8 @@ public class BasicVisitor extends SpecializedFixComputer {
 
   @Override
   public Set<Fix> visitIdentifier(IdentifierTree node, FoundRequired pair) {
+    Element element = TreeUtils.elementFromUse(node);
     if (requireFix(pair)) {
-      Element element = TreeUtils.elementFromUse(node);
       Fix fix = buildFixForElement(element, pair);
       if (fix == null) {
         // TODO Hacky , fix later.
@@ -78,6 +79,18 @@ public class BasicVisitor extends SpecializedFixComputer {
           }
         }
       } else {
+        // check if node is of type Class<?>
+        if (((Symbol.VarSymbol) element)
+            .type
+            .tsym
+            .getQualifiedName()
+            .toString()
+            .equals("java.lang.Class")) {
+          // We cannot annotate Class<?> as @Untainted or as Class<@RUntainted ?>
+          if (fix.location.getTypeVariablePositions().equals(List.of(List.of(1, 0)))) {
+            return Set.of();
+          }
+        }
         return Set.of(fix);
       }
     }

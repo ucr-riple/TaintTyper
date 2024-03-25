@@ -655,8 +655,82 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 4336,
+      "offset": 4725,
       "index": 22,
+      "region": {
+        "symbol": "testOnPolyWithClassCastTestHard(javax.xml.stream.XMLStreamReader)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testOnPolyWithClassCastTestHard(javax.xml.stream.XMLStreamReader)",
+            "kind": "PARAMETER",
+            "name": "data",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "poly",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "unmarshall(jakarta.xml.bind.JAXBContext,javax.xml.stream.XMLStreamReader,java.lang.Class)",
+            "kind": "POLY_METHOD",
+            "arguments": {
+              "0": [
+                [
+                  0
+                ]
+              ],
+              "1": [
+                [
+                  0
+                ]
+              ],
+              "2": [
+                [
+                  0
+                ]
+              ]
+            },
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getContext()",
+            "kind": "METHOD",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+      "messageKey": "assignment",
+      "offset": 4336,
+      "index": 23,
       "region": {
         "symbol": "main(java.lang.String[])",
         "class": "foo.bar.MainMethodTest"

@@ -116,11 +116,14 @@ public class SerializationService {
           }
         }
       default:
-        Set<Fix> fixes = new HashSet<>();
         // On Right Hand Side
-        fixes.addAll(tree.accept(fixComputer, pair));
+        Set<Fix> fixes = new HashSet<>(tree.accept(fixComputer, pair));
         // On Left Hand Side
-        fixes.addAll(generateLeftHandSideFixes(tree, messageKey, path, pair));
+        Set<Fix> onLeftHandSide = generateLeftHandSideFixes(tree, messageKey, path, pair);
+        if (!onLeftHandSide.isEmpty()) {
+          // let right hand side get fixed in the next iteration.
+          return onLeftHandSide;
+        }
         return fixes;
     }
   }

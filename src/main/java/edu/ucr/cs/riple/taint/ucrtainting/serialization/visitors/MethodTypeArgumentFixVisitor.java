@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeMirror;
-import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.util.AnnotatedTypes;
 import org.checkerframework.javacutil.TreeUtils;
@@ -48,16 +47,15 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
     Set<Type.TypeVar> effectiveTypes = checkMethodTypeVarImpact(calledMethod, pair);
     if (!effectiveTypes.isEmpty()) {
+      List<AnnotatedTypeMirror> paramsAnnotatedTypeMirrors =
+          AnnotatedTypes.adaptParameters(
+              typeFactory, typeFactory.getAnnotatedType(calledMethod), node.getArguments());
       for (Type.TypeVar typeVar : effectiveTypes) {
-        AnnotatedTypeFactory.ParameterizedExecutableType mType = typeFactory.methodFromUse(node);
-        AnnotatedTypeMirror.AnnotatedExecutableType invokedMethod = mType.executableType;
-        List<AnnotatedTypeMirror> paramsAnnotatedTypeMirrors =
-            AnnotatedTypes.adaptParameters(typeFactory, invokedMethod, node.getArguments());
         for (int i = 0; i < node.getArguments().size(); i++) {
           AnnotatedTypeMirror requiredParam = paramsAnnotatedTypeMirrors.get(i).deepCopy(true);
           Type paramType =
               calledMethod.isVarArgs()
-                  ? calledMethod.getParameters().get(0).type
+                  ? ((Type.ArrayType) calledMethod.getParameters().get(0).type).getComponentType()
                   : calledMethod.getParameters().get(i).type;
           boolean changed = updateAnnotatedTypeMirror(requiredParam, paramType, typeVar);
           if (changed) {
@@ -85,11 +83,9 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
               }
             }
             Set<Fix> onArgument = node.getArguments().get(i).accept(fixComputer, newPair);
-            if (onArgument == null || onArgument.isEmpty()) {
-              // Could not find any fix for that.
-              return Set.of();
+            if (onArgument != null) {
+              fixes.addAll(onArgument);
             }
-            fixes.addAll(onArgument);
           }
         }
       }

@@ -89,4 +89,9 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   public Path path() {
     return path;
   }
+
+  @Override
+  public List<List<Integer>> getTypeVariablePositions() {
+    return typeVariablePositions;
+  }
 }

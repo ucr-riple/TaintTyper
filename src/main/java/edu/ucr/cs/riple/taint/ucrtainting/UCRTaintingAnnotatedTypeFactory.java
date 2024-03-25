@@ -427,6 +427,9 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
           (AnnotatedTypeMirror.AnnotatedWildcardType) type;
       type = wildcardType.getExtendsBound();
     }
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      type = ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
+    }
     return type.hasPrimaryAnnotation(rUntainted);
   }
 
@@ -447,6 +450,11 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    *     edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotation, false otherwise.
    */
   public boolean hasPolyTaintedAnnotation(AnnotatedTypeMirror type) {
+    if (type instanceof AnnotatedTypeMirror.AnnotatedWildcardType) {
+      AnnotatedTypeMirror.AnnotatedWildcardType wildcardType =
+          (AnnotatedTypeMirror.AnnotatedWildcardType) type;
+      type = wildcardType.getExtendsBound();
+    }
     if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
       type = ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
     }

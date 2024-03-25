@@ -1,6 +1,10 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.*;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,6 +15,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.XMLStreamReader;
 import org.apache.commons.digester3.CallMethodRule;
 import org.apache.commons.digester3.Digester;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -158,6 +163,27 @@ class Foo {
     // :: error: assignment
     param = (callingCls != null) ? callingCls : getClass();
   }
+
+  public void testOnPolyWithClassCastTestHard(XMLStreamReader data) throws Exception {
+    JAXBElement<@RUntainted TLSClientParametersType> type =
+        // :: error: assignment
+        unmarshall(getContext(), data, TLSClientParametersType.class);
+  }
+
+  public static <T> JAXBElement<T> unmarshall(JAXBContext c, XMLStreamReader reader, Class<T> cls)
+      throws JAXBException {
+    Unmarshaller u = c.createUnmarshaller();
+    try {
+      u.setEventHandler(null);
+      return u.unmarshal(reader, cls);
+    } finally {
+
+    }
+  }
+
+  static JAXBContext getContext() {
+    return null;
+  }
 }
 
 class MainMethodTest {
@@ -168,8 +194,9 @@ class MainMethodTest {
 }
 
 abstract class StreamContent extends AbstractWebScript {
-
   void exec(Map<String, @RUntainted Object> map) {
     createScriptParameters(null, null, null, map);
   }
 }
+
+class TLSClientParametersType {}

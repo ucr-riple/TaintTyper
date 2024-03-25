@@ -125,19 +125,25 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
         return fixes;
       }
     }
+    // The method has a receiver, if the method contains a type argument, we should annotate the
+    // receiver and leave the called method untouched. Annotation on the declaration on the type
+    // argument, will be added on the method automatically.
+    if (isTypeVar && hasReceiver) {
+      Set<Fix> fixes =
+          node.accept(new ReceiverTypeArgumentFixVisitor(typeFactory, this, context), pair);
+      if (!fixes.isEmpty()) {
+        return fixes;
+      }
+    }
     // check if the call is to a method defined in a third party library. If the method has a type
     // var return type and has a receiver, we should annotate the receiver.
-    if (!isInAnnotatedPackage && !(isTypeVar && hasReceiver)) {
+    if (!isInAnnotatedPackage && basicVisitor.requireFix(pair)) {
       return node.accept(thirdPartyFixVisitor, pair);
     }
     // The method has a receiver, if the method contains a type argument, we should annotate the
     // receiver and leave the called method untouched. Annotation on the declaration on the type
     // argument, will be added on the method automatically.
-    if (isTypeVar && hasReceiver) {
-      return node.accept(new ReceiverTypeArgumentFixVisitor(typeFactory, this, context), pair);
-    } else {
-      return defaultAction(node, pair);
-    }
+    return defaultAction(node, pair);
   }
 
   public void reset(TreePath currentPath) {

@@ -32,7 +32,12 @@ public interface SymbolLocation {
       case METHOD:
         return new MethodLocation(target);
       case FIELD:
-        return new FieldLocation(target);
+        FieldLocation onField = new FieldLocation(target);
+        if (onField.variableSymbol.name.toString().equals("class")) {
+          // technically not a field.
+          return null;
+        }
+        return onField;
       case LOCAL_VARIABLE:
       case RESOURCE_VARIABLE:
         JCTree declarationTree = Utility.locateDeclaration(target, context);
@@ -69,4 +74,6 @@ public interface SymbolLocation {
   Symbol getTarget();
 
   Path path();
+
+  List<List<Integer>> getTypeVariablePositions();
 }

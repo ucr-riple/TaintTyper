@@ -173,10 +173,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
       }
       // receiver is written as a raw type and not parameterized. We cannot infer the actual types
       // and have to annotate the method directly.
-      Set<Fix> fixes = receivers.get(receivers.size() - 1).accept(fixComputer.basicVisitor, pair);
-      if (fixes != null && !fixes.isEmpty()) {
-        return fixes.iterator().next();
-      }
+      return null;
     }
     List<List<Integer>> indexes = computeIndices(element, typeMatchVisitor, pair);
     if (indexes.isEmpty()) {
