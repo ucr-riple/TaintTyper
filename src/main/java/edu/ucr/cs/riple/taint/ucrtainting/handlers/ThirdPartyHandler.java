@@ -19,7 +19,9 @@ import org.checkerframework.javacutil.TreeUtils;
 public class ThirdPartyHandler extends AbstractHandler {
 
   private static final ImmutableSet<MethodRef> approvedThirdPartyMethod =
-      ImmutableSet.of(new MethodRef("java.lang.Class", "cast(java.lang.Object)"));
+      ImmutableSet.of(
+          new MethodRef("java.lang.Class", "cast(java.lang.Object)"),
+          new MethodRef("java.lang.ClassLoader", "loadClass(java.lang.String)"));
 
   public ThirdPartyHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
     super(typeFactory);
