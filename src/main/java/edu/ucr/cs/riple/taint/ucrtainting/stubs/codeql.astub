@@ -1,5 +1,6 @@
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.File;
@@ -99,7 +100,7 @@ public abstract class ServletOutputStream {
 
 package java.lang;
 public final class String {
-    public String replaceAll(@RUntainted String regex, String replacement);
+    public @RPolyTainted String replaceAll(@RUntainted String regex, @RPolyTainted String replacement);
 }
 
 package java.nio.file;
