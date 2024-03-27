@@ -2,6 +2,7 @@ package test;
 
 import com.vaadin.shared.ui.ContentMode;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -287,10 +288,19 @@ public class CmsUUID {
   }
 
   void testAnnotationComponentType(DataBinding binding) {
-    sink(binding.value()[0]);
+    sink(binding.classes()[0]);
   }
 
   void sink(@RUntainted Object s) {}
+
+  @SuppressWarnings("unchecked")
+  private <T> @RUntainted Class<? extends T>[] testSkipReportForAnnotationMemberSelection(
+      Annotation ann, Class<T> type) { // NOPMD
+    if (ann instanceof DataBinding) {
+      return (Class<? extends T>[]) ((DataBinding) ann).classes();
+    }
+    throw new UnsupportedOperationException("Doesn't support the annotation: " + ann);
+  }
 }
 
 @Documented
@@ -298,7 +308,7 @@ public class CmsUUID {
 @Target({ElementType.TYPE})
 @Inherited
 @interface DataBinding {
-  Class<?>[] value();
+  Class<?>[] classes();
 
   /**
    * Bean reference to lookup in configuration. Bean must be castable to the Class set above

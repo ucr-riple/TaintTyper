@@ -153,6 +153,11 @@ public class UCRTaintingChecker extends AccumulationChecker {
         return true;
       }
     }
+    // check if the expression is a member of annotation
+    if (shouldBeSkippedForAnnotationMemberSelection(source)) {
+      return true;
+    }
+
     switch (messageKey) {
       case "lambda.param":
       case "enum.declaration":
@@ -264,5 +269,27 @@ public class UCRTaintingChecker extends AccumulationChecker {
       default:
         return false;
     }
+  }
+
+  private boolean shouldBeSkippedForAnnotationMemberSelection(Object source) {
+    Tree exp = (Tree) source;
+    while (exp instanceof JCTree.JCTypeCast) {
+      exp = ((JCTree.JCTypeCast) exp).getExpression();
+    }
+    JCTree.JCFieldAccess fieldAccess = null;
+    if (exp instanceof JCTree.JCFieldAccess) {
+      fieldAccess = (JCTree.JCFieldAccess) exp;
+    }
+    if (exp instanceof JCTree.JCMethodInvocation) {
+      JCTree.JCMethodInvocation methodInvocation = (JCTree.JCMethodInvocation) exp;
+      if (methodInvocation.getMethodSelect() instanceof JCTree.JCFieldAccess) {
+        fieldAccess = (JCTree.JCFieldAccess) methodInvocation.getMethodSelect();
+      }
+    }
+    if (fieldAccess == null) {
+      return false;
+    }
+    Symbol.ClassSymbol owner = fieldAccess.sym.enclClass();
+    return owner != null && owner.isAnnotationType();
   }
 }
