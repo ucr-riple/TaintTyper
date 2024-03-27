@@ -184,6 +184,12 @@ class Foo {
   static JAXBContext getContext() {
     return null;
   }
+
+  void testNullLiterallShouldNotReportErrors() {
+    sinkForTestNullLiteral((String[]) null);
+  }
+
+  void sinkForTestNullLiteral(@RUntainted String[] p) {}
 }
 
 class MainMethodTest {
