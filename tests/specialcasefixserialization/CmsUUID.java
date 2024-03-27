@@ -2,6 +2,12 @@ package test;
 
 import com.vaadin.shared.ui.ContentMode;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.*;
 import javax.servlet.http.*;
 import org.safehaus.uuid.UUID;
@@ -279,4 +285,25 @@ public class CmsUUID {
     // :: error: argument
     ProcessBuilder pb = new ProcessBuilder(params.toArray(new String[params.size()]));
   }
+
+  void testAnnotationComponentType(DataBinding binding) {
+    sink(binding.value()[0]);
+  }
+
+  void sink(@RUntainted Object s) {}
+}
+
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+@Inherited
+@interface DataBinding {
+  Class<?>[] value();
+
+  /**
+   * Bean reference to lookup in configuration. Bean must be castable to the Class set above
+   *
+   * @return The id of the bean reference
+   */
+  String ref() default "";
 }

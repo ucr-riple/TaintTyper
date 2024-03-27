@@ -53,6 +53,16 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
     if (methodSymbol.getSimpleName().contentEquals("getClass") && hasThisReceiver) {
       typeFactory.makeUntainted(annotatedTypeMirror);
     }
+    if (methodSymbol.owner instanceof Symbol.ClassSymbol) {
+      Symbol.ClassSymbol classSymbol = (Symbol.ClassSymbol) methodSymbol.owner;
+      if (classSymbol.isAnnotationType()) {
+        typeFactory.makeUntainted(annotatedTypeMirror);
+        if (annotatedTypeMirror instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+          typeFactory.makeUntainted(
+              ((AnnotatedTypeMirror.AnnotatedArrayType) annotatedTypeMirror).getComponentType());
+        }
+      }
+    }
     handler.visitMethodInvocation(node, annotatedTypeMirror);
     return super.visitMethodInvocation(node, annotatedTypeMirror);
   }
