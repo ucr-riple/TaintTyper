@@ -373,8 +373,8 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
       if (!result.isEmpty()) {
         for (List<Integer> integers : result) {
           List<Integer> position = new ArrayList<>(effectiveRegionIndex);
+          position.add(i + 1);
           position.addAll(integers);
-          position.add(0, i + 1);
           positions.add(position);
         }
       }

@@ -74,6 +74,11 @@ public class Foo<E, D> {
     // :: error: return
     return withString;
   }
+
+  void mapEntryTest(Map.Entry<String, List<String>> entry) {
+    // :: error: assignment
+    List<@RUntainted String> values = entry.getValue();
+  }
 }
 
 class TypeMapSelectTest {

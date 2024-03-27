@@ -3,8 +3,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 638,
-      "index": 17,
+      "offset": 656,
+      "index": 1,
       "region": {
         "symbol": "coreTest()",
         "class": "foo.bar.Foo"
@@ -30,8 +30,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 701,
-      "index": 18,
+      "offset": 719,
+      "index": 2,
       "region": {
         "symbol": "coreTest()",
         "class": "foo.bar.Foo"
@@ -57,8 +57,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 764,
-      "index": 19,
+      "offset": 782,
+      "index": 3,
       "region": {
         "symbol": "coreTest()",
         "class": "foo.bar.Foo"
@@ -88,8 +88,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 829,
-      "index": 20,
+      "offset": 847,
+      "index": 4,
       "region": {
         "symbol": "coreTest()",
         "class": "foo.bar.Foo"
@@ -114,8 +114,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 955,
-      "index": 21,
+      "offset": 973,
+      "index": 5,
       "region": {
         "symbol": "testOnTypeParameter(foo.bar.Foo)",
         "class": "foo.bar.Foo"
@@ -141,8 +141,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1023,
-      "index": 22,
+      "offset": 1041,
+      "index": 6,
       "region": {
         "symbol": "testOnTypeParameter(foo.bar.Foo)",
         "class": "foo.bar.Foo"
@@ -168,8 +168,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1093,
-      "index": 23,
+      "offset": 1111,
+      "index": 7,
       "region": {
         "symbol": "testOnTypeParameter(foo.bar.Foo)",
         "class": "foo.bar.Foo"
@@ -195,8 +195,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1156,
-      "index": 24,
+      "offset": 1174,
+      "index": 8,
       "region": {
         "symbol": "testOnTypeParameter(foo.bar.Foo)",
         "class": "foo.bar.Foo"
@@ -222,8 +222,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1221,
-      "index": 25,
+      "offset": 1239,
+      "index": 9,
       "region": {
         "symbol": "testOnTypeParameter(foo.bar.Foo)",
         "class": "foo.bar.Foo"
@@ -251,8 +251,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1290,
-      "index": 26,
+      "offset": 1308,
+      "index": 10,
       "region": {
         "symbol": "testOnTypeParameter(foo.bar.Foo)",
         "class": "foo.bar.Foo"
@@ -278,8 +278,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1425,
-      "index": 27,
+      "offset": 1443,
+      "index": 11,
       "region": {
         "symbol": "testOnParameter(foo.bar.Foo)",
         "class": "foo.bar.Foo"
@@ -304,8 +304,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1488,
-      "index": 28,
+      "offset": 1506,
+      "index": 12,
       "region": {
         "symbol": "testOnParameter(foo.bar.Foo)",
         "class": "foo.bar.Foo"
@@ -330,8 +330,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1553,
-      "index": 29,
+      "offset": 1571,
+      "index": 13,
       "region": {
         "symbol": "testOnParameter(foo.bar.Foo)",
         "class": "foo.bar.Foo"
@@ -356,8 +356,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1611,
-      "index": 30,
+      "offset": 1629,
+      "index": 14,
       "region": {
         "symbol": "testOnParameter(foo.bar.Foo)",
         "class": "foo.bar.Foo"
@@ -382,8 +382,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1671,
-      "index": 31,
+      "offset": 1689,
+      "index": 15,
       "region": {
         "symbol": "testOnParameter(foo.bar.Foo)",
         "class": "foo.bar.Foo"
@@ -410,8 +410,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 1735,
-      "index": 32,
+      "offset": 1753,
+      "index": 16,
       "region": {
         "symbol": "testOnParameter(foo.bar.Foo)",
         "class": "foo.bar.Foo"
@@ -436,8 +436,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "return",
-      "offset": 1867,
-      "index": 33,
+      "offset": 1885,
+      "index": 17,
       "region": {
         "symbol": "testOnParamReturn()",
         "class": "foo.bar.Foo"
@@ -462,8 +462,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "return",
-      "offset": 1986,
-      "index": 34,
+      "offset": 2004,
+      "index": 18,
       "region": {
         "symbol": "testOnTypeParamReturn()",
         "class": "foo.bar.Foo"
@@ -489,8 +489,38 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 2179,
-      "index": 35,
+      "offset": 2120,
+      "index": 19,
+      "region": {
+        "symbol": "mapEntryTest(java.util.Map.Entry)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                2,
+                1,
+                0
+              ]
+            ],
+            "method": "mapEntryTest(java.util.Map.Entry)",
+            "kind": "PARAMETER",
+            "name": "entry",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 2346,
+      "index": 20,
       "region": {
         "symbol": "testOnTypeArgumentMapSelection()",
         "class": "foo.bar.TypeMapSelectTest"
