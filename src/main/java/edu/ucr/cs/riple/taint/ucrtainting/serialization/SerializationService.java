@@ -210,8 +210,13 @@ public class SerializationService {
     }
     // todo: check for all subtypes.
     if (type.tsym.name.toString().equals("Array")) {
+      AnnotatedTypeMirror elementAnnotatedType = typeFactory.getAnnotatedType(element);
+      if (elementAnnotatedType instanceof AnnotatedTypeMirror.AnnotatedExecutableType) {
+        elementAnnotatedType =
+            ((AnnotatedTypeMirror.AnnotatedExecutableType) elementAnnotatedType).getReturnType();
+      }
       AnnotatedTypeMirror.AnnotatedArrayType arrayType =
-          (AnnotatedTypeMirror.AnnotatedArrayType) typeFactory.getAnnotatedType(element);
+          (AnnotatedTypeMirror.AnnotatedArrayType) elementAnnotatedType;
       SymbolLocation location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
       if (location == null || location.path() == null) {
         return ImmutableSet.of();

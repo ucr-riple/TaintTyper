@@ -457,10 +457,36 @@
       ]
     },
     {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "messageKey": "enhancedfor",
+      "offset": 7015,
+      "index": 15,
+      "region": {
+        "symbol": "enhancedForLoopInvocationTest()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getStrings()",
+            "kind": "METHOD",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/NotPolyInference.java",
       "messageKey": "argument",
       "offset": 2138,
-      "index": 15,
+      "index": 16,
       "region": {
         "symbol": "test(byte[],int,int,java.io.Writer)",
         "class": "foo.bar.NotPolyInference"

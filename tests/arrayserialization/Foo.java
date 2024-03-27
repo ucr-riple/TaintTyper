@@ -212,6 +212,15 @@ public class Foo {
     // :: error: assignment
     @RUntainted String s2 = simpleArrayAccessParam[1];
   }
+
+  void enhancedForLoopInvocationTest() {
+    // :: error: (enhancedfor)
+    for (@RUntainted String s : getStrings()) {}
+  }
+
+  String[] getStrings() {
+    return null;
+  }
 }
 
 // CASES THAT ARE NOT COVERED
