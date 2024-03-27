@@ -14,6 +14,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
+import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
@@ -30,6 +31,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisito
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -199,11 +201,27 @@ public class SerializationService {
   private ImmutableSet<Fix> handleEnhancedForLoop(Tree tree, FoundRequired pair) {
     Element element = TreeUtils.elementFromTree(tree);
     Type type = null;
+    int index = -1;
     if (element instanceof Symbol.VarSymbol) {
       type = ((Symbol.VarSymbol) element).type;
     }
     if (element instanceof Symbol.MethodSymbol) {
       type = ((Symbol.MethodSymbol) element).getReturnType();
+    }
+    if (type instanceof Type.TypeVar && tree instanceof JCTree.JCMethodInvocation) {
+      ExpressionTree receiver = TreeUtils.getReceiverTree((ExpressionTree) tree);
+      element = TreeUtils.elementFromUse(receiver);
+      if (element instanceof Symbol.VarSymbol) {
+        Symbol.VarSymbol varSymbol = (Symbol.VarSymbol) element;
+        List<String> vars =
+            varSymbol.type.tsym.type.getTypeArguments().stream()
+                .map(t -> t.tsym.name.toString())
+                .collect(Collectors.toList());
+        index = vars.indexOf(type.tsym.name.toString());
+        if (index != -1) {
+          type = varSymbol.type.getTypeArguments().get(index);
+        }
+      }
     }
     if (type == null) {
       return ImmutableSet.of();
@@ -229,7 +247,7 @@ public class SerializationService {
     if (!supportedTypes.contains(type.tsym.name.toString())) {
       return ImmutableSet.of();
     }
-    List<Integer> effectiveTypeArgumentRegion = List.of(1);
+    List<Integer> effectiveTypeArgumentRegion = index != -1 ? List.of(index + 1, 1) : List.of(1);
     AnnotatedTypeMirror typeArgumentRegion =
         getAnnotatedTypeMirrorOfTypeArgumentAt(
             typeFactory.getAnnotatedType(element), effectiveTypeArgumentRegion);
@@ -239,7 +257,8 @@ public class SerializationService {
       if (location == null || location.path() == null) {
         return ImmutableSet.of();
       }
-      location.setTypeVariablePositions(List.of(List.of(1, 0)));
+      location.setTypeVariablePositions(
+          List.of(index != -1 ? List.of(index + 1, 1, 0) : List.of(1, 0)));
       return ImmutableSet.of(new Fix(location));
     }
     return ImmutableSet.of();

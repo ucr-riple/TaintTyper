@@ -52,4 +52,15 @@ public class Foo {
     // :: error: (enhancedfor)
     for (@RUntainted Object o : map.values()) {}
   }
+
+  public void enhancedForLoopMixedWithTypeVar() {
+    final Map<Class<? extends Annotation>, @RUntainted Collection<String>> matchingInterfaces =
+        new HashMap<>();
+    final Map<Class<? extends Annotation>, Collection<Class<?>>> classes = new HashMap<>();
+    for (Map.Entry<Class<? extends Annotation>, @RUntainted Collection<String>> e :
+        matchingInterfaces.entrySet()) {
+      // :: error: enhancedfor
+      for (@RUntainted String intName : e.getValue()) {}
+    }
+  }
 }

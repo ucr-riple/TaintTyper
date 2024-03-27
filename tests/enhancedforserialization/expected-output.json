@@ -143,6 +143,35 @@
           }
         }
       ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+      "messageKey": "enhancedfor",
+      "offset": 2015,
+      "index": 6,
+      "region": {
+        "symbol": "enhancedForLoopMixedWithTypeVar()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "varName": "e",
+            "type-variable-position": [
+              [
+                2,
+                1,
+                0
+              ]
+            ],
+            "method": "enhancedForLoopMixedWithTypeVar()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     }
   ]
 }
