@@ -28,6 +28,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.PolyTypeMatchVisitor;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisitor;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -210,6 +211,9 @@ public class SerializationService {
     }
     if (type instanceof Type.TypeVar && tree instanceof JCTree.JCMethodInvocation) {
       ExpressionTree receiver = TreeUtils.getReceiverTree((ExpressionTree) tree);
+      if (receiver == null) {
+        return ImmutableSet.of();
+      }
       element = TreeUtils.elementFromUse(receiver);
       if (element instanceof Symbol.VarSymbol) {
         Symbol.VarSymbol varSymbol = (Symbol.VarSymbol) element;
@@ -251,17 +255,34 @@ public class SerializationService {
     AnnotatedTypeMirror typeArgumentRegion =
         getAnnotatedTypeMirrorOfTypeArgumentAt(
             typeFactory.getAnnotatedType(element), effectiveTypeArgumentRegion);
-    if (typeFactory.hasUntaintedAnnotation(pair.required)
-        && !typeFactory.hasUntaintedAnnotation(typeArgumentRegion)) {
-      SymbolLocation location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
-      if (location == null || location.path() == null) {
+    SymbolLocation location = SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+    if (location == null || location.path() == null) {
+      return ImmutableSet.of();
+    }
+    List<List<Integer>> locationToSet;
+    if (index != -1) {
+      if (typeFactory.hasUntaintedAnnotation(pair.required)
+          && !typeFactory.hasUntaintedAnnotation(typeArgumentRegion)) {
+        locationToSet = List.of(List.of(index + 1, 1, 0));
+      } else {
         return ImmutableSet.of();
       }
-      location.setTypeVariablePositions(
-          List.of(index != -1 ? List.of(index + 1, 1, 0) : List.of(1, 0)));
-      return ImmutableSet.of(new Fix(location));
+    } else {
+      List<List<Integer>> differences =
+          typeMatchVisitor.visit(typeArgumentRegion, pair.required, null);
+      if (differences.isEmpty()) {
+        return ImmutableSet.of();
+      }
+      locationToSet = new ArrayList<>();
+      differences.forEach(
+          integers -> {
+            List<Integer> l = new ArrayList<>(integers);
+            l.add(0, 1);
+            locationToSet.add(l);
+          });
     }
-    return ImmutableSet.of();
+    location.setTypeVariablePositions(locationToSet);
+    return ImmutableSet.of(new Fix(location));
   }
 
   /**

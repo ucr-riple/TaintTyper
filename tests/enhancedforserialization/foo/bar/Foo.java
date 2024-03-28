@@ -63,4 +63,13 @@ public class Foo {
       for (@RUntainted String intName : e.getValue()) {}
     }
   }
+
+  private void enhancedForLoopMixedWithTypeVarNested(
+      List<Pair<Integer, Integer>> quotedRegionIndices) {
+    // :: error: enhancedfor
+    for (Pair<@RUntainted Integer, @RUntainted Integer> nextQuotedRegionIndices :
+        quotedRegionIndices) {}
+  }
+
+  public final class Pair<F, S> {}
 }
