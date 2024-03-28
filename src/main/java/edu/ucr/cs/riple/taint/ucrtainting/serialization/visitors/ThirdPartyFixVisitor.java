@@ -66,7 +66,7 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
     for (int i = 0; i < node.getArguments().size(); i++) {
       ExpressionTree argument = node.getArguments().get(i);
       AnnotatedTypeMirror formalParameterType =
-          extractFormalParameterAnnotatedTypeMirror(calledMethod, i).deepCopy(true);
+          extractFormalParameterAnnotatedTypeMirror(node, i).deepCopy(true);
       makeUntainted(formalParameterType, typeFactory);
       AnnotatedTypeMirror actualParameterType = typeFactory.getAnnotatedType(argument);
       FoundRequired argFoundRequired = null;
@@ -124,10 +124,7 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
   }
 
   private AnnotatedTypeMirror extractFormalParameterAnnotatedTypeMirror(
-      Symbol.MethodSymbol methodSymbol, int i) {
-    return methodSymbol.isVarArgs() && i >= methodSymbol.getParameters().size()
-        ? typeFactory.getAnnotatedType(
-            methodSymbol.getParameters().get(methodSymbol.getParameters().size() - 1))
-        : typeFactory.getAnnotatedType(methodSymbol.getParameters().get(i));
+      MethodInvocationTree invocation, int i) {
+    return typeFactory.getAnnotatedType(invocation.getArguments().get(i));
   }
 }

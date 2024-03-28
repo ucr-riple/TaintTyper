@@ -112,4 +112,36 @@ class Foo {
     @RUntainted List<String> list = List.of("a");
     @RUntainted List<String> list2 = Collections.singletonList("org");
   }
+
+  void testOnArgumentForUnboxing(String st, Pair<Integer, Integer> pair) {
+    // :: error: argument
+    new A(st.substring(pair.getFirst(), pair.getSecond()));
+  }
+
+  void testOnAssignmentForUnboxing(String st, Pair<Integer, Integer> pair) {
+    // :: error: assignment
+    @RUntainted String ans = st.substring(pair.getFirst(), pair.getSecond());
+  }
+
+  class A {
+    A(@RUntainted String a) {}
+  }
+
+  final class Pair<F, S> {
+    private F first;
+    private S second;
+
+    public Pair(F first, S second) {
+      this.first = first;
+      this.second = second;
+    }
+
+    public final F getFirst() {
+      return first;
+    }
+
+    public final S getSecond() {
+      return second;
+    }
+  }
 }

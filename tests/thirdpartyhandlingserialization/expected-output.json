@@ -163,6 +163,130 @@
           }
         }
       ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "messageKey": "argument",
+      "offset": 3713,
+      "index": 10,
+      "region": {
+        "symbol": "testOnArgumentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "testOnArgumentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
+            "kind": "PARAMETER",
+            "name": "pair",
+            "index": 1,
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testOnArgumentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
+            "kind": "PARAMETER",
+            "name": "st",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "testOnArgumentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
+            "kind": "PARAMETER",
+            "name": "pair",
+            "index": 1,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 3883,
+      "index": 11,
+      "region": {
+        "symbol": "testOnAssignmentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "testOnAssignmentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
+            "kind": "PARAMETER",
+            "name": "pair",
+            "index": 1,
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testOnAssignmentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
+            "kind": "PARAMETER",
+            "name": "st",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "testOnAssignmentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
+            "kind": "PARAMETER",
+            "name": "pair",
+            "index": 1,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     }
   ]
 }
