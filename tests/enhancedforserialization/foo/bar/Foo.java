@@ -66,8 +66,8 @@ public class Foo {
 
   private void enhancedForLoopMixedWithTypeVarNested(
       List<Pair<Integer, Integer>> quotedRegionIndices) {
-    // :: error: enhancedfor
     for (Pair<@RUntainted Integer, @RUntainted Integer> nextQuotedRegionIndices :
+        // :: error: enhancedfor
         quotedRegionIndices) {}
   }
 
