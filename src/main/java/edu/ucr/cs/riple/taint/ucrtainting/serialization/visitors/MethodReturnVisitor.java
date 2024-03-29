@@ -64,6 +64,9 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitMethod(MethodTree node, FoundRequired pair) {
     Symbol.MethodSymbol symbol = (Symbol.MethodSymbol) TreeUtils.elementFromDeclaration(node);
+    if (symbol == null) {
+      return Set.of();
+    }
     STATE state = getState(symbol);
     if (state.equals(STATE.VISITING)) {
       return Set.of();
@@ -77,6 +80,10 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
       return mergeResults(symbol, Collections.emptySet());
     }
     if (!typeFactory.polyTaintInferenceEnabled()) {
+      return mergeResults(symbol, Set.of(onMethod));
+    }
+    // check if method is static, for non-static method we do not infer poly tainted annotations.
+    if (!symbol.isStatic()) {
       return mergeResults(symbol, Set.of(onMethod));
     }
     Set<Fix> ans = new HashSet<>();

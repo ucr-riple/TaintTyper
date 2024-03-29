@@ -3,8 +3,8 @@ package tests;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import java.io.File;
 import java.util.List;
+import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
 import org.junit.runners.Parameterized;
-import tests.tools.SerializationTestHelper;
 
 /**
  * Test runner for tests of the UCR Tainting Checker.
@@ -14,7 +14,7 @@ import tests.tools.SerializationTestHelper;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class PolyTaintedSerializationTest extends SerializationTestHelper {
+public class PolyTaintedSerializationTest extends CheckerFrameworkPerDirectoryTest {
   public PolyTaintedSerializationTest(List<File> testFiles) {
     super(
         testFiles,
