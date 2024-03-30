@@ -7,8 +7,6 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.code.Types;
-import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.ThirdPartyHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.SerializationService;
@@ -56,7 +54,6 @@ public class UCRTaintingChecker extends AccumulationChecker {
   /** Serialization service for the checker. */
   private SerializationService serializationService;
 
-  private Types types;
   private UCRTaintingAnnotatedTypeFactory typeFactory;
   private boolean serialize = true;
   private FoundRequired pair = null;
@@ -68,8 +65,6 @@ public class UCRTaintingChecker extends AccumulationChecker {
     super.initChecker();
     this.serializationService = new SerializationService(this);
     this.typeFactory = (UCRTaintingAnnotatedTypeFactory) getTypeFactory();
-    this.types =
-        Types.instance(((JavacProcessingEnvironment) getProcessingEnvironment()).getContext());
   }
 
   @Override

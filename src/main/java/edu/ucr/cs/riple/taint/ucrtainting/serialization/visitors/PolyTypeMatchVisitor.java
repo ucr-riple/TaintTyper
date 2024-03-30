@@ -45,9 +45,6 @@ public class PolyTypeMatchVisitor extends TypeMatchVisitor {
         && typeFactory.hasPolyTaintedAnnotation(required)) {
       result.add(List.of(0));
     }
-    if (!typeFactory.typeArgumentInferenceEnabled()) {
-      return result;
-    }
     for (int i = 0; i < required.getTypeArguments().size(); i++) {
       AnnotatedTypeMirror typeArgumentFound = found.getTypeArguments().get(i);
       AnnotatedTypeMirror typeArgumentRequired = required.getTypeArguments().get(i);

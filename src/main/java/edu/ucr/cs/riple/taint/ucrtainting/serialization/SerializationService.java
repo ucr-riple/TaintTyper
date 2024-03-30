@@ -94,6 +94,15 @@ public class SerializationService {
       resolvingFixes = ImmutableSet.of();
       e.printStackTrace();
     }
+    if (!typeFactory.typeArgumentInferenceEnabled()) {
+      boolean inferredOnTypeArg =
+          resolvingFixes.stream()
+              .anyMatch(
+                  fix -> !fix.location.getTypeVariablePositions().equals(List.of(List.of(0))));
+      if (inferredOnTypeArg) {
+        resolvingFixes = ImmutableSet.of();
+      }
+    }
     Error error = new Error(messageKey, resolvingFixes, checker.getVisitor().getCurrentPath());
     serializer.serializeError(error);
   }

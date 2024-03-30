@@ -26,19 +26,13 @@ import org.checkerframework.javacutil.TreeUtils;
  */
 public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
 
-  private final boolean activation;
-
   public MethodTypeArgumentFixVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
-    this.activation = factory.typeArgumentInferenceEnabled();
   }
 
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
-    if (!activation) {
-      return Set.of();
-    }
     Element element = TreeUtils.elementFromUse(node);
     if (element == null) {
       return Set.of();
@@ -220,9 +214,6 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
       UCRTaintingAnnotatedTypeFactory typeFactory,
       FoundRequired pair,
       Type.TypeVar typeVar) {
-    if (!typeFactory.typeArgumentInferenceEnabled()) {
-      return Set.of();
-    }
     try {
       if (!(type.tsym instanceof Symbol.ClassSymbol)) {
         return Set.of();
