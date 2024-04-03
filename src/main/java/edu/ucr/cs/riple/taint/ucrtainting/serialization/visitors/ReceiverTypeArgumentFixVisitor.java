@@ -91,9 +91,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     }
     // Check if receiver is used as raw type. In this case, we should annotate the called method.
     if (Utility.elementHasRawType(calledMethod)) {
-      if (!receivers.isEmpty()) {
-        return receivers.get(receivers.size() - 1).accept(fixComputer.basicVisitor, pair);
-      }
+      return Set.of();
     }
     addReceiver(node);
     if (Utility.isFullyParameterizedType(calledMethod.getReturnType())) {
