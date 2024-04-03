@@ -58,6 +58,11 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
+  public List<List<Integer>> visitWildcard_Typevar(AnnotatedTypeMirror.AnnotatedWildcardType type1, AnnotatedTypeMirror.AnnotatedTypeVariable type2, Void unused) {
+    return supportedDefault(type1.getExtendsBound(), type2);
+  }
+
+  @Override
   public List<List<Integer>> visitDeclared_Primitive(
       AnnotatedTypeMirror.AnnotatedDeclaredType type1,
       AnnotatedTypeMirror.AnnotatedPrimitiveType type2,
