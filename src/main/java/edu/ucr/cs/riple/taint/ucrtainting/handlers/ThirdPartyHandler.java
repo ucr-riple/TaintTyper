@@ -145,6 +145,9 @@ public class ThirdPartyHandler extends AbstractHandler {
     } catch (Exception e) {
       return true;
     }
+    if (Utility.elementHasRawType(receiverElement)) {
+      return true;
+    }
     return Utility.getType(receiverElement).tsym.type.getTypeArguments().stream()
         .noneMatch(type -> Utility.containsTypeArgument(returnType, (Type.TypeVar) type));
   }
