@@ -27,7 +27,7 @@ import org.checkerframework.javacutil.TreeUtils;
   "stubs/find-sec-bugs-sanitizers.astub",
   "stubs/general.astub",
   "stubs/httpservletreq.astub",
-  "stubs/StringBuffer.astub",
+  //  "stubs/StringBuffer.astub",
   "stubs/taintedMethods.astub",
   "stubs/tdmljp.astub",
   "stubs/inferred-poly.astub",

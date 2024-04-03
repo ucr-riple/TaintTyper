@@ -114,7 +114,12 @@ public class BasicVisitor extends SpecializedFixComputer {
       for (ExpressionTree arg : node.getArguments()) {
         AnnotatedTypeMirror foundArgType = typeFactory.getAnnotatedType(arg);
         AnnotatedTypeMirror requiredArgType = foundArgType.deepCopy(true);
-        typeFactory.makeUntainted(requiredArgType);
+        if (requiredArgType instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+          typeFactory.makeUntainted(
+              ((AnnotatedTypeMirror.AnnotatedArrayType) requiredArgType).getComponentType());
+        } else {
+          typeFactory.makeUntainted(requiredArgType);
+        }
         fixes.addAll(
             arg.accept(fixComputer, new FoundRequired(foundArgType, requiredArgType, pair.depth)));
       }

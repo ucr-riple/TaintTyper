@@ -603,7 +603,7 @@
       "offset": 3829,
       "index": 20,
       "region": {
-        "symbol": "testResourceVariableSerialization()",
+        "symbol": "testResourceVariableSerialization(java.io.BufferedWriter)",
         "class": "foo.bar.Foo"
       },
       "fixes": [
@@ -617,7 +617,7 @@
                 0
               ]
             ],
-            "method": "testResourceVariableSerialization()",
+            "method": "testResourceVariableSerialization(java.io.BufferedWriter)",
             "kind": "LOCAL_VARIABLE",
             "class": "foo.bar.Foo"
           }

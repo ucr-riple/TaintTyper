@@ -9,16 +9,16 @@ public class Desktop {
 package java.util;
 public static class Base64.Decoder {
     public byte[] decode(@RUntainted byte[] src);
-    public int decode(@RUntainted byte[] src, byte[] dst);
-    public ByteBuffer decode(@RUntainted ByteBuffer buffer);
+    public @RUntainted int decode(@RUntainted byte[] src, byte[] dst);
+    public @RUntainted ByteBuffer decode(@RUntainted ByteBuffer buffer);
     public byte[] decode(@RUntainted String src);
 }
 
 public static class Base64.Encoder {
     public byte[] encode(@RUntainted byte[] src);
-    public int encode(@RUntainted byte[] src, byte[] dst);
-    public ByteBuffer encode(@RUntainted ByteBuffer buffer);
-    public String encodeToString(@RUntainted byte[] src);
+    public @RUntainted int encode(@RUntainted byte[] src, byte[] dst);
+    public @RUntainted ByteBuffer encode(@RUntainted ByteBuffer buffer);
+    public @RUntainted String encodeToString(@RUntainted byte[] src);
 }
 
 public class Scanner {
@@ -56,25 +56,25 @@ public abstract class URLConnection {
 
 package java.lang.reflect;
 public final class Method {
-    public Object invoke(@RUntainted Object obj, Object... args);
+    public @RUntainted Object invoke(@RUntainted Object obj, Object... args);
 }
 
 package java.beans;
 public class Introspector {
-    public static BeanInfo getBeanInfo(@RUntainted Class<?> beanClass);
-    public static BeanInfo getBeanInfo(@RUntainted Class<?> beanClass, Class<?> stopClass);
-    public static BeanInfo getBeanInfo(@RUntainted Class<?> beanClass, Class<?> stopClass, int flags);
-    public static BeanInfo getBeanInfo(@RUntainted Class<?> beanClass, int flags);
+    public static @RUntainted BeanInfo getBeanInfo(@RUntainted Class<?> beanClass);
+    public static @RUntainted BeanInfo getBeanInfo(@RUntainted Class<?> beanClass, Class<?> stopClass);
+    public static @RUntainted BeanInfo getBeanInfo(@RUntainted Class<?> beanClass, Class<?> stopClass, int flags);
+    public static @RUntainted BeanInfo getBeanInfo(@RUntainted Class<?> beanClass, int flags);
 }
 
 package java.io;
 public class BufferedReader {
-    public int read(@RUntainted char[] cbuf, int off, int len);
+    public @RUntainted int read(@RUntainted char[] cbuf, int off, int len);
 }
 
 public class RandomAccessFile {
-    public int read(@RUntainted byte[] b);
-    public int read(@RUntainted byte[] b, int off, int len);
+    public @RUntainted int read(@RUntainted byte[] b);
+    public @RUntainted int read(@RUntainted byte[] b, int off, int len);
     public void readFully(@RUntainted byte[] b);
     public void readFully(@RUntainted byte[] b, int off, int len);
 }

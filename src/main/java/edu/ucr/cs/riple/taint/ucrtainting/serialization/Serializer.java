@@ -178,7 +178,7 @@ public class Serializer {
   }
 
   public static void log(Object message) {
-    Path path = Paths.get("/Users/nima/Developer/commons-configuration/error.txt");
+    Path path = Paths.get("/Users/nima/Developer/struts/log.txt");
     // append to file
     try (OutputStream os = new FileOutputStream(path.toFile(), true)) {
       os.write((message + "\n").getBytes(Charset.defaultCharset()), 0, (message + "\n").length());

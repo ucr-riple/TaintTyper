@@ -21,8 +21,8 @@ public class URL {
 
 package org.springframework.scripting.bsh;
 public class BshScriptEvaluator {
-    public Object evaluate(@RUntainted ScriptSource script);
-    public Object evaluate(@RUntainted ScriptSource script, Map<String,Object> arguments);
+    public @RUntainted Object evaluate(@RUntainted ScriptSource script);
+    public @RUntainted Object evaluate(@RUntainted ScriptSource script, Map<String,Object> arguments);
 }
 
 package com.jcraft.jsch;
@@ -33,30 +33,30 @@ public class ChannelExec {
 
 package jdk.jshell;
 public class JShell {
-    public List<SnippetEvent> eval(@RUntainted String input);
+    public @RUntainted List<SnippetEvent> eval(@RUntainted String input);
 }
 
 package javax.el;
 public abstract class ExpressionFactory {
-    public abstract ValueExpression createValueExpression(ELContext context,
+    public abstract @RUntainted ValueExpression createValueExpression(ELContext context,
                                                       @RUntainted String expression,
-                                                      Class<?> expectedType);
+                                                     Class<?> expectedType);
 }
 
 package org.python.util;
 public class PythonInterpreter {
-    public PyObject	eval(@RUntainted String s);
-    public PyObject eval(@RUntainted PyObject code);
+    public @RUntainted PyObject	eval(@RUntainted String s);
+    public @RUntainted PyObject eval(@RUntainted PyObject code);
 }
 
 package javax.script;
 public interface ScriptEngine {
-    public Object eval(@RUntainted String script);
+    public @RUntainted Object eval(@RUntainted String script);
 }
 
 package jdk.nashorn.api.scripting;
 public class NashornScriptEngine {
-    public Object eval(@RUntainted String script);
+    public @RUntainted Object eval(@RUntainted String script);
 }
 
 package android.webkit;
@@ -105,13 +105,13 @@ public final class String {
 
 package java.nio.file;
 public final class Paths {
-    public static Path get(@RUntainted String first, @RUntainted String... more);
-    public static Path get(@RUntainted URI uri);
+    public static @RUntainted Path get(@RUntainted String first, @RUntainted String... more);
+    public static @RUntainted Path get(@RUntainted URI uri);
 }
 
 package javax.naming;
 public interface Context {
-    public Object lookup(@RUntainted String name);
+    public @RUntainted Object lookup(@RUntainted String name);
 }
 
 package org.xml.sax;
@@ -123,7 +123,7 @@ public interface XMLReader {
 
 package java.security.cert;
 public class CertPathValidator {
-    public CertPathValidatorResult validate(@RUntainted CertPath certPath, CertPathParameters params);
+    public @RUntainted CertPathValidatorResult validate(@RUntainted CertPath certPath, CertPathParameters params);
 }
 
 package java.lang;
@@ -134,7 +134,7 @@ public class Thread {
 
 package java.lang;
 public abstract class ClassLoader {
-    public Class<?>	loadClass(@RUntainted String name);
+    public @RUntainted Class<?>	loadClass(@RUntainted String name);
 }
 
 package java.io;
@@ -218,20 +218,20 @@ public class OutputStreamWriter {
 
 package javax.xml.xquery;
 public interface XQConnection {
-    public XQPreparedExpression prepareExpression(@RUntainted InputStream xquery);
-    public XQPreparedExpression	prepareExpression(@RUntainted InputStream xquery, XQStaticContext properties);
-    public XQPreparedExpression	prepareExpression(@RUntainted Reader xquery);
-    public XQPreparedExpression	prepareExpression(@RUntainted Reader xquery, XQStaticContext properties);
-    public XQPreparedExpression	prepareExpression(@RUntainted String xquery);
-    public XQPreparedExpression	prepareExpression(@RUntainted String xquery, XQStaticContext properties);
+    public @RUntainted XQPreparedExpression prepareExpression(@RUntainted InputStream xquery);
+    public @RUntainted XQPreparedExpression	prepareExpression(@RUntainted InputStream xquery, XQStaticContext properties);
+    public @RUntainted XQPreparedExpression	prepareExpression(@RUntainted Reader xquery);
+    public @RUntainted XQPreparedExpression	prepareExpression(@RUntainted Reader xquery, XQStaticContext properties);
+    public @RUntainted XQPreparedExpression	prepareExpression(@RUntainted String xquery);
+    public @RUntainted XQPreparedExpression	prepareExpression(@RUntainted String xquery, XQStaticContext properties);
 }
 
 public interface XQExpression {
     public void	executeCommand(@RUntainted Reader cmd);
     public void	executeCommand(@RUntainted String cmd);
-    public XQResultSequence	executeQuery(@RUntainted InputStream query);
-    public XQResultSequence	executeQuery(@RUntainted Reader query);
-    public XQResultSequence	executeQuery(@RUntainted String query);
+    public @RUntainted XQResultSequence	executeQuery(@RUntainted InputStream query);
+    public @RUntainted XQResultSequence	executeQuery(@RUntainted Reader query);
+    public @RUntainted XQResultSequence	executeQuery(@RUntainted String query);
 }
 
 package javax.xml.parsers;
@@ -249,14 +249,14 @@ public abstract class SAXParser {
 }
 
 public abstract class DocumentBuilder {
-    public Document	parse(@RUntainted File f);
-    public abstract Document parse(@RUntainted InputSource is);
-    public Document	parse(@RUntainted InputStream is);
-    public Document	parse(@RUntainted InputStream is, String systemId);
-    public Document	parse(@RUntainted String uri);
+    public @RUntainted Document	parse(@RUntainted File f);
+    public abstract @RUntainted Document parse(@RUntainted InputSource is);
+    public @RUntainted Document	parse(@RUntainted InputStream is);
+    public @RUntainted Document	parse(@RUntainted InputStream is, String systemId);
+    public @RUntainted Document	parse(@RUntainted String uri);
 }
 
 package org.apache.commons.jexl2;
 public interface Expression {
-    public Object evaluate(@RUntainted JexlContext context);
+    public @RUntainted Object evaluate(@RUntainted JexlContext context);
 }

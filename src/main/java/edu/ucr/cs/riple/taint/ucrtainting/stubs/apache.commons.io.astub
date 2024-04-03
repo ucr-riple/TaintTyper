@@ -182,7 +182,7 @@ public class FileUtils {
 	    }
 	}
 
-	public static FileOutputStream openOutputStream(@RUntainted final File file, final boolean append) throws IOException {
+	public static @RUntainted FileOutputStream openOutputStream(@RUntainted final File file, final boolean append) throws IOException {
 	    Objects.requireNonNull(file, "file");
 	    if (file.exists()) {
 	        requireFile(file, "file");
@@ -222,7 +222,7 @@ public class FileUtils {
 	    write(file, data, Charset.defaultCharset(), append);
 	}
 
-	public static String readFileToString(@RUntainted final File file, @RUntainted final Charset charsetName) throws IOException {
+	public static @RUntainted String readFileToString(@RUntainted final File file, @RUntainted final Charset charsetName) throws IOException {
 	    try (InputStream inputStream = Files.newInputStream(file.toPath())) {
 	        return IOUtils.toString(inputStream, Charsets.toCharset(charsetName));
 	    }
@@ -255,7 +255,7 @@ public class FileUtils {
 	    writeStringToFile(file, data, Charsets.toCharset(charsetName), append);
 	}
 
-	public static FileInputStream openInputStream(@RUntainted final File file) throws IOException {
+	public static @RUntainted FileInputStream openInputStream(@RUntainted final File file) throws IOException {
 	    Objects.requireNonNull(file, "file");
 	    return new FileInputStream(file);
 	}
@@ -410,7 +410,7 @@ public class FileUtils {
 	}
 
 	@SuppressWarnings("resource")
-	public static LineIterator lineIterator(@RUntainted final File file, @RUntainted final String charsetName) throws IOException {
+	public static @RUntainted LineIterator lineIterator(@RUntainted final File file, @RUntainted final String charsetName) throws IOException {
 	    InputStream inputStream = null;
 	    try {
 	        inputStream = Files.newInputStream(file.toPath());
@@ -421,7 +421,7 @@ public class FileUtils {
 	    }
 	}
 
-	public static List<String> readLines(@RUntainted final File file, @RUntainted final Charset charset) throws IOException {
+	public static @RUntainted List<@RUntainted String> readLines(@RUntainted final File file, @RUntainted final Charset charset) throws IOException {
 	    return Files.readAllLines(file.toPath(), charset);
 	}
 
@@ -439,7 +439,7 @@ public class FileUtils {
 	    }
 	}
 
-	public static List<String> readLines(@RUntainted final File file, @RUntainted final String charsetName) throws IOException {
+	public static @RUntainted List<@RUntainted String> readLines(@RUntainted final File file, @RUntainted final String charsetName) throws IOException {
 	    return readLines(file, Charsets.toCharset(charsetName));
 	}
 
@@ -457,7 +457,7 @@ public class FileUtils {
 	    }
 	}
 
-	public static boolean deleteQuietly(@RUntainted final File file) {
+	public static @RUntainted boolean deleteQuietly(@RUntainted final File file) {
 	    if (file == null) {
 	        return false;
 	    }
@@ -475,7 +475,7 @@ public class FileUtils {
 	    }
 	}
 
-	public static LineIterator lineIterator(@RUntainted final File file) throws IOException {
+	public static @RUntainted LineIterator lineIterator(@RUntainted final File file) throws IOException {
 	    return lineIterator(file, null);
 	}
 
@@ -545,7 +545,7 @@ public class FileUtils {
 	    write(file, data, charsetName, false);
 	}
 
-	public static FileOutputStream openOutputStream(@RUntainted final File file) throws IOException {
+	public static @RUntainted FileOutputStream openOutputStream(@RUntainted final File file) throws IOException {
 	    return openOutputStream(file, false);
 	}
 
@@ -590,5 +590,4 @@ public class FileUtils {
 	        IOUtils.copy(inputStream, out);
 	    }
 	}
-
 }

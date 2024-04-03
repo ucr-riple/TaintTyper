@@ -256,7 +256,8 @@ public class SerializationService {
           typeMatchVisitor.visit(arrayType.getComponentType(), pair.required, null));
       return ImmutableSet.of(new Fix(location));
     }
-    final ImmutableSet<String> supportedTypes = ImmutableSet.of("List", "ArrayList", "Collection");
+    final ImmutableSet<String> supportedTypes =
+        ImmutableSet.of("List", "ArrayList", "Collection", "Vector");
     if (!supportedTypes.contains(type.tsym.name.toString())) {
       return ImmutableSet.of();
     }

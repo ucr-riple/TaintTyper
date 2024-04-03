@@ -136,10 +136,8 @@ class Foo {
         });
   }
 
-  public void testResourceVariableSerialization() {
-    Path outputFilePath = Paths.get("output.txt");
-    Charset charset = StandardCharsets.UTF_8;
-    try (BufferedWriter writer = Files.newBufferedWriter(outputFilePath, charset)) {
+  public void testResourceVariableSerialization(BufferedWriter writer2) {
+    try (BufferedWriter writer = writer2) {
       // :: error: argument
       sink(writer);
     } catch (IOException e) {
