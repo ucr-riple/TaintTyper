@@ -2,16 +2,19 @@ package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 
-public class Test {
-  //    void test(Engine engine){
-  //        @RUntainted String parentTheme;
-  //        // :: error: assignment
-  //        while ((parentTheme = (String) engine.getThemeProps().get("parent")) != null) {
-  //
-  //        }
-  //    }
+import java.util.ArrayList;
+import java.util.List;
 
-  //    interface Engine {
-  //        Map getThemeProps();
-  //    }
+public class Test {
+
+  Test(List<String> param) {
+    List<String> l = param;
+    String s = l.get(0);
+    // :: error: argument
+    sink(s);
+  }
+
+  void sink(@RUntainted String param) {
+
+  }
 }

@@ -2,6 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getAnnotatedTypeMirrorOfTypeArgumentAt;
 import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getType;
+import static edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.BasicVisitor.extendFixesOnLocalVariable;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.IdentifierTree;
@@ -46,6 +47,9 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
   public Set<Fix> visitIdentifier(IdentifierTree node, FoundRequired pair) {
     addReceiver(node);
     Fix fix = buildFixForElement(TreeUtils.elementFromTree(node), pair);
+    if (fix != null && fix.location.getKind().isLocalVariable()) {
+      return extendFixesOnLocalVariable(fix, pair, context, fixComputer, typeFactory);
+    }
     return fix == null ? Set.of() : Set.of(fix);
   }
 

@@ -282,7 +282,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     }
   }
 
-  private static class AssignmentScanner extends AccumulateScanner {
+  static class AssignmentScanner extends AccumulateScanner {
 
     private final Symbol variable;
     private final UCRTaintingAnnotatedTypeFactory factory;
