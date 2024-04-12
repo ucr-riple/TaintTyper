@@ -338,24 +338,34 @@ public class BasicVisitor extends SpecializedFixComputer {
     this.currentPath = currentPath;
   }
 
-  public static Set<Fix> extendFixesOnLocalVariable(Fix onLocalVariable, FoundRequired pair, Context context, FixComputer fixComputer, UCRTaintingAnnotatedTypeFactory typeFactory) {
-    Symbol symbol = onLocalVariable.location.getTarget();
-    JCTree declarationTree = Utility.locateDeclaration(symbol.owner, context);
-    if (!(declarationTree instanceof JCTree.JCMethodDecl)) {
+  public static Set<Fix> extendFixesOnLocalVariable(
+      Fix onLocalVariable,
+      FoundRequired pair,
+      Context context,
+      FixComputer fixComputer,
+      UCRTaintingAnnotatedTypeFactory typeFactory) {
+    try {
+      Symbol symbol = onLocalVariable.location.getTarget();
+      JCTree declarationTree = Utility.locateDeclaration(symbol.owner, context);
+      if (!(declarationTree instanceof JCTree.JCMethodDecl)) {
+        return Set.of(onLocalVariable);
+      }
+      JCTree.JCMethodDecl enclosingMethod = (JCTree.JCMethodDecl) declarationTree;
+      AnnotatedTypeMirror localVarType = typeFactory.getAnnotatedType(symbol).deepCopy(true);
+      typeFactory.makeUntainted(localVarType, onLocalVariable.location.getTypeVariablePositions());
+      FoundRequired localVarPair =
+          FoundRequired.of(typeFactory.getAnnotatedType(symbol), localVarType, pair.depth);
+      MethodReturnVisitor.AssignmentScanner assignmentScanner =
+          new MethodReturnVisitor.AssignmentScanner(symbol, localVarPair, typeFactory);
+      Set<Fix> fixes = enclosingMethod.accept(assignmentScanner, fixComputer);
+      if (fixes == null || fixes.isEmpty()) {
+        return Set.of(onLocalVariable);
+      }
+      Set<Fix> newFixes = new HashSet<>(fixes);
+      newFixes.add(onLocalVariable);
+      return newFixes;
+    } catch (Exception e) {
       return Set.of(onLocalVariable);
     }
-    JCTree.JCMethodDecl enclosingMethod = (JCTree.JCMethodDecl) declarationTree;
-    AnnotatedTypeMirror localVarType = typeFactory.getAnnotatedType(symbol).deepCopy(true);
-    typeFactory.makeUntainted(localVarType, onLocalVariable.location.getTypeVariablePositions());
-    FoundRequired localVarPair = FoundRequired.of(typeFactory.getAnnotatedType(symbol), localVarType, pair.depth);
-    MethodReturnVisitor.AssignmentScanner assignmentScanner =
-        new MethodReturnVisitor.AssignmentScanner(symbol, localVarPair, typeFactory);
-    Set<Fix> fixes = enclosingMethod.accept(assignmentScanner, fixComputer);
-    if (fixes == null || fixes.isEmpty()) {
-      return Set.of(onLocalVariable);
-    }
-    Set<Fix> newFixes = new HashSet<>(fixes);
-    newFixes.add(onLocalVariable);
-    return newFixes;
   }
 }

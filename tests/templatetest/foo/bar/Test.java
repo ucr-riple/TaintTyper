@@ -1,8 +1,6 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class Test {
@@ -14,7 +12,5 @@ public class Test {
     sink(s);
   }
 
-  void sink(@RUntainted String param) {
-
-  }
+  void sink(@RUntainted String param) {}
 }
