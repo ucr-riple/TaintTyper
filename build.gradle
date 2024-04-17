@@ -49,7 +49,7 @@ dependencies {
     // JSON
     implementation 'org.json:json:20230227'
     testImplementation 'org.json:json:20230227'
-    testImplementation 'commons-io:commons-io:2.13.0'
+    testImplementation 'commons-io:commons-io:2.16.1'
 
 
     // Testing
