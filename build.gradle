@@ -47,8 +47,8 @@ dependencies {
     testImplementation 'com.google.guava:guava:30.1.1-jre'
 
     // JSON
-    implementation 'org.json:json:20230227'
-    testImplementation 'org.json:json:20230227'
+    implementation 'org.json:json:20240303'
+    testImplementation 'org.json:json:20240303'
     testImplementation 'commons-io:commons-io:2.13.0'
 
 
