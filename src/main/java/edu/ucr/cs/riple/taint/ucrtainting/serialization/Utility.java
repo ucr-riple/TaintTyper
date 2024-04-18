@@ -120,6 +120,31 @@ public class Utility {
   }
 
   /**
+   * Gets the type of the given expression tree.
+   *
+   * @param tree The element to get the type for.
+   * @return The type of the given tree.
+   */
+  public static Type getType(ExpressionTree tree) {
+    if (tree instanceof MethodInvocationTree) {
+      return ((JCTree.JCMethodInvocation) tree).type;
+    }
+    if (tree instanceof MemberReferenceTree) {
+      return ((JCTree.JCMemberReference) tree).type;
+    }
+    if (tree instanceof IdentifierTree) {
+      return ((JCTree.JCIdent) tree).type;
+    }
+    if (tree instanceof NewClassTree) {
+      return ((JCTree.JCNewClass) tree).type;
+    }
+    if (tree instanceof JCTree.JCFieldAccess) {
+      return ((JCTree.JCFieldAccess) tree).type;
+    }
+    throw new IllegalArgumentException("Unsupported tree type: " + tree.getKind());
+  }
+
+  /**
    * Checks if the given element has a raw type. (e.g. {@code Foo} instead of {@code Foo<String>})
    *
    * @param element The element to check
