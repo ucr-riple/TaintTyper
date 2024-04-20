@@ -1,12 +1,16 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
+import static edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.MethodTypeArgumentFixVisitor.locateInheritedTypeOnExtendOrImplement;
+
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import java.util.List;
 import java.util.Set;
@@ -14,6 +18,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.util.AnnotatedTypes;
 
 public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
 
@@ -48,7 +53,44 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
     if (location == null) {
       return null;
     }
-    List<List<Integer>> indices = typeMatchVisitor.visit(pair.found, pair.required, null);
+    List<List<Integer>> indices = null;
+    try {
+      indices = typeMatchVisitor.visit(pair.found, pair.required, null);
+    } catch (IndexOutOfBoundsException e) {
+      Type type = Utility.getType(element);
+      Symbol.ClassSymbol classType = (Symbol.ClassSymbol) type.tsym;
+      Type.ClassType requiredType =
+          (Type.ClassType) ((Type.ClassType) pair.required.getUnderlyingType()).tsym.type;
+      // We intentionally limit the search to only the first level of inheritance. The type must
+      // either extend or implement the required type explicitly at the declaration.
+      Type.ClassType inheritedType =
+          locateInheritedTypeOnExtendOrImplement(classType, requiredType);
+      if (inheritedType == null) {
+        return null;
+      }
+      ClassDeclarationLocation classDeclarationLocation =
+          new ClassDeclarationLocation(classType, inheritedType);
+      Set<AnnotatedTypeMirror.AnnotatedDeclaredType> supers =
+          AnnotatedTypes.getSuperTypes((AnnotatedTypeMirror.AnnotatedDeclaredType) pair.found);
+      supers.stream()
+          .filter(
+              annotatedDeclaredType -> {
+                if (annotatedDeclaredType.getUnderlyingType() instanceof Type.ClassType) {
+                  Type.ClassType classType1 =
+                      (Type.ClassType) annotatedDeclaredType.getUnderlyingType();
+                  return classType1.tsym.equals(inheritedType.tsym);
+                }
+                return false;
+              })
+          .findFirst()
+          .ifPresent(
+              annotatedDeclaredType -> {
+                classDeclarationLocation.setTypeVariablePositions(
+                    typeMatchVisitor.visit(annotatedDeclaredType, pair.required, null));
+              });
+      return new Fix(classDeclarationLocation);
+    }
+
     AnnotatedTypeMirror elementAnnotatedType = typeFactory.getAnnotatedType(element);
     // remove redundant indices.
     indices =

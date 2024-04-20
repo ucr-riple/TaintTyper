@@ -8,7 +8,6 @@ import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
@@ -26,16 +25,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.util.AnnotatedTypes;
 import org.checkerframework.javacutil.TreeUtils;
 
 public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
 
-  Types types;
-
   public ReceiverTypeArgumentFixVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
-    types = Types.instance(context);
   }
 
   @Override
@@ -55,12 +52,18 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     if (declarationType == null && declaration instanceof JCTree.JCVariableDecl) {
       declarationType = ((JCTree.JCVariableDecl) declaration).vartype.type;
     }
-    if (Utility.isFullyParameterizedType(declarationType)) {
+    Element receiverElement = TreeUtils.elementFromUse(node.getExpression());
+    if (Utility.isFullyParameterizedType(declarationType)
+        || Utility.elementHasRawType(receiverElement)) {
       return node.accept(fixComputer, pair);
     }
     FoundRequired f =
         computeRequiredTypeForReceiverMatchingTypeArguments(
-            node, node.getExpression(), pair, declarationType);
+            (Symbol) TreeUtils.elementFromTree(node),
+            node,
+            node.getExpression(),
+            pair,
+            declarationType);
     return node.getExpression().accept(this, f);
   }
 
@@ -78,6 +81,10 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     if (calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver)) {
       return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod, pair)));
     }
+    Element receiverElement = TreeUtils.elementFromUse(receiver);
+    if (Utility.elementHasRawType(receiverElement)) {
+      return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod, pair)));
+    }
     // Locate the declaration of the method.
     JCTree declaration = Utility.locateDeclaration(calledMethod, context);
     if (declaration instanceof JCTree.JCMethodDecl) {
@@ -88,12 +95,16 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     }
     FoundRequired f =
         computeRequiredTypeForReceiverMatchingTypeArguments(
-            node, receiver, pair, calledMethod.getReturnType());
+            calledMethod, node, receiver, pair, calledMethod.getReturnType());
     return receiver.accept(this, f);
   }
 
   private FoundRequired computeRequiredTypeForReceiverMatchingTypeArguments(
-      ExpressionTree node, ExpressionTree receiver, FoundRequired pair, Type typeOnDeclaration) {
+      Symbol calledMethod,
+      ExpressionTree node,
+      ExpressionTree receiver,
+      FoundRequired pair,
+      Type typeOnDeclaration) {
     AnnotatedTypeMirror expressionAnnotatedType = typeFactory.getAnnotatedType(node);
     AnnotatedTypeMirror receiverAnnotatedType = typeFactory.getAnnotatedType(receiver);
     if (!(receiverAnnotatedType instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
@@ -144,16 +155,39 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
           && receiverDeclaredType.getEnclosingType().getTypeArguments() != null) {
         allTypeArguments.addAll(0, receiverDeclaredType.getEnclosingType().getTypeArguments());
       }
-      involvedTypeVariables.forEach(
-          (typeVarName, lists) -> {
-            int i = typeVariablesNameInReceiver.indexOf(typeVarName);
-            if (i == -1) {
-              return;
-            }
-            AnnotatedTypeMirror typeArgumentType = allTypeArguments.get(i);
+      for (Map.Entry<String, List<List<Integer>>> entry : involvedTypeVariables.entrySet()) {
+        String typeVarName = entry.getKey();
+        List<List<Integer>> lists = entry.getValue();
+        int i = typeVariablesNameInReceiver.indexOf(typeVarName);
+        if (i == -1) {
+          // A super class is providing that type argument
+          Type.ClassType ownerType = (Type.ClassType) calledMethod.owner.type;
+          Set<AnnotatedTypeMirror.AnnotatedDeclaredType> superTypes =
+              AnnotatedTypes.getSuperTypes(receiverDeclaredType);
+          AnnotatedTypeMirror.AnnotatedDeclaredType superTypeMirror =
+              superTypes.stream()
+                  .filter(t -> ((Type.ClassType) t.getUnderlyingType()).tsym.equals(ownerType.tsym))
+                  .findFirst()
+                  .orElse(null);
+          if (superTypeMirror != null) {
+            superTypeMirror = superTypeMirror.deepCopy(true);
+            Type.ClassType superTypeClassType =
+                (Type.ClassType) superTypeMirror.getUnderlyingType();
+            // Found the super type providing that type argument
+            List<String> tvnames =
+                Utility.getTypeVariables(superTypeClassType).stream()
+                    .map(t -> t.tsym.name.toString())
+                    .collect(Collectors.toList());
+            List<AnnotatedTypeMirror> ata = new ArrayList<>(superTypeMirror.getTypeArguments());
+            int ii = tvnames.indexOf(typeVarName);
+            AnnotatedTypeMirror typeArgumentType = ata.get(ii);
             typeFactory.makeUntainted(typeArgumentType, lists);
-            System.out.println();
-          });
+            return FoundRequired.of(receiverDeclaredType, superTypeMirror, pair.depth);
+          }
+        }
+        AnnotatedTypeMirror typeArgumentType = allTypeArguments.get(i);
+        typeFactory.makeUntainted(typeArgumentType, lists);
+      }
       if (currentExpressionAnnotatedType instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
         currentExpressionAnnotatedType =
             ((AnnotatedTypeMirror.AnnotatedDeclaredType) currentExpressionAnnotatedType)

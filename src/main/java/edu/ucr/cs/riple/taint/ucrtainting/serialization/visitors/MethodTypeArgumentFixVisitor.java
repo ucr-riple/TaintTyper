@@ -258,7 +258,7 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
    * @param requiredType The required type to check.
    * @return The inherited type on the given class type that extends or implements the required.
    */
-  private static Type.ClassType locateInheritedTypeOnExtendOrImplement(
+  public static Type.ClassType locateInheritedTypeOnExtendOrImplement(
       Symbol.ClassSymbol classSymbol, Type.ClassType requiredType) {
     if (!(classSymbol.type instanceof Type.ClassType)) {
       return null;

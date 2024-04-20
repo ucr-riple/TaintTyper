@@ -2,32 +2,59 @@ package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
 // import org.thirdparty.Foo;
-import java.util.Map;
 
 public class Test {
 
-  Foo<String, String> foo;
-  Bar<String, String> bar;
-
-  class Foo<K, M> {
-    Map<K, M> getMap() {
-      return null;
-    }
-  }
-
-  class Bar<K, M> {
-    Map<String, String> getMap() {
-      return null;
-    }
-  }
-
-  public void test() {
-    //        // :: error: assignment
-    //        @RUntainted String s0 = foo.getMap().keySet().iterator().next();
-    // :: error: assignment
-    @RUntainted String s1 = bar.getMap().keySet().iterator().next();
-  }
-
+  //  Foo<String, String> foo;
+  //  Bar<String, String> bar;
+  //
+  //  class Foo<K, M> {
+  //    Map<K, M> getMap() {
+  //      return null;
+  //    }
+  //  }
+  //
+  //  class Bar<K, M> {
+  //    Map<String, String> getMap() {
+  //      return null;
+  //    }
+  //  }
+  //
+  //  public void test() {
+  //    //        // :: error: assignment
+  //    //        @RUntainted String s0 = foo.getMap().keySet().iterator().next();
+  //    // :: error: assignment
+  //    @RUntainted String s1 = bar.getMap().keySet().iterator().next();
+  //  }
+  //
+  //  static class GenericBar<M, L> {
+  //    M getM() {
+  //      return null;
+  //    }
+  //
+  //    L getL() {
+  //      return null;
+  //    }
+  //
+  //    public void internal() {
+  //      GenericBar<M, L> gen = new GenericBar<>();
+  //      // :: error: assignment
+  //      @RUntainted M m = gen.getM();
+  //    }
+  //  }
+  //
+  //  private UserMapper userMapper;
+  //
+  //  public @RUntainted User selectByToken(String token) {
+  //    // :: error: return
+  //    return userMapper.selectOne(null);
+  //  }
+  //
+  //  class User {}
+  //
+  //  interface UserMapper extends BaseMapper<User> {
+  //     int countToday();
+  //  }
   //    Foo<String> foo;
   //
   //    public void test(){

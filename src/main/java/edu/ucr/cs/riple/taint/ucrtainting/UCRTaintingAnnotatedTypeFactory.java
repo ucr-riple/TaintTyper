@@ -350,9 +350,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    * @param positions The positions of the type arguments to be adapted.
    */
   public void makeUntainted(AnnotatedTypeMirror type, List<List<Integer>> positions) {
-    if (!(type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
-      return;
-    }
     if (positions.isEmpty()) {
       return;
     }
@@ -369,18 +366,18 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   private void makeUntaintedForPosition(
       AnnotatedTypeMirror type, List<Integer> position, int index) {
     // TODO: This method can be rewritten to remove index parameter.
-    if (!(type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
-      return;
-    }
     if (index == position.size()) {
       return;
     }
-    AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
-        (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
     if (position.get(index) == 0) {
       makeUntainted(type);
       return;
     }
+    if (!(type instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
+      return;
+    }
+    AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
+        (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
     int typeArgPosition = position.get(index) - 1;
     makeUntaintedForPosition(
         declaredType.getTypeArguments().get(typeArgPosition), position, index + 1);
