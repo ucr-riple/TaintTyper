@@ -9,3 +9,5 @@
 
 rootProject.name = 'ucrtainting-checker'
 include 'ucrtainting-checker-qual'
+include 'thirdparty'
+

@@ -16,6 +16,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -191,6 +192,24 @@ public class Utility {
       return containsTypeArgument(((Type.ArrayType) type).getComponentType(), var);
     }
     return false;
+  }
+
+  /**
+   * Returns the list of all (including nested in top level) type variables of the for the given
+   * element's type (e.g. {@code List<String> will return E and for Bar<R>.Foo<E> will return [R,
+   * E]}).
+   *
+   * @param elementType The element to get the type arguments for.
+   * @return The list of type arguments for the given element.
+   */
+  public static List<Type.TypeVar> getTypeVariables(Type elementType) {
+    List<Type> typeArgsList =
+        elementType instanceof Type.ClassType
+            // Should return all type arguments, including those of the outer class.
+            ? elementType.tsym.type.allparams()
+            : elementType.tsym.type.getTypeArguments();
+    // Should return as list to preserve the order of the type variables.
+    return typeArgsList.stream().map(type -> (Type.TypeVar) type).collect(Collectors.toList());
   }
 
   /**

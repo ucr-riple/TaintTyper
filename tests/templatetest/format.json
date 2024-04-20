@@ -128,9 +128,9 @@
                 0
               ]
             ],
-            "field": "foo",
+            "field": "baz",
             "kind": "FIELD",
-            "class": "Test$Baz"
+            "class": "Test"
           }
         }
       ]
@@ -177,11 +177,12 @@
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
             "type-variable-position": [
               [
+                1,
                 0
               ]
             ],
-            "method": "getE()",
-            "kind": "METHOD",
+            "field": "b",
+            "kind": "FIELD",
             "class": "Test$Baz$InnerBaz"
           }
         }
@@ -203,12 +204,13 @@
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
             "type-variable-position": [
               [
+                1,
                 0
               ]
             ],
-            "method": "getE()",
-            "kind": "METHOD",
-            "class": "Test$Baz$InnerBaz"
+            "field": "baz",
+            "kind": "FIELD",
+            "class": "Test"
           }
         }
       ]

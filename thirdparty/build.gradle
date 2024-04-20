@@ -1,0 +1,9 @@
+plugins {
+    id 'maven-publish'
+    id 'java'
+}
+
+
+// set target and source compatibility to java 8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8

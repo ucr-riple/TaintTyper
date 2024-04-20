@@ -69,6 +69,7 @@ dependencies {
     testImplementation 'org.springframework.extensions.surf:spring-webscripts:5.9'
     testImplementation 'xml-resolver:xml-resolver:1.2'
     testImplementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
+    testImplementation project(':thirdparty')
 
 
     // errorprone
