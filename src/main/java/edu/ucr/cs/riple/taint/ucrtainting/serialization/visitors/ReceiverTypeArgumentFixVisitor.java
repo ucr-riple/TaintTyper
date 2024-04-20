@@ -185,6 +185,9 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
             return FoundRequired.of(receiverDeclaredType, superTypeMirror, pair.depth);
           }
         }
+        if (i == -1) {
+          continue;
+        }
         AnnotatedTypeMirror typeArgumentType = allTypeArguments.get(i);
         typeFactory.makeUntainted(typeArgumentType, lists);
       }

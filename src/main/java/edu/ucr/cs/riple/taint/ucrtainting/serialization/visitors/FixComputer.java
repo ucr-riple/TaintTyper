@@ -7,6 +7,7 @@ import com.sun.source.tree.Tree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
@@ -16,6 +17,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -117,7 +119,44 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       }
     }
     if (CollectionHandler.isToArrayWithTypeArgMethod(calledMethod, types)) {
-      return node.accept(new CollectionVisitor(typeFactory, this, context), pair);
+      // update the type argument to match that.
+      Type type = Utility.getType(receiver);
+      Type current = type.tsym.type;
+      int index = -1;
+      while (current instanceof Type.ClassType) {
+        Type.ClassType classType = (Type.ClassType) current;
+        if (classType.interfaces_field != null) {
+          for (Type iFace : classType.interfaces_field) {
+            if (iFace.tsym instanceof Symbol.ClassSymbol
+                && ((Symbol.ClassSymbol) iFace.tsym)
+                    .fullname
+                    .toString()
+                    .equals("java.util.Collection")) {
+              String name = iFace.getTypeArguments().get(0).toString();
+              for (int i = 0; i < type.tsym.type.getTypeArguments().size(); i++) {
+                if (type.tsym.type.getTypeArguments().get(i).toString().equals(name)) {
+                  index = i;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        if (index != -1) {
+          break;
+        }
+        Type superType = ((Type.ClassType) current).supertype_field;
+        if (!(superType instanceof Type.ClassType)) {
+          break;
+        }
+        current = superType;
+      }
+      if (index != -1) {
+        AnnotatedTypeMirror receiverType = typeFactory.getAnnotatedType(receiver);
+        AnnotatedTypeMirror required = receiverType.deepCopy(true);
+        typeFactory.makeUntainted(required, List.of(List.of(index + 1, 0)));
+        return receiver.accept(this, FoundRequired.of(receiverType, required, pair.depth));
+      }
     }
     if (methodHasTypeArgs) {
       Set<Fix> fixes = node.accept(methodTypeArgumentFixVisitor, pair);
