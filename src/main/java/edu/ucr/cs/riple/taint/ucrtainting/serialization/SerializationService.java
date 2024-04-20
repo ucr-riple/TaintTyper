@@ -116,9 +116,9 @@ public class SerializationService {
         return handleReturnOverrideError(path.getLeaf());
       case "enhancedfor":
         {
-          ImmutableSet<Fix> fixes = handleEnhancedForLoop(tree, pair);
-          if (!fixes.isEmpty()) {
-            return fixes;
+          FoundRequired newPair = updateFoundRequiredPairEnhancedForLoopError(tree, pair);
+          if (newPair != null) {
+            pair = newPair;
           }
         }
       default:
@@ -202,10 +202,10 @@ public class SerializationService {
     return ImmutableSet.of(fixOnLeftHandSide);
   }
 
-  private ImmutableSet<Fix> handleEnhancedForLoop(Tree tree, FoundRequired pair) {
+  private FoundRequired updateFoundRequiredPairEnhancedForLoopError(Tree tree, FoundRequired pair) {
     List<List<Integer>> differences = typeMatchVisitor.visit(pair.found, pair.required, null);
     if (differences.isEmpty()) {
-      return ImmutableSet.of();
+      return null;
     }
     AnnotatedTypeMirror contentFoundType = typeFactory.getAnnotatedType(tree);
     AnnotatedTypeMirror required = contentFoundType.deepCopy(true);
@@ -218,8 +218,7 @@ public class SerializationService {
           ((AnnotatedTypeMirror.AnnotatedDeclaredType) required).getTypeArguments().get(0),
           differences);
     }
-    return ImmutableSet.copyOf(
-        tree.accept(fixComputer, FoundRequired.of(contentFoundType, required, 0)));
+    return FoundRequired.of(contentFoundType, required, 0);
   }
 
   /**
