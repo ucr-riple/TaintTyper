@@ -16,7 +16,7 @@ public class LambdaHandler extends AbstractHandler {
 
   /**
    * Set of lambda parameters that are visited previously by this handler. Parameters added to this
-   * handler
+   * handler will be considered as untainted if the overridden method is from unannotated code.
    */
   private final Set<Symbol.VarSymbol> lambdaParameters;
 
