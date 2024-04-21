@@ -89,7 +89,7 @@ public class UnannotatedCodeHandler extends AbstractHandler {
     if (Utility.hasUntaintedAnnotation(calledMethod.getReturnType())) {
       return true;
     }
-    if (!factory.isThirdPartyMethod(calledMethod)) {
+    if (!factory.isUnannotatedMethod(calledMethod)) {
       return false;
     }
     // Check receiver, if receiver is tainted, we should not make it untainted.

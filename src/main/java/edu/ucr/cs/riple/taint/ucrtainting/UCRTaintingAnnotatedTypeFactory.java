@@ -213,33 +213,33 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   /**
-   * Checks if the passed method is in third party code.
+   * Checks if the passed method is in unannotated code.
    *
    * @param symbol Method symbol to check for.
-   * @return true if in third party code, false otherwise
+   * @return true if in unannotated code, false otherwise
    */
-  public boolean isThirdPartyMethod(Symbol.MethodSymbol symbol) {
-    return isThirdPartySymbol(symbol);
+  public boolean isUnannotatedMethod(Symbol.MethodSymbol symbol) {
+    return isUnannotatedCodeSymbol(symbol);
   }
 
   /**
-   * Checks if the passed field is in third party code.
+   * Checks if the passed field is in unannotated code.
    *
    * @param symbol Field symbol to check for.
-   * @return true if in third party code, false otherwise
+   * @return true if in unannotated code, false otherwise
    */
-  public boolean isThirdPartyField(Symbol.VarSymbol symbol) {
-    return isThirdPartySymbol(symbol);
+  public boolean isUnannotatedField(Symbol.VarSymbol symbol) {
+    return isUnannotatedCodeSymbol(symbol);
   }
 
   /**
-   * Method to check if the passed symbol is in third party code. The method is private
+   * Method to check if the passed symbol is in unannotated code. The method is private
    * intentionally to make sure the symbol is either a method or a field.
    *
    * @param symbol Symbol to check for.
-   * @return true if in third party code, false otherwise
+   * @return true if in unannotated code, false otherwise
    */
-  private boolean isThirdPartySymbol(Symbol symbol) {
+  private boolean isUnannotatedCodeSymbol(Symbol symbol) {
     if (symbol == null) {
       return false;
     }
@@ -276,7 +276,15 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     return true;
   }
 
-  private AnnotatedTypeMirror getTargetType(AnnotatedTypeMirror type) {
+  /**
+   * Retrieves the effective annotated type of the given type. For most types that equals the type
+   * itself, however, for arrays and wildcards, the component type and the extends bound are
+   * returned respectively.
+   *
+   * @param type The type to get the effective annotated type of.
+   * @return The effective annotated type of the given type.
+   */
+  private static AnnotatedTypeMirror getTargetType(AnnotatedTypeMirror type) {
     if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
       return ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
     }
@@ -286,7 +294,15 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     return type;
   }
 
-  private Type getTargetType(Type type) {
+  /**
+   * Retrieves the effective type of the given type. For most types that equals the type itself,
+   * however, for arrays and wildcards, the component type and the extends bound are returned
+   * respectively.
+   *
+   * @param type The type to get the effective type of.
+   * @return The effective type of the given type.
+   */
+  private static Type getTargetType(Type type) {
     if (type instanceof Type.ArrayType) {
       return ((Type.ArrayType) type).getComponentType();
     }

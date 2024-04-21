@@ -38,7 +38,7 @@ public class StaticFinalFieldHandler extends AbstractHandler {
       return;
     }
     if (Utility.isStaticAndFinalField(element)) {
-      if (typeFactory.isThirdPartyField((Symbol.VarSymbol) element)) {
+      if (typeFactory.isUnannotatedField((Symbol.VarSymbol) element)) {
         makeUntaintedCustom(type);
       } else {
         Tree decl = typeFactory.declarationFromElement(element);

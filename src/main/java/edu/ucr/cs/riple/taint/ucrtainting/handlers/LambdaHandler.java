@@ -40,7 +40,7 @@ public class LambdaHandler extends AbstractHandler {
       LambdaExpressionTree node, AnnotatedTypeMirror annotatedTypeMirror) {
     typeFactory.makeUntainted(annotatedTypeMirror);
     Symbol.MethodSymbol overriddenMethod = Utility.getFunctionalInterfaceMethod(node, types);
-    if (overriddenMethod != null && typeFactory.isThirdPartyMethod(overriddenMethod)) {
+    if (overriddenMethod != null && typeFactory.isUnannotatedMethod(overriddenMethod)) {
       node.getParameters()
           .forEach(
               variableTree ->

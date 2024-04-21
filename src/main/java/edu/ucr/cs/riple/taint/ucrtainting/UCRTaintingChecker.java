@@ -162,7 +162,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
         {
           Symbol.MethodSymbol overridingMethod =
               (Symbol.MethodSymbol) TreeUtils.elementFromTree(visitor.getCurrentPath().getLeaf());
-          return overridingMethod == null || typeFactory.isThirdPartyMethod(overridingMethod);
+          return overridingMethod == null || typeFactory.isUnannotatedMethod(overridingMethod);
         }
         // Skip errors that are caused by third-party code.
       case "override.param":
@@ -173,7 +173,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
           AnnotatedTypeMirror.AnnotatedExecutableType overriddenType =
               (AnnotatedTypeMirror.AnnotatedExecutableType) args[6];
           Symbol.MethodSymbol overrideMethod = (Symbol.MethodSymbol) overriddenType.getElement();
-          return overrideMethod == null || typeFactory.isThirdPartyMethod(overrideMethod);
+          return overrideMethod == null || typeFactory.isUnannotatedMethod(overrideMethod);
         }
       case "assignment":
       case "return":
@@ -234,7 +234,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
               (JCTree.JCMethodInvocation) visitor.getCurrentPath().getLeaf();
           Symbol.MethodSymbol methodSymbol =
               (Symbol.MethodSymbol) TreeUtils.elementFromUse(methodInvocation);
-          if (methodSymbol != null && typeFactory.isThirdPartyMethod(methodSymbol)) {
+          if (methodSymbol != null && typeFactory.isUnannotatedMethod(methodSymbol)) {
             // we want to silence errors where the mismatch is found: List<@RUntainted String> and
             // required: List<@Tainted String>
             if (pair != null) {

@@ -13,12 +13,13 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
+/** This handler is responsible checker custom handling for subclasses java.util.Collection. */
 public class CollectionHandler extends AbstractHandler {
 
   /** Types instance used to detect if type is a subtype of java.util.Collection. */
   private final Types types;
   /** {@link java.util.Collection} interface name. */
-  private static final String COLLECTIONS_INTERFACE = java.util.Collection.class.getName();
+  public static final String COLLECTIONS_INTERFACE = java.util.Collection.class.getName();
   /** {@link java.util.Collection#toArray()} method name. */
   private static final String TO_ARRAY_METHOD_NAME = "toArray";
 
@@ -196,7 +197,7 @@ public class CollectionHandler extends AbstractHandler {
    * @param mirror The annotated type mirror to retrieve the {@link java.util.Collection} type from.
    * @return The {@link java.util.Collection} type from the given annotated type mirror.
    */
-  public static Type getCollectionTypeFromType(AnnotatedTypeMirror mirror) {
+  private static Type getCollectionTypeFromType(AnnotatedTypeMirror mirror) {
     return getCollectionTypeFromType((Type) mirror.getUnderlyingType());
   }
 }

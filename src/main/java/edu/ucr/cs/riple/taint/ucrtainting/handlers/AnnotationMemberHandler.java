@@ -8,16 +8,16 @@ import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
-public class AnnotationHandler extends AbstractHandler {
+/** This handler is responsible for making annotation members untainted. */
+public class AnnotationMemberHandler extends AbstractHandler {
 
-  public AnnotationHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
+  public AnnotationMemberHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
     super(typeFactory);
   }
 
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree, AnnotatedTypeMirror type) {
     super.visitMethodInvocation(tree, type);
-    // Check receiver, if receiver is tainted, we should not make it untainted.
     ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
     if (receiver == null) {
       return;

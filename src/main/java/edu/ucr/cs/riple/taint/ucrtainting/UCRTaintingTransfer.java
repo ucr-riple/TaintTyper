@@ -77,7 +77,7 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
       boolean isTainted) {
     AnnotatedTypeMirror rAnno = aTypeFactory.getAnnotatedType(node.getTree());
     Symbol.MethodSymbol symbol = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
-    if (aTypeFactory.isThirdPartyMethod(symbol) || rAnno.hasPrimaryAnnotation(RThis.class)) {
+    if (aTypeFactory.isUnannotatedMethod(symbol) || rAnno.hasPrimaryAnnotation(RThis.class)) {
       if (node.getTarget().getReceiver() instanceof MethodInvocationNode) {
         handleSideEffect(
             tree,

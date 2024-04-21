@@ -16,14 +16,14 @@ import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
 
 /**
- * Visitor for handling calls to third party libraries. This visitor gets to the required type by
- * making receiver and all arguments be untainted.
+ * Visitor for handling calls to unannotated code. This visitor gets to the required type by making
+ * receiver and all arguments be untainted.
  */
-public class ThirdPartyFixVisitor extends SpecializedFixComputer {
+public class UnannotatedCodeFixVisitor extends SpecializedFixComputer {
 
   private final boolean activation;
 
-  public ThirdPartyFixVisitor(
+  public UnannotatedCodeFixVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
     this.activation = factory.libraryCheckIsEnabled();
@@ -57,8 +57,8 @@ public class ThirdPartyFixVisitor extends SpecializedFixComputer {
       return Set.of();
     }
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
-    // check if the call is to a method defined in a third party library.
-    if (!typeFactory.isThirdPartyMethod(calledMethod)) {
+    // check if the call is to a method defined in unannotated code.
+    if (!typeFactory.isUnannotatedMethod(calledMethod)) {
       return Set.of();
     }
     Set<Fix> fixes = new HashSet<>();

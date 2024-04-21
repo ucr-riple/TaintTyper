@@ -24,7 +24,7 @@ public class CompositHandler implements Handler {
       handlerBuilder.add(new UnannotatedCodeHandler(typeFactory));
     }
     handlerBuilder.add(new CollectionHandler(typeFactory, context));
-    handlerBuilder.add(new AnnotationHandler(typeFactory));
+    handlerBuilder.add(new AnnotationMemberHandler(typeFactory));
     handlerBuilder.add(new SanitizerHandler(typeFactory));
     handlerBuilder.add(new LambdaHandler(typeFactory, context));
     this.handlers = handlerBuilder.build();

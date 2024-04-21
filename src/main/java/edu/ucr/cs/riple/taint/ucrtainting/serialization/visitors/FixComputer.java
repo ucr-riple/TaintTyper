@@ -46,7 +46,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     this.context = context;
     this.types = types;
     this.basicVisitor = new BasicVisitor(factory, this, context);
-    this.thirdPartyFixVisitor = new ThirdPartyFixVisitor(typeFactory, this, context);
+    this.thirdPartyFixVisitor = new UnannotatedCodeFixVisitor(typeFactory, this, context);
     this.methodTypeArgumentFixVisitor =
         new MethodTypeArgumentFixVisitor(typeFactory, this, context);
   }
@@ -63,7 +63,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       if (receiver != null) {
         Symbol symbol = (Symbol) TreeUtils.elementFromUse(tree);
         if (symbol.getKind().isField()
-            && typeFactory.isThirdPartyField((Symbol.VarSymbol) symbol)) {
+            && typeFactory.isUnannotatedField((Symbol.VarSymbol) symbol)) {
           return thirdPartyFixVisitor.visitMemberSelect(tree, pair);
         }
       }
@@ -102,7 +102,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
     // Locate method receiver.
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
-    boolean isInAnnotatedPackage = !typeFactory.isThirdPartyMethod(calledMethod);
+    boolean isInAnnotatedPackage = !typeFactory.isUnannotatedMethod(calledMethod);
     boolean isTypeVar = Utility.containsTypeArgument(calledMethod.getReturnType());
     boolean hasReceiver =
         !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));
@@ -131,7 +131,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
                 && ((Symbol.ClassSymbol) iFace.tsym)
                     .fullname
                     .toString()
-                    .equals("java.util.Collection")) {
+                    .equals(CollectionHandler.COLLECTIONS_INTERFACE)) {
               String name = iFace.getTypeArguments().get(0).toString();
               for (int i = 0; i < type.tsym.type.getTypeArguments().size(); i++) {
                 if (type.tsym.type.getTypeArguments().get(i).toString().equals(name)) {
