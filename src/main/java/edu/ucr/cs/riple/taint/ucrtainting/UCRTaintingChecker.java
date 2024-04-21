@@ -8,7 +8,7 @@ import com.sun.source.tree.Tree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.ThirdPartyHandler;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.UnannotatedCodeHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.SerializationService;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
 import org.checkerframework.common.accumulation.AccumulationChecker;
@@ -193,7 +193,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
             return false;
           }
           boolean isApplicable =
-              ThirdPartyHandler.checkHeuristicApplicability(
+              UnannotatedCodeHandler.checkHeuristicApplicability(
                   (MethodInvocationTree) initializer, typeFactory);
           if (!isApplicable) {
             return false;
@@ -259,7 +259,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
         if (!(tree instanceof MethodInvocationTree)) {
           return false;
         }
-        return ThirdPartyHandler.checkHeuristicApplicability(
+        return UnannotatedCodeHandler.checkHeuristicApplicability(
             (MethodInvocationTree) tree, typeFactory);
       default:
         return false;

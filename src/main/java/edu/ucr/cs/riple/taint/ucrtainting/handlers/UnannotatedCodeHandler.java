@@ -16,14 +16,14 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
 
-public class ThirdPartyHandler extends AbstractHandler {
+public class UnannotatedCodeHandler extends AbstractHandler {
 
   private static final ImmutableSet<MethodRef> approvedThirdPartyMethod =
       ImmutableSet.of(
           new MethodRef("java.lang.Class", "cast(java.lang.Object)"),
           new MethodRef("java.lang.ClassLoader", "loadClass(java.lang.String)"));
 
-  public ThirdPartyHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
+  public UnannotatedCodeHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
     super(typeFactory);
   }
 

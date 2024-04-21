@@ -21,7 +21,7 @@ public class CompositHandler implements Handler {
     handlerBuilder.add(new StaticFinalFieldHandler(typeFactory));
     handlerBuilder.add(new EnumHandler(typeFactory));
     if (typeFactory.libraryCheckIsEnabled()) {
-      handlerBuilder.add(new ThirdPartyHandler(typeFactory));
+      handlerBuilder.add(new UnannotatedCodeHandler(typeFactory));
     }
     handlerBuilder.add(new CollectionHandler(typeFactory, context));
     handlerBuilder.add(new AnnotationHandler(typeFactory));
