@@ -177,7 +177,7 @@ public class CollectionHandler extends AbstractHandler {
               && ((Symbol.ClassSymbol) iFace.tsym)
                   .fullname
                   .toString()
-                  .equals("java.util.Collection")) {
+                  .equals(COLLECTIONS_INTERFACE)) {
             collectionType = iFace;
           }
         }
