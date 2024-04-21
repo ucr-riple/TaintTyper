@@ -8,6 +8,7 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
 import java.util.HashSet;
@@ -244,7 +245,7 @@ public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
       }
       ClassDeclarationLocation classDeclarationLocation =
           new ClassDeclarationLocation(classType, inheritedType);
-      classDeclarationLocation.setTypeVariablePositions(List.of(List.of(index + 1, 0)));
+      classDeclarationLocation.setTypeIndexSet(TypeIndex.setOf(index + 1, 0));
       return Set.of(new Fix(classDeclarationLocation));
     } catch (Exception e) {
       return Set.of();

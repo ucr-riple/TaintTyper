@@ -1,6 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.AbstractSymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.FieldLocation;
@@ -8,6 +9,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.LocalVariableLo
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
+import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,9 +22,9 @@ public class LocationToJsonVisitor implements LocationVisitor<JSONObject, Void> 
     jsonObject.put("kind", location.kind.name());
     jsonObject.put("class", Serializer.serializeSymbol(location.enclosingClass));
     JSONArray typeVariablePositions = new JSONArray();
-    location.typeVariablePositions.forEach(
-        integers -> {
-          JSONArray positions = new JSONArray(integers);
+    location.typeIndexSet.forEach(
+        typeIndex -> {
+          JSONArray positions = new JSONArray(typeIndex.getContent());
           typeVariablePositions.put(positions);
         });
     jsonObject.put("type-variable-position", typeVariablePositions);
@@ -67,7 +69,11 @@ public class LocationToJsonVisitor implements LocationVisitor<JSONObject, Void> 
     JSONObject arguments = new JSONObject();
     polyMethodLocation.arguments.forEach(
         methodParameterLocation -> {
-          JSONArray positions = new JSONArray(methodParameterLocation.typeVariablePositions);
+          JSONArray positions =
+              new JSONArray(
+                  methodParameterLocation.typeIndexSet.stream()
+                      .map(TypeIndex::getContent)
+                      .collect(Collectors.toSet()));
           arguments.put(String.valueOf(methodParameterLocation.index), positions);
         });
     ans.put("arguments", arguments);

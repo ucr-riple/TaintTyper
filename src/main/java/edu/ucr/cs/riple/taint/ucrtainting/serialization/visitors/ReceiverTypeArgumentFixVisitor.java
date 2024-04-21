@@ -13,10 +13,9 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,28 +114,25 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     AnnotatedTypeMirror currentExpressionAnnotatedType = expressionAnnotatedType;
     AnnotatedTypeMirror currentRequiredType = pair.required;
     while (currentExpressionAnnotatedType != null && currentRequiredType != null) {
-      List<List<Integer>> differences =
+      Set<TypeIndex> differences =
           typeMatchVisitor.visit(currentExpressionAnnotatedType, currentRequiredType, null);
       // Based on the differences above, we need to find the required type of each type argument
-      Map<String, List<List<Integer>>> involvedTypeVariables = new HashMap<>();
+      Map<String, Set<TypeIndex>> involvedTypeVariables = new HashMap<>();
       differences.forEach(
-          integers -> {
-            Deque<Integer> deque = new ArrayDeque<>(integers);
+          typeIndex -> {
+            TypeIndex copy = typeIndex.copy();
             Type declaredType = typeOnDeclaration;
-            while (!deque.isEmpty()) {
+            while (!copy.isEmpty()) {
               if (declaredType instanceof Type.TypeVar) {
                 String typeVarName = declaredType.tsym.name.toString();
                 if (!involvedTypeVariables.containsKey(typeVarName)) {
-                  List<List<Integer>> ans = new ArrayList<>();
-                  List<Integer> list = new ArrayList<>(deque);
-                  ans.add(list);
-                  involvedTypeVariables.put(typeVarName, ans);
+                  involvedTypeVariables.put(typeVarName, TypeIndex.setOf(copy));
                 } else {
-                  involvedTypeVariables.get(typeVarName).add(new ArrayList<>(deque));
+                  involvedTypeVariables.get(typeVarName).add(copy);
                 }
                 break;
               } else {
-                int index = deque.poll() - 1;
+                int index = copy.poll() - 1;
                 if (index < 0) {
                   break;
                 }
@@ -155,9 +151,9 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
           && receiverDeclaredType.getEnclosingType().getTypeArguments() != null) {
         allTypeArguments.addAll(0, receiverDeclaredType.getEnclosingType().getTypeArguments());
       }
-      for (Map.Entry<String, List<List<Integer>>> entry : involvedTypeVariables.entrySet()) {
+      for (Map.Entry<String, Set<TypeIndex>> entry : involvedTypeVariables.entrySet()) {
         String typeVarName = entry.getKey();
-        List<List<Integer>> lists = entry.getValue();
+        Set<TypeIndex> lists = entry.getValue();
         int i = typeVariablesNameInReceiver.indexOf(typeVarName);
         if (i == -1) {
           // A super class is providing that type argument

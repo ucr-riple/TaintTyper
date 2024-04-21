@@ -12,9 +12,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -216,36 +214,25 @@ public class Utility {
    * Gets the annotated type mirror of the containing type parameter of the given element.
    *
    * @param type the type to get the containing type parameter.
-   * @param positions the positions of the type parameter.
-   * @return the annotated type mirror of the containing type parameter.
-   */
-  public static AnnotatedTypeMirror getAnnotatedTypeMirrorOfTypeArgumentAt(
-      AnnotatedTypeMirror type, List<Integer> positions) {
-    return getAnnotatedTypeMirrorOfTypeArgumentAt(type, new ArrayDeque<>(positions));
-  }
-
-  /**
-   * Gets the annotated type mirror of the containing type parameter of the given element.
-   *
-   * @param type the type to get the containing type parameter.
    * @param position the position of the type parameter.
    * @return the annotated type mirror of the containing type parameter.
    */
   public static AnnotatedTypeMirror getAnnotatedTypeMirrorOfTypeArgumentAt(
-      AnnotatedTypeMirror type, Deque<Integer> position) {
-    if (position.isEmpty()) {
+      AnnotatedTypeMirror type, TypeIndex position) {
+    TypeIndex copy = position.copy();
+    if (copy.isEmpty()) {
       return type;
     }
     if (type instanceof AnnotatedTypeMirror.AnnotatedExecutableType) {
       AnnotatedTypeMirror.AnnotatedExecutableType declaredType =
           (AnnotatedTypeMirror.AnnotatedExecutableType) type;
-      return getAnnotatedTypeMirrorOfTypeArgumentAt(declaredType.getReturnType(), position);
+      return getAnnotatedTypeMirrorOfTypeArgumentAt(declaredType.getReturnType(), copy);
     }
     if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
       return getAnnotatedTypeMirrorOfTypeArgumentAt(
-          ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType(), position);
+          ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType(), copy);
     }
-    int index = position.poll();
+    int index = copy.poll();
     if (index == 0) {
       return type;
     }
@@ -253,7 +240,7 @@ public class Utility {
       AnnotatedTypeMirror.AnnotatedDeclaredType declaredType =
           (AnnotatedTypeMirror.AnnotatedDeclaredType) type;
       return getAnnotatedTypeMirrorOfTypeArgumentAt(
-          declaredType.getTypeArguments().get(index - 1), position);
+          declaredType.getTypeArguments().get(index - 1), copy);
     }
     throw new IllegalArgumentException("Type " + type + " does not have type arguments.");
   }

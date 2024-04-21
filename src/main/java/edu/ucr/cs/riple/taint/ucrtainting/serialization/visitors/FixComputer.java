@@ -16,8 +16,8 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
-import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -154,7 +154,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       if (index != -1) {
         AnnotatedTypeMirror receiverType = typeFactory.getAnnotatedType(receiver);
         AnnotatedTypeMirror required = receiverType.deepCopy(true);
-        typeFactory.makeUntainted(required, List.of(List.of(index + 1, 0)));
+        typeFactory.makeUntainted(required, TypeIndex.setOf(index + 1, 0));
         return receiver.accept(this, FoundRequired.of(receiverType, required, pair.depth));
       }
     }

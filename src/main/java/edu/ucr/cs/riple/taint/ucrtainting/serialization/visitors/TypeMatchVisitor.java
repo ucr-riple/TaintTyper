@@ -1,8 +1,10 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import java.util.ArrayList;
-import java.util.List;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.visitor.AbstractAtmComboVisitor;
 
@@ -10,7 +12,7 @@ import org.checkerframework.framework.type.visitor.AbstractAtmComboVisitor;
  * Visitor for computing the required set of annotations on the declaration of an element which can
  * match the found annotated type mirror to the required annotated type mirror.
  */
-public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>>, Void> {
+public class TypeMatchVisitor extends AbstractAtmComboVisitor<Set<TypeIndex>, Void> {
 
   protected final UCRTaintingAnnotatedTypeFactory typeFactory;
 
@@ -26,7 +28,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> defaultAction(
+  public Set<TypeIndex> defaultAction(
       AnnotatedTypeMirror found, AnnotatedTypeMirror required, Void unused) {
     throw new UnsupportedOperationException(
         "Did not expect type match of found:"
@@ -39,18 +41,18 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
             + required);
   }
 
-  protected List<List<Integer>> supportedDefault(
+  protected Set<TypeIndex> supportedDefault(
       AnnotatedTypeMirror found, AnnotatedTypeMirror required) {
     if (!typeFactory.hasUntaintedAnnotation(found)
         && typeFactory.hasUntaintedAnnotation(required)) {
       // e.g. @Untainted int
-      return List.of(List.of(0));
+      return TypeIndex.topLevelSet();
     }
-    return List.of();
+    return Collections.emptySet();
   }
 
   @Override
-  public List<List<Integer>> visitArray_Declared(
+  public Set<TypeIndex> visitArray_Declared(
       AnnotatedTypeMirror.AnnotatedArrayType type1,
       AnnotatedTypeMirror.AnnotatedDeclaredType type2,
       Void unused) {
@@ -58,7 +60,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitWildcard_Typevar(
+  public Set<TypeIndex> visitWildcard_Typevar(
       AnnotatedTypeMirror.AnnotatedWildcardType type1,
       AnnotatedTypeMirror.AnnotatedTypeVariable type2,
       Void unused) {
@@ -66,7 +68,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitDeclared_Primitive(
+  public Set<TypeIndex> visitDeclared_Primitive(
       AnnotatedTypeMirror.AnnotatedDeclaredType type1,
       AnnotatedTypeMirror.AnnotatedPrimitiveType type2,
       Void unused) {
@@ -74,7 +76,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitWildcard_Declared(
+  public Set<TypeIndex> visitWildcard_Declared(
       AnnotatedTypeMirror.AnnotatedWildcardType type1,
       AnnotatedTypeMirror.AnnotatedDeclaredType type2,
       Void unused) {
@@ -82,7 +84,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitTypevar_Typevar(
+  public Set<TypeIndex> visitTypevar_Typevar(
       AnnotatedTypeMirror.AnnotatedTypeVariable found,
       AnnotatedTypeMirror.AnnotatedTypeVariable required,
       Void unused) {
@@ -90,29 +92,26 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitDeclared_Declared(
+  public Set<TypeIndex> visitDeclared_Declared(
       AnnotatedTypeMirror.AnnotatedDeclaredType found,
       AnnotatedTypeMirror.AnnotatedDeclaredType required,
       Void unused) {
-    List<List<Integer>> result = new ArrayList<>();
+    Set<TypeIndex> result = new HashSet<>();
     // e.g. @Untainted String
     if (!typeFactory.hasUntaintedAnnotation(found)
         && typeFactory.hasUntaintedAnnotation(required)) {
-      result.add(List.of(0));
+      result.add(TypeIndex.TOP_LEVEL);
     }
     for (int i = 0; i < required.getTypeArguments().size(); i++) {
       AnnotatedTypeMirror typeArgumentFound = found.getTypeArguments().get(i);
       AnnotatedTypeMirror typeArgumentRequired = required.getTypeArguments().get(i);
-      List<Integer> toAddOnThisTypeArg = new ArrayList<>();
-      toAddOnThisTypeArg.add(i + 1);
-      List<List<Integer>> onTypeArgs = visit(typeArgumentFound, typeArgumentRequired, unused);
-      for (List<Integer> toAddOnContainingTypeArg : onTypeArgs) {
+      TypeIndex toAddOnThisTypeArg = TypeIndex.of(i + 1);
+      Set<TypeIndex> onTypeArgs = visit(typeArgumentFound, typeArgumentRequired, unused);
+      for (TypeIndex toAddOnContainingTypeArg : onTypeArgs) {
         // Need a fresh chain for each type.
         if (!toAddOnContainingTypeArg.isEmpty()) {
-          List<Integer> toAddOnThisTypeArgWithContainingTypeArgs =
-              new ArrayList<>(toAddOnThisTypeArg);
-          toAddOnThisTypeArgWithContainingTypeArgs.addAll(toAddOnContainingTypeArg);
-          result.add(toAddOnThisTypeArgWithContainingTypeArgs);
+          TypeIndex realPosition = toAddOnContainingTypeArg.relativeTo(toAddOnThisTypeArg);
+          result.add(realPosition);
         }
       }
     }
@@ -120,7 +119,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitPrimitive_Primitive(
+  public Set<TypeIndex> visitPrimitive_Primitive(
       AnnotatedTypeMirror.AnnotatedPrimitiveType found,
       AnnotatedTypeMirror.AnnotatedPrimitiveType required,
       Void unused) {
@@ -128,7 +127,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitWildcard_Wildcard(
+  public Set<TypeIndex> visitWildcard_Wildcard(
       AnnotatedTypeMirror.AnnotatedWildcardType found,
       AnnotatedTypeMirror.AnnotatedWildcardType required,
       Void unused) {
@@ -136,7 +135,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitTypevar_Wildcard(
+  public Set<TypeIndex> visitTypevar_Wildcard(
       AnnotatedTypeMirror.AnnotatedTypeVariable found,
       AnnotatedTypeMirror.AnnotatedWildcardType required,
       Void unused) {
@@ -144,7 +143,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitTypevar_Declared(
+  public Set<TypeIndex> visitTypevar_Declared(
       AnnotatedTypeMirror.AnnotatedTypeVariable found,
       AnnotatedTypeMirror.AnnotatedDeclaredType required,
       Void unused) {
@@ -152,7 +151,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitDeclared_Typevar(
+  public Set<TypeIndex> visitDeclared_Typevar(
       AnnotatedTypeMirror.AnnotatedDeclaredType found,
       AnnotatedTypeMirror.AnnotatedTypeVariable required,
       Void unused) {
@@ -160,7 +159,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitDeclared_Wildcard(
+  public Set<TypeIndex> visitDeclared_Wildcard(
       AnnotatedTypeMirror.AnnotatedDeclaredType found,
       AnnotatedTypeMirror.AnnotatedWildcardType required,
       Void unused) {
@@ -168,7 +167,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitArray_Array(
+  public Set<TypeIndex> visitArray_Array(
       AnnotatedTypeMirror.AnnotatedArrayType found,
       AnnotatedTypeMirror.AnnotatedArrayType required,
       Void unused) {
@@ -177,7 +176,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<List<List<Integer>
   }
 
   @Override
-  public List<List<Integer>> visitPrimitive_Declared(
+  public Set<TypeIndex> visitPrimitive_Declared(
       AnnotatedTypeMirror.AnnotatedPrimitiveType found,
       AnnotatedTypeMirror.AnnotatedDeclaredType required,
       Void unused) {

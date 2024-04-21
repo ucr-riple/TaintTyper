@@ -91,8 +91,7 @@ public class SerializationService {
     if (!typeFactory.typeArgumentInferenceEnabled()) {
       boolean inferredOnTypeArg =
           resolvingFixes.stream()
-              .anyMatch(
-                  fix -> !fix.location.getTypeVariablePositions().equals(List.of(List.of(0))));
+              .anyMatch(fix -> !fix.location.getTypeIndexSet().equals(List.of(List.of(0))));
       if (inferredOnTypeArg) {
         resolvingFixes = ImmutableSet.of();
       }
@@ -182,7 +181,7 @@ public class SerializationService {
       return ImmutableSet.of();
     }
     TypeMatchVisitor visitor = new TypeMatchVisitor(typeFactory);
-    List<List<Integer>> differences;
+    Set<TypeIndex> differences;
     try {
       // todo: for now we ignore the possible exceptions thrown by the visitor.
       differences = visitor.visit(pair.required, pair.found, null);
@@ -190,20 +189,20 @@ public class SerializationService {
       return ImmutableSet.of();
     }
 
-    if (!differences.isEmpty() && differences.get(0).equals(List.of(0))) {
-      differences.remove(0);
+    if (!differences.isEmpty()) {
+      differences.remove(TypeIndex.TOP_LEVEL);
     }
     if (differences.isEmpty()) {
       return ImmutableSet.of();
     }
     Fix fixOnLeftHandSide =
         new Fix(SymbolLocation.createLocationFromSymbol((Symbol) toAnnotate, context));
-    fixOnLeftHandSide.location.setTypeVariablePositions(differences);
+    fixOnLeftHandSide.location.setTypeIndexSet(differences);
     return ImmutableSet.of(fixOnLeftHandSide);
   }
 
   private FoundRequired updateFoundRequiredPairEnhancedForLoopError(Tree tree, FoundRequired pair) {
-    List<List<Integer>> differences = typeMatchVisitor.visit(pair.found, pair.required, null);
+    Set<TypeIndex> differences = typeMatchVisitor.visit(pair.found, pair.required, null);
     if (differences.isEmpty()) {
       return null;
     }
@@ -246,11 +245,11 @@ public class SerializationService {
     Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
     SymbolLocation location = SymbolLocation.createLocationFromSymbol(toBeAnnotated, context);
     if (location != null) {
-      List<List<Integer>> differences = typeMatchVisitor.visit(pair.found, pair.required, null);
+      Set<TypeIndex> differences = typeMatchVisitor.visit(pair.found, pair.required, null);
       if (differences.isEmpty()) {
         return ImmutableSet.of();
       }
-      location.setTypeVariablePositions(typeMatchVisitor.visit(pair.found, pair.required, null));
+      location.setTypeIndexSet(typeMatchVisitor.visit(pair.found, pair.required, null));
     }
     return ImmutableSet.of(new Fix(location));
   }
@@ -282,14 +281,14 @@ public class SerializationService {
     AnnotatedTypeMirror overriddenReturnType = overriddenType.getReturnType();
     AnnotatedTypeMirror overridingReturnType =
         typeFactory.getAnnotatedType(overridingMethod).getReturnType();
-    List<List<Integer>> differences =
+    Set<TypeIndex> differences =
         typeMatchVisitor.visit(overriddenReturnType, overridingReturnType, null);
     if (!differences.isEmpty()) {
       SymbolLocation location = SymbolLocation.createLocationFromSymbol(overriddenMethod, context);
       if (location == null) {
         return ImmutableSet.of();
       }
-      location.setTypeVariablePositions(differences);
+      location.setTypeIndexSet(differences);
       ans.add(new Fix(location));
     }
     differences = typeMatchVisitor.visit(overridingReturnType, overriddenReturnType, null);
@@ -298,10 +297,10 @@ public class SerializationService {
       if (location == null) {
         return ImmutableSet.of();
       }
-      location.setTypeVariablePositions(differences);
+      location.setTypeIndexSet(differences);
       ans.add(new Fix(location));
     } else {
-      List<List<Integer>> onPoly =
+      Set<TypeIndex> onPoly =
           polyTypeMatchVisitor.visit(overridingReturnType, overriddenReturnType, null);
       if (!onPoly.isEmpty()) {
         Set<MethodParameterLocation> methodParameterLocations = new HashSet<>();
@@ -310,12 +309,12 @@ public class SerializationService {
         if (location == null) {
           return ImmutableSet.of();
         }
-        location.setTypeVariablePositions(onPoly);
+        location.setTypeIndexSet(onPoly);
         for (int i = 0;
             i < typeFactory.getAnnotatedType(overridingMethod).getParameterTypes().size();
             i++) {
           AnnotatedTypeMirror typeVariable = overriddenType.getParameterTypes().get(i);
-          List<List<Integer>> differencesOnParam =
+          Set<TypeIndex> differencesOnParam =
               polyTypeMatchVisitor.visit(
                   typeFactory.getAnnotatedType(overridingMethod).getParameterTypes().get(i),
                   typeVariable,
@@ -328,7 +327,7 @@ public class SerializationService {
             if (methodParameterLocation == null) {
               continue;
             }
-            methodParameterLocation.setTypeVariablePositions(differencesOnParam);
+            methodParameterLocation.setTypeIndexSet(differencesOnParam);
             methodParameterLocations.add(methodParameterLocation);
           }
         }

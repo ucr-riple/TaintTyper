@@ -11,9 +11,9 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -88,7 +88,7 @@ public class BasicVisitor extends SpecializedFixComputer {
             .toString()
             .equals("java.lang.Class")) {
           // We cannot annotate Class<?> as @Untainted or as Class<@RUntainted ?>
-          if (fix.location.getTypeVariablePositions().equals(List.of(List.of(1, 0)))) {
+          if (fix.location.getTypeIndexSet().equals(TypeIndex.setOf(1, 0))) {
             return Set.of();
           }
         }

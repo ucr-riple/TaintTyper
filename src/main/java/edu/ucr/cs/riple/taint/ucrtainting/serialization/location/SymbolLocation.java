@@ -4,10 +4,11 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 /** Provides method for symbol locations. */
@@ -67,7 +68,7 @@ public interface SymbolLocation {
    */
   <R, P> R accept(LocationVisitor<R, P> v, P p);
 
-  void setTypeVariablePositions(List<List<Integer>> typeVariables);
+  void setTypeIndexSet(Set<TypeIndex> typeVariables);
 
   LocationKind getKind();
 
@@ -75,5 +76,5 @@ public interface SymbolLocation {
 
   Path path();
 
-  List<List<Integer>> getTypeVariablePositions();
+  Set<TypeIndex> getTypeIndexSet();
 }

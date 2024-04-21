@@ -13,6 +13,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;
@@ -365,7 +366,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    * @param type The type to be adapted.
    * @param positions The positions of the type arguments to be adapted.
    */
-  public void makeUntainted(AnnotatedTypeMirror type, List<List<Integer>> positions) {
+  public void makeUntainted(AnnotatedTypeMirror type, Set<TypeIndex> positions) {
     if (positions.isEmpty()) {
       return;
     }
@@ -379,8 +380,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    * @param position The position of the type argument to be adapted.
    * @param index The index of the position.
    */
-  private void makeUntaintedForPosition(
-      AnnotatedTypeMirror type, List<Integer> position, int index) {
+  private void makeUntaintedForPosition(AnnotatedTypeMirror type, TypeIndex position, int index) {
     // TODO: This method can be rewritten to remove index parameter.
     if (index == position.size()) {
       return;

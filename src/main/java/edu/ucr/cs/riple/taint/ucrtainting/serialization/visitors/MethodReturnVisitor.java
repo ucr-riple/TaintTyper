@@ -190,7 +190,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
                   AnnotatedTypeMirror formalParameterAnnotatedTypeMirror =
                       typeFactory.getAnnotatedType(decl.getParameters().get(index)).deepCopy(true);
                   typeFactory.makeUntainted(
-                      formalParameterAnnotatedTypeMirror, parameter.typeVariablePositions);
+                      formalParameterAnnotatedTypeMirror, parameter.typeIndexSet);
                   AnnotatedTypeMirror foundParameterType =
                       typeFactory.getAnnotatedType(invocation.node.getArguments().get(index));
                   Set<Fix> passedArgumentOnInvocation =
@@ -235,8 +235,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
                       .noneMatch(
                           m ->
                               m.index == methodParameterLocation.index
-                                  && m.typeVariablePositions.equals(
-                                      methodParameterLocation.typeVariablePositions))) {
+                                  && m.typeIndexSet.equals(methodParameterLocation.typeIndexSet))) {
                     // is an untainted for non poly argument. should be considered a poly
                     // argument.
                     inferredPolyMethod.arguments.add(methodParameterLocation);

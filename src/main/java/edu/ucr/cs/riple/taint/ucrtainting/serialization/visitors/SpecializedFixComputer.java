@@ -9,10 +9,10 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -53,7 +53,7 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
     if (location == null) {
       return null;
     }
-    List<List<Integer>> indices = null;
+    Set<TypeIndex> indices;
     try {
       indices = typeMatchVisitor.visit(pair.found, pair.required, null);
     } catch (IndexOutOfBoundsException e) {
@@ -85,7 +85,7 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
           .findFirst()
           .ifPresent(
               annotatedDeclaredType -> {
-                classDeclarationLocation.setTypeVariablePositions(
+                classDeclarationLocation.setTypeIndexSet(
                     typeMatchVisitor.visit(annotatedDeclaredType, pair.required, null));
               });
       return new Fix(classDeclarationLocation);
@@ -100,8 +100,8 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
                     !typeFactory.hasUntaintedAnnotation(
                         Utility.getAnnotatedTypeMirrorOfTypeArgumentAt(
                             elementAnnotatedType, integers)))
-            .collect(Collectors.toList());
-    location.setTypeVariablePositions(indices);
+            .collect(Collectors.toSet());
+    location.setTypeIndexSet(indices);
     if (indices.isEmpty()) {
       return null;
     }

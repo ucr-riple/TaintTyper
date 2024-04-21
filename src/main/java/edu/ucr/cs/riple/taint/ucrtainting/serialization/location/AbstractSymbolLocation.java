@@ -1,11 +1,11 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
-import com.google.common.collect.ImmutableList;
 import com.sun.tools.javac.code.Symbol;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 /** abstract base class for {@link SymbolLocation}. */
@@ -19,24 +19,22 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   public final Symbol.ClassSymbol enclosingClass;
   /** Target symbol. */
   public final Symbol target;
-  /** List of indexes to locate the type variable. */
-  public List<List<Integer>> typeVariablePositions;
+  /** Set of type indexes */
+  public Set<TypeIndex> typeIndexSet;
 
-  public static final ImmutableList<List<Integer>> ON_TYPE = ImmutableList.of(List.of(0));
+  public static final Set<TypeIndex> ON_TYPE = TypeIndex.topLevelSet();
 
   public AbstractSymbolLocation(LocationKind kind, Symbol target) {
     this.kind = kind;
     this.enclosingClass = target.enclClass();
     this.path = Utility.getPathFromSymbol(target);
     this.target = target;
-    this.typeVariablePositions = ON_TYPE;
+    this.typeIndexSet = ON_TYPE;
   }
 
-  public void setTypeVariablePositions(@Nullable List<List<Integer>> typeVariablePositions) {
-    this.typeVariablePositions =
-        (typeVariablePositions == null || typeVariablePositions.isEmpty())
-            ? ON_TYPE
-            : typeVariablePositions;
+  @Override
+  public void setTypeIndexSet(@Nullable Set<TypeIndex> typeIndexSet) {
+    this.typeIndexSet = (typeIndexSet == null || typeIndexSet.isEmpty()) ? ON_TYPE : typeIndexSet;
   }
 
   @Override
@@ -47,8 +45,8 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
         + enclosingClass
         + ", target="
         + target
-        + ", typeVariablePositions="
-        + typeVariablePositions
+        + ", typeIndexSet="
+        + typeIndexSet
         + ", path="
         + path
         + '}';
@@ -72,12 +70,12 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
         && Objects.equals(path, that.path)
         && Objects.equals(enclosingClass, that.enclosingClass)
         && Objects.equals(target, that.target)
-        && Objects.equals(typeVariablePositions, that.typeVariablePositions);
+        && Objects.equals(typeIndexSet, that.typeIndexSet);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getKind(), path, enclosingClass, target, typeVariablePositions);
+    return Objects.hash(getKind(), path, enclosingClass, target, typeIndexSet);
   }
 
   @Override
@@ -91,7 +89,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   }
 
   @Override
-  public List<List<Integer>> getTypeVariablePositions() {
-    return typeVariablePositions;
+  public Set<TypeIndex> getTypeIndexSet() {
+    return typeIndexSet;
   }
 }

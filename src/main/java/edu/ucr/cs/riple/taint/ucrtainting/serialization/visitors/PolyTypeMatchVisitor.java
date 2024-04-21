@@ -1,8 +1,10 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import java.util.ArrayList;
-import java.util.List;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
 public class PolyTypeMatchVisitor extends TypeMatchVisitor {
@@ -10,54 +12,37 @@ public class PolyTypeMatchVisitor extends TypeMatchVisitor {
     super(typeFactory);
   }
 
-  @Override
-  public List<List<Integer>> defaultAction(
-      AnnotatedTypeMirror found, AnnotatedTypeMirror required, Void unused) {
-    throw new UnsupportedOperationException(
-        "Did not expect type match of found:"
-            + found.getKind()
-            + ":"
-            + found
-            + " with required:"
-            + required.getKind()
-            + ":"
-            + required);
-  }
-
-  protected List<List<Integer>> supportedDefault(
+  protected Set<TypeIndex> supportedDefault(
       AnnotatedTypeMirror found, AnnotatedTypeMirror required) {
     if (!typeFactory.hasPolyTaintedAnnotation(found)
         && typeFactory.hasPolyTaintedAnnotation(required)) {
       // e.g. @Polytainted int
-      return List.of(List.of(0));
+      return TypeIndex.topLevelSet();
     }
-    return List.of();
+    return Collections.emptySet();
   }
 
   @Override
-  public List<List<Integer>> visitDeclared_Declared(
+  public Set<TypeIndex> visitDeclared_Declared(
       AnnotatedTypeMirror.AnnotatedDeclaredType found,
       AnnotatedTypeMirror.AnnotatedDeclaredType required,
       Void unused) {
-    List<List<Integer>> result = new ArrayList<>();
+    Set<TypeIndex> result = new HashSet<>();
     // e.g. @Polytainted String
     if (!typeFactory.hasPolyTaintedAnnotation(found)
         && typeFactory.hasPolyTaintedAnnotation(required)) {
-      result.add(List.of(0));
+      result.add(TypeIndex.TOP_LEVEL);
     }
     for (int i = 0; i < required.getTypeArguments().size(); i++) {
       AnnotatedTypeMirror typeArgumentFound = found.getTypeArguments().get(i);
       AnnotatedTypeMirror typeArgumentRequired = required.getTypeArguments().get(i);
-      List<Integer> toAddOnThisTypeArg = new ArrayList<>();
-      toAddOnThisTypeArg.add(i + 1);
-      List<List<Integer>> onTypeArgs = visit(typeArgumentFound, typeArgumentRequired, unused);
-      for (List<Integer> toAddOnContainingTypeArg : onTypeArgs) {
+      TypeIndex toAddOnThisTypeArg = TypeIndex.of(i + 1);
+      Set<TypeIndex> onTypeArgs = visit(typeArgumentFound, typeArgumentRequired, unused);
+      for (TypeIndex toAddOnContainingTypeArg : onTypeArgs) {
         // Need a fresh chain for each type.
         if (!toAddOnContainingTypeArg.isEmpty()) {
-          List<Integer> toAddOnThisTypeArgWithContainingTypeArgs =
-              new ArrayList<>(toAddOnThisTypeArg);
-          toAddOnThisTypeArgWithContainingTypeArgs.addAll(toAddOnContainingTypeArg);
-          result.add(toAddOnThisTypeArgWithContainingTypeArgs);
+          TypeIndex realPosition = toAddOnContainingTypeArg.relativeTo(toAddOnThisTypeArg);
+          result.add(realPosition);
         }
       }
     }
