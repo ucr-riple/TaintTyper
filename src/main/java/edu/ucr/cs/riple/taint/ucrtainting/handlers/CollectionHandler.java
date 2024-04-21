@@ -101,7 +101,7 @@ public class CollectionHandler extends AbstractHandler {
    * @param type The type to check.
    * @return True if the type implements the {@link java.util.Collection} interface.
    */
-  private static boolean implementsCollectionInterface(Type type, Types types) {
+  public static boolean implementsCollectionInterface(Type type, Types types) {
     if (type == null || type.tsym == null) {
       return false;
     }

@@ -59,7 +59,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     }
     FoundRequired f =
         computeRequiredTypeForReceiverMatchingTypeArguments(
-            (Symbol) TreeUtils.elementFromTree(node),
+            (Symbol) TreeUtils.elementFromUse(node),
             node,
             node.getExpression(),
             pair,
