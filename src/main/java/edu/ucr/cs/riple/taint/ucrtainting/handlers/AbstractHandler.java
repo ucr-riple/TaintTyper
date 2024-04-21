@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
+import com.sun.source.tree.LambdaExpressionTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewClassTree;
@@ -42,7 +43,8 @@ public abstract class AbstractHandler implements Handler {
   }
 
   @Override
-  public LambdaHandler getLambdaHandler() {
-    return null;
+  public void visitLambdaExpression(
+      LambdaExpressionTree node, AnnotatedTypeMirror annotatedTypeMirror) {
+    // no-op
   }
 }

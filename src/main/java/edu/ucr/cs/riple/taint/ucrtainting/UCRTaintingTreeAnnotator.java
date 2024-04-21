@@ -155,17 +155,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
   @Override
   public Void visitLambdaExpression(
       LambdaExpressionTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-    typeFactory.makeUntainted(annotatedTypeMirror);
-    Symbol.MethodSymbol overriddenMethod = Utility.getFunctionalInterfaceMethod(node, types);
-    if (overriddenMethod != null && typeFactory.isThirdPartyMethod(overriddenMethod)) {
-      node.getParameters()
-          .forEach(
-              variableTree ->
-                  handler
-                      .getLambdaHandler()
-                      .addLambdaParameter(
-                          (Symbol.VarSymbol) TreeUtils.elementFromDeclaration(variableTree)));
-    }
+    handler.visitLambdaExpression(node, annotatedTypeMirror);
     return super.visitLambdaExpression(node, annotatedTypeMirror);
   }
 

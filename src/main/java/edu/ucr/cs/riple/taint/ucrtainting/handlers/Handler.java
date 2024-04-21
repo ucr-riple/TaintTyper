@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
+import com.sun.source.tree.LambdaExpressionTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewClassTree;
@@ -19,5 +20,5 @@ public interface Handler {
 
   void visitNewClass(NewClassTree tree, AnnotatedTypeMirror type);
 
-  LambdaHandler getLambdaHandler();
+  void visitLambdaExpression(LambdaExpressionTree node, AnnotatedTypeMirror annotatedTypeMirror);
 }

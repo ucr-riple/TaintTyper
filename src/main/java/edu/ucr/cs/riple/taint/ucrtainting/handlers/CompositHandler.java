@@ -1,6 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
 import com.google.common.collect.ImmutableSet;
+import com.sun.source.tree.LambdaExpressionTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewClassTree;
@@ -15,20 +16,17 @@ public class CompositHandler implements Handler {
   /** Set of handlers to be used to add annotations from default for type. */
   private final ImmutableSet<Handler> handlers;
 
-  private final LambdaHandler lambdaHandler;
-
   public CompositHandler(UCRTaintingAnnotatedTypeFactory typeFactory, Context context) {
     ImmutableSet.Builder<Handler> handlerBuilder = new ImmutableSet.Builder<>();
     handlerBuilder.add(new StaticFinalFieldHandler(typeFactory));
     handlerBuilder.add(new EnumHandler(typeFactory));
-    lambdaHandler = new LambdaHandler(typeFactory);
     if (typeFactory.libraryCheckIsEnabled()) {
       handlerBuilder.add(new ThirdPartyHandler(typeFactory));
     }
     handlerBuilder.add(new CollectionHandler(typeFactory, context));
     handlerBuilder.add(new AnnotationHandler(typeFactory));
     handlerBuilder.add(new SanitizerHandler(typeFactory));
-    handlerBuilder.add(lambdaHandler);
+    handlerBuilder.add(new LambdaHandler(typeFactory, context));
     this.handlers = handlerBuilder.build();
   }
 
@@ -58,7 +56,8 @@ public class CompositHandler implements Handler {
   }
 
   @Override
-  public LambdaHandler getLambdaHandler() {
-    return lambdaHandler;
+  public void visitLambdaExpression(
+      LambdaExpressionTree node, AnnotatedTypeMirror annotatedTypeMirror) {
+    this.handlers.forEach(handler -> handler.visitLambdaExpression(node, annotatedTypeMirror));
   }
 }
