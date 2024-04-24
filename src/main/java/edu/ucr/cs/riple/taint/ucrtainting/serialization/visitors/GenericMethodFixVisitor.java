@@ -25,9 +25,9 @@ import org.checkerframework.javacutil.TreeUtils;
  * Visitor used to match the required type argument using method type arguments and passed
  * parameters parameter types.
  */
-public class MethodTypeArgumentFixVisitor extends SpecializedFixComputer {
+public class GenericMethodFixVisitor extends SpecializedFixComputer {
 
-  public MethodTypeArgumentFixVisitor(
+  public GenericMethodFixVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
   }

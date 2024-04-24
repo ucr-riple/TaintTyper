@@ -45,7 +45,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     JCTree declaration =
         Utility.locateDeclaration((Symbol) TreeUtils.elementFromUse(node), context);
     if (declaration == null) {
-      // Ask the fixComputer to fix the node with other fix computers.
+      // If we cannot locate the declaration, we cannot suggest a fix on its type arguments.
       return Set.of();
     }
     Type declarationType = declaration.type;

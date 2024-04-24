@@ -1,6 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
-import static edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.MethodTypeArgumentFixVisitor.locateInheritedTypeOnExtendOrImplement;
+import static edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.GenericMethodFixVisitor.locateInheritedTypeOnExtendOrImplement;
 
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.tools.javac.code.Symbol;

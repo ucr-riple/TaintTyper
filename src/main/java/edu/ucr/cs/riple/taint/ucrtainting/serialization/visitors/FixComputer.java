@@ -47,8 +47,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     this.types = types;
     this.basicVisitor = new BasicVisitor(factory, this, context);
     this.thirdPartyFixVisitor = new UnannotatedCodeFixVisitor(typeFactory, this, context);
-    this.methodTypeArgumentFixVisitor =
-        new MethodTypeArgumentFixVisitor(typeFactory, this, context);
+    this.methodTypeArgumentFixVisitor = new GenericMethodFixVisitor(typeFactory, this, context);
   }
 
   @Override
