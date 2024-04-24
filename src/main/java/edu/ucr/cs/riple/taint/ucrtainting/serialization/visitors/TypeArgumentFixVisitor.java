@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.util.AnnotatedTypes;
@@ -65,6 +66,9 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
     // argument.
     FoundRequired updatedFoundRequiredPair =
         translateToReceiverRequiredPair(node, pair, declarationType);
+    if (updatedFoundRequiredPair == null) {
+      return Set.of();
+    }
     return node.getExpression().accept(this, updatedFoundRequiredPair);
   }
 
@@ -101,13 +105,25 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
     }
     FoundRequired updatedFoundRequiredPair =
         translateToReceiverRequiredPair(node, pair, calledMethod.getReturnType());
+    if (updatedFoundRequiredPair == null) {
+      return Set.of();
+    }
     return receiver.accept(this, updatedFoundRequiredPair);
   }
 
+  /**
+   * Translate the required type of the expression to the required type of the receiver.
+   *
+   * @param expr The expression tree.
+   * @param pair The required type of the expression.
+   * @param typeOnDeclaration The type on the declaration of the expression.
+   * @return The required type of the receiver.
+   */
+  @Nullable
   private FoundRequired translateToReceiverRequiredPair(
-      ExpressionTree node, FoundRequired pair, Type typeOnDeclaration) {
-    ExpressionTree receiver = TreeUtils.getReceiverTree(node);
-    AnnotatedTypeMirror expressionAnnotatedType = typeFactory.getAnnotatedType(node);
+      ExpressionTree expr, FoundRequired pair, Type typeOnDeclaration) {
+    ExpressionTree receiver = TreeUtils.getReceiverTree(expr);
+    AnnotatedTypeMirror expressionAnnotatedType = typeFactory.getAnnotatedType(expr);
     AnnotatedTypeMirror receiverAnnotatedType = typeFactory.getAnnotatedType(receiver);
     if (!(receiverAnnotatedType instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
       return null;
@@ -159,7 +175,10 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
         Set<TypeIndex> lists = entry.getValue();
         int i = typeVariablesNameInReceiver.indexOf(typeVarName);
         if (i == -1) {
-          Symbol nodeSymbol = (Symbol) TreeUtils.elementFromTree(node);
+          Symbol nodeSymbol = (Symbol) TreeUtils.elementFromTree(expr);
+          if (nodeSymbol == null) {
+            return null;
+          }
           // A super class is providing that type argument
           Type.ClassType ownerType = (Type.ClassType) nodeSymbol.owner.type;
           Set<AnnotatedTypeMirror.AnnotatedDeclaredType> superTypes =
