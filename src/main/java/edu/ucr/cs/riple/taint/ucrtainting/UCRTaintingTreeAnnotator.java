@@ -3,9 +3,7 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
@@ -19,20 +17,17 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
 
   private final Handler handler;
   private final UCRTaintingAnnotatedTypeFactory typeFactory;
-  private final Types types;
 
   /**
    * UCRTaintingTreeAnnotator
    *
    * @param typeFactory the type factory
-   * @param context
+   * @param handler Handler to apply custom behavior
    */
-  protected UCRTaintingTreeAnnotator(
-      UCRTaintingAnnotatedTypeFactory typeFactory, Handler handler, Context context) {
+  protected UCRTaintingTreeAnnotator(UCRTaintingAnnotatedTypeFactory typeFactory, Handler handler) {
     super(typeFactory);
     this.typeFactory = typeFactory;
     this.handler = handler;
-    this.types = Types.instance(context);
   }
 
   /**

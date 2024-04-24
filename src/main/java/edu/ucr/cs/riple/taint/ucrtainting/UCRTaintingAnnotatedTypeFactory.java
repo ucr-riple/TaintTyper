@@ -6,7 +6,6 @@ import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CompositHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted;
@@ -123,10 +122,8 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
 
   @Override
   protected TreeAnnotator createTreeAnnotator() {
-    Context context =
-        ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext();
     return new ListTreeAnnotator(
-        super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this, handler, context));
+        super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this, handler));
   }
 
   @Override

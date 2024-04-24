@@ -45,17 +45,25 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     JCTree declaration =
         Utility.locateDeclaration((Symbol) TreeUtils.elementFromUse(node), context);
     if (declaration == null) {
-      return node.accept(fixComputer, pair);
+      // Ask the fixComputer to fix the node with other fix computers.
+      return Set.of();
     }
     Type declarationType = declaration.type;
     if (declarationType == null && declaration instanceof JCTree.JCVariableDecl) {
       declarationType = ((JCTree.JCVariableDecl) declaration).vartype.type;
     }
     Element receiverElement = TreeUtils.elementFromUse(node.getExpression());
-    if (Utility.isFullyParameterizedType(declarationType)
-        || Utility.elementHasRawType(receiverElement)) {
+    if (Utility.isFullyParameterizedType(declarationType)) {
+      // Element is fully parameterized, no need to update the required type argument, we should
+      // directly fix the declaration.
       return node.accept(fixComputer, pair);
     }
+    if (Utility.elementHasRawType(receiverElement)) {
+      // Receiver is raw type, no fix can be suggested by this visitor.
+      return Set.of();
+    }
+    // Receiver is not parameterized and has type arguments, we need to update the required type
+    // argument.
     FoundRequired f =
         computeRequiredTypeForReceiverMatchingTypeArguments(
             (Symbol) TreeUtils.elementFromUse(node),

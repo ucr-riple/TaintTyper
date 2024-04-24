@@ -106,3 +106,53 @@ class TypeMapSelectTest {
     }
   }
 }
+
+class ParameterizedReceiverDetection {
+
+  Foo<String, String> foo;
+  Bar<String, String> bar;
+
+  class Foo<K, M> {
+    Map<K, M> getMap() {
+      return null;
+    }
+  }
+
+  class Bar<K, M> {
+    Map<String, String> getMap() {
+      return null;
+    }
+  }
+
+  public void test() {
+    // :: error: assignment
+    @RUntainted String s0 = foo.getMap().keySet().iterator().next();
+    // :: error: assignment
+    @RUntainted String s1 = bar.getMap().keySet().iterator().next();
+  }
+
+  public void testcomplex(Foo1<List<String>, String> foo) {
+    // :: error: assignment
+    Bar1<String, List<@RUntainted List<@RUntainted String>>> s = foo.getBar();
+  }
+
+  class Foo1<K, M> {
+
+    Bar1<M, List<K>> getBar() {
+      return null;
+    }
+  }
+
+  class Bar1<T, U> {
+    T t;
+    U u;
+
+    T getT() {
+      return t;
+    }
+
+    U getU() {
+      return u;
+    }
+  }
+}

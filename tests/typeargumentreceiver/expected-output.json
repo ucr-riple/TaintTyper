@@ -543,6 +543,94 @@
           }
         }
       ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 2910,
+      "index": 21,
+      "region": {
+        "symbol": "test()",
+        "class": "foo.bar.ParameterizedReceiverDetection"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "field": "foo",
+            "kind": "FIELD",
+            "class": "foo.bar.ParameterizedReceiverDetection"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 3007,
+      "index": 22,
+      "region": {
+        "symbol": "test()",
+        "class": "foo.bar.ParameterizedReceiverDetection"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "getMap()",
+            "kind": "METHOD",
+            "class": "foo.bar.ParameterizedReceiverDetection$Bar"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 3169,
+      "index": 23,
+      "region": {
+        "symbol": "testcomplex(foo.bar.ParameterizedReceiverDetection.Foo1)",
+        "class": "foo.bar.ParameterizedReceiverDetection"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ],
+              [
+                1,
+                1,
+                0
+              ]
+            ],
+            "method": "testcomplex(foo.bar.ParameterizedReceiverDetection.Foo1)",
+            "kind": "PARAMETER",
+            "name": "foo",
+            "index": 0,
+            "class": "foo.bar.ParameterizedReceiverDetection"
+          }
+        }
+      ]
     }
   ]
 }
