@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
@@ -64,14 +63,14 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     }
     // Receiver is not parameterized and has type arguments, we need to update the required type
     // argument.
-    FoundRequired f =
+    FoundRequired updatedFoundRequiredPair =
         computeRequiredTypeForReceiverMatchingTypeArguments(
             (Symbol) TreeUtils.elementFromUse(node),
             node,
             node.getExpression(),
             pair,
             declarationType);
-    return node.getExpression().accept(this, f);
+    return node.getExpression().accept(this, updatedFoundRequiredPair);
   }
 
   @Override
@@ -83,14 +82,19 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
     // Locate method receiver.
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
-    // If method is static, or has no receiver, or receiver is "this", we must annotate the method
-    // directly.
-    if (calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver)) {
-      return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod, pair)));
+    // static method return type cannot be changed using class type arguments. No fix can be
+    // suggested by this visitor.
+    if (calledMethod.isStatic()) {
+      return Set.of();
+    }
+    // If receiver is null or a simple identifier, we must fix the method declaration.
+    if (receiver == null || Utility.isThisIdentifier(receiver)) {
+      return node.accept(fixComputer, pair);
     }
     Element receiverElement = TreeUtils.elementFromUse(receiver);
     if (Utility.elementHasRawType(receiverElement)) {
-      return Set.of(Objects.requireNonNull(buildFixForElement(calledMethod, pair)));
+      // Receiver is raw type, no fix can be suggested by this visitor.
+      return Set.of();
     }
     // Locate the declaration of the method.
     JCTree declaration = Utility.locateDeclaration(calledMethod, context);
@@ -100,10 +104,10 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
         return node.accept(fixComputer, pair);
       }
     }
-    FoundRequired f =
+    FoundRequired updatedFoundRequiredPair =
         computeRequiredTypeForReceiverMatchingTypeArguments(
             calledMethod, node, receiver, pair, calledMethod.getReturnType());
-    return receiver.accept(this, f);
+    return receiver.accept(this, updatedFoundRequiredPair);
   }
 
   private FoundRequired computeRequiredTypeForReceiverMatchingTypeArguments(
