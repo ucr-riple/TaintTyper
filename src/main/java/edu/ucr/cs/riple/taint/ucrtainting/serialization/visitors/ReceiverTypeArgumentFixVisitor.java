@@ -64,12 +64,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
     // Receiver is not parameterized and has type arguments, we need to update the required type
     // argument.
     FoundRequired updatedFoundRequiredPair =
-        computeRequiredTypeForReceiverMatchingTypeArguments(
-            (Symbol) TreeUtils.elementFromUse(node),
-            node,
-            node.getExpression(),
-            pair,
-            declarationType);
+        translateToReceiverRequiredPair(node, pair, declarationType);
     return node.getExpression().accept(this, updatedFoundRequiredPair);
   }
 
@@ -105,17 +100,14 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
       }
     }
     FoundRequired updatedFoundRequiredPair =
-        computeRequiredTypeForReceiverMatchingTypeArguments(
-            calledMethod, node, receiver, pair, calledMethod.getReturnType());
+        translateToReceiverRequiredPair(
+            node, pair, calledMethod.getReturnType());
     return receiver.accept(this, updatedFoundRequiredPair);
   }
 
-  private FoundRequired computeRequiredTypeForReceiverMatchingTypeArguments(
-      Symbol calledMethod,
-      ExpressionTree node,
-      ExpressionTree receiver,
-      FoundRequired pair,
-      Type typeOnDeclaration) {
+  private FoundRequired translateToReceiverRequiredPair(
+      ExpressionTree node, FoundRequired pair, Type typeOnDeclaration) {
+    ExpressionTree receiver = TreeUtils.getReceiverTree(node);
     AnnotatedTypeMirror expressionAnnotatedType = typeFactory.getAnnotatedType(node);
     AnnotatedTypeMirror receiverAnnotatedType = typeFactory.getAnnotatedType(receiver);
     if (!(receiverAnnotatedType instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)) {
@@ -168,8 +160,9 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
         Set<TypeIndex> lists = entry.getValue();
         int i = typeVariablesNameInReceiver.indexOf(typeVarName);
         if (i == -1) {
+          Symbol nodeSymbol = (Symbol) TreeUtils.elementFromTree(node);
           // A super class is providing that type argument
-          Type.ClassType ownerType = (Type.ClassType) calledMethod.owner.type;
+          Type.ClassType ownerType = (Type.ClassType) nodeSymbol.owner.type;
           Set<AnnotatedTypeMirror.AnnotatedDeclaredType> superTypes =
               AnnotatedTypes.getSuperTypes(receiverDeclaredType);
           AnnotatedTypeMirror.AnnotatedDeclaredType superTypeMirror =
