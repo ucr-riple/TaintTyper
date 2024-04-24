@@ -167,8 +167,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     // receiver and leave the called method untouched. Annotation on the declaration on the type
     // argument, will be added on the method automatically.
     if (isTypeVar && hasReceiver) {
-      Set<Fix> fixes =
-          node.accept(new ReceiverTypeArgumentFixVisitor(typeFactory, this, context), pair);
+      Set<Fix> fixes = node.accept(new TypeArgumentFixVisitor(typeFactory, this, context), pair);
       if (!fixes.isEmpty()) {
         return fixes;
       }

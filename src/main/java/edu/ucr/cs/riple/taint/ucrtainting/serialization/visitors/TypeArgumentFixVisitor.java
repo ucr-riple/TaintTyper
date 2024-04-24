@@ -26,9 +26,9 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.util.AnnotatedTypes;
 import org.checkerframework.javacutil.TreeUtils;
 
-public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
+public class TypeArgumentFixVisitor extends SpecializedFixComputer {
 
-  public ReceiverTypeArgumentFixVisitor(
+  public TypeArgumentFixVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
   }
@@ -100,8 +100,7 @@ public class ReceiverTypeArgumentFixVisitor extends SpecializedFixComputer {
       }
     }
     FoundRequired updatedFoundRequiredPair =
-        translateToReceiverRequiredPair(
-            node, pair, calledMethod.getReturnType());
+        translateToReceiverRequiredPair(node, pair, calledMethod.getReturnType());
     return receiver.accept(this, updatedFoundRequiredPair);
   }
 
