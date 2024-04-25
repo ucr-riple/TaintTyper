@@ -17,7 +17,8 @@ import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
+import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
 import java.util.Set;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -102,9 +103,9 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     // Locate method receiver.
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
     boolean isInAnnotatedPackage = !typeFactory.isUnannotatedMethod(calledMethod);
-    boolean isTypeVar = Utility.containsTypeArgument(calledMethod.getReturnType());
+    boolean isTypeVar = TypeUtils.containsTypeArgument(calledMethod.getReturnType());
     boolean hasReceiver =
-        !(calledMethod.isStatic() || receiver == null || Utility.isThisIdentifier(receiver));
+        !(calledMethod.isStatic() || receiver == null || SymbolUtils.isThisIdentifier(receiver));
     AnnotatedTypeMirror.AnnotatedExecutableType methodAnnotatedType =
         typeFactory.getAnnotatedType(calledMethod);
     boolean hasPolyTaintedAnnotation =
@@ -119,7 +120,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     }
     if (CollectionHandler.isToArrayWithTypeArgMethod(calledMethod, types)) {
       // update the type argument to match that.
-      Type type = Utility.getType(receiver);
+      Type type = TypeUtils.getType(receiver);
       Type current = type.tsym.type;
       int index = -1;
       while (current instanceof Type.ClassType) {

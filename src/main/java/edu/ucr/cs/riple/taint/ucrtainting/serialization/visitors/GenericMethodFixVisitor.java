@@ -9,8 +9,8 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,7 +68,7 @@ public class GenericMethodFixVisitor extends SpecializedFixComputer {
                   && !requiredClassType.tsym.type.getTypeArguments().isEmpty()) {
                 Set<Fix> onDeclaration =
                     computeFixesOnClassDeclarationForRawType(
-                        Utility.getType(TreeUtils.elementFromTree(arg)),
+                        TypeUtils.getType(TreeUtils.elementFromTree(arg)),
                         typeFactory,
                         newPair,
                         typeVar);

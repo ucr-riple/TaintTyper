@@ -9,7 +9,8 @@ import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
+import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
@@ -39,7 +40,7 @@ public class CollectionHandler extends AbstractHandler {
       return;
     }
     ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
-    if (receiver == null || Utility.isThisIdentifier(receiver)) {
+    if (receiver == null || SymbolUtils.isThisIdentifier(receiver)) {
       return;
     }
     if (!(((JCTree) receiver).type instanceof Type.ClassType)) {
@@ -56,7 +57,7 @@ public class CollectionHandler extends AbstractHandler {
     if (((Type.ClassType) collectionType).typarams_field.isEmpty()) {
       return;
     }
-    if (Utility.hasUntaintedAnnotation(((Type.ClassType) collectionType).typarams_field.get(0))) {
+    if (TypeUtils.hasUntaintedAnnotation(((Type.ClassType) collectionType).typarams_field.get(0))) {
       typeFactory.makeUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
     }
   }

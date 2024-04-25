@@ -5,7 +5,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.util.HashSet;
 import java.util.Set;
 import javax.lang.model.element.Element;
@@ -39,7 +39,7 @@ public class LambdaHandler extends AbstractHandler {
   public void visitLambdaExpression(
       LambdaExpressionTree node, AnnotatedTypeMirror annotatedTypeMirror) {
     typeFactory.makeUntainted(annotatedTypeMirror);
-    Symbol.MethodSymbol overriddenMethod = Utility.getFunctionalInterfaceMethod(node, types);
+    Symbol.MethodSymbol overriddenMethod = SymbolUtils.getFunctionalInterfaceMethod(node, types);
     if (overriddenMethod != null && typeFactory.isUnannotatedMethod(overriddenMethod)) {
       node.getParameters()
           .forEach(

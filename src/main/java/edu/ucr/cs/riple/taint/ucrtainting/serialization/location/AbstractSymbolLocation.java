@@ -2,7 +2,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
 import com.sun.tools.javac.code.Symbol;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Set;
@@ -27,7 +27,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   public AbstractSymbolLocation(LocationKind kind, Symbol target) {
     this.kind = kind;
     this.enclosingClass = target.enclClass();
-    this.path = Utility.getPathFromSymbol(target);
+    this.path = SymbolUtils.getPathFromSymbol(target);
     this.target = target;
     this.typeIndexSet = ON_TYPE;
   }

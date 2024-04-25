@@ -1,7 +1,5 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
-import static edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility.getType;
-
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MemberSelectTree;
@@ -14,7 +12,8 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
+import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +42,7 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitMemberSelect(MemberSelectTree node, FoundRequired pair) {
     JCTree declaration =
-        Utility.locateDeclaration((Symbol) TreeUtils.elementFromUse(node), context);
+        SymbolUtils.locateDeclaration((Symbol) TreeUtils.elementFromUse(node), context);
     if (declaration == null) {
       // If we cannot locate the declaration, we cannot suggest a fix on its type arguments.
       return Set.of();
@@ -52,20 +51,19 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
     if (declarationType == null && declaration instanceof JCTree.JCVariableDecl) {
       declarationType = ((JCTree.JCVariableDecl) declaration).vartype.type;
     }
-    Element receiverElement = TreeUtils.elementFromUse(node.getExpression());
-    if (Utility.isFullyParameterizedType(declarationType)) {
+    if (TypeUtils.isFullyParameterizedType(declarationType)) {
       // Element is fully parameterized, no need to update the required type argument, we should
       // directly fix the declaration.
       return node.accept(fixComputer, pair);
     }
-    if (Utility.elementHasRawType(receiverElement)) {
+    Element receiverElement = TreeUtils.elementFromUse(node.getExpression());
+    if (TypeUtils.elementHasRawType(receiverElement)) {
       // Receiver is raw type, no fix can be suggested by this visitor.
       return Set.of();
     }
     // Receiver is not parameterized and has type arguments, we need to update the required type
     // argument.
-    FoundRequired updatedFoundRequiredPair =
-        translateToReceiverRequiredPair(node, pair, declarationType);
+    FoundRequired updatedFoundRequiredPair = translateToReceiverRequiredPair(node, pair);
     if (updatedFoundRequiredPair == null) {
       return Set.of();
     }
@@ -87,24 +85,23 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
       return Set.of();
     }
     // If receiver is null or a simple identifier, we must fix the method declaration.
-    if (receiver == null || Utility.isThisIdentifier(receiver)) {
+    if (receiver == null || SymbolUtils.isThisIdentifier(receiver)) {
       return node.accept(fixComputer, pair);
     }
     Element receiverElement = TreeUtils.elementFromUse(receiver);
-    if (Utility.elementHasRawType(receiverElement)) {
+    if (TypeUtils.elementHasRawType(receiverElement)) {
       // Receiver is raw type, no fix can be suggested by this visitor.
       return Set.of();
     }
     // Locate the declaration of the method.
-    JCTree declaration = Utility.locateDeclaration(calledMethod, context);
+    JCTree declaration = SymbolUtils.locateDeclaration(calledMethod, context);
     if (declaration instanceof JCTree.JCMethodDecl) {
       Type returnType = ((JCTree.JCMethodDecl) declaration).restype.type;
-      if (Utility.isFullyParameterizedType(returnType)) {
+      if (TypeUtils.isFullyParameterizedType(returnType)) {
         return node.accept(fixComputer, pair);
       }
     }
-    FoundRequired updatedFoundRequiredPair =
-        translateToReceiverRequiredPair(node, pair, calledMethod.getReturnType());
+    FoundRequired updatedFoundRequiredPair = translateToReceiverRequiredPair(node, pair);
     if (updatedFoundRequiredPair == null) {
       return Set.of();
     }
@@ -116,12 +113,11 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
    *
    * @param expr The expression tree.
    * @param pair The required type of the expression.
-   * @param typeOnDeclaration The type on the declaration of the expression.
    * @return The required type of the receiver.
    */
   @Nullable
-  private FoundRequired translateToReceiverRequiredPair(
-      ExpressionTree expr, FoundRequired pair, Type typeOnDeclaration) {
+  private FoundRequired translateToReceiverRequiredPair(ExpressionTree expr, FoundRequired pair) {
+    Type formalDeclaredType = TypeUtils.getType(TreeUtils.elementFromTree(expr));
     ExpressionTree receiver = TreeUtils.getReceiverTree(expr);
     AnnotatedTypeMirror expressionAnnotatedType = typeFactory.getAnnotatedType(expr);
     AnnotatedTypeMirror receiverAnnotatedType = typeFactory.getAnnotatedType(receiver);
@@ -140,7 +136,7 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
       differences.forEach(
           typeIndex -> {
             TypeIndex copy = typeIndex.copy();
-            Type declaredType = typeOnDeclaration;
+            Type declaredType = formalDeclaredType;
             while (!copy.isEmpty()) {
               if (declaredType instanceof Type.TypeVar) {
                 String typeVarName = declaredType.tsym.name.toString();
@@ -159,9 +155,9 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
               }
             }
           });
-      Type receiverType = getType(receiver);
+      Type receiverType = TypeUtils.getType(receiver);
       List<String> typeVariablesNameInReceiver =
-          Utility.getTypeVariables(receiverType).stream()
+          TypeUtils.getTypeVariables(receiverType).stream()
               .map(t -> t.tsym.name.toString())
               .collect(Collectors.toList());
       List<AnnotatedTypeMirror> allTypeArguments =
@@ -194,7 +190,7 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
                 (Type.ClassType) superTypeMirror.getUnderlyingType();
             // Found the super type providing that type argument
             List<String> tvnames =
-                Utility.getTypeVariables(superTypeClassType).stream()
+                TypeUtils.getTypeVariables(superTypeClassType).stream()
                     .map(t -> t.tsym.name.toString())
                     .collect(Collectors.toList());
             List<AnnotatedTypeMirror> ata = new ArrayList<>(superTypeMirror.getTypeArguments());

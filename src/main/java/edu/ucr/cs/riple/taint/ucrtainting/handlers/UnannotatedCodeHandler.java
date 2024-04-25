@@ -9,7 +9,8 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
+import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
 import java.util.Objects;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -86,7 +87,7 @@ public class UnannotatedCodeHandler extends AbstractHandler {
     }
 
     // If already untainted, it should be acknowledged
-    if (Utility.hasUntaintedAnnotation(calledMethod.getReturnType())) {
+    if (TypeUtils.hasUntaintedAnnotation(calledMethod.getReturnType())) {
       return true;
     }
     if (!factory.isUnannotatedMethod(calledMethod)) {
@@ -98,7 +99,7 @@ public class UnannotatedCodeHandler extends AbstractHandler {
         receiver == null
             || calledMethod.isStatic()
             || factory.isPolyOrUntainted(receiver)
-            || Utility.isSuperIdentifier(receiver);
+            || SymbolUtils.isSuperIdentifier(receiver);
     if (!hasValidReceiver) {
       return false;
     }
@@ -145,11 +146,11 @@ public class UnannotatedCodeHandler extends AbstractHandler {
     } catch (Exception e) {
       return true;
     }
-    if (Utility.elementHasRawType(receiverElement)) {
+    if (TypeUtils.elementHasRawType(receiverElement)) {
       return true;
     }
-    return Utility.getType(receiverElement).tsym.type.getTypeArguments().stream()
-        .noneMatch(type -> Utility.containsTypeArgument(returnType, (Type.TypeVar) type));
+    return TypeUtils.getType(receiverElement).tsym.type.getTypeArguments().stream()
+        .noneMatch(type -> TypeUtils.containsTypeArgument(returnType, (Type.TypeVar) type));
   }
 
   /**

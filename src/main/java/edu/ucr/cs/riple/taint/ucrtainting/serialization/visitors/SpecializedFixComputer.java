@@ -10,9 +10,9 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -57,7 +57,7 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
     try {
       indices = typeMatchVisitor.visit(pair.found, pair.required, null);
     } catch (IndexOutOfBoundsException e) {
-      Type type = Utility.getType(element);
+      Type type = TypeUtils.getType(element);
       Symbol.ClassSymbol classType = (Symbol.ClassSymbol) type.tsym;
       Type.ClassType requiredType =
           (Type.ClassType) ((Type.ClassType) pair.required.getUnderlyingType()).tsym.type;
@@ -98,7 +98,7 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
             .filter(
                 integers ->
                     !typeFactory.hasUntaintedAnnotation(
-                        Utility.getAnnotatedTypeMirrorOfTypeArgumentAt(
+                        TypeUtils.getAnnotatedTypeMirrorOfTypeArgumentAt(
                             elementAnnotatedType, integers)))
             .collect(Collectors.toSet());
     location.setTypeIndexSet(indices);

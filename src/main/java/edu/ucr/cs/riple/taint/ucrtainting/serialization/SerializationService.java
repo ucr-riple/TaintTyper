@@ -24,6 +24,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.PolyTypeMatchVisitor;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisitor;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -154,14 +155,14 @@ public class SerializationService {
         }
         break;
       case "return":
-        MethodTree enclosingMethod = Utility.findEnclosingNode(path, MethodTree.class);
+        MethodTree enclosingMethod = SymbolUtils.findEnclosingNode(path, MethodTree.class);
         if (enclosingMethod == null) {
           return ImmutableSet.of();
         }
         toAnnotate = TreeUtils.elementFromDeclaration(enclosingMethod);
         break;
       case "argument":
-        List<? extends ExpressionTree> args = Utility.getCallableArguments(path.getLeaf());
+        List<? extends ExpressionTree> args = SymbolUtils.getCallableArguments(path.getLeaf());
         int index = -1;
         for (int i = 0; i < args.size(); i++) {
           if (args.get(i).equals(tree)) {
@@ -172,7 +173,7 @@ public class SerializationService {
         if (index == -1) {
           return ImmutableSet.of();
         }
-        toAnnotate = Utility.getCallableArgumentsSymbol(path.getLeaf()).get(index);
+        toAnnotate = SymbolUtils.getCallableArgumentsSymbol(path.getLeaf()).get(index);
         break;
       default:
         return ImmutableSet.of();
@@ -237,7 +238,7 @@ public class SerializationService {
     }
     Types types = Types.instance(context);
     Symbol.MethodSymbol overriddenMethod =
-        Utility.getClosestOverriddenMethod(overridingMethod, types);
+        SymbolUtils.getClosestOverriddenMethod(overridingMethod, types);
     if (overriddenMethod == null) {
       return ImmutableSet.of();
     }
@@ -274,7 +275,7 @@ public class SerializationService {
         ((UCRTaintingVisitor) checker.getVisitor())
             .getAnnotatedTypeOfOverriddenMethod(methodElement);
     Symbol.MethodSymbol overriddenMethod =
-        Utility.getClosestOverriddenMethod(overridingMethod, types);
+        SymbolUtils.getClosestOverriddenMethod(overridingMethod, types);
     if (overriddenType == null) {
       overriddenType = typeFactory.getAnnotatedType(overriddenMethod);
     }

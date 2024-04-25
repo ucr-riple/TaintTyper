@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.nio.file.Path;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -38,8 +39,8 @@ public class Error implements JSONSerializable {
     this.messageKey = messageKey;
     this.resolvingFixes =
         resolvingFixes == null ? ImmutableSet.of() : ImmutableSet.copyOf(resolvingFixes);
-    this.regionClass = Utility.findRegionClassSymbol(path);
-    this.regionSymbol = Utility.findRegionMemberSymbol(this.regionClass, path);
+    this.regionClass = SymbolUtils.findRegionClassSymbol(path);
+    this.regionSymbol = SymbolUtils.findRegionMemberSymbol(this.regionClass, path);
     this.offset = ((JCTree) path.getLeaf()).getStartPosition();
     this.path =
         Serializer.pathToSourceFileFromURI(path.getCompilationUnit().getSourceFile().toUri());

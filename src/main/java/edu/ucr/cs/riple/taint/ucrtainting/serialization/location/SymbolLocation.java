@@ -5,8 +5,8 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.nio.file.Path;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -41,7 +41,7 @@ public interface SymbolLocation {
         return onField;
       case LOCAL_VARIABLE:
       case RESOURCE_VARIABLE:
-        JCTree declarationTree = Utility.locateDeclaration(target, context);
+        JCTree declarationTree = SymbolUtils.locateDeclaration(target, context);
         LocalVariableLocation location = new LocalVariableLocation(target, declarationTree);
         // TODO: add support for making a local variable in a lambda static. For now let's skip.
         if (Serializer.serializeSymbol(location.enclosingMethod).equals("<clinit>")) {

@@ -15,10 +15,10 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
@@ -180,7 +180,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
         invocation -> {
           if (invocation.calledMethod.equals(methodSymbol)) {
             JCTree.JCMethodDecl decl =
-                (JCTree.JCMethodDecl) Utility.locateDeclaration(methodSymbol, context);
+                (JCTree.JCMethodDecl) SymbolUtils.locateDeclaration(methodSymbol, context);
             if (decl == null) {
               return;
             }

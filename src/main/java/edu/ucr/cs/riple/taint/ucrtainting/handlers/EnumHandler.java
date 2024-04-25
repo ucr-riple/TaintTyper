@@ -1,7 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
@@ -13,7 +13,7 @@ public class EnumHandler extends AbstractHandler {
 
   @Override
   public void addAnnotationsFromDefaultForType(Element element, AnnotatedTypeMirror type) {
-    if (Utility.isEnumConstant(element)) {
+    if (SymbolUtils.isEnumConstant(element)) {
       typeFactory.makeUntainted(type);
     }
   }

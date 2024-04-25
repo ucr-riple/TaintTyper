@@ -5,7 +5,7 @@ import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.code.Symbol;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,7 +37,7 @@ public class StaticFinalFieldHandler extends AbstractHandler {
       makeUntaintedCustom(type);
       return;
     }
-    if (Utility.isStaticAndFinalField(element)) {
+    if (SymbolUtils.isStaticAndFinalField(element)) {
       if (typeFactory.isUnannotatedField((Symbol.VarSymbol) element)) {
         makeUntaintedCustom(type);
       } else {
@@ -61,7 +61,7 @@ public class StaticFinalFieldHandler extends AbstractHandler {
       return;
     }
     // check if is final and static
-    if (Utility.isStaticAndFinalField(element)) {
+    if (SymbolUtils.isStaticAndFinalField(element)) {
       ExpressionTree initializer = tree.getInitializer();
       if (isUntaintedInitializer(initializer)) {
         staticFinalFields.add(element);

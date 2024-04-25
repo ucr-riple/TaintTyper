@@ -6,7 +6,7 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.util.List;
 import javax.lang.model.element.ElementKind;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -43,7 +43,7 @@ public class UCRTaintingTreeAnnotator extends TreeAnnotator {
       MethodInvocationTree node, AnnotatedTypeMirror annotatedTypeMirror) {
     // Make getClass() and this.getClass() untainted
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
-    boolean hasThisReceiver = receiver == null || Utility.isThisIdentifier(receiver);
+    boolean hasThisReceiver = receiver == null || SymbolUtils.isThisIdentifier(receiver);
     Symbol.MethodSymbol methodSymbol = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
     if (methodSymbol.getSimpleName().contentEquals("getClass") && hasThisReceiver) {
       typeFactory.makeUntainted(annotatedTypeMirror);

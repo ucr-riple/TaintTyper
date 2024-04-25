@@ -13,7 +13,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;
 import java.util.*;
@@ -252,7 +252,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     if (isUnAnnotatedPackage) {
       return true;
     }
-    Path path = Utility.getPathFromSymbol(symbol);
+    Path path = SymbolUtils.getPathFromSymbol(symbol);
     if (path == null) {
       return true;
     }

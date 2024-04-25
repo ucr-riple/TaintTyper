@@ -12,7 +12,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.util.HashSet;
 import java.util.Set;
 import javax.lang.model.element.Element;
@@ -64,7 +64,7 @@ public class BasicVisitor extends SpecializedFixComputer {
           for (VariableTree variableTree : lambdaExpressionTree.getParameters()) {
             if (varSymbol.getSimpleName().equals(variableTree.getName())) {
               Symbol.MethodSymbol methodSymbol =
-                  Utility.getFunctionalInterfaceMethod(
+                  SymbolUtils.getFunctionalInterfaceMethod(
                       lambdaExpressionTree, Types.instance(context));
               if (methodSymbol == null) {
                 return Set.of();
@@ -200,7 +200,7 @@ public class BasicVisitor extends SpecializedFixComputer {
       // no parameters, make untainted
       return Set.of(onMethod);
     }
-    JCTree decl = Utility.locateDeclaration(calledMethod, context);
+    JCTree decl = SymbolUtils.locateDeclaration(calledMethod, context);
     if (decl == null || decl.getKind() != Tree.Kind.METHOD) {
       return Set.of(onMethod);
     }

@@ -3,7 +3,7 @@ package edu.ucr.cs.riple.taint.ucrtainting;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RThis;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Utility;
+import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.util.Collections;
 import java.util.List;
 import javax.lang.model.type.TypeKind;
@@ -37,7 +37,7 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
     // Assume any receiver or argument involved in
     // a boolean method invocation to be validated
     if (aTypeFactory.enableValidationCheck) {
-      if (Utility.isMethodInvocationInIfConditional(methodInvocationNode.getTreePath())
+      if (SymbolUtils.isMethodInvocationInIfConditional(methodInvocationNode.getTreePath())
           && methodInvocationNode.getType().getKind() == TypeKind.BOOLEAN) {
         for (Node arg : methodInvocationNode.getArguments()) {
           makePossiblyValidated(result, arg, methodInvocationNode);
