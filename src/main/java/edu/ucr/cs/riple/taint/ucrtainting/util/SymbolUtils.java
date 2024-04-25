@@ -1,11 +1,9 @@
 package edu.ucr.cs.riple.taint.ucrtainting.util;
 
-import com.google.common.base.Preconditions;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.LambdaExpressionTree;
-import com.sun.source.tree.MemberReferenceTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.NewClassTree;
@@ -127,6 +125,12 @@ public class SymbolUtils {
     return (path == null) ? null : klass.cast(path.getLeaf());
   }
 
+  /**
+   * Given a TreePath, finds the first enclosing class node and returns the symbol for that class.
+   *
+   * @param path The path to the tree node.
+   * @return The symbol for the enclosing class node.
+   */
   @Nullable
   public static Symbol.ClassSymbol findRegionClassSymbol(TreePath path) {
     // If path is on a class, that class itself is the region class. Otherwise, use the enclosing
@@ -140,6 +144,14 @@ public class SymbolUtils {
         : null;
   }
 
+  /**
+   * Given a TreePath, finds the first enclosing region member of the given class and returns the
+   * symbol for that member.
+   *
+   * @param regionClass The class to which the region member belongs.
+   * @param path The path to the tree node.
+   * @return The symbol for the enclosing region member.
+   */
   @Nullable
   public static Symbol findRegionMemberSymbol(
       @Nullable Symbol.ClassSymbol regionClass, TreePath path) {
@@ -321,9 +333,19 @@ public class SymbolUtils {
     return Serializer.pathToSourceFileFromURI(pathInURI);
   }
 
-  public static Symbol.MethodSymbol getFunctionalInterfaceMethod(ExpressionTree tree, Types types) {
-    Preconditions.checkArgument(
-        (tree instanceof LambdaExpressionTree) || (tree instanceof MemberReferenceTree));
+  /**
+   * Retrieves the method symbol for the overridden method in the given lambda expression.
+   *
+   * @param tree the lambda expression tree
+   * @param types Javac types instance
+   * @return the method symbol for the overridden method in the given lambda expression
+   */
+  @Nullable
+  public static Symbol.MethodSymbol getFunctionalInterfaceMethod(
+      LambdaExpressionTree tree, Types types) {
+    if (tree == null) {
+      return null;
+    }
     Type funcInterfaceType = ((JCTree.JCFunctionalExpression) tree).type;
     return (Symbol.MethodSymbol) types.findDescriptorSymbol(funcInterfaceType.tsym);
   }

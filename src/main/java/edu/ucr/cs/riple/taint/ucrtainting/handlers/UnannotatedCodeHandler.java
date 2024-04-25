@@ -150,7 +150,7 @@ public class UnannotatedCodeHandler extends AbstractHandler {
       return true;
     }
     return TypeUtils.getType(receiverElement).tsym.type.getTypeArguments().stream()
-        .noneMatch(type -> TypeUtils.containsTypeArgument(returnType, (Type.TypeVar) type));
+        .noneMatch(type -> TypeUtils.containsTypeVariable(returnType, (Type.TypeVar) type));
   }
 
   /**

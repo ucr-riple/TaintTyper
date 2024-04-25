@@ -73,19 +73,20 @@ public class TypeUtils {
   }
 
   /**
-   * Checks if a type contains a typ argument. (e.g. {@code Foo<E>})
+   * Checks if a type is or contains a typ variable. (e.g. {@code Foo<E>}). This method will return
+   * false for {@code List<String>} but true for {@code List<E>}.
    *
    * @param type the type to check
-   * @return true if the type contains a typ argument, false otherwise
+   * @return true if the type contains a typ variable, false otherwise
    */
-  public static boolean containsTypeArgument(Type type) {
+  public static boolean containsTypeVariable(Type type) {
     if (type instanceof Type.TypeVar) {
       return true;
     }
     if (type instanceof Type.ClassType) {
       Type.ClassType classType = (Type.ClassType) type;
       for (Type t : classType.allparams()) {
-        if (containsTypeArgument(t)) {
+        if (containsTypeVariable(t)) {
           return true;
         }
       }
@@ -93,20 +94,27 @@ public class TypeUtils {
     return false;
   }
 
-  public static boolean containsTypeArgument(Type type, Type.TypeVar var) {
+  /**
+   * Checks if a type contains the given type variable.
+   *
+   * @param type the type to check
+   * @param var the type variable to check for
+   * @return true if the type contains the given type variable, false otherwise
+   */
+  public static boolean containsTypeVariable(Type type, Type.TypeVar var) {
     if (type instanceof Type.TypeVar) {
       return type.equals(var);
     }
     if (type instanceof Type.ClassType) {
       Type.ClassType classType = (Type.ClassType) type;
       for (Type t : classType.allparams()) {
-        if (containsTypeArgument(t, var)) {
+        if (containsTypeVariable(t, var)) {
           return true;
         }
       }
     }
     if (type instanceof Type.ArrayType) {
-      return containsTypeArgument(((Type.ArrayType) type).getComponentType(), var);
+      return containsTypeVariable(((Type.ArrayType) type).getComponentType(), var);
     }
     return false;
   }
@@ -166,7 +174,7 @@ public class TypeUtils {
 
   /**
    * Checks if the given type is a parameterized type. (e.g. {@code Foo<String>}, please note:
-   * {@code Bar<E>.Foo<String>} is not a fully parameterized type)
+   * {@code Bar<E>.Foo<String>} is not a fully parameterized type, E is not parameterized)
    *
    * @param type the type to check
    * @return true if the type is a parameterized type, false otherwise
@@ -179,7 +187,7 @@ public class TypeUtils {
     if (classType.getTypeArguments().isEmpty()) {
       return false;
     }
-    return !containsTypeArgument(type);
+    return !containsTypeVariable(type);
   }
 
   /**

@@ -103,7 +103,8 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     // Locate method receiver.
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
     boolean isInAnnotatedPackage = !typeFactory.isUnannotatedMethod(calledMethod);
-    boolean isTypeVar = TypeUtils.containsTypeArgument(calledMethod.getReturnType());
+    boolean declaredReturnTypeContainsTypeVariable =
+        TypeUtils.containsTypeVariable(calledMethod.getReturnType());
     boolean hasReceiver =
         !(calledMethod.isStatic() || receiver == null || SymbolUtils.isThisIdentifier(receiver));
     AnnotatedTypeMirror.AnnotatedExecutableType methodAnnotatedType =
@@ -111,7 +112,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     boolean hasPolyTaintedAnnotation =
         methodAnnotatedType != null
             && typeFactory.hasPolyTaintedAnnotation(methodAnnotatedType.getReturnType());
-    boolean methodHasTypeArgs = !calledMethod.getTypeParameters().isEmpty();
+    boolean isGenericMethod = !calledMethod.getTypeParameters().isEmpty();
     if (hasPolyTaintedAnnotation) {
       Set<Fix> polyFixes = node.accept(new PolyMethodVisitor(typeFactory, this, context), pair);
       if (!polyFixes.isEmpty()) {
@@ -158,7 +159,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
         return receiver.accept(this, FoundRequired.of(receiverType, required, pair.depth));
       }
     }
-    if (methodHasTypeArgs) {
+    if (isGenericMethod) {
       Set<Fix> fixes = node.accept(methodTypeArgumentFixVisitor, pair);
       if (!fixes.isEmpty()) {
         return fixes;
@@ -167,7 +168,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     // The method has a receiver, if the method contains a type argument, we should annotate the
     // receiver and leave the called method untouched. Annotation on the declaration on the type
     // argument, will be added on the method automatically.
-    if (isTypeVar && hasReceiver) {
+    if (declaredReturnTypeContainsTypeVariable && hasReceiver) {
       Set<Fix> fixes = node.accept(new TypeArgumentFixVisitor(typeFactory, this, context), pair);
       if (!fixes.isEmpty()) {
         return fixes;
