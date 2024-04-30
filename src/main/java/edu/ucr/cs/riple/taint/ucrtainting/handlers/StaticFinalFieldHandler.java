@@ -14,6 +14,7 @@ import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
+/** Handler for static final fields. This handler will make static final fields. */
 public class StaticFinalFieldHandler extends AbstractHandler {
 
   private final Set<Element> staticFinalFields;

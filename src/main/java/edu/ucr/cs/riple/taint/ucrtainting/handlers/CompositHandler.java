@@ -20,7 +20,7 @@ public class CompositHandler implements Handler {
     ImmutableSet.Builder<Handler> handlerBuilder = new ImmutableSet.Builder<>();
     handlerBuilder.add(new StaticFinalFieldHandler(typeFactory));
     handlerBuilder.add(new EnumHandler(typeFactory));
-    if (typeFactory.libraryCheckIsEnabled()) {
+    if (typeFactory.unannotatedCodeHandlingEnabled()) {
       handlerBuilder.add(new UnannotatedCodeHandler(typeFactory));
     }
     handlerBuilder.add(new CollectionHandler(typeFactory, context));

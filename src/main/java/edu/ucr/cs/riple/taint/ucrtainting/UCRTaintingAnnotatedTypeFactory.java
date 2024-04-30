@@ -51,10 +51,8 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
    * on the receiver. By default, such handling is disabled.
    */
   public final boolean enableSideEffect;
-  /**
-   * This option enables custom handling of third party code. By default, such handling is enabled.
-   */
-  public final boolean enableLibraryCheck;
+  /** This option enables unannotated code handling. By default, such handling is enabled. */
+  public final boolean enableUnannotatedCodeHandling;
   /**
    * This option enables inference of {@link RPolyTainted} annotations. By default, such inference
    * is disabled.
@@ -73,7 +71,8 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker, RPossiblyValidated.class, RUntainted.class, null);
-    enableLibraryCheck = checker.getBooleanOption(UCRTaintingChecker.ENABLE_LIBRARY_CHECKER, true);
+    enableUnannotatedCodeHandling =
+        checker.getBooleanOption(UCRTaintingChecker.ENABLE_LIBRARY_CHECKER, true);
     enablePolyTaintInference =
         checker.getBooleanOption(UCRTaintingChecker.ENABLE_POLY_TAINT_INFERENCE, true);
     enableTypeArgumentInference =
@@ -101,8 +100,8 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     print(
         "Configuration: Annotated Packages: "
             + listOfAnnotatedPackageNames
-            + ", Library: "
-            + enableLibraryCheck
+            + ", Unannotated Code Handling: "
+            + enableUnannotatedCodeHandling
             + ", Poly: "
             + enablePolyTaintInference
             + ", Type Argument: "
@@ -523,12 +522,12 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   }
 
   /**
-   * Checks if custom check is enabled.
+   * Checks if unannotated code handling is enabled.
    *
-   * @return True if custom check is enabled, false otherwise.
+   * @return True if unannotated code handling is enabled, false otherwise.
    */
-  public boolean libraryCheckIsEnabled() {
-    return enableLibraryCheck;
+  public boolean unannotatedCodeHandlingEnabled() {
+    return enableUnannotatedCodeHandling;
   }
 
   /**

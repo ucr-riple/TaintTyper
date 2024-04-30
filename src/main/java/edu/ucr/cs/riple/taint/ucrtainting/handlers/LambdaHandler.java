@@ -12,6 +12,10 @@ import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
+/**
+ * Handler for lambda expressions. Lambda expressions parameters are considered untainted if the
+ * overridden method is from unannotated code.
+ */
 public class LambdaHandler extends AbstractHandler {
 
   /**

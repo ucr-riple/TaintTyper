@@ -7,6 +7,11 @@ import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
+/**
+ * This handler is responsible for making the invocation of stub methods untainted if the invoked
+ * method is annotated as untainted. Note: not sure why this is necessary, as the annotations in the
+ * stubs should be enough to determine the taint of the method.
+ */
 public class SanitizerHandler extends AbstractHandler {
 
   public SanitizerHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {

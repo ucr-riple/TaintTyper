@@ -26,7 +26,7 @@ public class UnannotatedCodeFixVisitor extends SpecializedFixComputer {
   public UnannotatedCodeFixVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
-    this.activation = factory.libraryCheckIsEnabled();
+    this.activation = factory.unannotatedCodeHandlingEnabled();
   }
 
   public Set<Fix> visitMemberSelect(MemberSelectTree node, FoundRequired pair) {
