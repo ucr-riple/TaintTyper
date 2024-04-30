@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.type.TypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
 public class TypeUtils {
@@ -196,7 +197,7 @@ public class TypeUtils {
    * @param type the type to check.
    * @return true if the type has an untainted annotation, false otherwise.
    */
-  public static boolean hasUntaintedAnnotation(Type type) {
+  public static boolean hasUntaintedAnnotation(TypeMirror type) {
     if (type == null) {
       return false;
     }
@@ -221,7 +222,7 @@ public class TypeUtils {
    * @param type the type to check.
    * @return true if the type has a poly tainted annotation, false otherwise.
    */
-  public static boolean hasPolyTaintedAnnotation(Type type) {
+  public static boolean hasPolyTaintedAnnotation(TypeMirror type) {
     if (type == null) {
       return false;
     }
