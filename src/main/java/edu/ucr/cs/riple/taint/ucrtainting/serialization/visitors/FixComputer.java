@@ -119,7 +119,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
         return polyFixes;
       }
     }
-    if (CollectionHandler.isToArrayWithTypeArgMethod(calledMethod, types)) {
+    if (CollectionHandler.isGenericToArrayMethod(calledMethod, types)) {
       // update the type argument to match that.
       Type type = TypeUtils.getType(receiver);
       Type current = type.tsym.type;

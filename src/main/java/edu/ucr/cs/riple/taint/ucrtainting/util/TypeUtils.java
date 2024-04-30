@@ -214,4 +214,29 @@ public class TypeUtils {
     }
     return false;
   }
+
+  /**
+   * Checks if the passed type has a poly tainted annotation.
+   *
+   * @param type the type to check.
+   * @return true if the type has a poly tainted annotation, false otherwise.
+   */
+  public static boolean hasPolyTaintedAnnotation(Type type) {
+    if (type == null) {
+      return false;
+    }
+    if (type instanceof Type.ClassType) {
+      Type.ClassType classType = (Type.ClassType) type;
+      for (AnnotationMirror annotation : classType.getAnnotationMirrors()) {
+        if (annotation
+            .getAnnotationType()
+            .asElement()
+            .getSimpleName()
+            .contentEquals("RPolyTainted")) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
