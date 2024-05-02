@@ -22,7 +22,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   /** Set of type indexes */
   public Set<TypeIndex> typeIndexSet;
 
-  public static final Set<TypeIndex> ON_TYPE = TypeIndex.topLevelSet();
+  public static final Set<TypeIndex> ON_TYPE = TypeIndex.topLevel();
 
   public AbstractSymbolLocation(LocationKind kind, Symbol target) {
     this.kind = kind;

@@ -30,7 +30,7 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
 
   protected final FixComputer fixComputer;
 
-  protected final TypeMatchVisitor typeMatchVisitor;
+  protected final TypeMatchVisitor untaintedTypeMatchVisitor;
   protected final Context context;
 
   public SpecializedFixComputer(
@@ -38,7 +38,7 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
     this.context = context;
     this.typeFactory = typeFactory;
     this.fixComputer = fixComputer;
-    this.typeMatchVisitor = new TypeMatchVisitor(typeFactory);
+    this.untaintedTypeMatchVisitor = TypeMatchVisitor.createUntaintedMatcher(typeFactory);
   }
 
   /**
@@ -55,7 +55,7 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
     }
     Set<TypeIndex> indices;
     try {
-      indices = typeMatchVisitor.visit(pair.found, pair.required, null);
+      indices = untaintedTypeMatchVisitor.visit(pair.found, pair.required, null);
     } catch (IndexOutOfBoundsException e) {
       Type type = TypeUtils.getType(element);
       Symbol.ClassSymbol classType = (Symbol.ClassSymbol) type.tsym;
@@ -86,7 +86,7 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
           .ifPresent(
               annotatedDeclaredType -> {
                 classDeclarationLocation.setTypeIndexSet(
-                    typeMatchVisitor.visit(annotatedDeclaredType, pair.required, null));
+                    untaintedTypeMatchVisitor.visit(annotatedDeclaredType, pair.required, null));
               });
       return new Fix(classDeclarationLocation);
     }

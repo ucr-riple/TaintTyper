@@ -130,7 +130,8 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
     AnnotatedTypeMirror currentRequiredType = pair.required;
     while (currentExpressionAnnotatedType != null && currentRequiredType != null) {
       Set<TypeIndex> differences =
-          typeMatchVisitor.visit(currentExpressionAnnotatedType, currentRequiredType, null);
+          untaintedTypeMatchVisitor.visit(
+              currentExpressionAnnotatedType, currentRequiredType, null);
       // Based on the differences above, we need to find the required type of each type argument
       Map<String, Set<TypeIndex>> involvedTypeVariables = new HashMap<>();
       differences.forEach(

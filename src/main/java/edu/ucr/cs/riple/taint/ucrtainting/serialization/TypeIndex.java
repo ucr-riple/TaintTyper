@@ -47,7 +47,7 @@ public class TypeIndex {
     return set;
   }
 
-  public static Set<TypeIndex> topLevelSet() {
+  public static Set<TypeIndex> topLevel() {
     return setOf(TOP_LEVEL);
   }
 

@@ -5,6 +5,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.visitor.AbstractAtmComboVisitor;
 
@@ -14,11 +15,21 @@ import org.checkerframework.framework.type.visitor.AbstractAtmComboVisitor;
  */
 public class TypeMatchVisitor extends AbstractAtmComboVisitor<Set<TypeIndex>, Void> {
 
-  protected final UCRTaintingAnnotatedTypeFactory typeFactory;
+  private final Predicate<AnnotatedTypeMirror> predicate;
 
-  public TypeMatchVisitor(UCRTaintingAnnotatedTypeFactory typeFactory) {
+  public TypeMatchVisitor(Predicate<AnnotatedTypeMirror> predicate) {
     super();
-    this.typeFactory = typeFactory;
+    this.predicate = predicate;
+  }
+
+  public static TypeMatchVisitor createPolyTaintedMatcher(
+      UCRTaintingAnnotatedTypeFactory typeFactory) {
+    return new TypeMatchVisitor(typeFactory::hasPolyTaintedAnnotation);
+  }
+
+  public static TypeMatchVisitor createUntaintedMatcher(
+      UCRTaintingAnnotatedTypeFactory typeFactory) {
+    return new TypeMatchVisitor(typeFactory::hasUntaintedAnnotation);
   }
 
   @Override
@@ -43,10 +54,8 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<Set<TypeIndex>, Vo
 
   protected Set<TypeIndex> supportedDefault(
       AnnotatedTypeMirror found, AnnotatedTypeMirror required) {
-    if (!typeFactory.hasUntaintedAnnotation(found)
-        && typeFactory.hasUntaintedAnnotation(required)) {
-      // e.g. @Untainted int
-      return TypeIndex.topLevelSet();
+    if (!predicate.test(found) && predicate.test(required)) {
+      return TypeIndex.topLevel();
     }
     return Collections.emptySet();
   }
@@ -98,8 +107,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<Set<TypeIndex>, Vo
       Void unused) {
     Set<TypeIndex> result = new HashSet<>();
     // e.g. @Untainted String
-    if (!typeFactory.hasUntaintedAnnotation(found)
-        && typeFactory.hasUntaintedAnnotation(required)) {
+    if (!predicate.test(found) && predicate.test(required)) {
       result.add(TypeIndex.TOP_LEVEL);
     }
     for (int i = 0; i < required.getTypeArguments().size(); i++) {

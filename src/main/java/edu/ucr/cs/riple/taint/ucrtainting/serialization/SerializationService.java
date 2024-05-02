@@ -22,7 +22,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameter
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.PolyTypeMatchVisitor;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisitor;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.util.HashSet;
@@ -49,7 +48,7 @@ public class SerializationService {
   private final Context context;
 
   private final FixComputer fixComputer;
-  private final TypeMatchVisitor typeMatchVisitor;
+  private final TypeMatchVisitor untaintedTypeMatchVisitor;
   private final TypeMatchVisitor polyTypeMatchVisitor;
   private final Types types;
 
@@ -59,8 +58,8 @@ public class SerializationService {
     this.typeFactory = (UCRTaintingAnnotatedTypeFactory) checker.getTypeFactory();
     this.context = ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext();
     this.types = Types.instance(context);
-    this.typeMatchVisitor = new TypeMatchVisitor(typeFactory);
-    this.polyTypeMatchVisitor = new PolyTypeMatchVisitor(typeFactory);
+    this.untaintedTypeMatchVisitor = TypeMatchVisitor.createUntaintedMatcher(typeFactory);
+    this.polyTypeMatchVisitor = TypeMatchVisitor.createPolyTaintedMatcher(typeFactory);
     this.fixComputer = new FixComputer(typeFactory, types, context);
   }
 
@@ -181,7 +180,7 @@ public class SerializationService {
     if (toAnnotate == null) {
       return ImmutableSet.of();
     }
-    TypeMatchVisitor visitor = new TypeMatchVisitor(typeFactory);
+    TypeMatchVisitor visitor = TypeMatchVisitor.createUntaintedMatcher(typeFactory);
     Set<TypeIndex> differences;
     try {
       // todo: for now we ignore the possible exceptions thrown by the visitor.
@@ -203,7 +202,7 @@ public class SerializationService {
   }
 
   private FoundRequired updateFoundRequiredPairEnhancedForLoopError(Tree tree, FoundRequired pair) {
-    Set<TypeIndex> differences = typeMatchVisitor.visit(pair.found, pair.required, null);
+    Set<TypeIndex> differences = untaintedTypeMatchVisitor.visit(pair.found, pair.required, null);
     if (differences.isEmpty()) {
       return null;
     }
@@ -246,11 +245,11 @@ public class SerializationService {
     Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
     SymbolLocation location = SymbolLocation.createLocationFromSymbol(toBeAnnotated, context);
     if (location != null) {
-      Set<TypeIndex> differences = typeMatchVisitor.visit(pair.found, pair.required, null);
+      Set<TypeIndex> differences = untaintedTypeMatchVisitor.visit(pair.found, pair.required, null);
       if (differences.isEmpty()) {
         return ImmutableSet.of();
       }
-      location.setTypeIndexSet(typeMatchVisitor.visit(pair.found, pair.required, null));
+      location.setTypeIndexSet(untaintedTypeMatchVisitor.visit(pair.found, pair.required, null));
     }
     return ImmutableSet.of(new Fix(location));
   }
@@ -283,7 +282,7 @@ public class SerializationService {
     AnnotatedTypeMirror overridingReturnType =
         typeFactory.getAnnotatedType(overridingMethod).getReturnType();
     Set<TypeIndex> differences =
-        typeMatchVisitor.visit(overriddenReturnType, overridingReturnType, null);
+        untaintedTypeMatchVisitor.visit(overriddenReturnType, overridingReturnType, null);
     if (!differences.isEmpty()) {
       SymbolLocation location = SymbolLocation.createLocationFromSymbol(overriddenMethod, context);
       if (location == null) {
@@ -292,7 +291,7 @@ public class SerializationService {
       location.setTypeIndexSet(differences);
       ans.add(new Fix(location));
     }
-    differences = typeMatchVisitor.visit(overridingReturnType, overriddenReturnType, null);
+    differences = untaintedTypeMatchVisitor.visit(overridingReturnType, overriddenReturnType, null);
     if (!differences.isEmpty()) {
       SymbolLocation location = SymbolLocation.createLocationFromSymbol(overridingMethod, context);
       if (location == null) {
