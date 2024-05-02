@@ -12,7 +12,7 @@ public class FieldLocation extends AbstractSymbolLocation {
 
   public FieldLocation(Symbol target) {
     super(LocationKind.FIELD, target);
-    variableSymbol = (Symbol.VarSymbol) target;
+    this.variableSymbol = (Symbol.VarSymbol) target;
   }
 
   @Override

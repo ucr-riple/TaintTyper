@@ -1,8 +1,0 @@
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted;
-
-package java.lang;
-
-public final class Class<T>{
-
-    public @RPolyTainted T cast(@RPolyTainted Object obj);
-}

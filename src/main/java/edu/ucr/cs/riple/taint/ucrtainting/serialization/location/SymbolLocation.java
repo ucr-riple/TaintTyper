@@ -1,8 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.location;
 
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
@@ -10,29 +8,36 @@ import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.nio.file.Path;
 import java.util.Set;
 import javax.annotation.Nullable;
+import javax.lang.model.element.Modifier;
 
 /** Provides method for symbol locations. */
 public interface SymbolLocation {
-
-  @Nullable
-  SymbolLocation instance(Symbol target, Context context);
 
   /**
    * returns the appropriate subtype of {@link SymbolLocation} based on the target kind.
    *
    * @param target Target element.
-   * @param context Context instance.
    * @return subtype of {@link SymbolLocation} matching target's type.
    */
   @Nullable
-  static SymbolLocation createLocationFromSymbol(@Nullable Symbol target, Context context) {
+  static SymbolLocation createLocationFromSymbol(@Nullable Symbol target) {
     if (target == null) {
       return null;
     }
+    Symbol.MethodSymbol enclosingMethod = SymbolUtils.findEnclosingMethod(target);
     switch (target.getKind()) {
       case PARAMETER:
-        MethodParameterLocation methodParameterLocation = new MethodParameterLocation(target);
-        return methodParameterLocation.index == -1 ? null : methodParameterLocation;
+        if (enclosingMethod == null || isMainMethod(enclosingMethod)) {
+          return null;
+        }
+        // check if the enclosing method has parameter with the given symbol name, otherwise, the
+        // parameter is inside a lambda
+        boolean hasArgumentWithTargetName =
+            enclosingMethod.getParameters().stream()
+                .anyMatch(param -> param.name.equals(target.name));
+        return hasArgumentWithTargetName
+            ? new MethodParameterLocation(target, enclosingMethod)
+            : null;
       case METHOD:
         return new MethodLocation(target);
       case FIELD:
@@ -44,13 +49,10 @@ public interface SymbolLocation {
         return onField;
       case LOCAL_VARIABLE:
       case RESOURCE_VARIABLE:
-        JCTree declarationTree = SymbolUtils.locateDeclaration(target, context);
-        LocalVariableLocation location = new LocalVariableLocation(target, declarationTree);
-        // TODO: add support for making a local variable in a lambda static. For now let's skip.
-        if (Serializer.serializeSymbol(location.enclosingMethod).equals("<clinit>")) {
+        if (Serializer.serializeSymbol(enclosingMethod).equals("<clinit>")) {
           return null;
         }
-        return location;
+        return new LocalVariableLocation(target, enclosingMethod);
       case EXCEPTION_PARAMETER:
         // currently not supported / desired.
         return null;
@@ -58,6 +60,38 @@ public interface SymbolLocation {
         throw new IllegalArgumentException(
             "Cannot locate node: " + target + ", kind: " + target.getKind());
     }
+  }
+
+  /**
+   * Checks if the given method symbol is {@code public static void main(String[])} method.
+   *
+   * @param enclosingMethod The method symbol to check.
+   * @return {@code true} if the given method symbol is {@code public static void main(String[])}
+   *     method.
+   */
+  private static boolean isMainMethod(Symbol.MethodSymbol enclosingMethod) {
+    // check if method is public
+    if (!enclosingMethod.getModifiers().contains(Modifier.PUBLIC)) {
+      return false;
+    }
+    // check if method is static
+    if (!enclosingMethod.isStatic()) {
+      return false;
+    }
+    // check if return type is void
+    if (!enclosingMethod.getReturnType().toString().equals("void")) {
+      return false;
+    }
+    // check if method name is main
+    if (!enclosingMethod.getSimpleName().toString().equals("main")) {
+      return false;
+    }
+    // check if method has a single parameter
+    if (enclosingMethod.getParameters().size() != 1) {
+      return false;
+    }
+    // check if the parameter is of type String[]
+    return enclosingMethod.getParameters().get(0).asType().toString().equals("java.lang.String[]");
   }
 
   /**

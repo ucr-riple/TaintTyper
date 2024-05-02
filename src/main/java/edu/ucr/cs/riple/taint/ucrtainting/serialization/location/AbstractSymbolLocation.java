@@ -31,7 +31,8 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
 
   @Override
   public void setTypeIndexSet(@Nullable Set<TypeIndex> typeIndexSet) {
-    this.typeIndexSet = (typeIndexSet == null || typeIndexSet.isEmpty()) ? TypeIndex.topLevel() : typeIndexSet;
+    this.typeIndexSet =
+        (typeIndexSet == null || typeIndexSet.isEmpty()) ? TypeIndex.topLevel() : typeIndexSet;
   }
 
   @Override

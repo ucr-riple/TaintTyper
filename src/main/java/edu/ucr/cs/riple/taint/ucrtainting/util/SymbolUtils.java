@@ -209,6 +209,24 @@ public class SymbolUtils {
   }
 
   /**
+   * Given a symbol, finds the enclosing method symbol.
+   *
+   * @param symbol Given symbol
+   * @return Enclosing method symbol
+   */
+  @Nullable
+  public static Symbol.MethodSymbol findEnclosingMethod(Symbol symbol) {
+    Symbol cursor = symbol;
+    // Look for the enclosing method.
+    while (cursor != null
+        && cursor.getKind() != ElementKind.CONSTRUCTOR
+        && cursor.getKind() != ElementKind.METHOD) {
+      cursor = cursor.owner;
+    }
+    return cursor instanceof Symbol.MethodSymbol ? (Symbol.MethodSymbol) cursor : null;
+  }
+
+  /**
    * Returns true if the passed tree is the {@code this} identifier.
    *
    * @param tree Tree to check.

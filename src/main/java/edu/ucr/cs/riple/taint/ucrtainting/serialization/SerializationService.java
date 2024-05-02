@@ -91,7 +91,7 @@ public class SerializationService {
     if (!typeFactory.typeArgumentInferenceEnabled()) {
       boolean inferredOnTypeArg =
           resolvingFixes.stream()
-              .anyMatch(fix -> !fix.location.getTypeIndexSet().equals(List.of(List.of(0))));
+              .anyMatch(fix -> !fix.location.getTypeIndexSet().equals(TypeIndex.topLevel()));
       if (inferredOnTypeArg) {
         resolvingFixes = ImmutableSet.of();
       }
@@ -195,8 +195,7 @@ public class SerializationService {
     if (differences.isEmpty()) {
       return ImmutableSet.of();
     }
-    Fix fixOnLeftHandSide =
-        new Fix(SymbolLocation.createLocationFromSymbol((Symbol) toAnnotate, context));
+    Fix fixOnLeftHandSide = new Fix(SymbolLocation.createLocationFromSymbol((Symbol) toAnnotate));
     fixOnLeftHandSide.location.setTypeIndexSet(differences);
     return ImmutableSet.of(fixOnLeftHandSide);
   }
@@ -243,7 +242,7 @@ public class SerializationService {
     }
     int paramIndex = overridingMethod.getParameters().indexOf((Symbol.VarSymbol) treeElement);
     Symbol toBeAnnotated = overriddenMethod.getParameters().get(paramIndex);
-    SymbolLocation location = SymbolLocation.createLocationFromSymbol(toBeAnnotated, context);
+    SymbolLocation location = SymbolLocation.createLocationFromSymbol(toBeAnnotated);
     if (location != null) {
       Set<TypeIndex> differences = untaintedTypeMatchVisitor.visit(pair.found, pair.required, null);
       if (differences.isEmpty()) {
@@ -284,7 +283,7 @@ public class SerializationService {
     Set<TypeIndex> differences =
         untaintedTypeMatchVisitor.visit(overriddenReturnType, overridingReturnType, null);
     if (!differences.isEmpty()) {
-      SymbolLocation location = SymbolLocation.createLocationFromSymbol(overriddenMethod, context);
+      SymbolLocation location = SymbolLocation.createLocationFromSymbol(overriddenMethod);
       if (location == null) {
         return ImmutableSet.of();
       }
@@ -293,7 +292,7 @@ public class SerializationService {
     }
     differences = untaintedTypeMatchVisitor.visit(overridingReturnType, overriddenReturnType, null);
     if (!differences.isEmpty()) {
-      SymbolLocation location = SymbolLocation.createLocationFromSymbol(overridingMethod, context);
+      SymbolLocation location = SymbolLocation.createLocationFromSymbol(overridingMethod);
       if (location == null) {
         return ImmutableSet.of();
       }
@@ -305,7 +304,7 @@ public class SerializationService {
       if (!onPoly.isEmpty()) {
         Set<MethodParameterLocation> methodParameterLocations = new HashSet<>();
         MethodLocation location =
-            (MethodLocation) SymbolLocation.createLocationFromSymbol(overridingMethod, context);
+            (MethodLocation) SymbolLocation.createLocationFromSymbol(overridingMethod);
         if (location == null) {
           return ImmutableSet.of();
         }
@@ -323,7 +322,7 @@ public class SerializationService {
             MethodParameterLocation methodParameterLocation =
                 (MethodParameterLocation)
                     SymbolLocation.createLocationFromSymbol(
-                        overridingMethod.getParameters().get(i), context);
+                        overridingMethod.getParameters().get(i));
             if (methodParameterLocation == null) {
               continue;
             }

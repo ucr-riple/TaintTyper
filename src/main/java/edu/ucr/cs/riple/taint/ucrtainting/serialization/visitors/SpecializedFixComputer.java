@@ -118,6 +118,6 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
     if (element == null) {
       return null;
     }
-    return SymbolLocation.createLocationFromSymbol((Symbol) element, context);
+    return SymbolLocation.createLocationFromSymbol((Symbol) element);
   }
 }
