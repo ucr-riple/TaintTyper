@@ -13,19 +13,13 @@ import org.checkerframework.javacutil.TreeUtils;
 
 public class PolyMethodVisitor extends SpecializedFixComputer {
 
-  private final boolean activation;
-
   public PolyMethodVisitor(
       UCRTaintingAnnotatedTypeFactory typeFactory, FixComputer fixComputer, Context context) {
     super(typeFactory, fixComputer, context);
-    this.activation = typeFactory.polyTaintInferenceEnabled();
   }
 
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
-    if (!activation) {
-      return Set.of();
-    }
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(node);
     AnnotatedTypeMirror returnTypeCopy =
         typeFactory.getAnnotatedType(calledMethod).getReturnType().deepCopy(true);

@@ -14,6 +14,9 @@ import javax.annotation.Nullable;
 /** Provides method for symbol locations. */
 public interface SymbolLocation {
 
+  @Nullable
+  SymbolLocation instance(Symbol target, Context context);
+
   /**
    * returns the appropriate subtype of {@link SymbolLocation} based on the target kind.
    *

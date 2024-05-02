@@ -22,19 +22,16 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   /** Set of type indexes */
   public Set<TypeIndex> typeIndexSet;
 
-  public static final Set<TypeIndex> ON_TYPE = TypeIndex.topLevel();
-
   public AbstractSymbolLocation(LocationKind kind, Symbol target) {
     this.kind = kind;
     this.enclosingClass = target.enclClass();
     this.path = SymbolUtils.getPathFromSymbol(target);
     this.target = target;
-    this.typeIndexSet = ON_TYPE;
   }
 
   @Override
   public void setTypeIndexSet(@Nullable Set<TypeIndex> typeIndexSet) {
-    this.typeIndexSet = (typeIndexSet == null || typeIndexSet.isEmpty()) ? ON_TYPE : typeIndexSet;
+    this.typeIndexSet = (typeIndexSet == null || typeIndexSet.isEmpty()) ? TypeIndex.topLevel() : typeIndexSet;
   }
 
   @Override
