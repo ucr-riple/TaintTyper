@@ -17,7 +17,7 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<Set<TypeIndex>, Vo
 
   private final Predicate<AnnotatedTypeMirror> predicate;
 
-  public TypeMatchVisitor(Predicate<AnnotatedTypeMirror> predicate) {
+  private TypeMatchVisitor(Predicate<AnnotatedTypeMirror> predicate) {
     super();
     this.predicate = predicate;
   }
