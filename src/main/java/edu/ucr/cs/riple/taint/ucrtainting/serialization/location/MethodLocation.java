@@ -4,7 +4,7 @@ import com.sun.tools.javac.code.Symbol;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationVisitor;
 import java.util.Objects;
 
-/** subtype of {@link AbstractSymbolLocation} targeting methods. */
+/** subtype of {@link AbstractSymbolLocation} targeting methods declarations */
 public class MethodLocation extends AbstractSymbolLocation {
 
   /** Symbol of the targeted method. */
