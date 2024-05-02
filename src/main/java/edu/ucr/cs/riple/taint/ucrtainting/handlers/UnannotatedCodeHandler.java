@@ -39,20 +39,17 @@ public class UnannotatedCodeHandler extends AbstractHandler {
       // if not field and is an invocation, we should handle it in visitMethodInvocation call.
       return;
     }
-    if (tree instanceof JCTree.JCFieldAccess) {
-      ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
-      if (receiver == null) {
-        return;
-      }
-      Symbol symbol = (Symbol) TreeUtils.elementFromUse(receiver);
-      String packageName = symbol.type.tsym.packge().toString();
-      if (packageName.equals("unnamed package")) {
-        packageName = "";
-      }
-      if (typeFactory.isUnAnnotatedPackageName(packageName)
-          && (ElementUtils.isStatic(selected) || (!typeFactory.mayBeTainted(receiver)))) {
-        typeFactory.makeUntainted(type);
-      }
+    Symbol.VarSymbol field = (Symbol.VarSymbol) selected;
+    if (!typeFactory.isUnannotatedField(field)) {
+      return;
+    }
+    if (ElementUtils.isStatic(field)) {
+      typeFactory.makeUntainted(type);
+      return;
+    }
+    ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
+    if (receiver != null && !typeFactory.mayBeTainted(receiver)) {
+      typeFactory.makeUntainted(type);
     }
   }
 

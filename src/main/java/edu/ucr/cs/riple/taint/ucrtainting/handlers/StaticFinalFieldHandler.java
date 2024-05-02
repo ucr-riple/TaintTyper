@@ -14,12 +14,24 @@ import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
-/** Handler for static final fields. This handler will make static final fields. */
+/**
+ * Handler for static final fields. This handler will make static final fields with an untainted
+ * initializer, untainted
+ */
 public class StaticFinalFieldHandler extends AbstractHandler {
 
+  /**
+   * Set of static final fields that are visited previously by this handler. Fields added to this
+   * set will be considered as untainted.
+   */
   private final Set<Element> staticFinalFields;
+  /**
+   * Map of visited initializers. The key is the initializer expression and the value is the state
+   * of the initializer.
+   */
   private final Map<ExpressionTree, InitializerState> visitedInitializers;
 
+  /** Enum to represent the state of the initializer. */
   enum InitializerState {
     UNKNOWN,
     UNTAINTED,
@@ -71,6 +83,12 @@ public class StaticFinalFieldHandler extends AbstractHandler {
     }
   }
 
+  /**
+   * Check if the initializer expression is untainted.
+   *
+   * @param initializer the initializer expression.
+   * @return true if the initializer is untainted.
+   */
   private boolean isUntaintedInitializer(ExpressionTree initializer) {
     if (visitedInitializers.containsKey(initializer)
         && visitedInitializers.get(initializer) == InitializerState.UNKNOWN) {
@@ -93,6 +111,11 @@ public class StaticFinalFieldHandler extends AbstractHandler {
     return isUntaintedInitializer;
   }
 
+  /**
+   * Make the type untainted. If the type is an array, the component type will also be untainted.
+   *
+   * @param type the type to make untainted.
+   */
   private void makeUntaintedCustom(AnnotatedTypeMirror type) {
     typeFactory.makeUntainted(type);
     if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
