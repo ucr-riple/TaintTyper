@@ -38,7 +38,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
 
   protected final Types types;
   protected final Context context;
-  protected final BasicVisitor basicVisitor;
+  protected final DefaultTypeChangeVisitor defaultTypeChangeVisitor;
   protected final SpecializedFixComputer thirdPartyFixVisitor;
   protected final SpecializedFixComputer methodTypeArgumentFixVisitor;
 
@@ -46,14 +46,14 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     this.typeFactory = factory;
     this.context = context;
     this.types = types;
-    this.basicVisitor = new BasicVisitor(factory, this, context);
+    this.defaultTypeChangeVisitor = new DefaultTypeChangeVisitor(factory, this, context);
     this.thirdPartyFixVisitor = new UnannotatedCodeFixVisitor(typeFactory, this, context);
     this.methodTypeArgumentFixVisitor = new GenericMethodFixVisitor(typeFactory, this, context);
   }
 
   @Override
   public Set<Fix> defaultAction(Tree node, FoundRequired pair) {
-    return node.accept(basicVisitor, pair);
+    return node.accept(defaultTypeChangeVisitor, pair);
   }
 
   @Override
@@ -176,7 +176,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     }
     // check if the call is to a method defined in a third party library. If the method has a type
     // var return type and has a receiver, we should annotate the receiver.
-    if (!isInAnnotatedPackage && basicVisitor.requireFix(pair)) {
+    if (!isInAnnotatedPackage && defaultTypeChangeVisitor.requireFix(pair)) {
       return node.accept(thirdPartyFixVisitor, pair);
     }
     // The method has a receiver, if the method contains a type argument, we should annotate the
@@ -186,6 +186,6 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   }
 
   public void reset(TreePath currentPath) {
-    basicVisitor.reset(currentPath);
+    defaultTypeChangeVisitor.reset(currentPath);
   }
 }

@@ -20,6 +20,7 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   /** Target symbol. */
   public final Symbol target;
   /** Set of type indexes */
+  // todo: make this field final
   public Set<TypeIndex> typeIndexSet;
 
   public AbstractSymbolLocation(LocationKind kind, Symbol target) {

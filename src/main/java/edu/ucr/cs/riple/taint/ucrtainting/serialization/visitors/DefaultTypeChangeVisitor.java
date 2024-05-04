@@ -14,19 +14,23 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Name;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 /** This visitor directly annotates the element declaration to match the required type. */
-public class BasicVisitor extends SpecializedFixComputer {
+public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
 
   protected final MethodReturnVisitor returnVisitor;
   protected TreePath currentPath;
   protected final Types types;
 
-  public BasicVisitor(
+  public DefaultTypeChangeVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
     this.returnVisitor = new MethodReturnVisitor(typeFactory, fixComputer, context);
@@ -39,46 +43,39 @@ public class BasicVisitor extends SpecializedFixComputer {
     if (requireFix(pair)) {
       Fix fix = buildFixForElement(element, pair);
       if (fix == null) {
-        // TODO Hacky , fix later.
-        // Check if the created method has the parameter with the same name as the identifier.
-        // We might be inside a lambda expression, so we need to check the parameters of the method
+        // if fix is null, it might be possible that the target is a parameter in a lambda
+        // expression.
         if (!(element instanceof Symbol.VarSymbol)) {
           return Set.of();
         }
         Symbol.VarSymbol varSymbol = (Symbol.VarSymbol) element;
-        currentPath = TreePath.getPath(currentPath, node);
-        while (currentPath != null
-            && !currentPath.getLeaf().getKind().equals(Tree.Kind.LAMBDA_EXPRESSION)
-            && !currentPath.getLeaf().getKind().equals(Tree.Kind.METHOD)) {
-          currentPath = currentPath.getParentPath();
-          if (currentPath == null || currentPath.getLeaf() == null) {
-            return Set.of();
-          }
-        }
-        if (currentPath == null) {
+        if (!varSymbol.getKind().equals(ElementKind.PARAMETER)) {
           return Set.of();
         }
-        if (currentPath.getLeaf().getKind().equals(Tree.Kind.LAMBDA_EXPRESSION)) {
-          LambdaExpressionTree lambdaExpressionTree = (LambdaExpressionTree) currentPath.getLeaf();
-          int index = 0;
-          for (VariableTree variableTree : lambdaExpressionTree.getParameters()) {
-            if (varSymbol.getSimpleName().equals(variableTree.getName())) {
-              Symbol.MethodSymbol methodSymbol =
-                  SymbolUtils.getFunctionalInterfaceMethod(
-                      lambdaExpressionTree, Types.instance(context));
-              if (methodSymbol == null) {
-                return Set.of();
-              }
-              if (index >= methodSymbol.getParameters().size()) {
-                return Set.of();
-              }
-              Fix onSuperMethodParameter =
-                  buildFixForElement(methodSymbol.getParameters().get(index), pair);
-              return onSuperMethodParameter == null ? Set.of() : Set.of(onSuperMethodParameter);
-            }
-            index++;
-          }
+        // Target is a parameter, we have to locate the overridden method and the parameter index.
+        // update path to the current path
+        currentPath = TreePath.getPath(currentPath, node);
+        LambdaExpressionTree lambdaExpressionTree =
+            SymbolUtils.findEnclosingNode(currentPath, LambdaExpressionTree.class);
+        if (lambdaExpressionTree == null) {
+          return Set.of();
         }
+        Symbol.MethodSymbol overriddenMethod =
+            SymbolUtils.getFunctionalInterfaceMethod(lambdaExpressionTree, types);
+        if (overriddenMethod == null) {
+          return Set.of();
+        }
+        List<Name> parameterNames =
+            lambdaExpressionTree.getParameters().stream()
+                .map(VariableTree::getName)
+                .collect(Collectors.toList());
+        int index = parameterNames.indexOf(varSymbol.getSimpleName());
+        if (index == -1) {
+          return Set.of();
+        }
+        Fix onSuperMethodParameter =
+            buildFixForElement(overriddenMethod.getParameters().get(index), pair);
+        return onSuperMethodParameter == null ? Set.of() : Set.of(onSuperMethodParameter);
       } else {
         // check if node is of type Class<?>
         if (((Symbol.VarSymbol) element)
@@ -87,7 +84,7 @@ public class BasicVisitor extends SpecializedFixComputer {
             .getQualifiedName()
             .toString()
             .equals("java.lang.Class")) {
-          // We cannot annotate Class<?> as @Untainted or as Class<@RUntainted ?>
+          // We cannot annotate Class<?> as Class<@RUntainted ?>
           if (fix.location.getTypeIndexSet().equals(TypeIndex.setOf(1, 0))) {
             return Set.of();
           }

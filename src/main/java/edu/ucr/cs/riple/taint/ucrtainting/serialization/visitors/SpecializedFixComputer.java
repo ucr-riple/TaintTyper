@@ -29,7 +29,6 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
   protected final UCRTaintingAnnotatedTypeFactory typeFactory;
 
   protected final FixComputer fixComputer;
-
   protected final TypeMatchVisitor untaintedTypeMatchVisitor;
   protected final Context context;
 
