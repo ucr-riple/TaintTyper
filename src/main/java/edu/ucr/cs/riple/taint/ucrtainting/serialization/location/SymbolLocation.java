@@ -10,7 +10,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.lang.model.element.Modifier;
 
-/** Provides method for symbol locations. */
+/** Interface for all symbol locations */
 public interface SymbolLocation {
 
   /**
@@ -105,13 +105,38 @@ public interface SymbolLocation {
    */
   <R, P> R accept(LocationVisitor<R, P> v, P p);
 
+  /**
+   * Sets the type index set for this location.
+   *
+   * @param typeVariables The set of type indexes to set.
+   */
   void setTypeIndexSet(Set<TypeIndex> typeVariables);
 
+  /**
+   * Gets the kind of this location.
+   *
+   * @return The kind of this location.
+   */
   LocationKind getKind();
 
+  /**
+   * Returns the target symbol for the location.
+   *
+   * @return The target symbol for the location.
+   */
   Symbol getTarget();
 
+  /**
+   * Returns the path to source file where the symbol is located.
+   *
+   * @return The path to source file where the symbol is located.
+   */
   Path path();
 
+  /**
+   * Returns type index set for this location.
+   *
+   * @return The type index set for this location.
+   */
   Set<TypeIndex> getTypeIndexSet();
 }
