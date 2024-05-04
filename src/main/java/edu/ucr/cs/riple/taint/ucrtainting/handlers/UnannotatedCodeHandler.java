@@ -19,10 +19,12 @@ import org.checkerframework.javacutil.TreeUtils;
 
 public class UnannotatedCodeHandler extends AbstractHandler {
 
-  private static final ImmutableSet<MethodRef> approvedThirdPartyMethod =
-      ImmutableSet.of(
-          new MethodRef("java.lang.Class", "cast(java.lang.Object)"),
-          new MethodRef("java.lang.ClassLoader", "loadClass(java.lang.String)"));
+  /**
+   * Set of third party {@link MethodRef} that are identified as polymorphic. For some reason that
+   * we should investigate, these methods require special handling.
+   */
+  private static final ImmutableSet<MethodRef> identifiedPolyMorphicThirdPartyMethod =
+      ImmutableSet.of(new MethodRef("java.lang.Class", "cast(java.lang.Object)"));
 
   public UnannotatedCodeHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
     super(typeFactory);
@@ -79,7 +81,7 @@ public class UnannotatedCodeHandler extends AbstractHandler {
         new MethodRef(
             Serializer.serializeSymbol(calledMethod.enclClass()),
             Serializer.serializeMethodSignature(calledMethod));
-    if (approvedThirdPartyMethod.contains(methodRef)) {
+    if (identifiedPolyMorphicThirdPartyMethod.contains(methodRef)) {
       return true;
     }
 
