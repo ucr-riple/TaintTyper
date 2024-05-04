@@ -41,10 +41,7 @@ public class UnannotatedCodeFixVisitor extends SpecializedFixComputer {
     if (field == null || ElementUtils.isStatic(field)) {
       return Set.of();
     }
-    AnnotatedTypeMirror receiverType = typeFactory.getAnnotatedType(receiver);
-    AnnotatedTypeMirror requiredType = receiverType.deepCopy(true);
-    typeFactory.makeUntainted(requiredType);
-    return receiver.accept(fixComputer, new FoundRequired(receiverType, requiredType, pair.depth));
+    return receiver.accept(fixComputer, typeFactory.makeUntaintedPair(receiver, pair.depth));
   }
 
   @Override
@@ -96,11 +93,8 @@ public class UnannotatedCodeFixVisitor extends SpecializedFixComputer {
     // Build the fix for the receiver.
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
     if (receiver != null) {
-      AnnotatedTypeMirror receiverType = typeFactory.getAnnotatedType(receiver);
-      AnnotatedTypeMirror required = receiverType.deepCopy(true);
-      typeFactory.makeUntainted(required);
       fixes.addAll(
-          receiver.accept(fixComputer, new FoundRequired(receiverType, required, pair.depth)));
+          receiver.accept(fixComputer, typeFactory.makeUntaintedPair(receiver, pair.depth)));
     }
     return fixes;
   }

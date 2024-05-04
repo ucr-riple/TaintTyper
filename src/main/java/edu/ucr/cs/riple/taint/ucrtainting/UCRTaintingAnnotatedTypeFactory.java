@@ -521,6 +521,27 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     }
   }
 
+  public FoundRequired makeUntaintedPair(AnnotatedTypeMirror found, int depth) {
+    AnnotatedTypeMirror required = found.deepCopy();
+    makeUntainted(required);
+    return FoundRequired.of(found, required, depth);
+  }
+
+  public FoundRequired makeUntaintedPair(Tree tree, int depth) {
+    return makeUntaintedPair(getAnnotatedType(tree), depth);
+  }
+
+  public FoundRequired makeUntaintedPair(
+      AnnotatedTypeMirror found, Set<TypeIndex> typeIndex, int depth) {
+    AnnotatedTypeMirror required = found.deepCopy();
+    makeUntainted(required, typeIndex);
+    return FoundRequired.of(found, required, depth);
+  }
+
+  public FoundRequired makeUntaintedPair(Tree tree, Set<TypeIndex> typeIndex, int depth) {
+    return makeUntaintedPair(getAnnotatedType(tree), typeIndex, depth);
+  }
+
   /**
    * Checks if unannotated code handling is enabled.
    *
@@ -564,7 +585,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
           return false;
         }
       }
-
       List<AnnotatedTypeMirror> foundTypeArgs =
           ((AnnotatedTypeMirror.AnnotatedDeclaredType) found).getTypeArguments();
       List<AnnotatedTypeMirror> requiredTypeArgs =
@@ -601,19 +621,16 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
       if (AnnotationUtils.areSame(a1, bottom) || AnnotationUtils.areSame(a2, bottom)) {
         return bottom;
       }
-
       if (AnnotationUtils.areSame(a1, rTainted)) {
         return a2;
       } else if (AnnotationUtils.areSame(a2, rTainted)) {
         return a1;
       }
-
       if (isPolymorphicQualifier(a1) && isPolymorphicQualifier(a2)) {
         return a1;
       } else if (isPolymorphicQualifier(a1) || isPolymorphicQualifier(a2)) {
         return bottom;
       }
-
       // If either is a predicate, then both should be converted to predicates and and-ed.
       if (isPredicate(a1) || isPredicate(a2)) {
         String a1Pred = convertToPredicate(a1);
@@ -627,14 +644,13 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
           return createPredicateAnnotation("(" + a1Pred + ") && (" + a2Pred + ")");
         }
       }
-
       List<String> a1Val = getAccumulatedValues(a1);
       List<String> a2Val = getAccumulatedValues(a2);
       // Avoid creating new annotation objects in the common case.
-      if (a1Val.containsAll(a2Val)) {
+      if (new HashSet<>(a1Val).containsAll(a2Val)) {
         return a1;
       }
-      if (a2Val.containsAll(a1Val)) {
+      if (new HashSet<>(a2Val).containsAll(a1Val)) {
         return a2;
       }
       a1Val.addAll(a2Val); // union
@@ -679,14 +695,13 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
           return createPredicateAnnotation("(" + a1Pred + ") || (" + a2Pred + ")");
         }
       }
-
       List<String> a1Val = getAccumulatedValues(a1);
       List<String> a2Val = getAccumulatedValues(a2);
       // Avoid creating new annotation objects in the common case.
-      if (a1Val.containsAll(a2Val)) {
+      if (new HashSet<>(a1Val).containsAll(a2Val)) {
         return a2;
       }
-      if (a2Val.containsAll(a1Val)) {
+      if (new HashSet<>(a2Val).containsAll(a1Val)) {
         return a1;
       }
       a1Val.retainAll(a2Val); // intersection
@@ -740,7 +755,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
 
       List<String> subVal = getAccumulatedValues(subAnno);
       List<String> superVal = getAccumulatedValues(superAnno);
-      return subVal.containsAll(superVal);
+      return new HashSet<>(subVal).containsAll(superVal);
     }
   }
 }

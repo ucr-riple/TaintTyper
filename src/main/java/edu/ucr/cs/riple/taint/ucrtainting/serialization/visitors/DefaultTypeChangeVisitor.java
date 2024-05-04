@@ -98,8 +98,14 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitConditionalExpression(ConditionalExpressionTree node, FoundRequired pair) {
     Set<Fix> fixes = new HashSet<>();
-    fixes.addAll(node.getTrueExpression().accept(fixComputer, pair));
-    fixes.addAll(node.getFalseExpression().accept(fixComputer, pair));
+    fixes.addAll(
+        node.getTrueExpression()
+            .accept(
+                fixComputer, typeFactory.makeUntaintedPair(node.getTrueExpression(), pair.depth)));
+    fixes.addAll(
+        node.getFalseExpression()
+            .accept(
+                fixComputer, typeFactory.makeUntaintedPair(node.getFalseExpression(), pair.depth)));
     return fixes;
   }
 
@@ -234,21 +240,15 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
     Set<Fix> fixes = new HashSet<>();
     ExpressionTree left = node.getLeftOperand();
     ExpressionTree right = node.getRightOperand();
-    AnnotatedTypeMirror leftType = typeFactory.getAnnotatedType(left);
-    AnnotatedTypeMirror rightType = typeFactory.getAnnotatedType(right);
     FoundRequired leftPair;
     FoundRequired rightPair;
     JCTree.Tag tag = ((JCTree.JCBinary) node).getTag();
     if (tag == JCTree.Tag.EQ || tag == JCTree.Tag.NE) {
-      AnnotatedTypeMirror leftCopy = leftType.deepCopy(true);
-      typeFactory.makeUntainted(leftCopy);
-      AnnotatedTypeMirror rightCopy = rightType.deepCopy(true);
-      typeFactory.makeUntainted(rightCopy);
-      leftPair = FoundRequired.of(leftType, leftCopy, pair.depth);
-      rightPair = FoundRequired.of(rightType, rightCopy, pair.depth);
+      leftPair = typeFactory.makeUntaintedPair(left, pair.depth);
+      rightPair = typeFactory.makeUntaintedPair(right, pair.depth);
     } else {
-      leftPair = FoundRequired.of(leftType, pair.required, pair.depth);
-      rightPair = FoundRequired.of(rightType, pair.required, pair.depth);
+      leftPair = FoundRequired.of(typeFactory.getAnnotatedType(left), pair.required, pair.depth);
+      rightPair = FoundRequired.of(typeFactory.getAnnotatedType(right), pair.required, pair.depth);
     }
     fixes.addAll(left.accept(fixComputer, leftPair));
     fixes.addAll(right.accept(fixComputer, rightPair));

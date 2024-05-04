@@ -153,10 +153,9 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
         current = superType;
       }
       if (index != -1) {
-        AnnotatedTypeMirror receiverType = typeFactory.getAnnotatedType(receiver);
-        AnnotatedTypeMirror required = receiverType.deepCopy(true);
-        typeFactory.makeUntainted(required, TypeIndex.setOf(index + 1, 0));
-        return receiver.accept(this, FoundRequired.of(receiverType, required, pair.depth));
+        return receiver.accept(
+            this,
+            typeFactory.makeUntaintedPair(receiver, TypeIndex.setOf(index + 1, 0), pair.depth));
       }
     }
     if (isGenericMethod) {
