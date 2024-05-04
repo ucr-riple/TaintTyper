@@ -193,7 +193,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
             return false;
           }
           boolean isApplicable =
-              UnannotatedCodeHandler.checkHeuristicApplicability(
+              UnannotatedCodeHandler.isSafeTransitionToUnAnnotatedCode(
                   (MethodInvocationTree) initializer, typeFactory);
           if (!isApplicable) {
             return false;
@@ -259,7 +259,7 @@ public class UCRTaintingChecker extends AccumulationChecker {
         if (!(tree instanceof MethodInvocationTree)) {
           return false;
         }
-        return UnannotatedCodeHandler.checkHeuristicApplicability(
+        return UnannotatedCodeHandler.isSafeTransitionToUnAnnotatedCode(
             (MethodInvocationTree) tree, typeFactory);
       default:
         return false;

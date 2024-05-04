@@ -20,8 +20,9 @@ import org.checkerframework.javacutil.TreeUtils;
 public class UnannotatedCodeHandler extends AbstractHandler {
 
   /**
-   * Set of third party {@link MethodRef} that are identified as polymorphic. For some reason that
-   * we should investigate, these methods require special handling.
+   * Set of third party {@link MethodRef} that are identified as polymorphic. These methods fail the
+   * heuristic applicability check since they contain a type variable in their return type, but they
+   * are known to be polymorphic. This is mostly to complicated structure of {@code Class<T>} type.
    */
   private static final ImmutableSet<MethodRef> identifiedPolyMorphicThirdPartyMethod =
       ImmutableSet.of(new MethodRef("java.lang.Class", "cast(java.lang.Object)"));
@@ -57,7 +58,7 @@ public class UnannotatedCodeHandler extends AbstractHandler {
 
   @Override
   public void visitMethodInvocation(MethodInvocationTree tree, AnnotatedTypeMirror type) {
-    if (!checkHeuristicApplicability(tree, typeFactory)) {
+    if (!isSafeTransitionToUnAnnotatedCode(tree, typeFactory)) {
       return;
     }
     typeFactory.makeUntainted(type);
@@ -67,24 +68,21 @@ public class UnannotatedCodeHandler extends AbstractHandler {
   }
 
   /**
-   * Determines if the heuristic is applicable to the passed invocation tree.
+   * Determines if the invocation is a safe transition to unannotated code. A safe transition is a
+   * method invocation from annotated to unannotated with {@code @Untainted} receiver and arguments.
+   * Please note that the method itself must be identified as unannotated polymorphic method. If the
+   * return type can be controlled using a type argument provided in annotated code, we refrain from
+   * applying the heuristic. (e.g. {@code list.get(0)} even thought the receiver can be untainted,
+   * the return type is controlled by the list type argument, hence, we should not make it
+   * untainted.)
    *
    * @param tree the invocation tree.
    * @param factory the type factory of the checker.
    * @return true if the heuristic is applicable, false otherwise.
    */
-  public static boolean checkHeuristicApplicability(
+  public static boolean isSafeTransitionToUnAnnotatedCode(
       MethodInvocationTree tree, UCRTaintingAnnotatedTypeFactory factory) {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
-    // Check if the method is approved third party method.
-    MethodRef methodRef =
-        new MethodRef(
-            Serializer.serializeSymbol(calledMethod.enclClass()),
-            Serializer.serializeMethodSignature(calledMethod));
-    if (identifiedPolyMorphicThirdPartyMethod.contains(methodRef)) {
-      return true;
-    }
-
     // If already untainted, it should be acknowledged
     if (TypeUtils.hasUntaintedAnnotation(calledMethod.getReturnType())) {
       return true;
@@ -94,8 +92,12 @@ public class UnannotatedCodeHandler extends AbstractHandler {
     }
     // Check receiver, if receiver is tainted, we should not make it untainted.
     ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
+    if (!checkMethodIsUnAnnotatedPolymorphic(receiver, calledMethod)) {
+      return false;
+    }
     boolean hasValidReceiver =
         receiver == null
+            || receiver instanceof JCTree.JCLiteral
             || calledMethod.isStatic()
             || factory.isPolyOrUntainted(receiver)
             || SymbolUtils.isSuperIdentifier(receiver);
@@ -103,51 +105,57 @@ public class UnannotatedCodeHandler extends AbstractHandler {
       return false;
     }
     // Check passed arguments, if any of them is tainted, we should not make it untainted.
-    boolean noTaintedParams =
-        tree.getArguments().stream()
-            .allMatch(expressionTree -> polyOrUntaintedParameter(expressionTree, factory));
-    if (noTaintedParams) {
-      return hasInvariantReturnType(tree);
-    }
-    return false;
+    return tree.getArguments().stream()
+        .allMatch(expressionTree -> polyOrUntaintedParameter(expressionTree, factory));
   }
 
   /**
-   * Determines if the invocation has an invariant return type. This is used to determine if the
-   * mismatch in the return type can be fixed by adding an annotation either on the receiver or the
-   * passed arguments.
+   * Determines if a method is unannotated polymorphic. A method is unannotated polymorphic if the
+   * method is from unannotated code and the return type cannot be controlled by a type argument
+   * provided in annotated code.
    *
-   * @param tree the invocation tree.
-   * @return true if the return type is invariant, false otherwise.
+   * @param calledMethod the invocation tree. * @param receiver the receiver of the method
+   *     invocation.
+   * @return true if the method is unannotated polymorphic, false otherwise.
    */
-  public static boolean hasInvariantReturnType(MethodInvocationTree tree) {
-    Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
-    ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
+  private static boolean checkMethodIsUnAnnotatedPolymorphic(
+      ExpressionTree receiver, Symbol.MethodSymbol calledMethod) {
+    if (receiver == null) {
+      return true;
+    }
+    // Check if the method is approved third party method.
+    MethodRef methodRef =
+        new MethodRef(
+            Serializer.serializeSymbol(calledMethod.enclClass()),
+            Serializer.serializeMethodSignature(calledMethod));
+    if (identifiedPolyMorphicThirdPartyMethod.contains(methodRef)) {
+      return true;
+    }
     Type returnType = calledMethod.getReturnType();
     if (calledMethod.isStatic() && calledMethod.params.isEmpty()) {
       return true;
     }
-    // check method type arguments
+    // if method is generic, check if the return type is one of the methods type variables.
     if (calledMethod.type.getTypeArguments().stream()
         .anyMatch(type -> type.tsym.name.equals(returnType.tsym.name))) {
+      // The method is generic and the return type is one of the type variables, the return type
+      // should be determined by the passed arguments.
       return false;
-    }
-    if (receiver == null) {
-      return true;
-    }
-    if (receiver instanceof JCTree.JCLiteral) {
-      // e.g. "bar".equals()
-      return true;
     }
     Element receiverElement;
     try {
+      // it has been observed that some time CF crashes when retrieving the element, to avoid
+      // stopping the whole process we catch the exception.
       receiverElement = TreeUtils.elementFromUse(receiver);
     } catch (Exception e) {
+      // Unsafe, but in practice, it is not observed to be a problem.
       return true;
     }
     if (TypeUtils.elementHasRawType(receiverElement)) {
+      // if raw type, we can just optimistically assume that the method is polymorphic.
       return true;
     }
+    // Check if return type is one of the type variables of the receiver.
     return TypeUtils.getType(receiverElement).tsym.type.getTypeArguments().stream()
         .noneMatch(type -> TypeUtils.containsTypeVariable(returnType, (Type.TypeVar) type));
   }
@@ -175,8 +183,11 @@ public class UnannotatedCodeHandler extends AbstractHandler {
     return false;
   }
 
+  /** Represents a method reference with class name and method name. */
   private static class MethodRef {
+    /** The method name. */
     public final String method;
+    /** The class name. */
     public final String className;
 
     public MethodRef(String className, String method) {
