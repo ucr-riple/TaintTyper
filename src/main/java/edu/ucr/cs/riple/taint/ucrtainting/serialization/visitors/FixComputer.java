@@ -3,6 +3,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.source.util.TreePath;
@@ -16,7 +17,6 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
 import java.util.Set;
@@ -41,6 +41,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   protected final DefaultTypeChangeVisitor defaultTypeChangeVisitor;
   protected final SpecializedFixComputer thirdPartyFixVisitor;
   protected final SpecializedFixComputer methodTypeArgumentFixVisitor;
+  protected final SpecializedFixComputer collectionFixVisitor;
 
   public FixComputer(UCRTaintingAnnotatedTypeFactory factory, Types types, Context context) {
     this.typeFactory = factory;
@@ -49,6 +50,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     this.defaultTypeChangeVisitor = new DefaultTypeChangeVisitor(factory, this, context);
     this.thirdPartyFixVisitor = new UnannotatedCodeFixVisitor(typeFactory, this, context);
     this.methodTypeArgumentFixVisitor = new GenericMethodFixVisitor(typeFactory, this, context);
+    this.collectionFixVisitor = new CollectionFixVisitor(typeFactory, this, context);
   }
 
   @Override
@@ -120,43 +122,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
       }
     }
     if (CollectionHandler.isGenericToArrayMethod(calledMethod, types)) {
-      // update the type argument to match that.
-      Type type = TypeUtils.getType(receiver);
-      Type current = type.tsym.type;
-      int index = -1;
-      while (current instanceof Type.ClassType) {
-        Type.ClassType classType = (Type.ClassType) current;
-        if (classType.interfaces_field != null) {
-          for (Type iFace : classType.interfaces_field) {
-            if (iFace.tsym instanceof Symbol.ClassSymbol
-                && ((Symbol.ClassSymbol) iFace.tsym)
-                    .fullname
-                    .toString()
-                    .equals(CollectionHandler.COLLECTIONS_INTERFACE)) {
-              String name = iFace.getTypeArguments().get(0).toString();
-              for (int i = 0; i < type.tsym.type.getTypeArguments().size(); i++) {
-                if (type.tsym.type.getTypeArguments().get(i).toString().equals(name)) {
-                  index = i;
-                  break;
-                }
-              }
-            }
-          }
-        }
-        if (index != -1) {
-          break;
-        }
-        Type superType = ((Type.ClassType) current).supertype_field;
-        if (!(superType instanceof Type.ClassType)) {
-          break;
-        }
-        current = superType;
-      }
-      if (index != -1) {
-        return receiver.accept(
-            this,
-            typeFactory.makeUntaintedPair(receiver, TypeIndex.setOf(index + 1, 0), pair.depth));
-      }
+      return node.accept(collectionFixVisitor, pair);
     }
     if (isGenericMethod) {
       Set<Fix> fixes = node.accept(methodTypeArgumentFixVisitor, pair);
@@ -181,6 +147,17 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     // The method has a receiver, if the method contains a type argument, we should annotate the
     // receiver and leave the called method untouched. Annotation on the declaration on the type
     // argument, will be added on the method automatically.
+    return defaultAction(node, pair);
+  }
+
+  @Override
+  public Set<Fix> visitNewClass(NewClassTree node, FoundRequired pair) {
+    if (CollectionHandler.implementsCollectionInterface(
+            (Type) pair.required.getUnderlyingType(), types)
+        && CollectionHandler.implementsCollectionInterface(
+            (Type) pair.found.getUnderlyingType(), types)) {
+      return node.accept(collectionFixVisitor, pair);
+    }
     return defaultAction(node, pair);
   }
 

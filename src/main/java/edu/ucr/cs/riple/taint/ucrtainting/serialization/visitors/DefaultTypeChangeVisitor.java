@@ -3,13 +3,11 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 import com.sun.source.tree.*;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
@@ -111,7 +109,6 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
 
   @Override
   public Set<Fix> visitNewClass(NewClassTree node, FoundRequired pair) {
-    Set<Fix> fixes = new HashSet<>();
     if (!typeFactory.hasUntaintedAnnotation(pair.found)
         && typeFactory.hasUntaintedAnnotation(pair.required)) {
       // Add a fix for each argument.
@@ -124,37 +121,11 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
         } else {
           typeFactory.makeUntainted(requiredArgType);
         }
-        fixes.addAll(
-            arg.accept(fixComputer, new FoundRequired(foundArgType, requiredArgType, pair.depth)));
+        return arg.accept(
+            fixComputer, new FoundRequired(foundArgType, requiredArgType, pair.depth));
       }
     }
-    if (CollectionHandler.implementsCollectionInterface(
-            (Type) pair.required.getUnderlyingType(), types)
-        && CollectionHandler.implementsCollectionInterface(
-            (Type) pair.found.getUnderlyingType(), types)) {
-      AnnotatedTypeMirror.AnnotatedDeclaredType foundType =
-          (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.found;
-      AnnotatedTypeMirror.AnnotatedDeclaredType requiredType =
-          (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.required;
-      if (typeFactory.hasUntaintedAnnotation(requiredType.getTypeArguments().get(0))
-          && !typeFactory.hasUntaintedAnnotation(foundType.getTypeArguments().get(0))) {
-        if (node.getArguments().size() == 1) {
-          ExpressionTree arg = node.getArguments().get(0);
-          AnnotatedTypeMirror foundArgType = typeFactory.getAnnotatedType(arg);
-          if (foundArgType instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-            AnnotatedTypeMirror.AnnotatedDeclaredType foundArgDeclaredType =
-                (AnnotatedTypeMirror.AnnotatedDeclaredType) foundArgType;
-            AnnotatedTypeMirror.AnnotatedDeclaredType requiredArgType =
-                foundArgDeclaredType.deepCopy(true);
-            typeFactory.makeUntainted(requiredArgType.getTypeArguments().get(0));
-            fixes.addAll(
-                arg.accept(
-                    fixComputer, new FoundRequired(foundArgType, requiredArgType, pair.depth)));
-          }
-        }
-      }
-    }
-    return fixes;
+    return Set.of();
   }
 
   @Override
