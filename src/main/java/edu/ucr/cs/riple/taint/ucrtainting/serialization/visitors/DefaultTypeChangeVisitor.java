@@ -270,9 +270,9 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
   }
 
   /**
-   * Checks if the fix is required.
+   * Checks if any annotation is required to adapt the found type to the required type.
    *
-   * @return True if the fix is required, false otherwise.
+   * @return True if a fix is required, false otherwise.
    */
   protected boolean requireFix(FoundRequired pair) {
     if (pair == null) {
@@ -286,6 +286,11 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
     }
   }
 
+  /**
+   * Resets the visitor state to be used for a new fix computation.
+   *
+   * @param currentPath The current path of the CF visitor.
+   */
   public void reset(TreePath currentPath) {
     this.returnVisitor.reset();
     this.currentPath = currentPath;
