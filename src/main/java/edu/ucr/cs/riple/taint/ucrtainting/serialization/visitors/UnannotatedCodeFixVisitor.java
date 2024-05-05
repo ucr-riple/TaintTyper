@@ -29,6 +29,7 @@ public class UnannotatedCodeFixVisitor extends SpecializedFixComputer {
     this.activation = factory.unannotatedCodeHandlingEnabled();
   }
 
+  @Override
   public Set<Fix> visitMemberSelect(MemberSelectTree node, FoundRequired pair) {
     if (!activation) {
       return Set.of();
@@ -63,7 +64,7 @@ public class UnannotatedCodeFixVisitor extends SpecializedFixComputer {
     for (int i = 0; i < node.getArguments().size(); i++) {
       ExpressionTree argument = node.getArguments().get(i);
       AnnotatedTypeMirror formalParameterType =
-          extractFormalParameterAnnotatedTypeMirror(node, i).deepCopy(true);
+          typeFactory.getAnnotatedType(node.getArguments().get(i)).deepCopy(true);
       makeUntainted(formalParameterType, typeFactory);
       AnnotatedTypeMirror actualParameterType = typeFactory.getAnnotatedType(argument);
       FoundRequired argFoundRequired = null;
@@ -115,10 +116,5 @@ public class UnannotatedCodeFixVisitor extends SpecializedFixComputer {
     } else {
       type.replaceAnnotation(factory.rUntainted);
     }
-  }
-
-  private AnnotatedTypeMirror extractFormalParameterAnnotatedTypeMirror(
-      MethodInvocationTree invocation, int i) {
-    return typeFactory.getAnnotatedType(invocation.getArguments().get(i));
   }
 }
