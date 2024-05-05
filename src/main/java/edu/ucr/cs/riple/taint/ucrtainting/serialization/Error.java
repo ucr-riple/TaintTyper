@@ -32,7 +32,7 @@ public class Error implements JSONSerializable {
   @Nullable public final Symbol regionSymbol;
   /** Offset of program point where this error is reported. */
   public final int offset;
-
+  /** Path to the source file where this error is reported. */
   public final Path path;
 
   public Error(String messageKey, Set<Fix> resolvingFixes, TreePath path) {

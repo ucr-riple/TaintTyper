@@ -83,7 +83,7 @@ public class SerializationService {
    * @param pair the pair of found and required annotated type mirrors.
    */
   public void serializeError(Object source, String messageKey, FoundRequired pair) {
-    if (!serializer.isActive()) {
+    if (serializer.isDisabled()) {
       return;
     }
     fixComputer.reset(checker.getVisitor().getCurrentPath());

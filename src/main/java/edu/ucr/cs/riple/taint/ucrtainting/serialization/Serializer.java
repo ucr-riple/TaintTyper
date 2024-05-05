@@ -30,12 +30,11 @@ public class Serializer {
   /** Config object used to configure the serializer. */
   private final Config config;
   /** Path to write errors. */
-  @Nullable private final Path errorOutputPath;
+  private final @Nullable Path errorOutputPath;
 
   public Serializer(UCRTaintingChecker checker) {
     this.config = new Config(checker);
-    this.errorOutputPath =
-        config.serializationActivation ? config.outputDir.resolve(ERROR_OUTPUT) : null;
+    this.errorOutputPath = config.outputDir != null ? config.outputDir.resolve(ERROR_OUTPUT) : null;
     initializeOutputFiles();
   }
 
@@ -50,11 +49,12 @@ public class Serializer {
 
   /** Initializes every file which will be re-generated in the new run of checker. */
   private void initializeOutputFiles() {
-    if (!isActive()) {
+    if (isDisabled()) {
       return;
     }
     Preconditions.checkArgument(errorOutputPath != null, "Unexpected null errorOutputPath");
     try {
+      Preconditions.checkArgument(config.outputDir != null, "Unexpected null outputDir");
       Files.createDirectories(config.outputDir);
       try {
         Files.deleteIfExists(errorOutputPath);
@@ -173,18 +173,35 @@ public class Serializer {
     return sb.toString();
   }
 
-  public boolean isActive() {
-    return config.serializationEnabled();
+  /**
+   * Checks if the serialization is disabled.
+   *
+   * @return True if serialization is disabled, false otherwise.
+   */
+  public boolean isDisabled() {
+    return !config.serializationEnabled();
   }
 
+  /**
+   * Logs the given message to the log file at /tmp/ucr_checker/log.txt.
+   *
+   * @param message The message to log.
+   */
   public static void log(Object message) {
-    Path path = Paths.get("/Users/nima/Developer/struts/log.txt");
+    final Path LOG_PATH = Paths.get("/tmp/ucr_checker/log.txt");
+    try {
+      if (!Files.exists(LOG_PATH.getParent())) {
+        Files.createDirectories(LOG_PATH.getParent());
+      }
+    } catch (IOException e) {
+      throw new RuntimeException("Could not create directory at: " + LOG_PATH, e);
+    }
     // append to file
-    try (OutputStream os = new FileOutputStream(path.toFile(), true)) {
+    try (OutputStream os = new FileOutputStream(LOG_PATH.toFile(), true)) {
       os.write((message + "\n").getBytes(Charset.defaultCharset()), 0, (message + "\n").length());
       os.flush();
     } catch (IOException e) {
-      throw new RuntimeException("Error happened for writing at file: " + path, e);
+      throw new RuntimeException("Error happened for writing at file: " + LOG_PATH, e);
     }
   }
 }
