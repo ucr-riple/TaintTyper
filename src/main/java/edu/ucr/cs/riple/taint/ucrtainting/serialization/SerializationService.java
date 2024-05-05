@@ -46,10 +46,21 @@ public class SerializationService {
   private final UCRTaintingChecker checker;
   /** Javac context instance. */
   private final Context context;
-
+  /** Fix computer to generate the required fixes for the errors. */
   private final FixComputer fixComputer;
+  /**
+   * Type match visitor to compute the required {@link
+   * edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted} annotations to match the found type to
+   * required type.
+   */
   private final TypeMatchVisitor untaintedTypeMatchVisitor;
+  /**
+   * Type match visitor to compute the required {@link
+   * edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted} annotations to match the found type to
+   * required type.
+   */
   private final TypeMatchVisitor polyTypeMatchVisitor;
+  /** Javac types instance. */
   private final Types types;
 
   public SerializationService(UCRTaintingChecker checker) {
@@ -115,10 +126,7 @@ public class SerializationService {
         return handleReturnOverrideError(path.getLeaf());
       case "enhancedfor":
         {
-          FoundRequired newPair = updateFoundRequiredPairEnhancedForLoopError(tree, pair);
-          if (newPair != null) {
-            pair = newPair;
-          }
+          pair = updateFoundRequiredPairEnhancedForLoopError(tree, pair);
         }
       default:
         // On Right Hand Side
@@ -133,6 +141,16 @@ public class SerializationService {
     }
   }
 
+  /**
+   * Generates the fixes for the left hand side of the type mismatch in assignment. The suggested
+   * fixes should only be on the type arguments of the left hand side of the assignment.
+   *
+   * @param tree The tree to generate the fixes for.
+   * @param messageKey The key of the error message.
+   * @param path The path of the tree.
+   * @param pair The pair of found and required annotated type mirrors.
+   * @return The set of fixes to be applied to the tree.
+   */
   private ImmutableSet<Fix> generateLeftHandSideFixes(
       Tree tree, String messageKey, TreePath path, FoundRequired pair) {
     if (!(pair.found instanceof AnnotatedTypeMirror.AnnotatedDeclaredType
@@ -188,8 +206,8 @@ public class SerializationService {
     } catch (Exception e) {
       return ImmutableSet.of();
     }
-
     if (!differences.isEmpty()) {
+      // Remove top level difference as it is not a type argument.
       differences.remove(TypeIndex.TOP_LEVEL);
     }
     if (differences.isEmpty()) {
@@ -200,12 +218,27 @@ public class SerializationService {
     return ImmutableSet.of(fixOnLeftHandSide);
   }
 
-  private FoundRequired updateFoundRequiredPairEnhancedForLoopError(Tree tree, FoundRequired pair) {
+  /**
+   * Updates the found and required pair for the enhanced for loop error. This method computes the
+   * required {@link java.util.Iterator} type from the used collection in the loop which it entries
+   * match the required type. Once the iterator type is computed, it generates a new instance of
+   * {@link FoundRequired} pair corresponding to the iterator type and the required type for the
+   * passed collection.
+   *
+   * @param iterationTree The tree used in the iteration.
+   * @param pair The found and required pair for the iteration variable.
+   * @return The updated pair if the found type is not a subtype of the required type, null
+   */
+  private FoundRequired updateFoundRequiredPairEnhancedForLoopError(
+      Tree iterationTree, FoundRequired pair) {
     Set<TypeIndex> differences = untaintedTypeMatchVisitor.visit(pair.found, pair.required, null);
     if (differences.isEmpty()) {
-      return null;
+      // In this case, the problem is on the left hand side of the assignment: e.g. List<String> l :
+      // Iterator<List<@RUntainted String>> and the pair does not need to be translated to
+      // collection type.
+      return pair;
     }
-    AnnotatedTypeMirror contentFoundType = typeFactory.getAnnotatedType(tree);
+    AnnotatedTypeMirror contentFoundType = typeFactory.getAnnotatedType(iterationTree);
     AnnotatedTypeMirror required = contentFoundType.deepCopy(true);
     if (required instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
       typeFactory.makeUntainted(

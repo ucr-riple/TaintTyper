@@ -11,6 +11,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
+import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -71,24 +72,23 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
         if (index == -1) {
           return Set.of();
         }
-        Fix onSuperMethodParameter =
-            buildFixForElement(overriddenMethod.getParameters().get(index), pair);
-        return onSuperMethodParameter == null ? Set.of() : Set.of(onSuperMethodParameter);
-      } else {
-        // check if node is of type Class<?>
-        if (((Symbol.VarSymbol) element)
-            .type
-            .tsym
-            .getQualifiedName()
-            .toString()
-            .equals("java.lang.Class")) {
-          // We cannot annotate Class<?> as Class<@RUntainted ?>
-          if (fix.location.getTypeIndexSet().equals(TypeIndex.setOf(1, 0))) {
-            return Set.of();
-          }
-        }
-        return Set.of(fix);
+        fix = buildFixForElement(overriddenMethod.getParameters().get(index), pair);
       }
+      if (fix == null) {
+        return Set.of();
+      }
+      // check if node is of type Class<?>
+      if (TypeUtils.getType(fix.location.getTarget())
+          .tsym
+          .getQualifiedName()
+          .toString()
+          .equals("java.lang.Class")) {
+        // We cannot annotate Class<?> as Class<@RUntainted ?>
+        if (fix.location.getTypeIndexSet().equals(TypeIndex.setOf(1, 0))) {
+          return Set.of();
+        }
+      }
+      return Set.of(fix);
     }
     return Set.of();
   }
