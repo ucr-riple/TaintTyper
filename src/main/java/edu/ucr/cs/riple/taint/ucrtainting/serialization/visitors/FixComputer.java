@@ -55,7 +55,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
 
   @Override
   public Set<Fix> defaultAction(Tree node, FoundRequired pair) {
-    return node.accept(defaultTypeChangeVisitor, pair);
+    return answer(node.accept(defaultTypeChangeVisitor, pair));
   }
 
   @Override
@@ -66,7 +66,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
         Symbol symbol = (Symbol) TreeUtils.elementFromUse(tree);
         if (symbol.getKind().isField()
             && typeFactory.isUnannotatedField((Symbol.VarSymbol) symbol)) {
-          return thirdPartyFixVisitor.visitMemberSelect(tree, pair);
+          return answer(thirdPartyFixVisitor.visitMemberSelect(tree, pair));
         }
       }
     }
@@ -118,16 +118,16 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     if (hasPolyTaintedAnnotation) {
       Set<Fix> polyFixes = node.accept(new PolyMethodVisitor(typeFactory, this, context), pair);
       if (!polyFixes.isEmpty()) {
-        return polyFixes;
+        return answer(polyFixes);
       }
     }
     if (CollectionHandler.isGenericToArrayMethod(calledMethod, types)) {
-      return node.accept(collectionFixVisitor, pair);
+      return answer(node.accept(collectionFixVisitor, pair));
     }
     if (isGenericMethod) {
       Set<Fix> fixes = node.accept(methodTypeArgumentFixVisitor, pair);
       if (!fixes.isEmpty()) {
-        return fixes;
+        return answer(fixes);
       }
     }
     // The method has a receiver, if the method contains a type argument, we should annotate the
@@ -136,13 +136,13 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     if (declaredReturnTypeContainsTypeVariable && hasReceiver) {
       Set<Fix> fixes = node.accept(new TypeArgumentFixVisitor(typeFactory, this, context), pair);
       if (!fixes.isEmpty()) {
-        return fixes;
+        return answer(fixes);
       }
     }
     // check if the call is to a method defined in a third party library. If the method has a type
     // var return type and has a receiver, we should annotate the receiver.
     if (!isInAnnotatedPackage && defaultTypeChangeVisitor.requireFix(pair)) {
-      return node.accept(thirdPartyFixVisitor, pair);
+      return answer(node.accept(thirdPartyFixVisitor, pair));
     }
     // The method has a receiver, if the method contains a type argument, we should annotate the
     // receiver and leave the called method untouched. Annotation on the declaration on the type
@@ -156,12 +156,16 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
             (Type) pair.required.getUnderlyingType(), types)
         && CollectionHandler.implementsCollectionInterface(
             (Type) pair.found.getUnderlyingType(), types)) {
-      return node.accept(collectionFixVisitor, pair);
+      return answer(node.accept(collectionFixVisitor, pair));
     }
     return defaultAction(node, pair);
   }
 
   public void reset(TreePath currentPath) {
     defaultTypeChangeVisitor.reset(currentPath);
+  }
+
+  private Set<Fix> answer(Set<Fix> fixes) {
+    return fixes;
   }
 }

@@ -2,13 +2,8 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import static java.util.stream.Collectors.toSet;
 
-import com.sun.source.tree.AssignmentTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
-import com.sun.source.tree.ReturnTree;
-import com.sun.source.tree.Tree;
-import com.sun.source.tree.VariableTree;
-import com.sun.source.util.TreeScanner;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
@@ -18,6 +13,8 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.PolyMethodLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.scanners.AssignmentScanner;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.scanners.ReturnStatementScanner;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.util.ArrayDeque;
 import java.util.Collections;
@@ -27,7 +24,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
@@ -87,7 +83,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
       return mergeResults(symbol, Set.of(onMethod));
     }
     Set<Fix> ans = new HashSet<>();
-    Set<Fix> onReturns = node.accept(new ReturnStatementVisitor(pair), fixComputer);
+    Set<Fix> onReturns = node.accept(new ReturnStatementScanner(pair), fixComputer);
     Deque<Fix> workList = new ArrayDeque<>(onReturns);
     Set<Symbol.VarSymbol> involvedElementsInReturnValueCreation = new HashSet<>();
     while (!workList.isEmpty()) {
@@ -255,90 +251,6 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
     this.store.clear();
     this.states.clear();
     this.invocations.clear();
-  }
-
-  abstract static class AccumulateScanner extends TreeScanner<Set<Fix>, FixComputer> {
-
-    protected final FoundRequired pair;
-
-    public AccumulateScanner(FoundRequired pair) {
-      this.pair = pair;
-    }
-
-    @Override
-    public Set<Fix> reduce(Set<Fix> r1, Set<Fix> r2) {
-      if (r2 == null && r1 == null) {
-        return Set.of();
-      }
-      Set<Fix> combined = new HashSet<>();
-      if (r1 != null) {
-        combined.addAll(r1);
-      }
-      if (r2 != null) {
-        combined.addAll(r2);
-      }
-      return combined;
-    }
-  }
-
-  private static class AssignmentScanner extends AccumulateScanner {
-
-    private final Symbol variable;
-    private final UCRTaintingAnnotatedTypeFactory factory;
-
-    public AssignmentScanner(
-        Symbol variable, FoundRequired pair, UCRTaintingAnnotatedTypeFactory factory) {
-      super(pair);
-      this.variable = variable;
-      this.factory = factory;
-    }
-
-    @Override
-    public Set<Fix> visitAssignment(AssignmentTree node, FixComputer visitor) {
-      Element element = TreeUtils.elementFromUse(node.getVariable());
-      if (variable.equals(element)) {
-        if (node.getVariable().getKind().equals(Tree.Kind.ARRAY_ACCESS)) {
-          if (pair.required instanceof AnnotatedTypeMirror.AnnotatedArrayType
-              && pair.found instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-            AnnotatedTypeMirror.AnnotatedArrayType required =
-                (AnnotatedTypeMirror.AnnotatedArrayType) pair.required;
-            AnnotatedTypeMirror found = factory.getAnnotatedType(node.getExpression());
-            FoundRequired newPair =
-                FoundRequired.of(found, required.getComponentType(), pair.depth);
-            return node.getExpression().accept(visitor, newPair);
-          }
-        }
-        return node.getExpression().accept(visitor, pair);
-      }
-      return Set.of();
-    }
-
-    @Override
-    public Set<Fix> visitVariable(VariableTree node, FixComputer visitor) {
-      Element element = TreeUtils.elementFromDeclaration(node);
-      if (variable.equals(element)) {
-        if (node.getInitializer() == null) {
-          return Set.of();
-        }
-        FoundRequired newPair =
-            FoundRequired.of(
-                factory.getAnnotatedType(node.getInitializer()), pair.required, pair.depth);
-        return node.getInitializer().accept(visitor, newPair);
-      }
-      return Set.of();
-    }
-  }
-
-  private static class ReturnStatementVisitor extends AccumulateScanner {
-
-    public ReturnStatementVisitor(FoundRequired pair) {
-      super(pair);
-    }
-
-    @Override
-    public Set<Fix> visitReturn(ReturnTree node, FixComputer visitor) {
-      return node.getExpression().accept(visitor, pair);
-    }
   }
 
   private static class Invocation {
