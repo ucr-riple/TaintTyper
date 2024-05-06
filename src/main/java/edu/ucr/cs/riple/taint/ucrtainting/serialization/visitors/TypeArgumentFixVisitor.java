@@ -56,8 +56,7 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
       // directly fix the declaration.
       return node.accept(fixComputer, pair);
     }
-    Element receiverElement = TreeUtils.elementFromUse(node.getExpression());
-    if (TypeUtils.elementHasRawType(receiverElement)) {
+    if (TypeUtils.hasRawType(node.getExpression())) {
       // Receiver is raw type, no fix can be suggested by this visitor.
       return Set.of();
     }
@@ -88,8 +87,7 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
     if (receiver == null || SymbolUtils.isThisIdentifier(receiver)) {
       return node.accept(fixComputer, pair);
     }
-    Element receiverElement = TreeUtils.elementFromUse(receiver);
-    if (TypeUtils.elementHasRawType(receiverElement)) {
+    if (TypeUtils.hasRawType(receiver)) {
       // Receiver is raw type, no fix can be suggested by this visitor.
       return Set.of();
     }

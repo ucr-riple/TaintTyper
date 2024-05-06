@@ -1,10 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting.util;
 
 import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.IdentifierTree;
-import com.sun.source.tree.MemberReferenceTree;
-import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.tree.NewClassTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
@@ -23,8 +19,8 @@ public class TypeUtils {
   }
 
   /**
-   * Gets the type of the given element. If the given element is a method, then the return type of
-   * the method is returned.
+   * Gets the declared type (not concrete) of the given element. If the given element is a method,
+   * then the return type of the method is returned.
    *
    * @param element The element to get the type for.
    * @return The type of the given element.
@@ -39,38 +35,24 @@ public class TypeUtils {
   }
 
   /**
-   * Gets the type of the given expression tree.
+   * Gets the concrete type (not declared) of the given expression tree.
    *
    * @param tree The element to get the type for.
    * @return The type of the given tree.
    */
   public static Type getType(ExpressionTree tree) {
-    if (tree instanceof MethodInvocationTree) {
-      return ((JCTree.JCMethodInvocation) tree).type;
-    }
-    if (tree instanceof MemberReferenceTree) {
-      return ((JCTree.JCMemberReference) tree).type;
-    }
-    if (tree instanceof IdentifierTree) {
-      return ((JCTree.JCIdent) tree).type;
-    }
-    if (tree instanceof NewClassTree) {
-      return ((JCTree.JCNewClass) tree).type;
-    }
-    if (tree instanceof JCTree.JCFieldAccess) {
-      return ((JCTree.JCFieldAccess) tree).type;
-    }
-    throw new IllegalArgumentException("Unsupported tree type: " + tree.getKind());
+    return ((JCTree.JCExpression) tree).type;
   }
 
   /**
-   * Checks if the given element has a raw type. (e.g. {@code Foo} instead of {@code Foo<String>})
+   * Checks if the given expression has a raw type. (e.g. {@code Foo} instead of {@code
+   * Foo<String>})
    *
-   * @param element The element to check
-   * @return true if the element has a raw type, false otherwise
+   * @param expressionTree The element to check
+   * @return true if the expression has a raw type, false otherwise
    */
-  public static boolean elementHasRawType(Element element) {
-    return getType(element).isRaw();
+  public static boolean hasRawType(ExpressionTree expressionTree) {
+    return getType(expressionTree).isRaw();
   }
 
   /**

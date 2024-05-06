@@ -142,21 +142,12 @@ public class UnannotatedCodeHandler extends AbstractHandler {
       // should be determined by the passed arguments.
       return false;
     }
-    Element receiverElement;
-    try {
-      // it has been observed that some time CF crashes when retrieving the element, to avoid
-      // stopping the whole process we catch the exception.
-      receiverElement = TreeUtils.elementFromUse(receiver);
-    } catch (Exception e) {
-      // Unsafe, but in practice, it is not observed to be a problem.
-      return true;
-    }
-    if (TypeUtils.elementHasRawType(receiverElement)) {
+    if (TypeUtils.hasRawType(receiver)) {
       // if raw type, we can just optimistically assume that the method is polymorphic.
       return true;
     }
     // Check if return type is one of the type variables of the receiver.
-    return TypeUtils.getType(receiverElement).tsym.type.getTypeArguments().stream()
+    return TypeUtils.getType(receiver).tsym.type.getTypeArguments().stream()
         .noneMatch(type -> TypeUtils.containsTypeVariable(returnType, (Type.TypeVar) type));
   }
 
