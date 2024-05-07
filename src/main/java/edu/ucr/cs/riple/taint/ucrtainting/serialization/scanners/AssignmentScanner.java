@@ -62,6 +62,7 @@ public class AssignmentScanner extends AccumulateScanner {
 
   @Override
   public Set<Fix> visitEnhancedForLoop(EnhancedForLoopTree node, FixComputer fixComputer) {
+    // todo handle enhanced for loop
     return super.visitEnhancedForLoop(node, fixComputer);
   }
 }
