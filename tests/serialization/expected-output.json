@@ -247,6 +247,22 @@
           "annotation": "untainted",
           "location": {
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "PARAMETER",
+            "name": "x",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "varName": "localVar",
             "type-variable-position": [
               [
@@ -300,6 +316,22 @@
           "annotation": "untainted",
           "location": {
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "bar(java.lang.String,java.lang.String,boolean)",
+            "kind": "PARAMETER",
+            "name": "x",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
             "varName": "finalLocalVar",
             "type-variable-position": [
               [
@@ -349,6 +381,20 @@
         "class": "foo.bar.Foo$1LocalClass$1LocalInnerClass"
       },
       "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "f2",
+            "kind": "FIELD",
+            "class": "foo.bar.Foo$1LocalClass"
+          }
+        },
         {
           "annotation": "untainted",
           "location": {
@@ -607,6 +653,22 @@
         "class": "foo.bar.Foo"
       },
       "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testResourceVariableSerialization(java.io.BufferedWriter)",
+            "kind": "PARAMETER",
+            "name": "writer2",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        },
         {
           "annotation": "untainted",
           "location": {

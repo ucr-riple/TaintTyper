@@ -21,7 +21,6 @@ import org.checkerframework.javacutil.TreeUtils;
 public class LocalVariableFixVisitor extends SpecializedFixComputer {
 
   private final Map<Pair<Symbol.VarSymbol, FoundRequired>, Set<Fix>> cache;
-  FixComputer fixComputer;
 
   public LocalVariableFixVisitor(
       UCRTaintingAnnotatedTypeFactory typeFactory, FixComputer fixComputer, Context context) {

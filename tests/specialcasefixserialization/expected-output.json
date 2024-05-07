@@ -265,6 +265,68 @@
             "kind": "LOCAL_VARIABLE",
             "class": "test.CmsUUID"
           }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "splitAsMap(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "keyValDelim",
+            "index": 2,
+            "class": "test.CmsUUID"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "varName": "param",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "splitAsMap(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "test.CmsUUID"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "varName": "itParams",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "splitAsMap(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "test.CmsUUID"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "varName": "pos",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "splitAsMap(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "test.CmsUUID"
+          }
         }
       ]
     },
@@ -282,7 +344,84 @@
           "annotation": "untainted",
           "location": {
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "splitAsMap(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "keyValDelim",
+            "index": 2,
+            "class": "test.CmsUUID"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
             "varName": "value",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "splitAsMap(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "test.CmsUUID"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "varName": "param",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "splitAsMap(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "test.CmsUUID"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "varName": "keyValLen",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "splitAsMap(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "test.CmsUUID"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "varName": "itParams",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "splitAsMap(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "test.CmsUUID"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/specialcasefixserialization/CmsUUID.java",
+            "varName": "pos",
             "type-variable-position": [
               [
                 0

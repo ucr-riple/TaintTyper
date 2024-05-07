@@ -1,6 +1,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.scanners;
 
 import com.sun.source.tree.AssignmentTree;
+import com.sun.source.tree.EnhancedForLoopTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.code.Symbol;
@@ -57,5 +58,10 @@ public class AssignmentScanner extends AccumulateScanner {
       return node.getInitializer().accept(visitor, newPair);
     }
     return Set.of();
+  }
+
+  @Override
+  public Set<Fix> visitEnhancedForLoop(EnhancedForLoopTree node, FixComputer fixComputer) {
+    return super.visitEnhancedForLoop(node, fixComputer);
   }
 }

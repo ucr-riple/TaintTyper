@@ -28,12 +28,14 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
   protected final MethodReturnVisitor returnVisitor;
   protected TreePath currentPath;
   protected final Types types;
+  private final SpecializedFixComputer localVariableFixVisitor;
 
   public DefaultTypeChangeVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
     this.returnVisitor = new MethodReturnVisitor(typeFactory, fixComputer, context);
     this.types = Types.instance(context);
+    this.localVariableFixVisitor = new LocalVariableFixVisitor(typeFactory, fixComputer, context);
   }
 
   @Override
@@ -88,7 +90,9 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
           return Set.of();
         }
       }
-      return Set.of(fix);
+      return fix.location.getKind().isLocalVariable()
+          ? localVariableFixVisitor.visitIdentifier(node, pair)
+          : Set.of(fix);
     }
     return Set.of();
   }
