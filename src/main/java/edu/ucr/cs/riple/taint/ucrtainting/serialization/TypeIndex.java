@@ -168,4 +168,10 @@ public class TypeIndex {
   public int hashCode() {
     return Objects.hashCode(getContent());
   }
+
+  @Override
+  public String toString() {
+    // for purposes of debugging
+    return content.toString();
+  }
 }

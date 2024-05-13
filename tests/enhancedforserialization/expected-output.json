@@ -207,6 +207,35 @@
           }
         }
       ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+      "messageKey": "enhancedfor",
+      "offset": 2464,
+      "index": 8,
+      "region": {
+        "symbol": "testCustomList(foo.bar.Foo.Custom)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "testCustomList(foo.bar.Foo.Custom)",
+            "kind": "PARAMETER",
+            "name": "custom",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     }
   ]
 }

@@ -9,6 +9,7 @@ import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.util.Context;
@@ -16,6 +17,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingVisitor;
+import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
@@ -24,9 +26,11 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.TypeMatchVisitor;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
+import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
@@ -238,18 +242,33 @@ public class SerializationService {
       // collection type.
       return pair;
     }
-    AnnotatedTypeMirror contentFoundType = typeFactory.getAnnotatedType(iterationTree);
-    AnnotatedTypeMirror required = contentFoundType.deepCopy(true);
+    AnnotatedTypeMirror expressionFoundType = typeFactory.getAnnotatedType(iterationTree);
+    AnnotatedTypeMirror required = expressionFoundType.deepCopy(true);
     if (required instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
       typeFactory.makeUntainted(
           ((AnnotatedTypeMirror.AnnotatedArrayType) required).getComponentType(), differences);
     }
     if (required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      Type typeSymbol = TypeUtils.getType((ExpressionTree) iterationTree);
+      Type collectionType = CollectionHandler.retrieveCollectionTypeMirrorFromType(typeSymbol);
+      if (collectionType == null) {
+        return pair;
+      }
+      Type.ClassType collectionTypeSymbol = (Type.ClassType) collectionType.tsym.type;
+      String typeArgName = collectionTypeSymbol.typarams_field.get(0).tsym.toString();
+      int index =
+          typeSymbol.tsym.type.getTypeArguments().stream()
+              .map(typeVariable -> typeVariable.tsym.toString())
+              .collect(Collectors.toList())
+              .indexOf(typeArgName);
+      if (index == -1) {
+        return pair;
+      }
       typeFactory.makeUntainted(
-          ((AnnotatedTypeMirror.AnnotatedDeclaredType) required).getTypeArguments().get(0),
+          ((AnnotatedTypeMirror.AnnotatedDeclaredType) required).getTypeArguments().get(index),
           differences);
     }
-    return FoundRequired.of(contentFoundType, required, 0);
+    return FoundRequired.of(expressionFoundType, required, 0);
   }
 
   /**

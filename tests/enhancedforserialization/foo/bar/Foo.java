@@ -56,7 +56,6 @@ public class Foo {
   public void enhancedForLoopMixedWithTypeVar() {
     final Map<Class<? extends Annotation>, @RUntainted Collection<String>> matchingInterfaces =
         new HashMap<>();
-    final Map<Class<? extends Annotation>, Collection<Class<?>>> classes = new HashMap<>();
     for (Map.Entry<Class<? extends Annotation>, @RUntainted Collection<String>> e :
         matchingInterfaces.entrySet()) {
       // :: error: enhancedfor
@@ -72,4 +71,11 @@ public class Foo {
   }
 
   public final class Pair<F, S> {}
+
+  public void testCustomList(Custom<String, String> custom) {
+    // :: error: enhancedfor
+    for (@RUntainted String s : custom) {}
+  }
+
+  private static class Custom<E, H_I> extends ArrayList<H_I> {}
 }

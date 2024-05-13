@@ -40,6 +40,9 @@ public class CollectionFixVisitor extends SpecializedFixComputer {
   @Override
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
+    if (receiver == null) {
+      return Set.of();
+    }
     // Locate the index of type argument passed to collection from type.
     Type type = TypeUtils.getType(receiver);
     Type current = type.tsym.type;
