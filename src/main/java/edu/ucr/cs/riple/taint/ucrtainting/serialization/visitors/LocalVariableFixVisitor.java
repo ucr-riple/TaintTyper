@@ -21,18 +21,24 @@ import org.checkerframework.javacutil.TreeUtils;
 public class LocalVariableFixVisitor extends SpecializedFixComputer {
 
   private final Map<Pair<Symbol.VarSymbol, FoundRequired>, Set<Fix>> cache;
+  private final Set<Pair<Symbol.VarSymbol, FoundRequired>> visiting;
 
   public LocalVariableFixVisitor(
       UCRTaintingAnnotatedTypeFactory typeFactory, FixComputer fixComputer, Context context) {
     super(typeFactory, fixComputer, context);
     this.cache = new HashMap<>();
+    this.visiting = new HashSet<>();
   }
 
   private boolean visited(Symbol.VarSymbol varSymbol, FoundRequired foundRequired) {
-    return cache.containsKey(Pair.of(varSymbol, foundRequired));
+    return cache.containsKey(Pair.of(varSymbol, foundRequired))
+        || visiting.contains(Pair.of(varSymbol, foundRequired));
   }
 
   private Set<Fix> get(Symbol.VarSymbol varSymbol, FoundRequired foundRequired) {
+    if (visiting.contains(Pair.of(varSymbol, foundRequired))) {
+      return Set.of();
+    }
     return cache.get(Pair.of(varSymbol, foundRequired));
   }
 
@@ -46,9 +52,11 @@ public class LocalVariableFixVisitor extends SpecializedFixComputer {
     if (visited(varSymbol, pair)) {
       return get(varSymbol, pair);
     }
+    visiting.add(Pair.of(varSymbol, pair));
     // compute
     Set<Fix> fixes = computeFixesForVariable(varSymbol, pair);
     cache.put(Pair.of(varSymbol, pair), fixes);
+    visiting.remove(Pair.of(varSymbol, pair));
     return fixes;
   }
 

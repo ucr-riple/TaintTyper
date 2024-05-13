@@ -188,6 +188,15 @@ class Foo {
   }
 
   void sinkForTestNullLiteral(@RUntainted String[] p) {}
+
+  void testMutualLocalAssignment(String param) {
+    String l = param;
+    String l1 = l;
+    l = l1;
+    l1 = l;
+    // :: error: assignment
+    @RUntainted String l2 = l1;
+  }
 }
 
 class MainMethodTest {

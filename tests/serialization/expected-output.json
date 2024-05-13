@@ -791,6 +791,64 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
       "messageKey": "assignment",
+      "offset": 5414,
+      "index": 23,
+      "region": {
+        "symbol": "testMutualLocalAssignment(java.lang.String)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "varName": "l1",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testMutualLocalAssignment(java.lang.String)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "varName": "l",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testMutualLocalAssignment(java.lang.String)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "testMutualLocalAssignment(java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "param",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/serialization/Foo.java",
+      "messageKey": "assignment",
       "offset": 4336,
       "index": 23,
       "region": {
