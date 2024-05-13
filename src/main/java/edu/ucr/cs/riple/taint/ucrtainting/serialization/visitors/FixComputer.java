@@ -41,7 +41,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   protected final DefaultTypeChangeVisitor defaultTypeChangeVisitor;
   protected final SpecializedFixComputer thirdPartyFixVisitor;
   protected final SpecializedFixComputer methodTypeArgumentFixVisitor;
-  protected final SpecializedFixComputer collectionFixVisitor;
+  protected final CollectionFixVisitor collectionFixVisitor;
 
   public FixComputer(UCRTaintingAnnotatedTypeFactory factory, Types types, Context context) {
     this.typeFactory = factory;
@@ -167,5 +167,21 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
 
   private Set<Fix> answer(Set<Fix> fixes) {
     return fixes;
+  }
+
+  /**
+   * Updates the found and required pair for the enhanced for loop error. This method computes the
+   * required {@link java.util.Iterator} type from the used collection in the loop which it entries
+   * match the required type. Once the iterator type is computed, it generates a new instance of
+   * {@link FoundRequired} pair corresponding to the iterator type and the required type for the
+   * passed collection.
+   *
+   * @param iterationTree The tree used in the iteration.
+   * @param pair The found and required pair for the iteration variable.
+   * @return The updated pair if the found type is not a subtype of the required type, null
+   */
+  public FoundRequired updateFoundRequiredPairEnhancedForLoopError(
+      Tree iterationTree, FoundRequired pair) {
+    return collectionFixVisitor.updateFoundRequiredPairEnhancedForLoopError(iterationTree, pair);
   }
 }

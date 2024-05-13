@@ -78,4 +78,13 @@ public class Foo {
   }
 
   private static class Custom<E, H_I> extends ArrayList<H_I> {}
+
+  public void updateFoundRequiredTypeInAssignmentScannerTest(List<String> list) {
+    for (String s : list) {
+      // :: error: argument
+      sink(s);
+    }
+  }
+
+  public void sink(@RUntainted String s) {}
 }

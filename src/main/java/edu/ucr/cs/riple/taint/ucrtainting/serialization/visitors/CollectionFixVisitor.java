@@ -3,6 +3,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewClassTree;
+import com.sun.source.tree.Tree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Context;
@@ -13,6 +14,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
@@ -105,5 +107,54 @@ public class CollectionFixVisitor extends SpecializedFixComputer {
       }
     }
     return Set.of();
+  }
+
+  /**
+   * Updates the found and required pair for the enhanced for loop error. This method computes the
+   * required {@link java.util.Iterator} type from the used collection in the loop which it entries
+   * match the required type. Once the iterator type is computed, it generates a new instance of
+   * {@link FoundRequired} pair corresponding to the iterator type and the required type for the
+   * passed collection.
+   *
+   * @param iterationTree The tree used in the iteration.
+   * @param pair The found and required pair for the iteration variable.
+   * @return The updated pair if the found type is not a subtype of the required type, null
+   */
+  public FoundRequired updateFoundRequiredPairEnhancedForLoopError(
+      Tree iterationTree, FoundRequired pair) {
+    Set<TypeIndex> differences = untaintedTypeMatchVisitor.visit(pair.found, pair.required, null);
+    if (differences.isEmpty()) {
+      // In this case, the problem is on the left hand side of the assignment: e.g. List<String> l :
+      // Iterator<List<@RUntainted String>> and the pair does not need to be translated to
+      // collection type.
+      return pair;
+    }
+    AnnotatedTypeMirror expressionFoundType = typeFactory.getAnnotatedType(iterationTree);
+    AnnotatedTypeMirror required = expressionFoundType.deepCopy(true);
+    if (required instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      typeFactory.makeUntainted(
+          ((AnnotatedTypeMirror.AnnotatedArrayType) required).getComponentType(), differences);
+    }
+    if (required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
+      Type typeSymbol = TypeUtils.getType((ExpressionTree) iterationTree);
+      Type collectionType = CollectionHandler.retrieveCollectionTypeMirrorFromType(typeSymbol);
+      if (collectionType == null) {
+        return pair;
+      }
+      Type.ClassType collectionTypeSymbol = (Type.ClassType) collectionType.tsym.type;
+      String typeArgName = collectionTypeSymbol.typarams_field.get(0).tsym.toString();
+      int index =
+          typeSymbol.tsym.type.getTypeArguments().stream()
+              .map(typeVariable -> typeVariable.tsym.toString())
+              .collect(Collectors.toList())
+              .indexOf(typeArgName);
+      if (index == -1) {
+        return pair;
+      }
+      typeFactory.makeUntainted(
+          ((AnnotatedTypeMirror.AnnotatedDeclaredType) required).getTypeArguments().get(index),
+          differences);
+    }
+    return FoundRequired.of(expressionFoundType, required, 0);
   }
 }
