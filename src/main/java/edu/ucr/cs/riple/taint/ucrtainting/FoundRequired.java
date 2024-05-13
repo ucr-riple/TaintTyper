@@ -1,5 +1,6 @@
 package edu.ucr.cs.riple.taint.ucrtainting;
 
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
@@ -59,5 +60,22 @@ public class FoundRequired {
   @Override
   public String toString() {
     return "found='" + foundString + '\'' + ", required='" + requiredString + ", depth: " + depth;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof FoundRequired)) {
+      return false;
+    }
+    FoundRequired that = (FoundRequired) o;
+    return Objects.equals(found, that.found) && Objects.equals(required, that.required);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(found, required);
   }
 }
