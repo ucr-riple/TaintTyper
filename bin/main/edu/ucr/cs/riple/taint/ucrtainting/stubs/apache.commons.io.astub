@@ -1,0 +1,593 @@
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+
+package org.apache.commons.io.output;
+public class FileWriterWithEncoding {
+
+	public FileWriterWithEncoding(@RUntainted final File file, @RUntainted final String charsetName) throws IOException {
+	    this(file, charsetName, false);
+	}
+
+	public FileWriterWithEncoding(@RUntainted final String fileName, @RUntainted final CharsetEncoder charsetEncoder, final boolean append) throws IOException {
+	    this(new File(fileName), charsetEncoder, append);
+	}
+
+	@SuppressWarnings("resource")
+	public FileWriterWithEncoding(@RUntainted final File file, @RUntainted final CharsetEncoder charsetEncoder, final boolean append) throws IOException {
+	    super(initWriter(file, charsetEncoder, append));
+	}
+
+	public FileWriterWithEncoding(@RUntainted final String fileName, @RUntainted final String charsetName) throws IOException {
+	    this(new File(fileName), charsetName, false);
+	}
+
+	public FileWriterWithEncoding(@RUntainted final File file, @RUntainted final Charset charset) throws IOException {
+	    this(file, charset, false);
+	}
+
+	public FileWriterWithEncoding(@RUntainted final File file, @RUntainted final CharsetEncoder charsetEncoder) throws IOException {
+	    this(file, charsetEncoder, false);
+	}
+
+	@SuppressWarnings("resource")
+	public FileWriterWithEncoding(@RUntainted final File file, @RUntainted final Charset encoding, final boolean append) throws IOException {
+	    super(initWriter(file, encoding, append));
+	}
+
+	public FileWriterWithEncoding(@RUntainted final String fileName, @RUntainted final Charset charset) throws IOException {
+	    this(new File(fileName), charset, false);
+	}
+
+	public FileWriterWithEncoding(@RUntainted final String fileName, @RUntainted final Charset charset, final boolean append) throws IOException {
+	    this(new File(fileName), charset, append);
+	}
+
+	public FileWriterWithEncoding(@RUntainted final String fileName, @RUntainted final String charsetName, final boolean append) throws IOException {
+	    this(new File(fileName), charsetName, append);
+	}
+
+	public FileWriterWithEncoding(@RUntainted final String fileName, @RUntainted final CharsetEncoder encoding) throws IOException {
+	    this(new File(fileName), encoding, false);
+	}
+
+	@SuppressWarnings("resource")
+	public FileWriterWithEncoding(@RUntainted final File file, @RUntainted final String charsetName, final boolean append) throws IOException {
+	    super(initWriter(file, charsetName, append));
+	}
+
+}
+package org.apache.commons.io.output;
+public class DeferredFileOutputStream {
+
+	public DeferredFileOutputStream(final int threshold, final int initialBufferSize, @RUntainted final String prefix, @RUntainted final String suffix, @RUntainted final File directory) {
+	    this(threshold, null, prefix, suffix, directory, initialBufferSize);
+	    Objects.requireNonNull(prefix, "prefix");
+	    if (initialBufferSize < 0) {
+	        throw new IllegalArgumentException("Initial buffer size must be at least 0.");
+	    }
+	}
+
+	private DeferredFileOutputStream(final int threshold, @RUntainted final File outputFile, @RUntainted final String prefix, @RUntainted final String suffix, @RUntainted final File directory, final int initialBufferSize) {
+	    super(threshold);
+	    this.outputPath = toPath(outputFile, null);
+	    this.prefix = prefix;
+	    this.suffix = suffix;
+	    this.directory = toPath(directory, PathUtils::getTempDirectory);
+	    memoryOutputStream = new ByteArrayOutputStream(initialBufferSize);
+	    currentOutputStream = memoryOutputStream;
+	}
+
+	public DeferredFileOutputStream(final int threshold, @RUntainted final String prefix, @RUntainted final String suffix, @RUntainted final File directory) {
+	    this(threshold, null, prefix, suffix, directory, AbstractByteArrayOutputStream.DEFAULT_SIZE);
+	    Objects.requireNonNull(prefix, "prefix");
+	}
+
+	public DeferredFileOutputStream(final int threshold, final int initialBufferSize, @RUntainted final File outputFile) {
+	    this(threshold, outputFile, null, null, null, initialBufferSize);
+	    if (initialBufferSize < 0) {
+	        throw new IllegalArgumentException("Initial buffer size must be at least 0.");
+	    }
+	}
+
+	public DeferredFileOutputStream(final int threshold, @RUntainted final File outputFile) {
+	    this(threshold, outputFile, null, null, null, AbstractByteArrayOutputStream.DEFAULT_SIZE);
+	}
+
+}
+
+package org.apache.commons.io.output;
+public class LockableFileWriter {
+	@Deprecated
+	public LockableFileWriter(@RUntainted final File file, final boolean append, @RUntainted final String lockDir) throws IOException {
+	    this(file, Charset.defaultCharset(), append, lockDir);
+	}
+
+	public LockableFileWriter(@RUntainted final File file, @RUntainted final Charset charset, final boolean append, @RUntainted String lockDir) throws IOException {
+	    // init file to create/append
+	    final File absFile = file.getAbsoluteFile();
+	    if (absFile.getParentFile() != null) {
+	        FileUtils.forceMkdir(absFile.getParentFile());
+	    }
+	    if (absFile.isDirectory()) {
+	        throw new IOException("File specified is a directory");
+	    }
+	    // init lock file
+	    if (lockDir == null) {
+	        lockDir = FileUtils.getTempDirectoryPath();
+	    }
+	    final File lockDirFile = new File(lockDir);
+	    FileUtils.forceMkdir(lockDirFile);
+	    testLockDir(lockDirFile);
+	    lockFile = new File(lockDirFile, absFile.getName() + LCK);
+	    // check if locked
+	    createLock();
+	    // init wrapped writer
+	    out = initWriter(absFile, charset, append);
+	}
+
+	public LockableFileWriter(@RUntainted final String fileName, final boolean append, @RUntainted final String lockDir) throws IOException {
+	    this(new File(fileName), append, lockDir);
+	}
+
+	public LockableFileWriter(@RUntainted final File file) throws IOException {
+	    this(file, false, null);
+	}
+
+	public LockableFileWriter(@RUntainted final File file, @RUntainted final String charsetName) throws IOException {
+	    this(file, charsetName, false, null);
+	}
+
+	public LockableFileWriter(@RUntainted final File file, @RUntainted final String charsetName, final boolean append, @RUntainted final String lockDir) throws IOException {
+	    this(file, Charsets.toCharset(charsetName), append, lockDir);
+	}
+
+	public LockableFileWriter(@RUntainted final String fileName) throws IOException {
+	    this(fileName, false, null);
+	}
+
+	public LockableFileWriter(@RUntainted final File file, final boolean append) throws IOException {
+	    this(file, append, null);
+	}
+
+	public LockableFileWriter(@RUntainted final String fileName, final boolean append) throws IOException {
+	    this(fileName, append, null);
+	}
+
+	public LockableFileWriter(@RUntainted final File file, @RUntainted final Charset charset) throws IOException {
+	    this(file, charset, false, null);
+	}
+
+}
+
+package org.apache.commons.io;
+public class FileUtils {
+	public static void copyFileToDirectory(@RUntainted final File srcFile, @RUntainted final File destDir) throws IOException {
+	    copyFileToDirectory(srcFile, destDir, true);
+	}
+
+	public static void writeLines(@RUntainted final File file, @RUntainted final String charsetName, @RUntainted final Collection<?> lines) throws IOException {
+	    writeLines(file, charsetName, lines, null, false);
+	}
+
+	@Deprecated
+	public static List<String> readLines(@RUntainted final File file) throws IOException {
+	    return readLines(file, Charset.defaultCharset());
+	}
+
+	public static void moveToDirectory(@RUntainted final File src, @RUntainted final File destDir, final boolean createDestDir) throws IOException {
+	    validateMoveParameters(src, destDir);
+	    if (src.isDirectory()) {
+	        moveDirectoryToDirectory(src, destDir, createDestDir);
+	    } else {
+	        moveFileToDirectory(src, destDir, createDestDir);
+	    }
+	}
+
+	public static @RUntainted FileOutputStream openOutputStream(@RUntainted final File file, final boolean append) throws IOException {
+	    Objects.requireNonNull(file, "file");
+	    if (file.exists()) {
+	        requireFile(file, "file");
+	        requireCanWrite(file, "file");
+	    } else {
+	        createParentDirectories(file);
+	    }
+	    return new FileOutputStream(file, append);
+	}
+
+	public static void copyFileToDirectory(@RUntainted final File sourceFile, @RUntainted final File destinationDir, final boolean preserveFileDate) throws IOException {
+	    Objects.requireNonNull(sourceFile, "sourceFile");
+	    requireDirectoryIfExists(destinationDir, "destinationDir");
+	    copyFile(sourceFile, new File(destinationDir, sourceFile.getName()), preserveFileDate);
+	}
+
+	public static void moveDirectoryToDirectory(@RUntainted final File source, @RUntainted final File destDir, final boolean createDestDir) throws IOException {
+	    validateMoveParameters(source, destDir);
+	    if (!destDir.isDirectory()) {
+	        if (destDir.exists()) {
+	            throw new IOException("Destination '" + destDir + "' is not a directory");
+	        }
+	        if (!createDestDir) {
+	            throw new FileNotFoundException("Destination directory '" + destDir + "' does not exist [createDestDir=" + false + "]");
+	        }
+	        mkdirs(destDir);
+	    }
+	    moveDirectory(source, new File(destDir, source.getName()));
+	}
+
+	public static void writeStringToFile(@RUntainted final File file, @RUntainted final String data, @RUntainted final Charset charset) throws IOException {
+	    writeStringToFile(file, data, charset, false);
+	}
+
+	@Deprecated
+	public static void write(@RUntainted final File file, @RUntainted final CharSequence data, final boolean append) throws IOException {
+	    write(file, data, Charset.defaultCharset(), append);
+	}
+
+	public static @RUntainted String readFileToString(@RUntainted final File file, @RUntainted final Charset charsetName) throws IOException {
+	    try (InputStream inputStream = Files.newInputStream(file.toPath())) {
+	        return IOUtils.toString(inputStream, Charsets.toCharset(charsetName));
+	    }
+	}
+
+	public static void copyURLToFile(@RUntainted final URL source, @RUntainted final File destination, final int connectionTimeoutMillis, final int readTimeoutMillis) throws IOException {
+	    try (CloseableURLConnection urlConnection = CloseableURLConnection.open(source)) {
+	        urlConnection.setConnectTimeout(connectionTimeoutMillis);
+	        urlConnection.setReadTimeout(readTimeoutMillis);
+	        try (InputStream stream = urlConnection.getInputStream()) {
+	            copyInputStreamToFile(stream, destination);
+	        }
+	    }
+	}
+
+	public static void write(@RUntainted final File file, @RUntainted final CharSequence data, @RUntainted final Charset charset) throws IOException {
+	    write(file, data, charset, false);
+	}
+
+	public static void copyDirectory(@RUntainted final File srcDir, @RUntainted final File destDir, @RUntainted final FileFilter filter, final boolean preserveFileDate) throws IOException {
+	    copyDirectory(srcDir, destDir, filter, preserveFileDate, StandardCopyOption.REPLACE_EXISTING);
+	}
+
+	public static byte[] readFileToByteArray(@RUntainted final File file) throws IOException {
+	    Objects.requireNonNull(file, "file");
+	    return Files.readAllBytes(file.toPath());
+	}
+
+	public static void writeStringToFile(@RUntainted final File file, @RUntainted final String data, @RUntainted final String charsetName, final boolean append) throws IOException {
+	    writeStringToFile(file, data, Charsets.toCharset(charsetName), append);
+	}
+
+	public static @RUntainted FileInputStream openInputStream(@RUntainted final File file) throws IOException {
+	    Objects.requireNonNull(file, "file");
+	    return new FileInputStream(file);
+	}
+
+	public static void writeLines(@RUntainted final File file, @RUntainted final Collection<?> lines) throws IOException {
+	    writeLines(file, null, lines, null, false);
+	}
+
+	public static void writeLines(@RUntainted final File file, @RUntainted final Collection<?> lines, @RUntainted final String lineEnding, final boolean append) throws IOException {
+	    writeLines(file, null, lines, lineEnding, append);
+	}
+
+	public static void writeLines(@RUntainted final File file, @RUntainted final String charsetName, @RUntainted final Collection<?> lines, final boolean append) throws IOException {
+	    writeLines(file, charsetName, lines, null, append);
+	}
+
+	public static void copyDirectory(@RUntainted final File srcDir, @RUntainted final File destDir, @RUntainted final FileFilter fileFilter, final boolean preserveFileDate, @RUntainted final CopyOption... copyOptions) throws IOException {
+	    requireFileCopy(srcDir, destDir);
+	    requireDirectory(srcDir, "srcDir");
+	    requireCanonicalPathsNotEquals(srcDir, destDir);
+	    // Cater for destination being directory within the source directory (see IO-141)
+	    List<String> exclusionList = null;
+	    final String srcDirCanonicalPath = srcDir.getCanonicalPath();
+	    final String destDirCanonicalPath = destDir.getCanonicalPath();
+	    if (destDirCanonicalPath.startsWith(srcDirCanonicalPath)) {
+	        final File[] srcFiles = listFiles(srcDir, fileFilter);
+	        if (srcFiles.length > 0) {
+	            exclusionList = new ArrayList<>(srcFiles.length);
+	            for (final File srcFile : srcFiles) {
+	                exclusionList.add(new File(destDir, srcFile.getName()).getCanonicalPath());
+	            }
+	        }
+	    }
+	    doCopyDirectory(srcDir, destDir, fileFilter, exclusionList, preserveFileDate, preserveFileDate ? addCopyAttributes(copyOptions) : copyOptions);
+	}
+
+	public static void write(@RUntainted final File file, @RUntainted final CharSequence data, @RUntainted final String charsetName, final boolean append) throws IOException {
+	    write(file, data, Charsets.toCharset(charsetName), append);
+	}
+
+	@Deprecated
+	public static void writeStringToFile(@RUntainted final File file, @RUntainted final String data, final boolean append) throws IOException {
+	    writeStringToFile(file, data, Charset.defaultCharset(), append);
+	}
+
+	public static void moveDirectory(@RUntainted final File srcDir, @RUntainted final File destDir) throws IOException {
+	    validateMoveParameters(srcDir, destDir);
+	    requireDirectory(srcDir, "srcDir");
+	    requireAbsent(destDir, "destDir");
+	    if (!srcDir.renameTo(destDir)) {
+	        if (destDir.getCanonicalPath().startsWith(srcDir.getCanonicalPath() + File.separator)) {
+	            throw new IOException("Cannot move directory: " + srcDir + " to a subdirectory of itself: " + destDir);
+	        }
+	        copyDirectory(srcDir, destDir);
+	        deleteDirectory(srcDir);
+	        if (srcDir.exists()) {
+	            throw new IOException("Failed to delete original directory '" + srcDir + "' after copy to '" + destDir + "'");
+	        }
+	    }
+	}
+
+	public static void cleanDirectory(@RUntainted final File directory) throws IOException {
+	    IOConsumer.forAll(FileUtils::forceDelete, listFiles(directory, null));
+	}
+
+	public static void copyInputStreamToFile(@RUntainted final InputStream source, @RUntainted final File destination) throws IOException {
+	    try (InputStream inputStream = source) {
+	        copyToFile(inputStream, destination);
+	    }
+	}
+
+	public static void copyDirectory(@RUntainted final File srcDir, @RUntainted final File destDir, @RUntainted final FileFilter filter) throws IOException {
+	    copyDirectory(srcDir, destDir, filter, true);
+	}
+
+	public static void moveFile(@RUntainted final File srcFile, @RUntainted final File destFile, @RUntainted final CopyOption... copyOptions) throws IOException {
+	    validateMoveParameters(srcFile, destFile);
+	    requireFile(srcFile, "srcFile");
+	    requireAbsent(destFile, "destFile");
+	    final boolean rename = srcFile.renameTo(destFile);
+	    if (!rename) {
+	        copyFile(srcFile, destFile, copyOptions);
+	        if (!srcFile.delete()) {
+	            FileUtils.deleteQuietly(destFile);
+	            throw new IOException("Failed to delete original file '" + srcFile + "' after copy to '" + destFile + "'");
+	        }
+	    }
+	}
+
+	public static void copyToDirectory(@RUntainted final Iterable<File> sourceIterable, @RUntainted final File destinationDir) throws IOException {
+	    Objects.requireNonNull(sourceIterable, "sourceIterable");
+	    for (final File src : sourceIterable) {
+	        copyFileToDirectory(src, destinationDir);
+	    }
+	}
+
+	public static void forceDeleteOnExit(@RUntainted final File file) throws IOException {
+	    Objects.requireNonNull(file, "file");
+	    if (file.isDirectory()) {
+	        deleteDirectoryOnExit(file);
+	    } else {
+	        file.deleteOnExit();
+	    }
+	}
+
+	public static void copyFile(@RUntainted final File srcFile, @RUntainted final File destFile, final boolean preserveFileDate, @RUntainted final CopyOption... copyOptions) throws IOException {
+	    copyFile(srcFile, destFile, preserveFileDate ? addCopyAttributes(copyOptions) : copyOptions);
+	}
+
+	public static void deleteDirectory(@RUntainted final File directory) throws IOException {
+	    Objects.requireNonNull(directory, "directory");
+	    if (!directory.exists()) {
+	        return;
+	    }
+	    if (!isSymlink(directory)) {
+	        cleanDirectory(directory);
+	    }
+	    delete(directory);
+	}
+
+	public static void writeLines(@RUntainted final File file, @RUntainted final Collection<?> lines, final boolean append) throws IOException {
+	    writeLines(file, null, lines, null, append);
+	}
+
+	public static void copyFile(@RUntainted final File srcFile, @RUntainted final File destFile) throws IOException {
+	    copyFile(srcFile, destFile, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
+	}
+
+	@Deprecated
+	public static String readFileToString(@RUntainted final File file) throws IOException {
+	    return readFileToString(file, Charset.defaultCharset());
+	}
+
+	public static void copyURLToFile(@RUntainted final URL source, @RUntainted final File destination) throws IOException {
+	    try (InputStream stream = source.openStream()) {
+	        final Path path = destination.toPath();
+	        PathUtils.createParentDirectories(path);
+	        Files.copy(stream, path, StandardCopyOption.REPLACE_EXISTING);
+	    }
+	}
+
+	public static void writeByteArrayToFile(@RUntainted final File file, @RUntainted final byte[] data, final int off, final int len, final boolean append) throws IOException {
+	    try (OutputStream out = newOutputStream(file, append)) {
+	        out.write(data, off, len);
+	    }
+	}
+
+	public static void copyDirectoryToDirectory(@RUntainted final File sourceDir, @RUntainted final File destinationDir) throws IOException {
+	    requireDirectoryIfExists(sourceDir, "sourceDir");
+	    requireDirectoryIfExists(destinationDir, "destinationDir");
+	    copyDirectory(sourceDir, new File(destinationDir, sourceDir.getName()), true);
+	}
+
+	@SuppressWarnings("resource")
+	public static @RUntainted LineIterator lineIterator(@RUntainted final File file, @RUntainted final String charsetName) throws IOException {
+	    InputStream inputStream = null;
+	    try {
+	        inputStream = Files.newInputStream(file.toPath());
+	        return IOUtils.lineIterator(inputStream, charsetName);
+	    } catch (final IOException | RuntimeException ex) {
+	        IOUtils.closeQuietly(inputStream, ex::addSuppressed);
+	        throw ex;
+	    }
+	}
+
+	public static @RUntainted List<@RUntainted String> readLines(@RUntainted final File file, @RUntainted final Charset charset) throws IOException {
+	    return Files.readAllLines(file.toPath(), charset);
+	}
+
+	public static void write(@RUntainted final File file, @RUntainted final CharSequence data, @RUntainted final Charset charset, final boolean append) throws IOException {
+	    writeStringToFile(file, Objects.toString(data, null), charset, append);
+	}
+
+	public static void writeByteArrayToFile(@RUntainted final File file, @RUntainted final byte[] data) throws IOException {
+	    writeByteArrayToFile(file, data, false);
+	}
+
+	public static void writeLines(@RUntainted final File file, @RUntainted final String charsetName, @RUntainted final Collection<?> lines, @RUntainted final String lineEnding, final boolean append) throws IOException {
+	    try (OutputStream out = new BufferedOutputStream(newOutputStream(file, append))) {
+	        IOUtils.writeLines(lines, lineEnding, out, charsetName);
+	    }
+	}
+
+	public static @RUntainted List<@RUntainted String> readLines(@RUntainted final File file, @RUntainted final String charsetName) throws IOException {
+	    return readLines(file, Charsets.toCharset(charsetName));
+	}
+
+	public static void forceDelete(@RUntainted final File file) throws IOException {
+	    Objects.requireNonNull(file, "file");
+	    final Counters.PathCounters deleteCounters;
+	    try {
+	        deleteCounters = PathUtils.delete(file.toPath(), PathUtils.EMPTY_LINK_OPTION_ARRAY, StandardDeleteOption.OVERRIDE_READ_ONLY);
+	    } catch (final IOException e) {
+	        throw new IOException("Cannot delete file: " + file, e);
+	    }
+	    if (deleteCounters.getFileCounter().get() < 1 && deleteCounters.getDirectoryCounter().get() < 1) {
+	        // didn't find a file to delete.
+	        throw new FileNotFoundException("File does not exist: " + file);
+	    }
+	}
+
+	public static @RUntainted boolean deleteQuietly(@RUntainted final File file) {
+	    if (file == null) {
+	        return false;
+	    }
+	    try {
+	        if (file.isDirectory()) {
+	            cleanDirectory(file);
+	        }
+	    } catch (final Exception ignored) {
+	        // ignore
+	    }
+	    try {
+	        return file.delete();
+	    } catch (final Exception ignored) {
+	        return false;
+	    }
+	}
+
+	public static @RUntainted LineIterator lineIterator(@RUntainted final File file) throws IOException {
+	    return lineIterator(file, null);
+	}
+
+	public static void writeLines(@RUntainted final File file, @RUntainted final String charsetName, @RUntainted final Collection<?> lines, @RUntainted final String lineEnding) throws IOException {
+	    writeLines(file, charsetName, lines, lineEnding, false);
+	}
+
+	public static void copyFile(@RUntainted final File srcFile, @RUntainted final File destFile, @RUntainted final CopyOption... copyOptions) throws IOException {
+	    requireFileCopy(srcFile, destFile);
+	    requireFile(srcFile, "srcFile");
+	    requireCanonicalPathsNotEquals(srcFile, destFile);
+	    createParentDirectories(destFile);
+	    requireFileIfExists(destFile, "destFile");
+	    if (destFile.exists()) {
+	        requireCanWrite(destFile, "destFile");
+	    }
+	    // On Windows, the last modified time is copied by default.
+	    Files.copy(srcFile.toPath(), destFile.toPath(), copyOptions);
+	}
+
+	@Deprecated
+	public static void writeStringToFile(@RUntainted final File file, @RUntainted final String data) throws IOException {
+	    writeStringToFile(file, data, Charset.defaultCharset(), false);
+	}
+
+	public static long copyFile(@RUntainted final File input, @RUntainted final OutputStream output) throws IOException {
+	    try (InputStream fis = Files.newInputStream(input.toPath())) {
+	        return IOUtils.copyLarge(fis, output);
+	    }
+	}
+
+	public static void writeStringToFile(@RUntainted final File file, @RUntainted final String data, @RUntainted final String charsetName) throws IOException {
+	    writeStringToFile(file, data, charsetName, false);
+	}
+
+	public static String readFileToString(@RUntainted final File file, @RUntainted final String charsetName) throws IOException {
+	    return readFileToString(file, Charsets.toCharset(charsetName));
+	}
+
+	public static void copyDirectory(@RUntainted final File srcDir, @RUntainted final File destDir) throws IOException {
+	    copyDirectory(srcDir, destDir, true);
+	}
+
+	public static void copyFile(@RUntainted final File srcFile, @RUntainted final File destFile, final boolean preserveFileDate) throws IOException {
+	    // @formatter:off
+	    copyFile(srcFile, destFile, preserveFileDate ? new CopyOption[] { StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING } : new CopyOption[] { StandardCopyOption.REPLACE_EXISTING });
+	    // @formatter:on
+	}
+
+	public static void writeLines(@RUntainted final File file, @RUntainted final Collection<?> lines, @RUntainted final String lineEnding) throws IOException {
+	    writeLines(file, null, lines, lineEnding, false);
+	}
+
+	public static void moveFile(@RUntainted final File srcFile, @RUntainted final File destFile) throws IOException {
+	    moveFile(srcFile, destFile, StandardCopyOption.COPY_ATTRIBUTES);
+	}
+
+	public static void copyDirectory(@RUntainted final File srcDir, @RUntainted final File destDir, final boolean preserveFileDate) throws IOException {
+	    copyDirectory(srcDir, destDir, null, preserveFileDate);
+	}
+
+	public static void writeByteArrayToFile(@RUntainted final File file, @RUntainted final byte[] data, final boolean append) throws IOException {
+	    writeByteArrayToFile(file, data, 0, data.length, append);
+	}
+
+	public static void write(@RUntainted final File file, @RUntainted final CharSequence data, @RUntainted final String charsetName) throws IOException {
+	    write(file, data, charsetName, false);
+	}
+
+	public static @RUntainted FileOutputStream openOutputStream(@RUntainted final File file) throws IOException {
+	    return openOutputStream(file, false);
+	}
+
+	public static void moveFileToDirectory(@RUntainted final File srcFile, @RUntainted final File destDir, final boolean createDestDir) throws IOException {
+	    validateMoveParameters(srcFile, destDir);
+	    if (!destDir.exists() && createDestDir) {
+	        mkdirs(destDir);
+	    }
+	    requireExistsChecked(destDir, "destDir");
+	    requireDirectory(destDir, "destDir");
+	    moveFile(srcFile, new File(destDir, srcFile.getName()));
+	}
+
+	public static void writeStringToFile(@RUntainted final File file, @RUntainted final String data, @RUntainted final Charset charset, final boolean append) throws IOException {
+	    try (OutputStream out = newOutputStream(file, append)) {
+	        IOUtils.write(data, out, charset);
+	    }
+	}
+
+	@Deprecated
+	public static void write(@RUntainted final File file, @RUntainted final CharSequence data) throws IOException {
+	    write(file, data, Charset.defaultCharset(), false);
+	}
+
+	public static void copyToDirectory(@RUntainted final File sourceFile, @RUntainted final File destinationDir) throws IOException {
+	    Objects.requireNonNull(sourceFile, "sourceFile");
+	    if (sourceFile.isFile()) {
+	        copyFileToDirectory(sourceFile, destinationDir);
+	    } else if (sourceFile.isDirectory()) {
+	        copyDirectoryToDirectory(sourceFile, destinationDir);
+	    } else {
+	        throw new FileNotFoundException("The source " + sourceFile + " does not exist");
+	    }
+	}
+
+	public static void writeByteArrayToFile(@RUntainted final File file, @RUntainted final byte[] data, final int off, final int len) throws IOException {
+	    writeByteArrayToFile(file, data, off, len, false);
+	}
+
+	public static void copyToFile(@RUntainted final InputStream inputStream, @RUntainted final File file) throws IOException {
+	    try (OutputStream out = newOutputStream(file, false)) {
+	        IOUtils.copy(inputStream, out);
+	    }
+	}
+}
