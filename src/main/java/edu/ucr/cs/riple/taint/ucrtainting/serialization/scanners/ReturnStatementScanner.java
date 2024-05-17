@@ -30,6 +30,7 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
 import java.util.Set;
 
+/** A scanner that accumulates the results of visiting a return statements a method. */
 public class ReturnStatementScanner extends AccumulateScanner {
 
   public ReturnStatementScanner(FoundRequired pair) {

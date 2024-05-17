@@ -38,22 +38,27 @@ import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
+/**
+ * A scanner that accumulates the results of visiting an assignments to a variable within a method.
+ */
 public class AssignmentScanner extends AccumulateScanner {
 
-  private final Symbol variable;
+  /** The target variable to find assignments to. */
+  private final Symbol target;
+  /** The factory to create annotated types. */
   private final UCRTaintingAnnotatedTypeFactory factory;
 
   public AssignmentScanner(
-      Symbol variable, FoundRequired pair, UCRTaintingAnnotatedTypeFactory factory) {
+      Symbol target, FoundRequired pair, UCRTaintingAnnotatedTypeFactory factory) {
     super(pair);
-    this.variable = variable;
+    this.target = target;
     this.factory = factory;
   }
 
   @Override
   public Set<Fix> visitAssignment(AssignmentTree node, FixComputer visitor) {
     Element element = TreeUtils.elementFromUse(node.getVariable());
-    if (variable.equals(element)) {
+    if (target.equals(element)) {
       if (node.getVariable().getKind().equals(Tree.Kind.ARRAY_ACCESS)) {
         if (pair.required instanceof AnnotatedTypeMirror.AnnotatedArrayType
             && pair.found instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
@@ -72,7 +77,7 @@ public class AssignmentScanner extends AccumulateScanner {
   @Override
   public Set<Fix> visitVariable(VariableTree node, FixComputer visitor) {
     Element element = TreeUtils.elementFromDeclaration(node);
-    if (variable.equals(element)) {
+    if (target.equals(element)) {
       if (node.getInitializer() == null) {
         return Set.of();
       }
@@ -86,8 +91,14 @@ public class AssignmentScanner extends AccumulateScanner {
 
   @Override
   public Set<Fix> visitEnhancedForLoop(EnhancedForLoopTree node, FixComputer fixComputer) {
-    FoundRequired updated =
-        fixComputer.updateFoundRequiredPairEnhancedForLoopError(node.getExpression(), pair);
-    return node.getExpression().accept(fixComputer, updated);
+    Symbol.VarSymbol loopVariable =
+        (Symbol.VarSymbol) TreeUtils.elementFromDeclaration(node.getVariable());
+    if (this.target.equals(loopVariable)) {
+      // This is the loop where there is an assignment to the target variable.
+      FoundRequired updated =
+          fixComputer.updateFoundRequiredPairEnhancedForLoopError(node.getExpression(), pair);
+      return node.getExpression().accept(fixComputer, updated);
+    }
+    return super.visitEnhancedForLoop(node, fixComputer);
   }
 }

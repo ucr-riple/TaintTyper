@@ -31,8 +31,10 @@ import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
 import java.util.HashSet;
 import java.util.Set;
 
+/** A scanner that accumulates the results of visiting a tree. */
 abstract class AccumulateScanner extends TreeScanner<Set<Fix>, FixComputer> {
 
+  /** The pair of required and found annotations. */
   protected final FoundRequired pair;
 
   public AccumulateScanner(FoundRequired pair) {
