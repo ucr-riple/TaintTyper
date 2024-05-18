@@ -102,10 +102,10 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
     // Locate method receiver.
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
-    // static method return type cannot be changed using class type arguments. No fix can be
-    // suggested by this visitor.
+    // static method return type cannot be changed using class type arguments. We must fix it with
+    // other existing methods.
     if (calledMethod.isStatic()) {
-      return Set.of();
+      return node.accept(fixComputer, pair);
     }
     // If receiver is null or a simple identifier, we must fix the method declaration.
     if (receiver == null || SymbolUtils.isThisIdentifier(receiver)) {

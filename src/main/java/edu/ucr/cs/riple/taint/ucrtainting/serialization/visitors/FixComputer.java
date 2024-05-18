@@ -117,6 +117,8 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   public Set<Fix> visitMethodInvocation(MethodInvocationTree node, FoundRequired pair) {
     Element element;
     try {
+      // It has been observed that in some cases, CF crashes in finding the element, in such cases
+      // we should just return an empty set.
       element = TreeUtils.elementFromUse(node);
     } catch (Exception e) {
       Serializer.log("Error in finding the element from invocation: " + node);

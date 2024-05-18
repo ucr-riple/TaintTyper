@@ -198,6 +198,11 @@ public class CmsUUID {
     return result;
   }
 
+  public void testOnTypeArgChangeOnMethodAsReceiver() {
+    // :: error: assignment
+    Iterator<@RUntainted String> itParams = splitAsList(null, null, true).iterator();
+  }
+
   public void testValueForStaticFinalMap() {
     @RUntainted String s = IMAGE_MIMETYPES.get("png");
   }

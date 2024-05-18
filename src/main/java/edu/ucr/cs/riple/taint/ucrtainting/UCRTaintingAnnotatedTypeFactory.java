@@ -566,6 +566,10 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     return makeUntaintedPair(getAnnotatedType(tree), typeIndex, depth);
   }
 
+  public FoundRequired makeUntaintedPair(Element element, Set<TypeIndex> typeIndex, int depth) {
+    return makeUntaintedPair(getAnnotatedType(element), typeIndex, depth);
+  }
+
   /**
    * Checks if unannotated code handling is enabled.
    *

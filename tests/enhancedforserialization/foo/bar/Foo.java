@@ -86,5 +86,17 @@ public class Foo {
     }
   }
 
+  public void testLocalVariablesNestedAssignmentWithEnhancedForLoop(
+      Map<Map<List<String>, String>, List<String>> map) {
+    for (Map<List<String>, String> smallMap : map.keySet()) {
+      for (Map.Entry<List<String>, String> entry : smallMap.entrySet()) {
+        for (String s : entry.getKey()) {
+          // :: error: argument
+          sink(s);
+        }
+      }
+    }
+  }
+
   public void sink(@RUntainted String s) {}
 }

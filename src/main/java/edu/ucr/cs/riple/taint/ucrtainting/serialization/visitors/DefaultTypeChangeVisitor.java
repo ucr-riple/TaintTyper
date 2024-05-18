@@ -52,7 +52,7 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
   protected final MethodReturnVisitor returnVisitor;
   protected TreePath currentPath;
   protected final Types types;
-  private final SpecializedFixComputer localVariableFixVisitor;
+  protected final LocalVariableFixVisitor localVariableFixVisitor;
 
   public DefaultTypeChangeVisitor(
       UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
@@ -322,5 +322,6 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
   public void reset(TreePath currentPath) {
     this.returnVisitor.reset();
     this.currentPath = currentPath;
+    this.localVariableFixVisitor.reset();
   }
 }

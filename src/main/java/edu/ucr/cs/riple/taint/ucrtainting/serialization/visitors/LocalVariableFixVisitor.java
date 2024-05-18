@@ -34,12 +34,13 @@ import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.scanners.AssignmentScanner;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.lang.model.element.Element;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
 
 public class LocalVariableFixVisitor extends SpecializedFixComputer {
@@ -73,6 +74,34 @@ public class LocalVariableFixVisitor extends SpecializedFixComputer {
       return Set.of();
     }
     Symbol.VarSymbol varSymbol = (Symbol.VarSymbol) element;
+    List<Pair<Symbol.VarSymbol, FoundRequired>> localVariables = new ArrayList<>();
+    localVariables.add(Pair.of(varSymbol, pair));
+    Set<Fix> fixes = new HashSet<>();
+    while (!localVariables.stream().allMatch(p -> visited(p.fst, p.snd))) {
+      Set<Pair<Symbol.VarSymbol, FoundRequired>> toProcess = new HashSet<>();
+      for (Pair<Symbol.VarSymbol, FoundRequired> p : localVariables) {
+        if (visited(p.fst, p.snd)) {
+          continue;
+        }
+        Set<Fix> newFixes = computeAndUpdateCache(p.fst, p.snd);
+        fixes.addAll(newFixes);
+        newFixes.forEach(
+            fix -> {
+              if (fix.location.getKind().isLocalVariable()) {
+                Symbol.VarSymbol varSymbol1 = (Symbol.VarSymbol) fix.location.getTarget();
+                FoundRequired newPair =
+                    typeFactory.makeUntaintedPair(
+                        varSymbol1, fix.location.getTypeIndexSet(), pair.depth);
+                toProcess.add(Pair.of(varSymbol1, newPair));
+              }
+            });
+      }
+      localVariables.addAll(toProcess);
+    }
+    return fixes;
+  }
+
+  private Set<Fix> computeAndUpdateCache(Symbol.VarSymbol varSymbol, FoundRequired pair) {
     if (visited(varSymbol, pair)) {
       return get(varSymbol, pair);
     }
@@ -95,12 +124,11 @@ public class LocalVariableFixVisitor extends SpecializedFixComputer {
         return Set.of(onLocalVariable);
       }
       JCTree.JCMethodDecl enclosingMethod = (JCTree.JCMethodDecl) declarationTree;
-      AnnotatedTypeMirror localVarType = typeFactory.getAnnotatedType(varSymbol).deepCopy(true);
-      typeFactory.makeUntainted(localVarType, onLocalVariable.location.getTypeIndexSet());
-      FoundRequired localVarPair =
-          FoundRequired.of(typeFactory.getAnnotatedType(varSymbol), localVarType, pair.depth);
+      FoundRequired assignmentRequiredPair =
+          typeFactory.makeUntaintedPair(
+              varSymbol, onLocalVariable.location.getTypeIndexSet(), pair.depth);
       AssignmentScanner assignmentScanner =
-          new AssignmentScanner(varSymbol, localVarPair, typeFactory);
+          new AssignmentScanner(varSymbol, assignmentRequiredPair, typeFactory);
       Set<Fix> fixes = enclosingMethod.accept(assignmentScanner, fixComputer);
       if (fixes == null || fixes.isEmpty()) {
         return Set.of(onLocalVariable);
@@ -111,5 +139,9 @@ public class LocalVariableFixVisitor extends SpecializedFixComputer {
     } catch (Exception e) {
       return Set.of(onLocalVariable);
     }
+  }
+
+  public void reset() {
+    cache.clear();
   }
 }
