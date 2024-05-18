@@ -77,9 +77,10 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
       return null;
     }
     Set<TypeIndex> indices;
-    try {
-      indices = untaintedTypeMatchVisitor.visit(pair.found, pair.required, null);
-    } catch (IndexOutOfBoundsException e) {
+    indices = untaintedTypeMatchVisitor.visit(pair.found, pair.required, null);
+    if (indices == null || indices.isEmpty()) {
+      // There is a chance that we can change the class declaration and add annotations on the type
+      // arguments of the class declaration. {e.g. Foo extends List<String>}
       Type type = TypeUtils.getType(element);
       Symbol.ClassSymbol classType = (Symbol.ClassSymbol) type.tsym;
       Type.ClassType requiredType =
@@ -113,7 +114,6 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
               });
       return new Fix(classDeclarationLocation);
     }
-
     AnnotatedTypeMirror elementAnnotatedType = typeFactory.getAnnotatedType(element);
     // remove redundant indices.
     indices =
