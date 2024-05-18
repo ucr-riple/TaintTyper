@@ -79,6 +79,12 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
     Set<TypeIndex> indices;
     indices = untaintedTypeMatchVisitor.visit(pair.found, pair.required, null);
     if (indices == null || indices.isEmpty()) {
+      if (pair.found.getUnderlyingType() instanceof Type.ClassType) {
+        Type.ClassType foundType = (Type.ClassType) pair.found.getUnderlyingType();
+        if (!foundType.getTypeArguments().isEmpty()) {
+          return null;
+        }
+      }
       // There is a chance that we can change the class declaration and add annotations on the type
       // arguments of the class declaration. {e.g. Foo extends List<String>}
       Type type = TypeUtils.getType(element);
@@ -94,6 +100,10 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
       }
       ClassDeclarationLocation classDeclarationLocation =
           new ClassDeclarationLocation(classType, inheritedType);
+      if (classDeclarationLocation.path == null) {
+        // Class is not even declared in the project. Cannot do anything.
+        return null;
+      }
       Set<AnnotatedTypeMirror.AnnotatedDeclaredType> supers =
           AnnotatedTypes.getSuperTypes((AnnotatedTypeMirror.AnnotatedDeclaredType) pair.found);
       supers.stream()
@@ -112,7 +122,9 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
                 classDeclarationLocation.setTypeIndexSet(
                     untaintedTypeMatchVisitor.visit(annotatedDeclaredType, pair.required, null));
               });
-      return new Fix(classDeclarationLocation);
+      return classDeclarationLocation.getTypeIndexSet().isEmpty()
+          ? null
+          : new Fix(classDeclarationLocation);
     }
     AnnotatedTypeMirror elementAnnotatedType = typeFactory.getAnnotatedType(element);
     // remove redundant indices.
