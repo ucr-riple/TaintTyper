@@ -55,18 +55,6 @@ public class LocalVariableFixVisitor extends SpecializedFixComputer {
     this.visiting = new HashSet<>();
   }
 
-  private boolean visited(Symbol.VarSymbol varSymbol, FoundRequired foundRequired) {
-    return cache.containsKey(Pair.of(varSymbol, foundRequired))
-        || visiting.contains(Pair.of(varSymbol, foundRequired));
-  }
-
-  private Set<Fix> get(Symbol.VarSymbol varSymbol, FoundRequired foundRequired) {
-    if (visiting.contains(Pair.of(varSymbol, foundRequired))) {
-      return Set.of();
-    }
-    return cache.get(Pair.of(varSymbol, foundRequired));
-  }
-
   @Override
   public Set<Fix> visitIdentifier(IdentifierTree node, FoundRequired pair) {
     Element element = TreeUtils.elementFromTree(node);
@@ -101,6 +89,48 @@ public class LocalVariableFixVisitor extends SpecializedFixComputer {
     return fixes;
   }
 
+  /**
+   * Reset the cache of fixes. Required to be called before visiting a new series of fix
+   * computations for a new error.
+   */
+  public void reset() {
+    cache.clear();
+  }
+
+  /**
+   * Check if a local variable has been visited or is currently being visited. If the local variable
+   * is being visited, we should not visit it again to avoid infinite loops.
+   *
+   * @param varSymbol The local variable to check.
+   * @param foundRequired The required and found annotations.
+   * @return True if the local variable has been visited or is currently being visited.
+   */
+  private boolean visited(Symbol.VarSymbol varSymbol, FoundRequired foundRequired) {
+    return cache.containsKey(Pair.of(varSymbol, foundRequired))
+        || visiting.contains(Pair.of(varSymbol, foundRequired));
+  }
+
+  /**
+   * Get the fixes for a local variable from the cache.
+   *
+   * @param varSymbol The local variable to get the fixes for.
+   * @param foundRequired The required and found annotations.
+   * @return The set of fixes for the local variable.
+   */
+  private Set<Fix> get(Symbol.VarSymbol varSymbol, FoundRequired foundRequired) {
+    if (visiting.contains(Pair.of(varSymbol, foundRequired))) {
+      return Set.of();
+    }
+    return cache.get(Pair.of(varSymbol, foundRequired));
+  }
+
+  /**
+   * Computes the fixes for a local variable and updates the cache.
+   *
+   * @param varSymbol The local variable to compute the fixes for.
+   * @param pair The required and found annotations.
+   * @return The set of fixes for the local variable.
+   */
   private Set<Fix> computeAndUpdateCache(Symbol.VarSymbol varSymbol, FoundRequired pair) {
     if (visited(varSymbol, pair)) {
       return get(varSymbol, pair);
@@ -113,6 +143,13 @@ public class LocalVariableFixVisitor extends SpecializedFixComputer {
     return fixes;
   }
 
+  /**
+   * Computes the fixes on every assignment to a local variable.
+   *
+   * @param varSymbol The local variable to compute the fixes for.
+   * @param pair The required and found annotations.
+   * @return The set of fixes for the local variable.
+   */
   private Set<Fix> computeFixesForVariable(Symbol.VarSymbol varSymbol, FoundRequired pair) {
     Fix onLocalVariable = buildFixForElement(varSymbol, pair);
     if (onLocalVariable == null) {
@@ -139,9 +176,5 @@ public class LocalVariableFixVisitor extends SpecializedFixComputer {
     } catch (Exception e) {
       return Set.of(onLocalVariable);
     }
-  }
-
-  public void reset() {
-    cache.clear();
   }
 }

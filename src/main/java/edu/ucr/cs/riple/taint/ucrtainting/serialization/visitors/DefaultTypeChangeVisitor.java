@@ -49,9 +49,13 @@ import org.checkerframework.javacutil.TreeUtils;
 /** This visitor directly annotates the element declaration to match the required type. */
 public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
 
+  /** The visitor that accumulates the results of visiting a return statements in a method. */
   protected final MethodReturnVisitor returnVisitor;
+  /** Current path of the CF visitor. */
   protected TreePath currentPath;
+  /** Javac types instance. */
   protected final Types types;
+  /** Visitor that fixes all assignments on local variables. */
   protected final LocalVariableFixVisitor localVariableFixVisitor;
 
   public DefaultTypeChangeVisitor(
