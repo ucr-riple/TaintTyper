@@ -135,6 +135,10 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<Set<TypeIndex>, Vo
       result.add(TypeIndex.TOP_LEVEL);
     }
     for (int i = 0; i < required.getTypeArguments().size(); i++) {
+      if (i >= found.getTypeArguments().size() || i >= required.getTypeArguments().size()) {
+        // It is possible that one of the types does not have type arguments.
+        break;
+      }
       AnnotatedTypeMirror typeArgumentFound = found.getTypeArguments().get(i);
       AnnotatedTypeMirror typeArgumentRequired = required.getTypeArguments().get(i);
       TypeIndex toAddOnThisTypeArg = TypeIndex.of(i + 1);
