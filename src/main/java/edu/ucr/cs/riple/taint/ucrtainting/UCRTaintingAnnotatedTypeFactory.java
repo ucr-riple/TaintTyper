@@ -405,6 +405,10 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     if (index == position.size()) {
       return;
     }
+    if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType && position.get(index) == 0) {
+      makeUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
+      return;
+    }
     if (position.get(index) == 0) {
       makeUntainted(type);
       return;
