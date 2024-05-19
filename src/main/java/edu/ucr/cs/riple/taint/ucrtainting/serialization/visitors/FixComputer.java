@@ -63,7 +63,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   protected final Types types;
   protected final Context context;
   protected final DefaultTypeChangeVisitor defaultTypeChangeVisitor;
-  protected final SpecializedFixComputer thirdPartyFixVisitor;
+  protected final SpecializedFixComputer unannotatedCodeFixComputer;
   protected final SpecializedFixComputer methodTypeArgumentFixVisitor;
   protected final CollectionFixVisitor collectionFixVisitor;
 
@@ -72,7 +72,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     this.context = context;
     this.types = types;
     this.defaultTypeChangeVisitor = new DefaultTypeChangeVisitor(factory, this, context);
-    this.thirdPartyFixVisitor = new UnannotatedCodeFixVisitor(typeFactory, this, context);
+    this.unannotatedCodeFixComputer = new UnannotatedCodeFixVisitor(typeFactory, this, context);
     this.methodTypeArgumentFixVisitor = new GenericMethodFixVisitor(typeFactory, this, context);
     this.collectionFixVisitor = new CollectionFixVisitor(typeFactory, this, context);
   }
@@ -90,7 +90,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
         Symbol symbol = (Symbol) TreeUtils.elementFromUse(tree);
         if (symbol.getKind().isField()
             && typeFactory.isUnannotatedField((Symbol.VarSymbol) symbol)) {
-          return answer(thirdPartyFixVisitor.visitMemberSelect(tree, pair));
+          return answer(unannotatedCodeFixComputer.visitMemberSelect(tree, pair));
         }
       }
     }
@@ -168,7 +168,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     // check if the call is to a method defined in a third party library. If the method has a type
     // var return type and has a receiver, we should annotate the receiver.
     if (!isInAnnotatedPackage && defaultTypeChangeVisitor.requireFix(pair)) {
-      return answer(node.accept(thirdPartyFixVisitor, pair));
+      return answer(node.accept(unannotatedCodeFixComputer, pair));
     }
     // The method has a receiver, if the method contains a type argument, we should annotate the
     // receiver and leave the called method untouched. Annotation on the declaration on the type
