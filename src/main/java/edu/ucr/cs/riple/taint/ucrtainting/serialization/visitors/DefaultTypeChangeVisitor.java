@@ -144,6 +144,7 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
     if (!typeFactory.hasUntaintedAnnotation(pair.found)
         && typeFactory.hasUntaintedAnnotation(pair.required)) {
       // Add a fix for each argument.
+      Set<Fix> onArguments = new HashSet<>();
       for (ExpressionTree arg : node.getArguments()) {
         AnnotatedTypeMirror foundArgType = typeFactory.getAnnotatedType(arg);
         AnnotatedTypeMirror requiredArgType = foundArgType.deepCopy(true);
@@ -153,9 +154,10 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
         } else {
           typeFactory.makeUntainted(requiredArgType);
         }
-        return arg.accept(
-            fixComputer, new FoundRequired(foundArgType, requiredArgType, pair.depth));
+        onArguments.addAll(
+            arg.accept(fixComputer, new FoundRequired(foundArgType, requiredArgType, pair.depth)));
       }
+      return onArguments;
     }
     return Set.of();
   }

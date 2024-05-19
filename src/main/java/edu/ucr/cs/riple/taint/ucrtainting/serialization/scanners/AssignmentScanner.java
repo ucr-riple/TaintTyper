@@ -71,7 +71,7 @@ public class AssignmentScanner extends AccumulateScanner {
       }
       return node.getExpression().accept(visitor, pair);
     }
-    return Set.of();
+    return super.visitAssignment(node, visitor);
   }
 
   @Override
@@ -86,7 +86,7 @@ public class AssignmentScanner extends AccumulateScanner {
               factory.getAnnotatedType(node.getInitializer()), pair.required, pair.depth);
       return node.getInitializer().accept(visitor, newPair);
     }
-    return Set.of();
+    return super.visitVariable(node, visitor);
   }
 
   @Override
