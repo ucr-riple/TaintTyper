@@ -54,7 +54,6 @@ import org.checkerframework.javacutil.TreeUtils;
   //  "stubs/StringBuffer.astub",
   "stubs/taintedMethods.astub",
   "stubs/tdmljp.astub",
-  "stubs/inferred-poly.astub",
 })
 @SupportedOptions({
   UCRTaintingChecker.ANNOTATED_PACKAGES,
