@@ -9,6 +9,7 @@ public class Foo {
   public void testClassTypeWithArg() {
     Bar<String, String> bar = new Bar<String, String>();
     //    // :: error: assignment
+    //    The reason is that we need two fixes on two different receivers. Pretty rare.
     //    Map<@RUntainted String, @RUntainted String> map = bar.getMapWithE();
     // :: error: assignment
     @RUntainted String s = bar.getE();

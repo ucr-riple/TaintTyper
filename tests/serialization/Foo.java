@@ -197,6 +197,14 @@ class Foo {
     // :: error: assignment
     @RUntainted String l2 = l1;
   }
+
+  void testAllArgsUntaintedForNewClassExpression(String p1, String p2) {
+    class SomeClass {
+      SomeClass(String s1, String s2) {}
+    }
+    // :: error: assignment
+    @RUntainted SomeClass s = new SomeClass(p1, p2);
+  }
 }
 
 class MainMethodTest {

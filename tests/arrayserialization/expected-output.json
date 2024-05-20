@@ -3,7 +3,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "array.initializer",
-      "offset": 732,
+      "offset": 678,
       "index": 1,
       "region": {
         "symbol": "bar(java.lang.Object)",
@@ -29,7 +29,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "array.initializer",
-      "offset": 732,
+      "offset": 678,
       "index": 2,
       "region": {
         "symbol": "bar(java.lang.Object)",
@@ -57,7 +57,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 732,
+      "offset": 678,
       "index": 3,
       "region": {
         "symbol": "bar(java.lang.Object)",
@@ -73,10 +73,8 @@
                 0
               ]
             ],
-            "method": "bar(java.lang.Object)",
-            "kind": "PARAMETER",
-            "name": "param",
-            "index": 0,
+            "field": "field",
+            "kind": "FIELD",
             "class": "foo.bar.Foo"
           }
         },
@@ -89,8 +87,10 @@
                 0
               ]
             ],
-            "field": "field",
-            "kind": "FIELD",
+            "method": "bar(java.lang.Object)",
+            "kind": "PARAMETER",
+            "name": "param",
+            "index": 0,
             "class": "foo.bar.Foo"
           }
         }
@@ -99,7 +99,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 906,
+      "offset": 852,
       "index": 4,
       "region": {
         "symbol": "arrayCopy(java.lang.String[])",
@@ -127,7 +127,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 1688,
+      "offset": 1634,
       "index": 5,
       "region": {
         "symbol": "toArrayTestWithError(java.util.Map)",
@@ -157,7 +157,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 1892,
+      "offset": 1838,
       "index": 6,
       "region": {
         "symbol": "toArrayTestWithErrorSimple(java.util.List)",
@@ -186,7 +186,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 3260,
+      "offset": 3206,
       "index": 7,
       "region": {
         "symbol": "createNewSplitSegmentFile(java.lang.Integer)",
@@ -213,29 +213,13 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 3773,
+      "offset": 3719,
       "index": 8,
       "region": {
         "symbol": "vargarsMultipleArguments(java.lang.String,java.lang.String,java.lang.String)",
         "class": "foo.bar.Foo"
       },
       "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "method": "vargarsMultipleArguments(java.lang.String,java.lang.String,java.lang.String)",
-            "kind": "PARAMETER",
-            "name": "table",
-            "index": 1,
-            "class": "foo.bar.Foo"
-          }
-        },
         {
           "annotation": "untainted",
           "location": {
@@ -267,13 +251,29 @@
             "index": 0,
             "class": "foo.bar.Foo"
           }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "vargarsMultipleArguments(java.lang.String,java.lang.String,java.lang.String)",
+            "kind": "PARAMETER",
+            "name": "table",
+            "index": 1,
+            "class": "foo.bar.Foo"
+          }
         }
       ]
     },
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "argument",
-      "offset": 4620,
+      "offset": 4566,
       "index": 9,
       "region": {
         "symbol": "matchOnArgTypeArg()",
@@ -299,8 +299,64 @@
     },
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "messageKey": "return",
+      "offset": 5487,
+      "index": 10,
+      "region": {
+        "symbol": "create()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "varName": "dirname",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "create()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "PROP_NAMES",
+            "kind": "FIELD",
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "varName": "prop",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "create()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 5748,
+      "offset": 5728,
       "index": 11,
       "region": {
         "symbol": "inferParamToBeUntainted(java.lang.String)",
@@ -349,7 +405,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 6035,
+      "offset": 6015,
       "index": 12,
       "region": {
         "symbol": "inferForPolyComponent(java.lang.String)",
@@ -377,7 +433,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 6378,
+      "offset": 6358,
       "index": 13,
       "region": {
         "symbol": "testVarArgsForArraysAsList(java.lang.String,java.lang.String)",
@@ -405,7 +461,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 6738,
+      "offset": 6749,
       "index": 14,
       "region": {
         "symbol": "simpleArrayAccessTest(java.lang.String[])",
@@ -431,8 +487,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
-      "offset": 6884,
-      "index": 14,
+      "offset": 6826,
+      "index": 15,
       "region": {
         "symbol": "simpleArrayAccessTest(java.lang.String[])",
         "class": "foo.bar.Foo"
@@ -459,8 +515,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "enhancedfor",
-      "offset": 7015,
-      "index": 15,
+      "offset": 6958,
+      "index": 16,
       "region": {
         "symbol": "enhancedForLoopInvocationTest()",
         "class": "foo.bar.Foo"
@@ -483,10 +539,114 @@
       ]
     },
     {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "messageKey": "assignment",
+      "offset": 7134,
+      "index": 17,
+      "region": {
+        "symbol": "arrayOnListTypeArg(java.util.List)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "arrayOnListTypeArg(java.util.List)",
+            "kind": "PARAMETER",
+            "name": "l",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "messageKey": "assignment",
+      "offset": 7261,
+      "index": 18,
+      "region": {
+        "symbol": "arrayOnMapTypeArg(java.util.Map)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "arrayOnMapTypeArg(java.util.Map)",
+            "kind": "PARAMETER",
+            "name": "map",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "messageKey": "assignment",
+      "offset": 7555,
+      "index": 19,
+      "region": {
+        "symbol": "localVariableFullAssignmentCheckWithArrayUntaintedComponent(java.lang.String[])",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "varName": "foo",
+            "type-variable-position": [[0]],
+            "method": "localVariableFullAssignmentCheckWithArrayUntaintedComponent(java.lang.String[])",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "type-variable-position": [[0]],
+            "method": "localVariableFullAssignmentCheckWithArrayUntaintedComponent(java.lang.String[])",
+            "kind": "PARAMETER",
+            "name": "arr",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "varName": "f1",
+            "type-variable-position": [[0]],
+            "method": "localVariableFullAssignmentCheckWithArrayUntaintedComponent(java.lang.String[])",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/NotPolyInference.java",
       "messageKey": "argument",
       "offset": 2138,
-      "index": 16,
+      "index": 20,
       "region": {
         "symbol": "test(byte[],int,int,java.io.Writer)",
         "class": "foo.bar.NotPolyInference"

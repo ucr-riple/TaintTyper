@@ -61,8 +61,6 @@ public class Foo {
   }
 
   public void enhancedForLeftHandSide(Set<Map.Entry<String, @RUntainted String>> entrySet) {
-    //    Iterator<Map.Entry<@RUntainted String, @RUntainted List<String>>> i =
-    // headers.entrySet().iterator();
     // :: error: enhancedfor
     for (Map.Entry<String, String> entry : entrySet) {}
   }
@@ -156,6 +154,12 @@ public class Foo {
   public List<@RUntainted String> testThisIdentifier() {
     // :: error: return
     return this.tokens;
+  }
+
+  public void iteratorOnMapEntryTest(Map<String, List<String>> headers) {
+    // :: error: assignment
+    Iterator<Map.Entry<@RUntainted String, @RUntainted List<@RUntainted String>>> i =
+        headers.entrySet().iterator();
   }
 }
 

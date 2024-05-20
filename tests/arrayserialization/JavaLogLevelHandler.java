@@ -2,12 +2,7 @@ package foo.bar;
 
 import java.util.logging.Logger;
 
-/**
- * Contract used to isolate translations for each Java Logging Level.
- *
- * @see JavaLogLevelHandlers
- * @see JavaLogBridgeImpl
- */
+/** Contract used to isolate translations for each Java Logging Level. */
 interface JavaLogLevelHandler {
   /** Check if the logging level is enabled for the specified logger. */
   boolean isEnabled(Logger logger);

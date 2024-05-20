@@ -148,29 +148,34 @@ public class Foo {
     return this;
   }
 
-  //  public static @RUntainted JFileChooser create() {
-  //    // :: error: enhancedfor
-  //    for (final java.lang.@RUntainted String prop : PROP_NAMES) {
-  //      try {
-  //        @RUntainted String dirname = null;
-  //        if (prop == null) {
-  //        } else {
-  //          dirname = System.getProperty(prop);
-  //        }
-  //        if ("".equals(dirname)) {
-  //          return new JFileChooser();
-  //        } else {
-  //          final java.io.File dir = new File(dirname);
-  //          if (dir != null) {
-  //            return new JFileChooser(dir);
-  //          }
-  //        }
-  //      } catch (RuntimeException t) {
-  //        throw new RuntimeException(t);
-  //      }
-  //    }
-  //    return null;
-  //  }
+  static class JFileChooser {
+    public JFileChooser(String dir) {}
+
+    public JFileChooser() {}
+
+    public JFileChooser(java.io.File dir) {}
+  }
+
+  public static @RUntainted JFileChooser create() {
+    for (final java.lang.String prop : PROP_NAMES) {
+      try {
+        String dirname = null;
+        if (prop == null) {
+        } else {
+          dirname = System.getProperty(prop);
+        }
+        if ("".equals(dirname)) {
+          return new JFileChooser();
+        } else {
+          // :: error: return
+          return new JFileChooser(dirname);
+        }
+      } catch (RuntimeException t) {
+        throw new RuntimeException(t);
+      }
+    }
+    return null;
+  }
 
   public void inferParamToBeUntainted(String line) {
     // :: error: assignment
@@ -221,7 +226,24 @@ public class Foo {
   String[] getStrings() {
     return null;
   }
-}
 
-// CASES THAT ARE NOT COVERED
-// 1. sink(list.get(0)[0]);
+  void arrayOnListTypeArg(List<String[]> l) {
+    // :: error: assignment
+    @RUntainted String a = l.get(0)[0];
+  }
+
+  void arrayOnMapTypeArg(Map<String, String[]> map) {
+    // :: error: assignment
+    @RUntainted Object[] arr = map.get("key");
+  }
+
+  public void localVariableFullAssignmentCheckWithArrayUntaintedComponent(String[] arr) {
+    class InnerFoo {
+      InnerFoo(String p) {}
+    }
+    InnerFoo foo = new InnerFoo(arr[0]);
+    InnerFoo f1 = foo;
+    // :: error: assignment
+    @RUntainted Object ans = f1;
+  }
+}

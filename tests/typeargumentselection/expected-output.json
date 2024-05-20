@@ -509,6 +509,44 @@
           }
         }
       ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 4254,
+      "index": 19,
+      "region": {
+        "symbol": "iteratorOnMapEntryTest(java.util.Map)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentselection/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ],
+              [
+                2,
+                1,
+                0
+              ],
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "iteratorOnMapEntryTest(java.util.Map)",
+            "kind": "PARAMETER",
+            "name": "headers",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     }
   ]
 }
