@@ -157,8 +157,8 @@ public class Foo {
   }
 
   public void iteratorOnMapEntryTest(Map<String, List<String>> headers) {
-    // :: error: assignment
     Iterator<Map.Entry<@RUntainted String, @RUntainted List<@RUntainted String>>> i =
+        // :: error: assignment
         headers.entrySet().iterator();
   }
 }
