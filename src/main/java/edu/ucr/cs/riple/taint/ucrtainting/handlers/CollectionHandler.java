@@ -131,7 +131,7 @@ public class CollectionHandler extends AbstractHandler {
     }
     Type.ClassType argumentCollectionType =
         retrieveCollectionTypeMirrorFromType(argAnnotatedType.getUnderlyingType());
-    if (argumentCollectionType == null) {
+    if (argumentCollectionType == null || argumentCollectionType.isRaw()) {
       return;
     }
     if (TypeUtils.hasUntaintedAnnotation(argumentCollectionType.typarams_field.get(0))) {
