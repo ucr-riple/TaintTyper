@@ -73,7 +73,10 @@ public interface SymbolLocation {
         return onField;
       case LOCAL_VARIABLE:
       case RESOURCE_VARIABLE:
-        if (Serializer.serializeSymbol(enclosingMethod).equals("<clinit>")) {
+        // For local variables in static initializer blocks, enclosingMethod is null.
+        // We don't have the support yet.
+        if (enclosingMethod == null
+            || Serializer.serializeSymbol(enclosingMethod).equals("<clinit>")) {
           return null;
         }
         return new LocalVariableLocation(target, enclosingMethod);
