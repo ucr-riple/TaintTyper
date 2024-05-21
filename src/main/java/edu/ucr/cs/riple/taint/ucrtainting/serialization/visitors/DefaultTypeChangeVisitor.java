@@ -197,6 +197,9 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
     if (typeFactory.isFromStubFile(calledMethod)) {
       return Set.of();
     }
+    if (!requireFix(pair)) {
+      return Set.of();
+    }
     Fix onMethod = buildFixForElement(calledMethod, pair);
     if (onMethod == null || !requireFix(pair)) {
       return Set.of();
