@@ -120,7 +120,7 @@ public class SerializationService {
     } catch (Exception e) {
       System.err.println(
           "Error in computing required fixes: " + source + " " + messageKey + ", exception:" + e);
-      System.out.println(
+      System.err.println(
           "At path: "
               + Serializer.pathToSourceFileFromURI(
                   checker
@@ -129,7 +129,7 @@ public class SerializationService {
                       .getCompilationUnit()
                       .getSourceFile()
                       .toUri()));
-      System.out.println("Last visited tree: " + checker.getVisitor().getCurrentPath().getLeaf());
+      System.err.println("Last visited tree: " + checker.getVisitor().getCurrentPath().getLeaf());
       resolvingFixes = ImmutableSet.of();
       e.printStackTrace();
     }
