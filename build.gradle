@@ -85,7 +85,7 @@ dependencies {
     implementation 'com.vaadin:vaadin-shared:8.20.3'
     testImplementation 'org.springframework:spring-websocket:5.3.29'
     testImplementation 'com.opensymphony:xwork:2.1.2'
-    testImplementation 'commons-cli:commons-cli:1.4'
+    testImplementation 'commons-cli:commons-cli:1.8.0'
     testImplementation 'org.apache.commons:commons-lang3:3.12.0'
     testImplementation 'org.apache.commons:commons-digester3:3.2'
     testImplementation 'com.baomidou:mybatis-plus-core:3.5.4.1'
