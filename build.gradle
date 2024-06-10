@@ -88,7 +88,7 @@ dependencies {
     testImplementation 'commons-cli:commons-cli:1.4'
     testImplementation 'org.apache.commons:commons-lang3:3.12.0'
     testImplementation 'org.apache.commons:commons-digester3:3.2'
-    testImplementation 'com.baomidou:mybatis-plus-core:3.5.4.1'
+    testImplementation 'com.baomidou:mybatis-plus-core:3.5.7'
     testImplementation 'org.owasp.esapi:esapi:2.5.3.1'
     testImplementation 'org.springframework.extensions.surf:spring-webscripts:5.9'
     testImplementation 'xml-resolver:xml-resolver:1.2'
