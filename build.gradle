@@ -83,7 +83,7 @@ dependencies {
     testImplementation 'javax.servlet:servlet-api:2.5'
     testImplementation group: 'org.safehaus.jug', name: 'jug', version: '2.0.0', classifier: 'lgpl'
     implementation 'com.vaadin:vaadin-shared:8.20.3'
-    testImplementation 'org.springframework:spring-websocket:5.3.29'
+    testImplementation 'org.springframework:spring-websocket:6.1.11'
     testImplementation 'com.opensymphony:xwork:2.1.2'
     testImplementation 'commons-cli:commons-cli:1.4'
     testImplementation 'org.apache.commons:commons-lang3:3.12.0'
