@@ -29,9 +29,6 @@ import static edu.ucr.cs.riple.taint.ucrtainting.Log.print;
 import com.sun.source.tree.*;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.CompositHandler;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.Handler;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RPolyTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
@@ -43,20 +40,14 @@ import java.nio.file.Path;
 import java.util.*;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.Modifier;
 import javax.lang.model.util.Elements;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.checkerframework.common.accumulation.AccumulationAnnotatedTypeFactory;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.QualifierHierarchy;
-import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
-import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
-import org.checkerframework.framework.type.typeannotator.DefaultForTypeAnnotator;
 import org.checkerframework.framework.type.typeannotator.DefaultQualifierForUseTypeAnnotator;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.TreeUtils;
 import org.checkerframework.javacutil.UserError;
 
 public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFactory {
@@ -90,8 +81,6 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   public final AnnotationMirror rTainted;
   /** AnnotationMirror for {@link RPolyTainted}. */
   public final AnnotationMirror rPolyTainted;
-  /** The handler for the checker. Used to handle the custom logic of the checker. */
-  private final Handler handler;
 
   public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker, RPossiblyValidated.class, RUntainted.class, null);
@@ -137,31 +126,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     this.rUntainted = AnnotationBuilder.fromClass(elements, RUntainted.class);
     this.rTainted = AnnotationBuilder.fromClass(elements, RTainted.class);
     this.rPolyTainted = AnnotationBuilder.fromClass(elements, RPolyTainted.class);
-    this.handler =
-        new CompositHandler(
-            this, ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext());
     postInit();
-  }
-
-  @Override
-  protected TreeAnnotator createTreeAnnotator() {
-    return new ListTreeAnnotator(
-        super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this, handler));
-  }
-
-  @Override
-  protected void addAnnotationsFromDefaultForType(
-      @Nullable Element element, AnnotatedTypeMirror type) {
-    super.addAnnotationsFromDefaultForType(element, type);
-    // make reference type for var args untainted.
-    if (element instanceof Symbol.VarSymbol) {
-      if (((Symbol.VarSymbol) element).type instanceof Type.ArrayType) {
-        if (((Type.ArrayType) ((Symbol.VarSymbol) element).type).isVarargs()) {
-          makeUntainted(type);
-        }
-      }
-    }
-    handler.addAnnotationsFromDefaultForType(element, type);
   }
 
   @Override
@@ -174,63 +139,15 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
     return new UCRTaintingQualifierHierarchy(this.getSupportedTypeQualifiers(), this.elements);
   }
 
-  @Override
-  protected DefaultForTypeAnnotator createDefaultForTypeAnnotator() {
-    return new UCRTaintingTypeAnnotator(this);
-  }
+  //  @Override
+  //  protected DefaultForTypeAnnotator createDefaultForTypeAnnotator() {
+  //    return new UCRTaintingTypeAnnotator(this);
+  //  }
 
   public AnnotationMirror rPossiblyValidatedAM(List<String> calledMethods) {
     AnnotationBuilder builder = new AnnotationBuilder(processingEnv, RPossiblyValidated.class);
     builder.setValue("value", calledMethods.toArray());
     return builder.build();
-  }
-
-  /**
-   * Checks if any of the arguments of the node has been annotated with {@link RTainted}
-   *
-   * @param node to check for
-   * @return true if any argument is annotated with {@link RTainted}, false otherwise
-   */
-  public boolean hasTaintedArgument(ExpressionTree node) {
-    List<? extends ExpressionTree> argumentsList = null;
-    if (node instanceof MethodInvocationTree) {
-      argumentsList = ((MethodInvocationTree) node).getArguments();
-    } else if (node instanceof NewClassTree) {
-      argumentsList = ((NewClassTree) node).getArguments();
-    }
-    if (node instanceof TypeCastTree) {
-      argumentsList = Collections.singletonList(((TypeCastTree) node).getExpression());
-    }
-    if (argumentsList != null) {
-      for (ExpressionTree eTree : argumentsList) {
-        if (mayBeTainted(getAnnotatedType(eTree))) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Checks if the receiver tree has been annotated with {@link RTainted}
-   *
-   * @param node to check for
-   * @return true if annotated with {@link RTainted}, false otherwise
-   */
-  public boolean hasTaintedReceiver(ExpressionTree node) {
-    if (node != null) {
-      ExpressionTree receiverTree = TreeUtils.getReceiverTree(node);
-      if (receiverTree != null) {
-        Element element = TreeUtils.elementFromTree(node);
-        if (element != null) {
-          Set<Modifier> modifiers = element.getModifiers();
-          return modifiers != null
-              && !modifiers.contains(Modifier.STATIC)
-              && getAnnotatedType(receiverTree).hasPrimaryAnnotation(rTainted);
-        }
-      }
-    }
-    return false;
   }
 
   /**

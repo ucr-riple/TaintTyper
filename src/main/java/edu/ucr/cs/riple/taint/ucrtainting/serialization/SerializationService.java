@@ -158,10 +158,6 @@ public class SerializationService {
         return handleParamOverrideError(tree, pair);
       case "override.return":
         return handleReturnOverrideError(path.getLeaf());
-      case "enhancedfor":
-        {
-          pair = fixComputer.updateFoundRequiredPairEnhancedForLoopError(tree, pair);
-        }
       default:
         // On Right Hand Side
         Set<Fix> fixes = new HashSet<>(tree.accept(fixComputer, pair));

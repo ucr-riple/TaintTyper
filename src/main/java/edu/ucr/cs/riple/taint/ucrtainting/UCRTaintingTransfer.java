@@ -83,11 +83,6 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
         // if the code is part of provided annotated packages or is present
         // in the stub files, then we don't need any custom handling for it.
         MethodInvocationTree tree = methodInvocationNode.getTree();
-        handleSideEffect(
-            tree,
-            result,
-            methodInvocationNode,
-            aTypeFactory.hasTaintedArgument(tree) && !aTypeFactory.hasTaintedReceiver(tree));
       }
     }
 
@@ -103,12 +98,6 @@ public class UCRTaintingTransfer extends AccumulationTransfer {
     Symbol.MethodSymbol symbol = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
     if (aTypeFactory.isUnannotatedMethod(symbol) || rAnno.hasPrimaryAnnotation(RThis.class)) {
       if (node.getTarget().getReceiver() instanceof MethodInvocationNode) {
-        handleSideEffect(
-            tree,
-            result,
-            (MethodInvocationNode) node.getTarget().getReceiver(),
-            (aTypeFactory.hasTaintedArgument(tree) && !aTypeFactory.hasTaintedReceiver(tree))
-                || isTainted);
       } else {
         if (isTainted) {
           makeStoresTainted(result, node.getTarget().getReceiver());

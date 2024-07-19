@@ -211,3 +211,11 @@ public class PolicyFactory {
     public @RUntainted String sanitize(String input);
     public @RUntainted <CTX> String sanitize(String html, org.owasp.html.HtmlChangeListener<CTX> listener, CTX context);
 }
+
+
+package edu.ucr.cs.riple;
+public class Sanitizer {
+    public static @RUntainted String sanitize(String input);
+    public static @RUntainted String[] sanitize(String[] args);
+    public static @RUntainted File sanitize(File file);
+}

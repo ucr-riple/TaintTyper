@@ -24,22 +24,13 @@
 
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import static com.sun.source.tree.Tree.Kind.NULL_LITERAL;
-
-import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.tree.Tree;
-import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.UnannotatedCodeHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.SerializationService;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
 import org.checkerframework.common.accumulation.AccumulationChecker;
 import org.checkerframework.framework.qual.StubFiles;
 import org.checkerframework.framework.source.SupportedOptions;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.javacutil.TreeUtils;
 
 /** This is the entry point for pluggable type-checking. */
 @StubFiles({
@@ -93,21 +84,14 @@ public class UCRTaintingChecker extends AccumulationChecker {
   @Override
   public void reportError(Object source, @CompilerMessageKey String messageKey, Object... args) {
     pair = pair == null ? retrievePair(messageKey, args) : pair;
-    if (shouldBeSkipped(source, messageKey, pair, args)) {
-      return;
-    }
     if (serialize) {
       this.serializationService.serializeError(source, messageKey, pair);
     }
-    args[args.length - 1] = args[args.length - 1].toString() + ", index: " + ++index;
     super.reportError(source, messageKey, args);
   }
 
   public void detailedReportError(
       Object source, @CompilerMessageKey String messageKey, FoundRequired pair, Object... args) {
-    if (shouldBeSkipped(source, messageKey, pair, args)) {
-      return;
-    }
     this.serializationService.serializeError(source, messageKey, pair);
     this.serialize = false;
     this.pair = pair;
@@ -149,165 +133,5 @@ public class UCRTaintingChecker extends AccumulationChecker {
       default:
         return null;
     }
-  }
-
-  /**
-   * Determine if the error should be skipped.
-   *
-   * @param source The source of the error.
-   * @param messageKey The message key of the error.
-   * @param pair The pair of found and required annotated type mirrors.
-   * @param args Arguments passed to checker to create the error message
-   * @return True if the error should be skipped, false otherwise.
-   */
-  private boolean shouldBeSkipped(
-      Object source, String messageKey, FoundRequired pair, Object[] args) {
-    Tree tree = (Tree) source;
-    if (source instanceof JCTree.JCTypeCast) {
-      ExpressionTree expression = ((JCTree.JCTypeCast) source).getExpression();
-      // check if expression is null literal
-      if (expression.getKind() == NULL_LITERAL) {
-        // skip errors where the cast is from null literal
-        return true;
-      }
-    }
-    // check if the expression is a member of annotation
-    if (shouldBeSkippedForAnnotationMemberSelection(source)) {
-      return true;
-    }
-
-    switch (messageKey) {
-      case "lambda.param":
-      case "enum.declaration":
-        return true;
-        // Skip errors that are caused by third-party code.
-      case "override.return":
-        {
-          Symbol.MethodSymbol overridingMethod =
-              (Symbol.MethodSymbol) TreeUtils.elementFromTree(visitor.getCurrentPath().getLeaf());
-          return overridingMethod == null || typeFactory.isUnannotatedMethod(overridingMethod);
-        }
-        // Skip errors that are caused by third-party code.
-      case "override.param":
-        {
-          if (!(args[6] instanceof AnnotatedTypeMirror.AnnotatedExecutableType)) {
-            return false;
-          }
-          AnnotatedTypeMirror.AnnotatedExecutableType overriddenType =
-              (AnnotatedTypeMirror.AnnotatedExecutableType) args[6];
-          Symbol.MethodSymbol overrideMethod = (Symbol.MethodSymbol) overriddenType.getElement();
-          return overrideMethod == null || typeFactory.isUnannotatedMethod(overrideMethod);
-        }
-      case "assignment":
-      case "return":
-        {
-          Tree errorTree = visitor.getCurrentPath().getLeaf();
-          ExpressionTree initializer = null;
-          if (errorTree instanceof JCTree.JCReturn) {
-            initializer = ((JCTree.JCReturn) errorTree).getExpression();
-          }
-          if (errorTree instanceof JCTree.JCVariableDecl) {
-            initializer = ((JCTree.JCVariableDecl) errorTree).getInitializer();
-          }
-          if (errorTree instanceof JCTree.JCAssign) {
-            initializer = ((JCTree.JCAssign) errorTree).getExpression();
-          }
-          if (!(initializer instanceof MethodInvocationTree)) {
-            return false;
-          }
-          boolean isApplicable =
-              UnannotatedCodeHandler.isSafeTransitionToUnAnnotatedCode(
-                  (MethodInvocationTree) initializer, typeFactory);
-          if (!isApplicable) {
-            return false;
-          }
-          // check miss match is only try args which found is untainted, but required is tainted.
-          if (pair == null) {
-            return false;
-          }
-          if (!(pair.found instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)
-              || !(pair.required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType)
-              || !(pair.found.getUnderlyingType() instanceof Type.ClassType)
-              || !(pair.required.getUnderlyingType() instanceof Type.ClassType)) {
-            return false;
-          }
-          AnnotatedTypeMirror.AnnotatedDeclaredType found =
-              (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.found;
-          AnnotatedTypeMirror.AnnotatedDeclaredType required =
-              (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.required;
-          Type.ClassType foundType = (Type.ClassType) found.getUnderlyingType();
-          Type.ClassType requiredType = (Type.ClassType) required.getUnderlyingType();
-          if (!foundType.tsym.equals(requiredType.tsym)) {
-            // We do not want to handle complex cases for now.
-            return false;
-          }
-          // all other mismatches should be ignored.
-          return !typeFactory.hasUntaintedAnnotation(required)
-              || typeFactory.hasUntaintedAnnotation(found);
-        }
-      case "argument":
-        if (source instanceof ExpressionTree
-            && TreeUtils.isExplicitThisDereference((ExpressionTree) source)) {
-          return true;
-        }
-        // Check if the tree is a argument of a method invocation which the invocation is a third
-        // party
-        if (visitor.getCurrentPath().getLeaf() instanceof JCTree.JCMethodInvocation) {
-          JCTree.JCMethodInvocation methodInvocation =
-              (JCTree.JCMethodInvocation) visitor.getCurrentPath().getLeaf();
-          Symbol.MethodSymbol methodSymbol =
-              (Symbol.MethodSymbol) TreeUtils.elementFromUse(methodInvocation);
-          if (methodSymbol != null && typeFactory.isUnannotatedMethod(methodSymbol)) {
-            // we want to silence errors where the mismatch is found: List<@RUntainted String> and
-            // required: List<@Tainted String>
-            if (pair != null) {
-              if (typeFactory.mayBeTainted(pair.found)
-                  && !typeFactory.mayBeTainted(pair.required)) {
-                return false;
-              }
-              if (pair.found instanceof AnnotatedTypeMirror.AnnotatedDeclaredType
-                  && pair.required instanceof AnnotatedTypeMirror.AnnotatedDeclaredType) {
-                AnnotatedTypeMirror.AnnotatedDeclaredType found =
-                    (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.found;
-                AnnotatedTypeMirror.AnnotatedDeclaredType required =
-                    (AnnotatedTypeMirror.AnnotatedDeclaredType) pair.required;
-                boolean isSubtype = typeFactory.allTypeArgumentsAreSubType(found, required);
-                if (isSubtype) {
-                  return true;
-                }
-              }
-            }
-          }
-        }
-        if (!(tree instanceof MethodInvocationTree)) {
-          return false;
-        }
-        return UnannotatedCodeHandler.isSafeTransitionToUnAnnotatedCode(
-            (MethodInvocationTree) tree, typeFactory);
-      default:
-        return false;
-    }
-  }
-
-  private boolean shouldBeSkippedForAnnotationMemberSelection(Object source) {
-    Tree exp = (Tree) source;
-    while (exp instanceof JCTree.JCTypeCast) {
-      exp = ((JCTree.JCTypeCast) exp).getExpression();
-    }
-    JCTree.JCFieldAccess fieldAccess = null;
-    if (exp instanceof JCTree.JCFieldAccess) {
-      fieldAccess = (JCTree.JCFieldAccess) exp;
-    }
-    if (exp instanceof JCTree.JCMethodInvocation) {
-      JCTree.JCMethodInvocation methodInvocation = (JCTree.JCMethodInvocation) exp;
-      if (methodInvocation.getMethodSelect() instanceof JCTree.JCFieldAccess) {
-        fieldAccess = (JCTree.JCFieldAccess) methodInvocation.getMethodSelect();
-      }
-    }
-    if (fieldAccess == null) {
-      return false;
-    }
-    Symbol.ClassSymbol owner = fieldAccess.sym.enclClass();
-    return owner != null && owner.isAnnotationType();
   }
 }

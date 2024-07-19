@@ -25,20 +25,15 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.SimpleTreeVisitor;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
-import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
@@ -63,38 +58,19 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   protected final Types types;
   protected final Context context;
   protected final DefaultTypeChangeVisitor defaultTypeChangeVisitor;
-  protected final SpecializedFixComputer unannotatedCodeFixComputer;
   protected final SpecializedFixComputer methodTypeArgumentFixVisitor;
-  protected final CollectionFixVisitor collectionFixVisitor;
 
   public FixComputer(UCRTaintingAnnotatedTypeFactory factory, Types types, Context context) {
     this.typeFactory = factory;
     this.context = context;
     this.types = types;
     this.defaultTypeChangeVisitor = new DefaultTypeChangeVisitor(factory, this, context);
-    this.unannotatedCodeFixComputer = new UnannotatedCodeFixVisitor(typeFactory, this, context);
     this.methodTypeArgumentFixVisitor = new GenericMethodFixVisitor(typeFactory, this, context);
-    this.collectionFixVisitor = new CollectionFixVisitor(typeFactory, this, context);
   }
 
   @Override
   public Set<Fix> defaultAction(Tree node, FoundRequired pair) {
     return answer(node.accept(defaultTypeChangeVisitor, pair));
-  }
-
-  @Override
-  public Set<Fix> visitMemberSelect(MemberSelectTree tree, FoundRequired pair) {
-    if (tree instanceof JCTree.JCFieldAccess) {
-      ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
-      if (receiver != null) {
-        Symbol symbol = (Symbol) TreeUtils.elementFromUse(tree);
-        if (symbol.getKind().isField()
-            && typeFactory.isUnannotatedField((Symbol.VarSymbol) symbol)) {
-          return answer(unannotatedCodeFixComputer.visitMemberSelect(tree, pair));
-        }
-      }
-    }
-    return defaultAction(tree, pair);
   }
 
   /**
@@ -130,7 +106,6 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) element;
     // Locate method receiver.
     ExpressionTree receiver = TreeUtils.getReceiverTree(node);
-    boolean isInAnnotatedPackage = !typeFactory.isUnannotatedMethod(calledMethod);
     boolean declaredReturnTypeContainsTypeVariable =
         TypeUtils.containsTypeVariable(calledMethod.getReturnType());
     boolean hasReceiver =
@@ -147,9 +122,6 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
         return answer(polyFixes);
       }
     }
-    if (CollectionHandler.isGenericToArrayMethod(calledMethod, types)) {
-      return answer(node.accept(collectionFixVisitor, pair));
-    }
     if (isGenericMethod) {
       Set<Fix> fixes = node.accept(methodTypeArgumentFixVisitor, pair);
       if (!fixes.isEmpty()) {
@@ -165,25 +137,9 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
         return answer(fixes);
       }
     }
-    // check if the call is to a method defined in a third party library. If the method has a type
-    // var return type and has a receiver, we should annotate the receiver.
-    if (!isInAnnotatedPackage && defaultTypeChangeVisitor.requireFix(pair)) {
-      return answer(node.accept(unannotatedCodeFixComputer, pair));
-    }
     // The method has a receiver, if the method contains a type argument, we should annotate the
     // receiver and leave the called method untouched. Annotation on the declaration on the type
     // argument, will be added on the method automatically.
-    return defaultAction(node, pair);
-  }
-
-  @Override
-  public Set<Fix> visitNewClass(NewClassTree node, FoundRequired pair) {
-    if (CollectionHandler.implementsCollectionInterface(
-            (Type) pair.required.getUnderlyingType(), types)
-        && CollectionHandler.implementsCollectionInterface(
-            (Type) pair.found.getUnderlyingType(), types)) {
-      return answer(node.accept(collectionFixVisitor, pair));
-    }
     return defaultAction(node, pair);
   }
 
@@ -193,21 +149,5 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
 
   private Set<Fix> answer(Set<Fix> fixes) {
     return fixes;
-  }
-
-  /**
-   * Updates the found and required pair for the enhanced for loop error. This method computes the
-   * required {@link java.util.Iterator} type from the used collection in the loop which it entries
-   * match the required type. Once the iterator type is computed, it generates a new instance of
-   * {@link FoundRequired} pair corresponding to the iterator type and the required type for the
-   * passed collection.
-   *
-   * @param iterationTree The tree used in the iteration.
-   * @param pair The found and required pair for the iteration variable.
-   * @return The updated pair if the found type is not a subtype of the required type, null
-   */
-  public FoundRequired updateFoundRequiredPairEnhancedForLoopError(
-      Tree iterationTree, FoundRequired pair) {
-    return collectionFixVisitor.updateFoundRequiredPairEnhancedForLoopError(iterationTree, pair);
   }
 }

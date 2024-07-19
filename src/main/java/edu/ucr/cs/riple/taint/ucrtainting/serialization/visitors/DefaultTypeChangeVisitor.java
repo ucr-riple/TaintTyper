@@ -33,9 +33,7 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
-import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -107,17 +105,6 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
       if (fix == null) {
         return Set.of();
       }
-      // check if node is of type Class<?>
-      if (TypeUtils.getType(fix.location.getTarget())
-          .tsym
-          .getQualifiedName()
-          .toString()
-          .equals("java.lang.Class")) {
-        // We cannot annotate Class<?> as Class<@RUntainted ?>
-        if (fix.location.getTypeIndexSet().equals(TypeIndex.setOf(1, 0))) {
-          return Set.of();
-        }
-      }
       return fix.location.getKind().isLocalVariable()
           ? localVariableFixVisitor.visitIdentifier(node, pair)
           : Set.of(fix);
@@ -136,58 +123,6 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
         node.getFalseExpression()
             .accept(
                 fixComputer, typeFactory.makeUntaintedPair(node.getFalseExpression(), pair.depth)));
-    return fixes;
-  }
-
-  @Override
-  public Set<Fix> visitNewClass(NewClassTree node, FoundRequired pair) {
-    if (!typeFactory.hasUntaintedAnnotation(pair.found)
-        && typeFactory.hasUntaintedAnnotation(pair.required)) {
-      // Add a fix for each argument.
-      Set<Fix> onArguments = new HashSet<>();
-      for (ExpressionTree arg : node.getArguments()) {
-        AnnotatedTypeMirror foundArgType = typeFactory.getAnnotatedType(arg);
-        AnnotatedTypeMirror requiredArgType = foundArgType.deepCopy(true);
-        if (requiredArgType instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-          typeFactory.makeUntainted(
-              ((AnnotatedTypeMirror.AnnotatedArrayType) requiredArgType).getComponentType());
-        } else {
-          typeFactory.makeUntainted(requiredArgType);
-        }
-        onArguments.addAll(
-            arg.accept(fixComputer, new FoundRequired(foundArgType, requiredArgType, pair.depth)));
-      }
-      return onArguments;
-    }
-    return Set.of();
-  }
-
-  @Override
-  public Set<Fix> visitTypeCast(TypeCastTree node, FoundRequired pair) {
-    Set<Fix> fixes = new HashSet<>();
-    if (node.getExpression() != null && typeFactory.mayBeTainted(node.getExpression())) {
-      fixes.addAll(node.getExpression().accept(fixComputer, pair));
-    }
-    return fixes;
-  }
-
-  @Override
-  public Set<Fix> visitNewArray(NewArrayTree node, FoundRequired pair) {
-    Set<Fix> fixes = new HashSet<>();
-    if (pair.found instanceof AnnotatedTypeMirror.AnnotatedArrayType
-        && pair.required instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
-      AnnotatedTypeMirror.AnnotatedArrayType foundArrayType =
-          (AnnotatedTypeMirror.AnnotatedArrayType) pair.found;
-      AnnotatedTypeMirror.AnnotatedArrayType requiredArrayType =
-          (AnnotatedTypeMirror.AnnotatedArrayType) pair.required;
-      FoundRequired newPair =
-          new FoundRequired(
-              foundArrayType.getComponentType(), requiredArrayType.getComponentType(), pair.depth);
-      // Add a fix for each argument.
-      if (node.getInitializers() != null) {
-        node.getInitializers().forEach(arg -> fixes.addAll(arg.accept(fixComputer, newPair)));
-      }
-    }
     return fixes;
   }
 
@@ -224,18 +159,6 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
     }
     returnVisitor.addInvocation(node, pair);
     return new HashSet<>(methodDecl.accept(returnVisitor, pair));
-  }
-
-  @Override
-  public Set<Fix> visitLiteral(LiteralTree node, FoundRequired pair) {
-    // We do not generate fix for primitive types.
-    return Set.of();
-  }
-
-  @Override
-  public Set<Fix> visitPrimitiveType(PrimitiveTypeTree node, FoundRequired pair) {
-    // We do not generate fix for primitive types.
-    return Set.of();
   }
 
   @Override
