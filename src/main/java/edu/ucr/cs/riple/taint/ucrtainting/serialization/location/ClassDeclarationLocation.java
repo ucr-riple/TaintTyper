@@ -32,7 +32,7 @@ public class ClassDeclarationLocation extends AbstractSymbolLocation {
 
   public final Type.ClassType toChange;
 
-  public ClassDeclarationLocation(Symbol target, Type.ClassType toChange) {
+  private ClassDeclarationLocation(Symbol target, Type.ClassType toChange) {
     super(LocationKind.CLASS_DECLARATION, target);
     this.toChange = toChange;
   }

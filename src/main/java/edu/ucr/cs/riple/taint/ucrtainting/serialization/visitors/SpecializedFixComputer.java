@@ -98,33 +98,7 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
       if (inheritedType == null) {
         return null;
       }
-      ClassDeclarationLocation classDeclarationLocation =
-          new ClassDeclarationLocation(classType, inheritedType);
-      if (classDeclarationLocation.path == null) {
-        // Class is not even declared in the project. Cannot do anything.
-        return null;
-      }
-      Set<AnnotatedTypeMirror.AnnotatedDeclaredType> supers =
-          AnnotatedTypes.getSuperTypes((AnnotatedTypeMirror.AnnotatedDeclaredType) pair.found);
-      supers.stream()
-          .filter(
-              annotatedDeclaredType -> {
-                if (annotatedDeclaredType.getUnderlyingType() instanceof Type.ClassType) {
-                  Type.ClassType classType1 =
-                      (Type.ClassType) annotatedDeclaredType.getUnderlyingType();
-                  return classType1.tsym.equals(inheritedType.tsym);
-                }
-                return false;
-              })
-          .findFirst()
-          .ifPresent(
-              annotatedDeclaredType -> {
-                classDeclarationLocation.setTypeIndexSet(
-                    untaintedTypeMatchVisitor.visit(annotatedDeclaredType, pair.required, null));
-              });
-      return classDeclarationLocation.getTypeIndexSet().isEmpty()
-          ? null
-          : new Fix(classDeclarationLocation);
+      return null;
     }
     AnnotatedTypeMirror elementAnnotatedType = typeFactory.getAnnotatedType(element);
     // remove redundant indices.
