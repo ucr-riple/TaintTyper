@@ -123,6 +123,7 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
                     untaintedTypeMatchVisitor.visit(annotatedDeclaredType, pair.required, null));
               });
       return classDeclarationLocation.getTypeIndexSet().isEmpty()
+              || classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.TOP_LEVEL)
           ? null
           : new Fix(classDeclarationLocation);
     }
