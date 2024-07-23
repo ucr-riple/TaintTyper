@@ -33,6 +33,7 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
@@ -122,9 +123,9 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
                 classDeclarationLocation.setTypeIndexSet(
                     untaintedTypeMatchVisitor.visit(annotatedDeclaredType, pair.required, null));
               });
-      System.out.println(
+      Serializer.log(
           "CLASS DECLARATION TYPE INDEX: " + classDeclarationLocation.getTypeIndexSet());
-      System.out.println(
+      Serializer.log(
           "CONDITION: "
               + (classDeclarationLocation.getTypeIndexSet().isEmpty()
                   || classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.TOP_LEVEL)));
