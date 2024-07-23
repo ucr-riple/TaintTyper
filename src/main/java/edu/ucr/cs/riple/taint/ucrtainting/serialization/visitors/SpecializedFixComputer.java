@@ -32,6 +32,7 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
@@ -122,9 +123,9 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
                 classDeclarationLocation.setTypeIndexSet(
                     untaintedTypeMatchVisitor.visit(annotatedDeclaredType, pair.required, null));
               });
-      return classDeclarationLocation.getTypeIndexSet().isEmpty()
-          ? null
-          : new Fix(classDeclarationLocation);
+      ((UCRTaintingChecker) typeFactory.getChecker())
+          .serializeClassDeclaration(classDeclarationLocation, pair);
+      return null;
     }
     AnnotatedTypeMirror elementAnnotatedType = typeFactory.getAnnotatedType(element);
     // remove redundant indices.

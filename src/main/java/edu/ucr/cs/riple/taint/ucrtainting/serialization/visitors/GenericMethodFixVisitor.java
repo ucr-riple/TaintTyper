@@ -31,6 +31,7 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
@@ -270,7 +271,9 @@ public class GenericMethodFixVisitor extends SpecializedFixComputer {
       ClassDeclarationLocation classDeclarationLocation =
           new ClassDeclarationLocation(classType, inheritedType);
       classDeclarationLocation.setTypeIndexSet(TypeIndex.setOf(index + 1, 0));
-      return Set.of(new Fix(classDeclarationLocation));
+      ((UCRTaintingChecker) typeFactory.getChecker())
+          .serializeClassDeclaration(classDeclarationLocation, pair);
+      return Set.of();
     } catch (Exception e) {
       return Set.of();
     }

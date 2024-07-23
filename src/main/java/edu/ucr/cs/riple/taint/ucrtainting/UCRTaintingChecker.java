@@ -34,12 +34,17 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.UnannotatedCodeHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.SerializationService;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
+import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.LocationToJsonVisitor;
+import java.io.FileWriter;
+import java.io.IOException;
 import org.checkerframework.checker.compilermsgs.qual.CompilerMessageKey;
 import org.checkerframework.common.accumulation.AccumulationChecker;
 import org.checkerframework.framework.qual.StubFiles;
 import org.checkerframework.framework.source.SupportedOptions;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
+import org.json.JSONObject;
 
 /** This is the entry point for pluggable type-checking. */
 @StubFiles({
@@ -309,5 +314,19 @@ public class UCRTaintingChecker extends AccumulationChecker {
     }
     Symbol.ClassSymbol owner = fieldAccess.sym.enclClass();
     return owner != null && owner.isAnnotationType();
+  }
+
+  public void serializeClassDeclaration(ClassDeclarationLocation location, FoundRequired pair) {
+    JSONObject ans = new JSONObject();
+    ans.put("pair", pair.toString());
+    ans.put("location", new LocationToJsonVisitor().visitClassDeclaration(location, null));
+    ans.put("tree", visitor.getCurrentPath().getLeaf().toString());
+    ans.put("file", visitor.getCurrentPath().getCompilationUnit().getSourceFile().getName());
+    // append to file /tmp/class_decl.json with try-resources
+    try (FileWriter file = new FileWriter("/tmp/class_decl.json", true)) {
+      file.write(ans.toString());
+    } catch (IOException e) {
+      System.err.println("Error writing to file");
+    }
   }
 }
