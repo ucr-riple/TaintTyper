@@ -217,6 +217,9 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
                     .map(t -> t.tsym.name.toString())
                     .collect(Collectors.toList());
             List<AnnotatedTypeMirror> ata = new ArrayList<>(superTypeMirror.getTypeArguments());
+            if (ata.isEmpty()) {
+              return null;
+            }
             int ii = tvnames.indexOf(typeVarName);
             AnnotatedTypeMirror typeArgumentType = ata.get(ii);
             typeFactory.makeUntainted(typeArgumentType, lists);

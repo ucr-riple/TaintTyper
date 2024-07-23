@@ -122,6 +122,12 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
                 classDeclarationLocation.setTypeIndexSet(
                     untaintedTypeMatchVisitor.visit(annotatedDeclaredType, pair.required, null));
               });
+      System.out.println(
+          "CLASS DECLARATION TYPE INDEX: " + classDeclarationLocation.getTypeIndexSet());
+      System.out.println(
+          "CONDITION: "
+              + (classDeclarationLocation.getTypeIndexSet().isEmpty()
+                  || classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.TOP_LEVEL)));
       return classDeclarationLocation.getTypeIndexSet().isEmpty()
               || classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.TOP_LEVEL)
           ? null

@@ -270,7 +270,10 @@ public class GenericMethodFixVisitor extends SpecializedFixComputer {
       ClassDeclarationLocation classDeclarationLocation =
           new ClassDeclarationLocation(classType, inheritedType);
       classDeclarationLocation.setTypeIndexSet(TypeIndex.setOf(index + 1, 0));
+      System.out.println(
+          "CLASS DECLARATION TYPE INDEX: " + classDeclarationLocation.getTypeIndexSet());
       if (classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.TOP_LEVEL)) {
+        System.out.println("ENTERED HERE: " + TypeIndex.TOP_LEVEL);
         return Set.of();
       }
       return Set.of(new Fix(classDeclarationLocation));
