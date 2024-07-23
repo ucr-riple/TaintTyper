@@ -33,7 +33,6 @@ import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
-import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.SymbolLocation;
@@ -123,14 +122,10 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
                 classDeclarationLocation.setTypeIndexSet(
                     untaintedTypeMatchVisitor.visit(annotatedDeclaredType, pair.required, null));
               });
-      Serializer.log(
-          "CLASS DECLARATION TYPE INDEX: " + classDeclarationLocation.getTypeIndexSet());
-      Serializer.log(
-          "CONDITION: "
-              + (classDeclarationLocation.getTypeIndexSet().isEmpty()
-                  || classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.setOf(TypeIndex.TOP_LEVEL))));
       return classDeclarationLocation.getTypeIndexSet().isEmpty()
-              || classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.setOf(TypeIndex.TOP_LEVEL))
+              || classDeclarationLocation
+                  .getTypeIndexSet()
+                  .equals(TypeIndex.setOf(TypeIndex.TOP_LEVEL))
           ? null
           : new Fix(classDeclarationLocation);
     }
