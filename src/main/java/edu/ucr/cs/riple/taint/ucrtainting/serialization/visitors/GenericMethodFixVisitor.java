@@ -273,7 +273,7 @@ public class GenericMethodFixVisitor extends SpecializedFixComputer {
       classDeclarationLocation.setTypeIndexSet(TypeIndex.setOf(index + 1, 0));
       Serializer.log(
           "CLASS DECLARATION TYPE INDEX: " + classDeclarationLocation.getTypeIndexSet());
-      if (classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.TOP_LEVEL)) {
+      if (classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.setOf(TypeIndex.TOP_LEVEL))) {
         Serializer.log("ENTERED HERE: " + TypeIndex.TOP_LEVEL);
         return Set.of();
       }

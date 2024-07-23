@@ -115,4 +115,8 @@ public abstract class AbstractSymbolLocation implements SymbolLocation {
   public Set<TypeIndex> getTypeIndexSet() {
     return typeIndexSet;
   }
+
+  public boolean isTopLevel() {
+    return typeIndexSet.size() == 1 && typeIndexSet.contains(TypeIndex.TOP_LEVEL);
+  }
 }

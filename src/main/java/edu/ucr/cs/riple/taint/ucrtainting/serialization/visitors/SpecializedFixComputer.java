@@ -128,9 +128,9 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
       Serializer.log(
           "CONDITION: "
               + (classDeclarationLocation.getTypeIndexSet().isEmpty()
-                  || classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.TOP_LEVEL)));
+                  || classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.setOf(TypeIndex.TOP_LEVEL))));
       return classDeclarationLocation.getTypeIndexSet().isEmpty()
-              || classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.TOP_LEVEL)
+              || classDeclarationLocation.getTypeIndexSet().equals(TypeIndex.setOf(TypeIndex.TOP_LEVEL))
           ? null
           : new Fix(classDeclarationLocation);
     }
