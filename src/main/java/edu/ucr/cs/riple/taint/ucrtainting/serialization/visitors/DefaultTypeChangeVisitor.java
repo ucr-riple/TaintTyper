@@ -30,6 +30,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.Config;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
@@ -119,6 +120,7 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
         }
       }
       return fix.location.getKind().isLocalVariable()
+              && !typeFactory.getChecker().hasOption(Config.DISABLE_LOCAL_VAR_OPT)
           ? localVariableFixVisitor.visitIdentifier(node, pair)
           : Set.of(fix);
     }

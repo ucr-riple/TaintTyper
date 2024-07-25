@@ -48,6 +48,8 @@ public class Config {
    * checker framework.
    */
   public static final String SERIALIZATION_ACTIVATION_FLAG = "enableSerialization";
+
+  public static final String DISABLE_LOCAL_VAR_OPT = "disableLocalVariableOptimization";
   /**
    * Path to serialization config. If {@link #serializationActivation} is false, it will be {@code
    * null}.
@@ -58,11 +60,14 @@ public class Config {
    * false, it will be {@code null}.
    */
   @Nullable public final Path outputDir;
+
+  public final boolean disableLocalVariableOptimization;
   /** Flag to control serialization internally. */
   public final boolean serializationActivation;
 
   public Config(UCRTaintingChecker checker) {
     this.serializationActivation = checker.hasOption(SERIALIZATION_ACTIVATION_FLAG);
+    this.disableLocalVariableOptimization = checker.hasOption(DISABLE_LOCAL_VAR_OPT);
     if (serializationActivation && !checker.hasOption(SERIALIZATION_CONFIG_PATH)) {
       throw new RuntimeException(
           "Please specify the serialization config using the flag: "
