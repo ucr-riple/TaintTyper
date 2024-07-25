@@ -32,18 +32,6 @@ public class ServletResponse {
 }
 
 package javax.servlet.http;
-public class HttpSession {
-	public void setAttribute(@RUntainted String name, @RUntainted Object value);
-	public void putValue(String name, Object value);
-}
-
-public class Cookie {
-	public void setPath(@RUntainted String uri);
-	public void setDomain(@RUntainted String domain);
-	public void setComment(@RUntainted String purpose);
-	public void setValue(@RUntainted String newValue);
-}
-
 public class HttpServletResponse {
 	public void setDateHeader(@RUntainted String name, long date);
 	public void setHeader(@RUntainted String name, String value);
