@@ -95,7 +95,7 @@ public class SerializationService {
     this.types = Types.instance(context);
     this.untaintedTypeMatchVisitor = TypeMatchVisitor.createUntaintedMatcher(typeFactory);
     this.polyTypeMatchVisitor = TypeMatchVisitor.createPolyTaintedMatcher(typeFactory);
-    this.fixComputer = new FixComputer(typeFactory, types, context);
+    this.fixComputer = new FixComputer(serializer.config, typeFactory, types, context);
   }
 
   /**

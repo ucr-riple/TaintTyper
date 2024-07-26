@@ -59,9 +59,15 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
   /** Visitor that fixes all assignments on local variables. */
   protected final LocalVariableFixVisitor localVariableFixVisitor;
 
+  protected final Config config;
+
   public DefaultTypeChangeVisitor(
-      UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
+      Config config,
+      UCRTaintingAnnotatedTypeFactory factory,
+      FixComputer fixComputer,
+      Context context) {
     super(factory, fixComputer, context);
+    this.config = config;
     this.returnVisitor = new MethodReturnVisitor(typeFactory, fixComputer, context);
     this.types = Types.instance(context);
     this.localVariableFixVisitor = new LocalVariableFixVisitor(typeFactory, fixComputer, context);
@@ -119,8 +125,7 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
           return Set.of();
         }
       }
-      return fix.location.getKind().isLocalVariable()
-              && !typeFactory.getChecker().hasOption(Config.DISABLE_LOCAL_VAR_OPT)
+      return fix.location.getKind().isLocalVariable() && config.enableLocalVariableOptimization
           ? localVariableFixVisitor.visitIdentifier(node, pair)
           : Set.of(fix);
     }

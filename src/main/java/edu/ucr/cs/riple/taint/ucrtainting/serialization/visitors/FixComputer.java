@@ -36,6 +36,7 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import edu.ucr.cs.riple.taint.ucrtainting.Config;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
@@ -67,11 +68,12 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   protected final SpecializedFixComputer methodTypeArgumentFixVisitor;
   protected final CollectionFixVisitor collectionFixVisitor;
 
-  public FixComputer(UCRTaintingAnnotatedTypeFactory factory, Types types, Context context) {
+  public FixComputer(
+      Config config, UCRTaintingAnnotatedTypeFactory factory, Types types, Context context) {
     this.typeFactory = factory;
     this.context = context;
     this.types = types;
-    this.defaultTypeChangeVisitor = new DefaultTypeChangeVisitor(factory, this, context);
+    this.defaultTypeChangeVisitor = new DefaultTypeChangeVisitor(config, factory, this, context);
     this.unannotatedCodeFixComputer = new UnannotatedCodeFixVisitor(typeFactory, this, context);
     this.methodTypeArgumentFixVisitor = new GenericMethodFixVisitor(typeFactory, this, context);
     this.collectionFixVisitor = new CollectionFixVisitor(typeFactory, this, context);

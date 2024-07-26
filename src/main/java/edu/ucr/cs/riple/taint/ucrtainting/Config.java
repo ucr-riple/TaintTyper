@@ -48,8 +48,6 @@ public class Config {
    * checker framework.
    */
   public static final String SERIALIZATION_ACTIVATION_FLAG = "enableSerialization";
-
-  public static final String DISABLE_LOCAL_VAR_OPT = "disableLocalVariableOptimization";
   /**
    * Path to serialization config. If {@link #serializationActivation} is false, it will be {@code
    * null}.
@@ -61,13 +59,12 @@ public class Config {
    */
   @Nullable public final Path outputDir;
 
-  public final boolean disableLocalVariableOptimization;
+  public final boolean enableLocalVariableOptimization;
   /** Flag to control serialization internally. */
   public final boolean serializationActivation;
 
   public Config(UCRTaintingChecker checker) {
     this.serializationActivation = checker.hasOption(SERIALIZATION_ACTIVATION_FLAG);
-    this.disableLocalVariableOptimization = checker.hasOption(DISABLE_LOCAL_VAR_OPT);
     if (serializationActivation && !checker.hasOption(SERIALIZATION_CONFIG_PATH)) {
       throw new RuntimeException(
           "Please specify the serialization config using the flag: "
@@ -81,8 +78,8 @@ public class Config {
             ? Paths.get(checker.getOptions().get(SERIALIZATION_CONFIG_PATH))
             : null;
     String outputDirString = null;
+    Document document = null;
     if (configPath != null) {
-      Document document;
       try {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -94,6 +91,10 @@ public class Config {
         throw new RuntimeException("Error in reading/parsing config at path: " + configPath, e);
       }
     }
+    this.enableLocalVariableOptimization =
+        Boolean.TRUE.equals(
+            XMLUtil.getValueFromTag(document, "/serialization/localVarOpt", Boolean.class)
+                .orElse(true));
     this.outputDir = outputDirString == null ? null : Paths.get(outputDirString);
   }
 
