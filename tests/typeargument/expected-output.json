@@ -3,268 +3,268 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 416,
+      "offset": 434,
+      "index": 1,
+      "region": {
+        "symbol": "foo(foo.bar.TypeArgument)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "foo(foo.bar.TypeArgument)",
+            "kind": "PARAMETER",
+            "name": "ta",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 485,
+      "index": 2,
+      "region": {
+        "symbol": "foo(foo.bar.TypeArgument)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                2,
+                0
+              ]
+            ],
+            "method": "foo(foo.bar.TypeArgument)",
+            "kind": "PARAMETER",
+            "name": "ta",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 536,
+      "index": 3,
+      "region": {
+        "symbol": "foo(foo.bar.TypeArgument)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                3,
+                0
+              ]
+            ],
+            "method": "foo(foo.bar.TypeArgument)",
+            "kind": "PARAMETER",
+            "name": "ta",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 598,
+      "index": 4,
+      "region": {
+        "symbol": "foo(foo.bar.TypeArgument)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                3,
+                1,
+                0
+              ]
+            ],
+            "method": "foo(foo.bar.TypeArgument)",
+            "kind": "PARAMETER",
+            "name": "ta",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 697,
+      "index": 5,
+      "region": {
+        "symbol": "foo(foo.bar.TypeArgument)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                3,
+                2,
+                0
+              ]
+            ],
+            "method": "foo(foo.bar.TypeArgument)",
+            "kind": "PARAMETER",
+            "name": "ta",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 767,
+      "index": 6,
+      "region": {
+        "symbol": "foo(foo.bar.TypeArgument)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                3,
+                1,
+                0
+              ]
+            ],
+            "method": "foo(foo.bar.TypeArgument)",
+            "kind": "PARAMETER",
+            "name": "ta",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 845,
+      "index": 7,
+      "region": {
+        "symbol": "foo(foo.bar.TypeArgument)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                3,
+                2,
+                0
+              ]
+            ],
+            "method": "foo(foo.bar.TypeArgument)",
+            "kind": "PARAMETER",
+            "name": "ta",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+      "messageKey": "argument",
+      "offset": 921,
+      "index": 8,
+      "region": {
+        "symbol": "foo(foo.bar.TypeArgument)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                3,
+                0
+              ]
+            ],
+            "method": "getTypeArgument()",
+            "kind": "METHOD",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+      "messageKey": "argument",
+      "offset": 989,
+      "index": 9,
+      "region": {
+        "symbol": "foo(foo.bar.TypeArgument)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "getTypeArgument()",
+            "kind": "METHOD",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 1061,
       "index": 10,
-      "region": {
-        "symbol": "foo(foo.bar.TypeArgument)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "type-variable-position": [
-              [
-                1,
-                0
-              ]
-            ],
-            "method": "foo(foo.bar.TypeArgument)",
-            "kind": "PARAMETER",
-            "name": "ta",
-            "index": 0,
-            "class": "foo.bar.Foo"
-          }
-        }
-      ]
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-      "messageKey": "assignment",
-      "offset": 467,
-      "index": 11,
-      "region": {
-        "symbol": "foo(foo.bar.TypeArgument)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "type-variable-position": [
-              [
-                2,
-                0
-              ]
-            ],
-            "method": "foo(foo.bar.TypeArgument)",
-            "kind": "PARAMETER",
-            "name": "ta",
-            "index": 0,
-            "class": "foo.bar.Foo"
-          }
-        }
-      ]
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-      "messageKey": "assignment",
-      "offset": 518,
-      "index": 12,
-      "region": {
-        "symbol": "foo(foo.bar.TypeArgument)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "type-variable-position": [
-              [
-                3,
-                0
-              ]
-            ],
-            "method": "foo(foo.bar.TypeArgument)",
-            "kind": "PARAMETER",
-            "name": "ta",
-            "index": 0,
-            "class": "foo.bar.Foo"
-          }
-        }
-      ]
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-      "messageKey": "assignment",
-      "offset": 580,
-      "index": 13,
-      "region": {
-        "symbol": "foo(foo.bar.TypeArgument)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "type-variable-position": [
-              [
-                3,
-                1,
-                0
-              ]
-            ],
-            "method": "foo(foo.bar.TypeArgument)",
-            "kind": "PARAMETER",
-            "name": "ta",
-            "index": 0,
-            "class": "foo.bar.Foo"
-          }
-        }
-      ]
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-      "messageKey": "assignment",
-      "offset": 679,
-      "index": 14,
-      "region": {
-        "symbol": "foo(foo.bar.TypeArgument)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "type-variable-position": [
-              [
-                3,
-                2,
-                0
-              ]
-            ],
-            "method": "foo(foo.bar.TypeArgument)",
-            "kind": "PARAMETER",
-            "name": "ta",
-            "index": 0,
-            "class": "foo.bar.Foo"
-          }
-        }
-      ]
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-      "messageKey": "assignment",
-      "offset": 749,
-      "index": 15,
-      "region": {
-        "symbol": "foo(foo.bar.TypeArgument)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "type-variable-position": [
-              [
-                3,
-                1,
-                0
-              ]
-            ],
-            "method": "foo(foo.bar.TypeArgument)",
-            "kind": "PARAMETER",
-            "name": "ta",
-            "index": 0,
-            "class": "foo.bar.Foo"
-          }
-        }
-      ]
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-      "messageKey": "assignment",
-      "offset": 827,
-      "index": 16,
-      "region": {
-        "symbol": "foo(foo.bar.TypeArgument)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "type-variable-position": [
-              [
-                3,
-                2,
-                0
-              ]
-            ],
-            "method": "foo(foo.bar.TypeArgument)",
-            "kind": "PARAMETER",
-            "name": "ta",
-            "index": 0,
-            "class": "foo.bar.Foo"
-          }
-        }
-      ]
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-      "messageKey": "argument",
-      "offset": 903,
-      "index": 17,
-      "region": {
-        "symbol": "foo(foo.bar.TypeArgument)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "type-variable-position": [
-              [
-                3,
-                0
-              ]
-            ],
-            "method": "getTypeArgument()",
-            "kind": "METHOD",
-            "class": "foo.bar.Foo"
-          }
-        }
-      ]
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-      "messageKey": "argument",
-      "offset": 971,
-      "index": 18,
-      "region": {
-        "symbol": "foo(foo.bar.TypeArgument)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "method": "getTypeArgument()",
-            "kind": "METHOD",
-            "class": "foo.bar.Foo"
-          }
-        }
-      ]
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-      "messageKey": "assignment",
-      "offset": 1043,
-      "index": 19,
       "region": {
         "symbol": "foo(foo.bar.TypeArgument)",
         "class": "foo.bar.Foo"
@@ -290,8 +290,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 1104,
-      "index": 20,
+      "offset": 1122,
+      "index": 11,
       "region": {
         "symbol": "foo(foo.bar.TypeArgument)",
         "class": "foo.bar.Foo"
@@ -317,8 +317,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 1318,
-      "index": 21,
+      "offset": 1336,
+      "index": 12,
       "region": {
         "symbol": "foo(foo.bar.TypeArgument)",
         "class": "foo.bar.Foo"
@@ -327,15 +327,17 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/MapTypeArgument.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+            "varName": "mapTypeArgument",
             "type-variable-position": [
               [
+                3,
                 0
               ]
             ],
-            "field": "c",
-            "kind": "FIELD",
-            "class": "foo.bar.MapTypeArgument"
+            "method": "foo(foo.bar.TypeArgument)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
           }
         }
       ]
@@ -343,8 +345,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 1375,
-      "index": 22,
+      "offset": 1393,
+      "index": 13,
       "region": {
         "symbol": "foo(foo.bar.TypeArgument)",
         "class": "foo.bar.Foo"
@@ -370,8 +372,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 1444,
-      "index": 23,
+      "offset": 1462,
+      "index": 14,
       "region": {
         "symbol": "foo(foo.bar.TypeArgument)",
         "class": "foo.bar.Foo"
@@ -380,15 +382,17 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/MapTypeArgument.java",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
+            "varName": "mapTypeArgument",
             "type-variable-position": [
               [
+                3,
                 0
               ]
             ],
-            "field": "c",
-            "kind": "FIELD",
-            "class": "foo.bar.MapTypeArgument"
+            "method": "foo(foo.bar.TypeArgument)",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
           }
         },
         {
@@ -411,8 +415,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 1537,
-      "index": 24,
+      "offset": 1555,
+      "index": 15,
       "region": {
         "symbol": "foo(foo.bar.TypeArgument)",
         "class": "foo.bar.Foo"

@@ -94,6 +94,9 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
             && typeFactory.isUnannotatedField((Symbol.VarSymbol) symbol)) {
           return answer(unannotatedCodeFixComputer.visitMemberSelect(tree, pair));
         }
+        if (symbol.getKind().isField() && TypeUtils.containsTypeVariable(symbol.type)) {
+          return answer(tree.accept(new TypeArgumentFixVisitor(typeFactory, this, context), pair));
+        }
       }
     }
     return defaultAction(tree, pair);

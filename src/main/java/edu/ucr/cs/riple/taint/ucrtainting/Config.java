@@ -95,6 +95,7 @@ public class Config {
         Boolean.TRUE.equals(
             XMLUtil.getValueFromTag(document, "/serialization/localVarOpt", Boolean.class)
                 .orElse(true));
+    System.out.println("Local Variable Optimization: " + this.enableLocalVariableOptimization);
     this.outputDir = outputDirString == null ? null : Paths.get(outputDirString);
   }
 
