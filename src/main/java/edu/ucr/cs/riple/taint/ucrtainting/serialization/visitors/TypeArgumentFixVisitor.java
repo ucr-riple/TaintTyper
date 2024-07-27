@@ -25,6 +25,7 @@
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
 import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
@@ -57,6 +58,12 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
   }
 
   @Override
+  public Set<Fix> visitIdentifier(IdentifierTree node, FoundRequired pair) {
+    Fix fix = buildFixForElement(TreeUtils.elementFromTree(node), pair);
+    return fix == null ? Set.of() : Set.of(fix);
+  }
+
+  @Override
   public Set<Fix> visitMemberSelect(MemberSelectTree node, FoundRequired pair) {
     JCTree declaration =
         SymbolUtils.locateDeclaration((Symbol) TreeUtils.elementFromUse(node), context);
@@ -83,7 +90,7 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
     if (updatedFoundRequiredPair == null) {
       return Set.of();
     }
-    return node.getExpression().accept(fixComputer, updatedFoundRequiredPair);
+    return node.getExpression().accept(this, updatedFoundRequiredPair);
   }
 
   @Override
@@ -120,7 +127,7 @@ public class TypeArgumentFixVisitor extends SpecializedFixComputer {
     if (updatedFoundRequiredPair == null) {
       return Set.of();
     }
-    return receiver.accept(fixComputer, updatedFoundRequiredPair);
+    return receiver.accept(this, updatedFoundRequiredPair);
   }
 
   /**

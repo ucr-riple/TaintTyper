@@ -327,17 +327,15 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "varName": "mapTypeArgument",
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/MapTypeArgument.java",
             "type-variable-position": [
               [
-                3,
                 0
               ]
             ],
-            "method": "foo(foo.bar.TypeArgument)",
-            "kind": "LOCAL_VARIABLE",
-            "class": "foo.bar.Foo"
+            "field": "c",
+            "kind": "FIELD",
+            "class": "foo.bar.MapTypeArgument"
           }
         }
       ]
@@ -382,22 +380,6 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "varName": "mapTypeArgument",
-            "type-variable-position": [
-              [
-                3,
-                0
-              ]
-            ],
-            "method": "foo(foo.bar.TypeArgument)",
-            "kind": "LOCAL_VARIABLE",
-            "class": "foo.bar.Foo"
-          }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Other.java",
             "type-variable-position": [
               [
@@ -408,6 +390,20 @@
             "field": "innerField",
             "kind": "FIELD",
             "class": "foo.bar.Other$Inner"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/MapTypeArgument.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "field": "c",
+            "kind": "FIELD",
+            "class": "foo.bar.MapTypeArgument"
           }
         }
       ]
@@ -425,6 +421,21 @@
         {
           "annotation": "untainted",
           "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Other.java",
+            "type-variable-position": [
+              [
+                3,
+                0
+              ]
+            ],
+            "field": "innerField",
+            "kind": "FIELD",
+            "class": "foo.bar.Other$Inner"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
             "varName": "mapTypeArgument",
             "type-variable-position": [
@@ -436,21 +447,6 @@
             "method": "foo(foo.bar.TypeArgument)",
             "kind": "LOCAL_VARIABLE",
             "class": "foo.bar.Foo"
-          }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Other.java",
-            "type-variable-position": [
-              [
-                3,
-                0
-              ]
-            ],
-            "field": "innerField",
-            "kind": "FIELD",
-            "class": "foo.bar.Other$Inner"
           }
         }
       ]

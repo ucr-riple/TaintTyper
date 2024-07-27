@@ -170,23 +170,6 @@
             "kind": "LOCAL_VARIABLE",
             "class": "foo.bar.Foo"
           }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
-            "varName": "matchingInterfaces",
-            "type-variable-position": [
-              [
-                2,
-                1,
-                0
-              ]
-            ],
-            "method": "enhancedForLoopMixedWithTypeVar()",
-            "kind": "LOCAL_VARIABLE",
-            "class": "foo.bar.Foo"
-          }
         }
       ]
     },

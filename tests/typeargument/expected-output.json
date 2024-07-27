@@ -328,16 +328,14 @@
           "annotation": "untainted",
           "location": {
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "varName": "mapTypeArgument",
             "type-variable-position": [
               [
-                3,
                 0
               ]
             ],
-            "method": "foo(foo.bar.TypeArgument)",
-            "kind": "LOCAL_VARIABLE",
-            "class": "foo.bar.Foo"
+            "field": "c",
+            "kind": "FIELD",
+            "class": "foo.bar.MapTypeArgument"
           }
         }
       ]
@@ -383,16 +381,14 @@
           "annotation": "untainted",
           "location": {
             "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargument/foo/bar/Foo.java",
-            "varName": "mapTypeArgument",
             "type-variable-position": [
               [
-                3,
                 0
               ]
             ],
-            "method": "foo(foo.bar.TypeArgument)",
-            "kind": "LOCAL_VARIABLE",
-            "class": "foo.bar.Foo"
+            "field": "c",
+            "kind": "FIELD",
+            "class": "foo.bar.MapTypeArgument"
           }
         },
         {
