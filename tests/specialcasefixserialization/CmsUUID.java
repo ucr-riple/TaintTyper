@@ -218,7 +218,7 @@ public class CmsUUID {
     @RUntainted CmsUgcSession session = createSession();
     HttpSession httpSession = request.getSession(true);
     // :: error: argument
-    httpSession.setAttribute("" + session.getId(), session);
+    sink("" + session.getId());
   }
 
   public static @RUntainted CmsUgcSession createSession() {

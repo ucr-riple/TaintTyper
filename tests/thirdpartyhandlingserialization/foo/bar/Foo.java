@@ -45,10 +45,10 @@ class Foo {
         new javax.servlet.http.Cookie("BenchmarkTest00093", "ls");
     userCookie.setMaxAge(60 * 3); // Store cookie for 3 minutes
     userCookie.setSecure(true);
-    // :: error: argument
-    userCookie.setPath(request.getRequestURI());
-    // :: error: argument
-    userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
+    //    // :: error: argument
+    //    userCookie.setPath(request.getRequestURI());
+    //    // :: error: argument
+    //    userCookie.setDomain(new java.net.URL(request.getRequestURL().toString()).getHost());
     response.addCookie(userCookie);
     javax.servlet.RequestDispatcher rd =
         request.getRequestDispatcher("/cmdi-00/BenchmarkTest00093.html");

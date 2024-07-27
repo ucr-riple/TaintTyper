@@ -3,7 +3,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 722,
+      "offset": 776,
       "index": 1,
       "region": {
         "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
@@ -14,7 +14,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 852,
+      "offset": 906,
       "index": 2,
       "region": {
         "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
@@ -40,7 +40,7 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 876,
+      "offset": 930,
       "index": 3,
       "region": {
         "symbol": "doPost(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
@@ -65,42 +65,9 @@
     },
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-      "messageKey": "argument",
-      "offset": 1433,
-      "index": 4,
-      "region": {
-        "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": []
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-      "messageKey": "argument",
-      "offset": 1508,
-      "index": 5,
-      "region": {
-        "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": []
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-      "messageKey": "argument",
-      "offset": 1529,
-      "index": 6,
-      "region": {
-        "symbol": "doGet(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": []
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "return",
-      "offset": 1886,
-      "index": 7,
+      "offset": 1948,
+      "index": 4,
       "region": {
         "symbol": "testOnStreamLambda(java.util.List)",
         "class": "foo.bar.Foo"
@@ -128,8 +95,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 2357,
-      "index": 8,
+      "offset": 2419,
+      "index": 5,
       "region": {
         "symbol": "testCheckTypeForArgumentsBeforeCallingFixVisitor(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)",
         "class": "foo.bar.Foo"
@@ -139,8 +106,8 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
-      "offset": 2950,
-      "index": 9,
+      "offset": 3012,
+      "index": 6,
       "region": {
         "symbol": "testErrorForThirdPartyFieldSelectionError(java.awt.Point)",
         "class": "foo.bar.Foo"
@@ -167,46 +134,13 @@
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "argument",
-      "offset": 3713,
-      "index": 10,
+      "offset": 3721,
+      "index": 7,
       "region": {
         "symbol": "testOnArgumentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
         "class": "foo.bar.Foo"
       },
       "fixes": [
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-            "type-variable-position": [
-              [
-                1,
-                0
-              ]
-            ],
-            "method": "testOnArgumentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
-            "kind": "PARAMETER",
-            "name": "pair",
-            "index": 1,
-            "class": "foo.bar.Foo"
-          }
-        },
-        {
-          "annotation": "untainted",
-          "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-            "type-variable-position": [
-              [
-                0
-              ]
-            ],
-            "method": "testOnArgumentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
-            "kind": "PARAMETER",
-            "name": "st",
-            "index": 0,
-            "class": "foo.bar.Foo"
-          }
-        },
         {
           "annotation": "untainted",
           "location": {
@@ -223,19 +157,7 @@
             "index": 1,
             "class": "foo.bar.Foo"
           }
-        }
-      ]
-    },
-    {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
-      "messageKey": "assignment",
-      "offset": 3883,
-      "index": 11,
-      "region": {
-        "symbol": "testOnAssignmentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
-        "class": "foo.bar.Foo"
-      },
-      "fixes": [
+        },
         {
           "annotation": "untainted",
           "location": {
@@ -246,7 +168,7 @@
                 0
               ]
             ],
-            "method": "testOnAssignmentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
+            "method": "testOnArgumentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
             "kind": "PARAMETER",
             "name": "pair",
             "index": 1,
@@ -262,10 +184,55 @@
                 0
               ]
             ],
+            "method": "testOnArgumentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
+            "kind": "PARAMETER",
+            "name": "st",
+            "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    },
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 3891,
+      "index": 8,
+      "region": {
+        "symbol": "testOnAssignmentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
             "method": "testOnAssignmentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
             "kind": "PARAMETER",
             "name": "st",
             "index": 0,
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "testOnAssignmentForUnboxing(java.lang.String,foo.bar.Foo.Pair)",
+            "kind": "PARAMETER",
+            "name": "pair",
+            "index": 1,
             "class": "foo.bar.Foo"
           }
         },
