@@ -1,6 +1,6 @@
 package localTaint;
 
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RUntainted;
 
 public class LocatTaint {
 

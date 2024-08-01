@@ -1,8 +1,8 @@
 package validatorTests;
 
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RPossiblyValidated;
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RPossiblyValidated;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RTainted;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RUntainted;
 
 // Test basic subtyping relationships for the UCR Tainting Checker.
 class ValidatorTest {

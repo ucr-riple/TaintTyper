@@ -1,6 +1,6 @@
 package thirdPartyTests.com.test.thirdparty;
 
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RTainted;
 import java.util.Arrays;
 import java.util.List;
 

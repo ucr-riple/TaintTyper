@@ -1,7 +1,7 @@
 package foo.bar;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.*;
 import java.security.PrivilegedAction;
 import java.util.*;
 import java.util.Map.Entry;

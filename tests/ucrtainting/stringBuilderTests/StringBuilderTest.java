@@ -1,7 +1,7 @@
 package stringBuilderTests;
 
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RTainted;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RUntainted;
 
 // Test taint passing through custom library method invocation
 class StringBuilderTest {

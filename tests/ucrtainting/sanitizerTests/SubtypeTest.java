@@ -1,7 +1,7 @@
 package sanitizerTests;
 
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
-import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RTainted;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RUntainted;
 
 // Test basic subtyping relationships for the UCR Tainting Checker.
 class SubtypeTest {

@@ -1,6 +1,6 @@
 package thirdPartyTests;
 
-import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.*;
 import org.apache.commons.lang3.StringUtils;
 
 // Test taint passing through library method invocation

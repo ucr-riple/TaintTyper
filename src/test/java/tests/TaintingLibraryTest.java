@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperChecker;
+import edu.xxx.cs.yyyyy.taint.tainttyper.TaintTyperChecker;
 import java.io.File;
 import java.util.List;
 import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;

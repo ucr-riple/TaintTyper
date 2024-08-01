@@ -1,6 +1,6 @@
 package com.test;
 
-import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

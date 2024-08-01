@@ -1,4 +1,4 @@
-import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.*;
 import java.util.*;
 
 public class Foo<E> {

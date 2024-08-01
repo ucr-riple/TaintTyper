@@ -1,6 +1,6 @@
 package foo.bar;
 
-import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.*;
 
 class Baz {
   public String field = "";

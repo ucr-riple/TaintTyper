@@ -1,0 +1,286 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 University of California, Riverside
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RTainted;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RUntainted;
+import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RPolyTainted;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.File;
+import org.xml.sax.InputSource;
+import java.net.URI;
+
+package java.net;
+public class URL {
+    public URL(@RUntainted String spec);
+    public URL(URL context, @RUntainted String spec);
+    public URL(String protocol, @RUntainted String host, String file);
+    public URL(URL context, @RUntainted String spec, URLStreamHandler handler);
+    public URL(String protocol, @RUntainted String host, int port, String file);
+    public URL(String protocol, @RUntainted String host, int port, String file, URLStreamHandler ph);
+    public @RTainted URLConnection openConnection();
+    public @RTainted java.io.InputStream openStream();
+}
+
+package org.springframework.scripting.bsh;
+public class BshScriptEvaluator {
+    public @RUntainted Object evaluate(@RUntainted ScriptSource script);
+    public @RUntainted Object evaluate(@RUntainted ScriptSource script, Map<String,Object> arguments);
+}
+
+package com.jcraft.jsch;
+public class ChannelExec {
+    public void setCommand(@RUntainted byte[] command);
+    public void setCommand(@RUntainted String command);
+}
+
+package jdk.jshell;
+public class JShell {
+    public @RUntainted List<SnippetEvent> eval(@RUntainted String input);
+}
+
+package javax.el;
+public abstract class ExpressionFactory {
+    public abstract @RUntainted ValueExpression createValueExpression(ELContext context,
+                                                      @RUntainted String expression,
+                                                     Class<?> expectedType);
+}
+
+package org.python.util;
+public class PythonInterpreter {
+    public @RUntainted PyObject	eval(@RUntainted String s);
+    public @RUntainted PyObject eval(@RUntainted PyObject code);
+}
+
+package javax.script;
+public interface ScriptEngine {
+    public @RUntainted Object eval(@RUntainted String script);
+}
+
+package jdk.nashorn.api.scripting;
+public class NashornScriptEngine {
+    public @RUntainted Object eval(@RUntainted String script);
+}
+
+package android.webkit;
+public class WebResourceResponse {
+    public WebResourceResponse(String mimeType, String encoding, @RUntainted InputStream data);
+}
+
+package javax.servlet.http;
+public interface HttpServletRequest {
+    public @RTainted String getHeader(java.lang.String arg0);
+    public @RTainted String getMethod();
+    public @RTainted String getPathInfo();
+    public @RTainted String getPathTranslated();
+    public @RTainted String getContextPath();
+    public @RTainted String getQueryString();
+    public @RTainted String getRemoteUser();
+    public @RTainted StringBuffer getRequestURL();
+    public @RTainted StringBuffer getRequestURI();
+    public @RTainted String getParameter(java.lang.String name);
+    public @RTainted java.io.BufferedReader	getReader();
+    public @RTainted javax.servlet.ServletInputStream getInputStream();
+}
+
+package javax.servlet;
+public abstract class ServletOutputStream {
+    public void print(@RUntainted boolean s);
+    public void print(@RUntainted char s);
+    public void print(@RUntainted double s);
+    public void print(@RUntainted float s);
+    public void print(@RUntainted int s);
+    public void print(@RUntainted long s);
+    public void print(@RUntainted String s);
+    public void println(@RUntainted boolean s);
+    public void println(@RUntainted char s);
+    public void println(@RUntainted double s);
+    public void println(@RUntainted float s);
+    public void println(@RUntainted int s);
+    public void println(@RUntainted long s);
+    public void println(@RUntainted String s);
+}
+
+package java.lang;
+public final class String {
+    public @RPolyTainted String replaceAll(@RUntainted String regex, @RPolyTainted String replacement);
+}
+
+package java.nio.file;
+public final class Paths {
+    public static @RUntainted Path get(@RUntainted String first, @RUntainted String... more);
+    public static @RUntainted Path get(@RUntainted URI uri);
+}
+
+package javax.naming;
+public interface Context {
+    public @RUntainted Object lookup(@RUntainted String name);
+}
+
+package org.xml.sax;
+public interface XMLReader {
+    public void parse(@RUntainted String systemId);
+    public void parse(@RUntainted InputSource systemId);
+}
+
+
+package java.security.cert;
+public class CertPathValidator {
+    public @RUntainted CertPathValidatorResult validate(@RUntainted CertPath certPath, CertPathParameters params);
+}
+
+package java.lang;
+public class Thread {
+    public static void sleep(@RUntainted long millis);
+    public static void sleep(@RUntainted long millis, @RUntainted int nanos);
+}
+
+package java.lang;
+public abstract class ClassLoader {
+    public @RUntainted Class<?>	loadClass(@RUntainted String name);
+}
+
+package java.io;
+public class File {
+    public File(@RUntainted File parent, @RUntainted String child);
+    public File(@RUntainted String pathname);
+    public File(@RUntainted String parent, @RUntainted String child);
+    public File(@RUntainted URI uri);
+}
+
+public abstract class Writer {
+    public void write(@RUntainted char[] cbuf);
+    public abstract void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+public class BufferedWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+public class CharArrayWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str);
+}
+
+public class FilterWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+public class OutputStreamWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+public class FileWriter {
+    public FileWriter(@RUntainted File file);
+    public FileWriter(@RUntainted File file, boolean append);
+    public FileWriter(@RUntainted String fileName);
+    public FileWriter(@RUntainted String fileName, boolean append);
+}
+
+public class PipedWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+}
+
+public class PrintWriter {
+    public void write(@RUntainted char[] cbuf);
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+public class StringWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+public class FileOutputStream {
+    public void write(@RUntainted byte[] b);
+    public void	write(@RUntainted byte[] b, int off, int len);
+    public void	write(@RUntainted int b);
+}
+
+public class OutputStreamWriter {
+    public void write(@RUntainted char[] cbuf, int off, int len);
+    public void	write(@RUntainted int c);
+    public void	write(@RUntainted String str, int off, int len);
+}
+
+package javax.xml.xquery;
+public interface XQConnection {
+    public @RUntainted XQPreparedExpression prepareExpression(@RUntainted InputStream xquery);
+    public @RUntainted XQPreparedExpression	prepareExpression(@RUntainted InputStream xquery, XQStaticContext properties);
+    public @RUntainted XQPreparedExpression	prepareExpression(@RUntainted Reader xquery);
+    public @RUntainted XQPreparedExpression	prepareExpression(@RUntainted Reader xquery, XQStaticContext properties);
+    public @RUntainted XQPreparedExpression	prepareExpression(@RUntainted String xquery);
+    public @RUntainted XQPreparedExpression	prepareExpression(@RUntainted String xquery, XQStaticContext properties);
+}
+
+public interface XQExpression {
+    public void	executeCommand(@RUntainted Reader cmd);
+    public void	executeCommand(@RUntainted String cmd);
+    public @RUntainted XQResultSequence	executeQuery(@RUntainted InputStream query);
+    public @RUntainted XQResultSequence	executeQuery(@RUntainted Reader query);
+    public @RUntainted XQResultSequence	executeQuery(@RUntainted String query);
+}
+
+package javax.xml.parsers;
+public abstract class SAXParser {
+    public void	parse(@RUntainted File f, DefaultHandler dh);
+    public void	parse(@RUntainted File f, HandlerBase hb);
+    public void	parse(@RUntainted InputSource is, DefaultHandler dh);
+    public void	parse(@RUntainted InputSource is, HandlerBase hb);
+    public void	parse(@RUntainted InputStream is, DefaultHandler dh);
+    public void	parse(@RUntainted InputStream is, DefaultHandler dh, String systemId);
+    public void	parse(@RUntainted InputStream is, HandlerBase hb);
+    public void	parse(@RUntainted InputStream is, HandlerBase hb, String systemId);
+    public void	parse(@RUntainted String uri, DefaultHandler dh);
+    public void	parse(@RUntainted String uri, HandlerBase hb);
+}
+
+public abstract class DocumentBuilder {
+    public @RUntainted Document	parse(@RUntainted File f);
+    public abstract @RUntainted Document parse(@RUntainted InputSource is);
+    public @RUntainted Document	parse(@RUntainted InputStream is);
+    public @RUntainted Document	parse(@RUntainted InputStream is, String systemId);
+    public @RUntainted Document	parse(@RUntainted String uri);
+}
+
+package org.apache.commons.jexl2;
+public interface Expression {
+    public @RUntainted Object evaluate(@RUntainted JexlContext context);
+}

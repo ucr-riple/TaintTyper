@@ -1,0 +1,80 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 University of California, Riverside
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+package edu.xxx.cs.yyyyy.taint.tainttyper.serialization.location;
+
+import com.sun.tools.javac.code.Symbol;
+import edu.xxx.cs.yyyyy.taint.tainttyper.serialization.visitors.LocationVisitor;
+import java.util.Objects;
+
+/** subtype of {@link AbstractSymbolLocation} targeting a method parameter declaration */
+public class MethodParameterLocation extends AbstractSymbolLocation {
+
+  /** Symbol of the targeted method. */
+  public final Symbol.MethodSymbol enclosingMethod;
+  /** Symbol of the targeted method parameter. */
+  public final Symbol.VarSymbol paramSymbol;
+  /** Index of the method parameter in the containing method's argument list. */
+  public final int index;
+
+  public MethodParameterLocation(Symbol target, Symbol.MethodSymbol enclosingMethod) {
+    super(LocationKind.PARAMETER, target);
+    this.paramSymbol = (Symbol.VarSymbol) target;
+    this.enclosingMethod = enclosingMethod;
+    int i;
+    for (i = 0; i < this.enclosingMethod.getParameters().size(); i++) {
+      if (this.enclosingMethod.getParameters().get(i).equals(target)) {
+        break;
+      }
+    }
+    this.index = i;
+  }
+
+  @Override
+  public <R, P> R accept(LocationVisitor<R, P> v, P p) {
+    return v.visitParameter(this, p);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof MethodParameterLocation)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+    MethodParameterLocation that = (MethodParameterLocation) o;
+    return index == that.index
+        && Objects.equals(enclosingMethod, that.enclosingMethod)
+        && Objects.equals(paramSymbol, that.paramSymbol);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), enclosingMethod, paramSymbol, index);
+  }
+}
