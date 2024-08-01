@@ -10,7 +10,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-// Test basic subtyping relationships for the UCR Tainting Checker.
+// Test basic subtyping relationships for the XXX Tainting Checker.
 class XMLStreamTest {
   void test(@RUntainted InputStream in)
       throws ParserConfigurationException, IOException, SAXException {

@@ -1,7 +1,7 @@
 {
   "errors": [
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/lambdainference/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/lambdainference/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 487,
       "index": 1,
@@ -13,7 +13,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/lambdainference/foo/bar/IBar.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/lambdainference/foo/bar/IBar.java",
             "type-variable-position": [
               [
                 0

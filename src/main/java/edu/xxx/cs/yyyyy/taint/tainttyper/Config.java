@@ -36,7 +36,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-/** Configuration class for the UCR Tainting project. */
+/** Configuration class for the XXX Tainting project. */
 public class Config {
 
   /**

@@ -1,7 +1,7 @@
 {
   "errors": [
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 656,
       "index": 1,
@@ -13,7 +13,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -28,7 +28,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 719,
       "index": 2,
@@ -40,7 +40,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 2,
@@ -55,7 +55,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 782,
       "index": 3,
@@ -67,7 +67,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -86,7 +86,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 847,
       "index": 4,
@@ -98,7 +98,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -112,7 +112,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 973,
       "index": 5,
@@ -124,7 +124,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -139,7 +139,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 1041,
       "index": 6,
@@ -151,7 +151,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -166,7 +166,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 1111,
       "index": 7,
@@ -178,7 +178,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -193,7 +193,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 1174,
       "index": 8,
@@ -205,7 +205,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -220,7 +220,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 1239,
       "index": 9,
@@ -232,7 +232,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -249,7 +249,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 1308,
       "index": 10,
@@ -261,7 +261,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -276,7 +276,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 1443,
       "index": 11,
@@ -288,7 +288,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -302,7 +302,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 1506,
       "index": 12,
@@ -314,7 +314,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -328,7 +328,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 1571,
       "index": 13,
@@ -340,7 +340,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -354,7 +354,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 1629,
       "index": 14,
@@ -366,7 +366,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -380,7 +380,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 1689,
       "index": 15,
@@ -392,7 +392,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -408,7 +408,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 1753,
       "index": 16,
@@ -420,7 +420,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -434,7 +434,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "return",
       "offset": 1885,
       "index": 17,
@@ -446,7 +446,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -460,7 +460,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "return",
       "offset": 2004,
       "index": 18,
@@ -472,7 +472,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -487,7 +487,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "assignment",
       "offset": 2120,
       "index": 19,
@@ -499,7 +499,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 2,
@@ -517,7 +517,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "assignment",
       "offset": 2346,
       "index": 20,
@@ -529,7 +529,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "varName": "c",
             "type-variable-position": [
               [
@@ -545,7 +545,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "assignment",
       "offset": 2910,
       "index": 21,
@@ -557,7 +557,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -572,7 +572,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "assignment",
       "offset": 3007,
       "index": 22,
@@ -584,7 +584,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -599,7 +599,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
       "messageKey": "assignment",
       "offset": 3169,
       "index": 23,
@@ -611,7 +611,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/typeargumentreceiver/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,

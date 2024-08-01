@@ -1,7 +1,7 @@
 {
   "errors": [
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
       "messageKey": "assignment",
       "offset": 229,
       "index": 1,
@@ -13,7 +13,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
             "type-variable-position": [
               [
                 1,
@@ -28,7 +28,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
       "messageKey": "assignment",
       "offset": 327,
       "index": 2,
@@ -40,7 +40,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
             "type-variable-position": [
               [
                 2,
@@ -55,7 +55,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
       "messageKey": "assignment",
       "offset": 406,
       "index": 3,
@@ -67,7 +67,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
             "type-variable-position": [
               [
                 1,
@@ -82,7 +82,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
       "messageKey": "assignment",
       "offset": 491,
       "index": 4,
@@ -94,7 +94,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
             "type-variable-position": [
               [
                 1,
@@ -109,7 +109,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
       "messageKey": "assignment",
       "offset": 581,
       "index": 5,
@@ -121,7 +121,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
             "type-variable-position": [
               [
                 1,
@@ -136,7 +136,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
       "messageKey": "assignment",
       "offset": 644,
       "index": 6,
@@ -148,7 +148,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -162,7 +162,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
       "messageKey": "assignment",
       "offset": 712,
       "index": 7,
@@ -174,7 +174,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
             "type-variable-position": [
               [
                 1,
@@ -189,7 +189,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
       "messageKey": "assignment",
       "offset": 791,
       "index": 8,
@@ -201,7 +201,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
             "type-variable-position": [
               [
                 1,
@@ -216,7 +216,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
       "messageKey": "assignment",
       "offset": 1154,
       "index": 9,
@@ -228,7 +228,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/accesspath/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/accesspath/Test.java",
             "type-variable-position": [
               [
                 0

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-// Test basic subtyping relationships for the UCR Tainting Checker.
+// Test basic subtyping relationships for the XXX Tainting Checker.
 class SubtypeTest {
   void allSubtypingRelationships(int x, @RUntainted int y) {
     @RTainted int a = x;

@@ -1,7 +1,7 @@
 {
   "errors": [
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
       "messageKey": "assignment",
       "offset": 1709,
       "index": 1,
@@ -13,7 +13,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
             "type-variable-position": [
               [
                 0
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
       "messageKey": "assignment",
       "offset": 1790,
       "index": 2,
@@ -39,7 +39,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
             "type-variable-position": [
               [
                 0
@@ -60,7 +60,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
             "type-variable-position": [
               [
                 0
@@ -81,7 +81,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
             "type-variable-position": [
               [
                 0
@@ -97,7 +97,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
             "type-variable-position": [
               [
                 0
@@ -118,7 +118,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/BoundTest.java",
             "type-variable-position": [
               [
                 0
@@ -139,7 +139,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
       "messageKey": "assignment",
       "offset": 285,
       "index": 3,
@@ -151,7 +151,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -172,7 +172,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -193,7 +193,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -207,7 +207,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -228,7 +228,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -249,7 +249,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -270,7 +270,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -291,7 +291,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
       "messageKey": "assignment",
       "offset": 2369,
       "index": 4,
@@ -303,7 +303,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -324,7 +324,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
       "messageKey": "assignment",
       "offset": 2896,
       "index": 5,
@@ -336,7 +336,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -350,7 +350,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -376,7 +376,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -402,7 +402,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
       "messageKey": "assignment",
       "offset": 3801,
       "index": 6,
@@ -414,7 +414,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -445,7 +445,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -466,7 +466,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -487,7 +487,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Recursive.java",
             "type-variable-position": [
               [
                 0
@@ -508,7 +508,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
       "messageKey": "assignment",
       "offset": 558,
       "index": 7,
@@ -520,7 +520,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "type-variable-position": [
               [
                 0
@@ -536,7 +536,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
       "messageKey": "assignment",
       "offset": 688,
       "index": 8,
@@ -548,7 +548,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "varName": "list",
             "type-variable-position": [
               [
@@ -564,7 +564,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
       "messageKey": "assignment",
       "offset": 1362,
       "index": 9,
@@ -576,7 +576,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "type-variable-position": [
               [
                 0
@@ -597,7 +597,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
       "messageKey": "assignment",
       "offset": 1749,
       "index": 10,
@@ -609,7 +609,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "type-variable-position": [
               [
                 1,
@@ -626,7 +626,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "type-variable-position": [
               [
                 0
@@ -648,7 +648,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
       "messageKey": "assignment",
       "offset": 2892,
       "index": 11,
@@ -660,7 +660,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "type-variable-position": [
               [
                 0
@@ -681,7 +681,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "type-variable-position": [
               [
                 0
@@ -702,7 +702,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
       "messageKey": "assignment",
       "offset": 2983,
       "index": 12,
@@ -714,7 +714,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "type-variable-position": [
               [
                 0
@@ -735,7 +735,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
       "messageKey": "assignment",
       "offset": 3670,
       "index": 13,
@@ -747,7 +747,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "type-variable-position": [
               [
                 0
@@ -761,7 +761,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
       "messageKey": "assignment",
       "offset": 3756,
       "index": 14,
@@ -773,7 +773,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "type-variable-position": [
               [
                 1,
@@ -796,7 +796,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/polytaintserialization/foo/bar/Test.java",
             "type-variable-position": [
               [
                 1,

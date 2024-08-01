@@ -1,7 +1,7 @@
 {
   "errors": [
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
       "offset": 776,
       "index": 1,
@@ -12,7 +12,7 @@
       "fixes": []
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
       "offset": 906,
       "index": 2,
@@ -24,7 +24,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -38,7 +38,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 930,
       "index": 3,
@@ -50,7 +50,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -64,7 +64,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "return",
       "offset": 1948,
       "index": 4,
@@ -76,7 +76,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -93,7 +93,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
       "offset": 2419,
       "index": 5,
@@ -104,7 +104,7 @@
       "fixes": []
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
       "offset": 3012,
       "index": 6,
@@ -116,7 +116,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -132,7 +132,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 3721,
       "index": 7,
@@ -144,7 +144,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 2,
@@ -161,7 +161,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -178,7 +178,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -194,7 +194,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
       "messageKey": "assignment",
       "offset": 3891,
       "index": 8,
@@ -206,7 +206,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -222,7 +222,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -239,7 +239,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartyhandlingserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 2,

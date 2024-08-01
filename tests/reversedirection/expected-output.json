@@ -1,7 +1,7 @@
 {
   "errors": [
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/reversedirection/com/test/Foo.java",
       "messageKey": "return",
       "offset": 281,
       "index": 1,
@@ -13,7 +13,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/reversedirection/com/test/Foo.java",
             "type-variable-position": [
               [
                 2,
@@ -28,7 +28,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/reversedirection/com/test/Foo.java",
       "messageKey": "assignment",
       "offset": 414,
       "index": 2,
@@ -40,7 +40,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/reversedirection/com/test/Foo.java",
             "varName": "var",
             "type-variable-position": [
               [
@@ -56,7 +56,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/reversedirection/com/test/Foo.java",
       "messageKey": "assignment",
       "offset": 479,
       "index": 3,
@@ -68,7 +68,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/reversedirection/com/test/Foo.java",
             "varName": "var",
             "type-variable-position": [
               [
@@ -84,7 +84,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/reversedirection/com/test/Foo.java",
       "messageKey": "argument",
       "offset": 581,
       "index": 4,
@@ -96,7 +96,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/reversedirection/com/test/Foo.java",
             "type-variable-position": [
               [
                 2,
@@ -113,7 +113,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/reversedirection/com/test/Foo.java",
       "messageKey": "assignment",
       "offset": 752,
       "index": 5,
@@ -125,7 +125,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/reversedirection/com/test/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/reversedirection/com/test/Foo.java",
             "varName": "entrySet",
             "type-variable-position": [
               [

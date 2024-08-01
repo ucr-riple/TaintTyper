@@ -1,4 +1,4 @@
-# UCR Tainting Checker
+# XXX Tainting Checker
 
 
 ## How to run the checker
@@ -27,7 +27,7 @@ dependencies {
 }
 ```
 
-Now, when you build your project, the UCR Tainting Checker will also run,
+Now, when you build your project, the XXX Tainting Checker will also run,
 informing you of any potential errors related to TODO.
 
 
@@ -52,6 +52,6 @@ Run these commands from the top-level directory.
 `./gradlew publishToMavenLocal`: publish the checker to your local Maven repository.
 This is useful for testing before you publish it elsewhere, such as to Maven Central.
 
-The UCR Tainting Checker is built upon the Checker Framework.  Please see
+The XXX Tainting Checker is built upon the Checker Framework.  Please see
 the [Checker Framework Manual](https://checkerframework.org/manual/) for
 more information about using pluggable type-checkers, including this one.

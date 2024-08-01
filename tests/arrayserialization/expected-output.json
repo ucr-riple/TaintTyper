@@ -1,7 +1,7 @@
 {
   "errors": [
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "array.initializer",
       "offset": 678,
       "index": 1,
@@ -13,7 +13,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "array.initializer",
       "offset": 678,
       "index": 2,
@@ -39,7 +39,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -55,7 +55,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 678,
       "index": 3,
@@ -67,7 +67,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -81,7 +81,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -97,7 +97,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 852,
       "index": 4,
@@ -109,7 +109,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -125,7 +125,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 1634,
       "index": 5,
@@ -137,7 +137,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 2,
@@ -155,7 +155,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 1838,
       "index": 6,
@@ -167,7 +167,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -184,7 +184,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 3206,
       "index": 7,
@@ -196,7 +196,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "varName": "extension",
             "type-variable-position": [
               [
@@ -211,7 +211,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 3719,
       "index": 8,
@@ -223,7 +223,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -239,7 +239,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -255,7 +255,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -271,7 +271,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "argument",
       "offset": 4566,
       "index": 9,
@@ -283,7 +283,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -298,7 +298,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "return",
       "offset": 5487,
       "index": 10,
@@ -310,7 +310,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "varName": "dirname",
             "type-variable-position": [
               [
@@ -325,7 +325,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -339,7 +339,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "varName": "prop",
             "type-variable-position": [
               [
@@ -354,7 +354,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 5728,
       "index": 11,
@@ -366,7 +366,7 @@
         {
           "annotation": "poly",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -387,7 +387,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -403,7 +403,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 6015,
       "index": 12,
@@ -415,7 +415,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -431,7 +431,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 6358,
       "index": 13,
@@ -443,7 +443,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -459,7 +459,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 6749,
       "index": 14,
@@ -471,7 +471,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -485,7 +485,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 6826,
       "index": 15,
@@ -497,7 +497,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -513,7 +513,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "enhancedfor",
       "offset": 6958,
       "index": 16,
@@ -525,7 +525,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 0
@@ -539,7 +539,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 7134,
       "index": 17,
@@ -551,7 +551,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -568,7 +568,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 7261,
       "index": 18,
@@ -580,7 +580,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [
               [
                 2,
@@ -597,7 +597,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
       "messageKey": "assignment",
       "offset": 7555,
       "index": 19,
@@ -609,7 +609,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "varName": "foo",
             "type-variable-position": [[0]],
             "method": "localVariableFullAssignmentCheckWithArrayUntaintedComponent(java.lang.String[])",
@@ -620,7 +620,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "type-variable-position": [[0]],
             "method": "localVariableFullAssignmentCheckWithArrayUntaintedComponent(java.lang.String[])",
             "kind": "PARAMETER",
@@ -632,7 +632,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/Foo.java",
             "varName": "f1",
             "type-variable-position": [[0]],
             "method": "localVariableFullAssignmentCheckWithArrayUntaintedComponent(java.lang.String[])",
@@ -643,7 +643,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/NotPolyInference.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/NotPolyInference.java",
       "messageKey": "argument",
       "offset": 2138,
       "index": 20,
@@ -655,7 +655,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/arrayserialization/NotPolyInference.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/arrayserialization/NotPolyInference.java",
             "type-variable-position": [
               [
                 0

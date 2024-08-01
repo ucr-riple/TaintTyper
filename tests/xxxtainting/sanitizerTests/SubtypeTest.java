@@ -3,7 +3,7 @@ package sanitizerTests;
 import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RTainted;
 import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RUntainted;
 
-// Test basic subtyping relationships for the UCR Tainting Checker.
+// Test basic subtyping relationships for the XXX Tainting Checker.
 class SubtypeTest {
   void validationArg(@RTainted String y) {
     if (validator(y)) {

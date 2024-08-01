@@ -29,7 +29,7 @@ import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test runner for tests of the UCR Tainting Checker.
+ * Test runner for tests of the XXX Tainting Checker.
  *
  * <p>Tests appear as Java files in the {@code tests/xxxtainting} folder. To add a new test case,
  * create a Java file in that directory. The file contains "// ::" comments to indicate expected

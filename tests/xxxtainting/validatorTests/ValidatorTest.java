@@ -4,7 +4,7 @@ import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RPossiblyValidated;
 import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RTainted;
 import edu.xxx.cs.yyyyy.taint.tainttyper.qual.RUntainted;
 
-// Test basic subtyping relationships for the UCR Tainting Checker.
+// Test basic subtyping relationships for the XXX Tainting Checker.
 class ValidatorTest {
 
   void subTypeTest1(@RTainted String x, @RPossiblyValidated({}) String z) {

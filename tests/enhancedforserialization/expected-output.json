@@ -1,7 +1,7 @@
 {
   "errors": [
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
       "messageKey": "enhancedfor",
       "offset": 383,
       "index": 1,
@@ -13,7 +13,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "varName": "headers",
             "type-variable-position": [
               [
@@ -33,7 +33,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
       "messageKey": "enhancedfor",
       "offset": 801,
       "index": 2,
@@ -45,7 +45,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "varName": "methods",
             "type-variable-position": [
               [
@@ -61,7 +61,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
       "messageKey": "enhancedfor",
       "offset": 1154,
       "index": 3,
@@ -73,7 +73,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "varName": "files",
             "type-variable-position": [
               [
@@ -89,7 +89,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
       "messageKey": "enhancedfor",
       "offset": 1292,
       "index": 4,
@@ -101,7 +101,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -116,7 +116,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
       "messageKey": "enhancedfor",
       "offset": 1610,
       "index": 1,
@@ -128,7 +128,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 2,
@@ -145,7 +145,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
       "messageKey": "enhancedfor",
       "offset": 2015,
       "index": 6,
@@ -157,7 +157,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "varName": "e",
             "type-variable-position": [
               [
@@ -174,7 +174,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
       "messageKey": "enhancedfor",
       "offset": 2207,
       "index": 7,
@@ -186,7 +186,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -209,7 +209,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
       "messageKey": "enhancedfor",
       "offset": 2464,
       "index": 8,
@@ -221,7 +221,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 2,
@@ -238,7 +238,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 2625,
       "index": 9,
@@ -250,7 +250,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "varName": "s",
             "type-variable-position": [
               [
@@ -265,7 +265,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,
@@ -282,7 +282,7 @@
       ]
     },
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
       "messageKey": "argument",
       "offset": 2985,
       "index": 10,
@@ -294,7 +294,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "varName": "entry",
             "type-variable-position": [
               [
@@ -311,7 +311,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "varName": "s",
             "type-variable-position": [
               [
@@ -326,7 +326,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "varName": "smallMap",
             "type-variable-position": [
               [
@@ -343,7 +343,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/enhancedforserialization/foo/bar/Foo.java",
             "type-variable-position": [
               [
                 1,

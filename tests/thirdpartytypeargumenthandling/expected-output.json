@@ -1,7 +1,7 @@
 {
   "errors": [
     {
-      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartytypeargumenthandling/Foo.java",
+      "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartytypeargumenthandling/Foo.java",
       "messageKey": "assignment",
       "offset": 265,
       "index": 1,
@@ -13,7 +13,7 @@
         {
           "annotation": "untainted",
           "location": {
-            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/thirdpartytypeargumenthandling/Foo.java",
+            "path": "/Users/zzzz/Developer/XXXTaintingChecker/tests/thirdpartytypeargumenthandling/Foo.java",
             "varName": "taintedList",
             "type-variable-position": [
               [
