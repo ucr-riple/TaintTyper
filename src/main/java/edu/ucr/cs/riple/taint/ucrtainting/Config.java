@@ -63,7 +63,7 @@ public class Config {
   /** Flag to control serialization internally. */
   public final boolean serializationActivation;
 
-  public Config(UCRTaintingChecker checker) {
+  public Config(TaintTyperChecker checker) {
     this.serializationActivation = checker.hasOption(SERIALIZATION_ACTIVATION_FLAG);
     if (serializationActivation && !checker.hasOption(SERIALIZATION_CONFIG_PATH)) {
       throw new RuntimeException(

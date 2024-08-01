@@ -32,7 +32,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.Config;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
@@ -63,7 +63,7 @@ public class DefaultTypeChangeVisitor extends SpecializedFixComputer {
 
   public DefaultTypeChangeVisitor(
       Config config,
-      UCRTaintingAnnotatedTypeFactory factory,
+      TaintTyperAnnotatedTypeFactory factory,
       FixComputer fixComputer,
       Context context) {
     super(factory, fixComputer, context);

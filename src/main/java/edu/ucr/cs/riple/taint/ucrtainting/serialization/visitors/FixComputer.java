@@ -38,7 +38,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.Config;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
@@ -59,7 +59,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
    * The type factory of the checker. Used to get the type of the tree and generate a fix only if is
    * {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}.
    */
-  protected final UCRTaintingAnnotatedTypeFactory typeFactory;
+  protected final TaintTyperAnnotatedTypeFactory typeFactory;
 
   protected final Types types;
   protected final Context context;
@@ -69,7 +69,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
   protected final CollectionFixVisitor collectionFixVisitor;
 
   public FixComputer(
-      Config config, UCRTaintingAnnotatedTypeFactory factory, Types types, Context context) {
+      Config config, TaintTyperAnnotatedTypeFactory factory, Types types, Context context) {
     this.typeFactory = factory;
     this.context = context;
     this.types = types;

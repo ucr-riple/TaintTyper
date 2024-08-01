@@ -42,12 +42,12 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.AnnotationMirrorSet;
 import org.checkerframework.javacutil.TreeUtils;
 
-public class UCRTaintingTransfer extends AccumulationTransfer {
-  private final UCRTaintingAnnotatedTypeFactory aTypeFactory;
+public class TaintTyperTransfer extends AccumulationTransfer {
+  private final TaintTyperAnnotatedTypeFactory aTypeFactory;
 
-  public UCRTaintingTransfer(UCRTaintingAnalysis analysis) {
+  public TaintTyperTransfer(TaintTyperAnalysis analysis) {
     super(analysis);
-    aTypeFactory = (UCRTaintingAnnotatedTypeFactory) analysis.getTypeFactory();
+    aTypeFactory = (TaintTyperAnnotatedTypeFactory) analysis.getTypeFactory();
   }
 
   @Override

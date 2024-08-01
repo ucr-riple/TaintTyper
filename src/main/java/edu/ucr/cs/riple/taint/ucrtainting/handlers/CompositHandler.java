@@ -31,7 +31,7 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.util.Context;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
@@ -40,7 +40,7 @@ public class CompositHandler implements Handler {
   /** Set of handlers to be used to add annotations from default for type. */
   private final ImmutableSet<Handler> handlers;
 
-  public CompositHandler(UCRTaintingAnnotatedTypeFactory typeFactory, Context context) {
+  public CompositHandler(TaintTyperAnnotatedTypeFactory typeFactory, Context context) {
     ImmutableSet.Builder<Handler> handlerBuilder = new ImmutableSet.Builder<>();
     handlerBuilder.add(new StaticFinalFieldHandler(typeFactory));
     handlerBuilder.add(new EnumHandler(typeFactory));

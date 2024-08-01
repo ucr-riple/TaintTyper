@@ -37,18 +37,18 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.javacutil.TreeUtils;
 
-public class UCRTaintingTreeAnnotator extends TreeAnnotator {
+public class TaintTyperTreeAnnotator extends TreeAnnotator {
 
   private final Handler handler;
-  private final UCRTaintingAnnotatedTypeFactory typeFactory;
+  private final TaintTyperAnnotatedTypeFactory typeFactory;
 
   /**
-   * UCRTaintingTreeAnnotator
+   * TaintTyperTreeAnnotator
    *
    * @param typeFactory the type factory
    * @param handler Handler to apply custom behavior
    */
-  protected UCRTaintingTreeAnnotator(UCRTaintingAnnotatedTypeFactory typeFactory, Handler handler) {
+  protected TaintTyperTreeAnnotator(TaintTyperAnnotatedTypeFactory typeFactory, Handler handler) {
     super(typeFactory);
     this.typeFactory = typeFactory;
     this.handler = handler;

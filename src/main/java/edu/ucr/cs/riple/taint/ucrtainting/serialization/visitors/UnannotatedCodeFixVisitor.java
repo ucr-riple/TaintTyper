@@ -30,7 +30,7 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,7 +48,7 @@ public class UnannotatedCodeFixVisitor extends SpecializedFixComputer {
   private final boolean activation;
 
   public UnannotatedCodeFixVisitor(
-      UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
+      TaintTyperAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
     this.activation = factory.unannotatedCodeHandlingEnabled();
   }
@@ -126,12 +126,12 @@ public class UnannotatedCodeFixVisitor extends SpecializedFixComputer {
 
   /**
    * Makes the given type untainted. If the type is an array, the component type is made untainted.
-   * Do not use or change {@link UCRTaintingAnnotatedTypeFactory#makeUntainted} method.
+   * Do not use or change {@link TaintTyperAnnotatedTypeFactory#makeUntainted} method.
    *
    * @param type The type to make untainted.
    * @param factory The type factory.
    */
-  private void makeUntainted(AnnotatedTypeMirror type, UCRTaintingAnnotatedTypeFactory factory) {
+  private void makeUntainted(AnnotatedTypeMirror type, TaintTyperAnnotatedTypeFactory factory) {
     // for arrays, we need to pass collection of untainted data rather than tainted.
     if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
       ((AnnotatedTypeMirror.AnnotatedArrayType) type)

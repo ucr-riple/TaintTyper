@@ -24,7 +24,7 @@
 
 package tests;
 
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperChecker;
 import java.io.File;
 import java.util.List;
 import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
@@ -42,7 +42,7 @@ public class PolyTaintedSerializationTest extends CheckerFrameworkPerDirectoryTe
   public PolyTaintedSerializationTest(List<File> testFiles) {
     super(
         testFiles,
-        UCRTaintingChecker.class,
+        TaintTyperChecker.class,
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=foo.bar",

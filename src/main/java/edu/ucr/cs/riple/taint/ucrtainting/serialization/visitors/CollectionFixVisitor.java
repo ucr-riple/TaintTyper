@@ -32,7 +32,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.handlers.CollectionHandler;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
@@ -49,7 +49,7 @@ import org.checkerframework.javacutil.TreeUtils;
 public class CollectionFixVisitor extends SpecializedFixComputer {
 
   public CollectionFixVisitor(
-      UCRTaintingAnnotatedTypeFactory typeFactory, FixComputer fixComputer, Context context) {
+      TaintTyperAnnotatedTypeFactory typeFactory, FixComputer fixComputer, Context context) {
     super(typeFactory, fixComputer, context);
   }
 

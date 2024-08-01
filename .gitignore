@@ -35,5 +35,5 @@ gradle-app.setting
 *~
 
 # checker-qual
-ucrtainting-checker-qual/src
+TaintTyper-qual/src
 /.vscode/

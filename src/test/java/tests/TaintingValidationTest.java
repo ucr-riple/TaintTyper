@@ -22,34 +22,34 @@
  * THE SOFTWARE.
  */
 
-package edu.ucr.cs.riple.taint.ucrtainting;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperChecker;
+import java.io.File;
+import java.util.List;
+import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
+import org.junit.runners.Parameterized.Parameters;
 
-import org.checkerframework.framework.type.AnnotatedTypeFactory;
-import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import org.checkerframework.framework.type.typeannotator.DefaultForTypeAnnotator;
-
-public class UCRTaintingTypeAnnotator extends DefaultForTypeAnnotator {
-
-  UCRTaintingAnnotatedTypeFactory factory;
-
-  /**
-   * Creates a new TypeAnnotator.
-   *
-   * @param atypeFactory the type factory
-   */
-  protected UCRTaintingTypeAnnotator(AnnotatedTypeFactory atypeFactory) {
-    super(atypeFactory);
-    this.factory = (UCRTaintingAnnotatedTypeFactory) atypeFactory;
+/**
+ * Test runner for tests of the UCR Tainting Checker.
+ *
+ * <p>Tests appear as Java files in the {@code tests/ucrtainting} folder. To add a new test case,
+ * create a Java file in that directory. The file contains "// ::" comments to indicate expected
+ * errors and warnings; see
+ * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
+ */
+public class TaintingValidationTest extends CheckerFrameworkPerDirectoryTest {
+  public TaintingValidationTest(List<File> testFiles) {
+    super(
+        testFiles,
+        TaintTyperChecker.class,
+        "ucrtainting",
+        "-Anomsgtext",
+        "-AannotatedPackages=foo.bar",
+        "-AenableValidationCheck",
+        "-nowarn");
   }
 
-  @Override
-  public Void visitDeclared(AnnotatedTypeMirror.AnnotatedDeclaredType type, Void unused) {
-    return super.visitDeclared(type, unused);
-  }
-
-  @Override
-  public Void visitArray(AnnotatedTypeMirror.AnnotatedArrayType type, Void unused) {
-    factory.makeUntainted(type);
-    return super.visitArray(type, unused);
+  @Parameters
+  public static String[] getTestDirs() {
+    return new String[] {"ucrtainting/validatorTests"};
   }
 }

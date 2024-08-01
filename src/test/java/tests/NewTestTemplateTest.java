@@ -24,7 +24,7 @@
 
 package tests;
 
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperChecker;
 import java.io.File;
 import java.util.List;
 import org.junit.runners.Parameterized.Parameters;
@@ -44,7 +44,7 @@ public class NewTestTemplateTest extends SerializationTestHelper {
   public NewTestTemplateTest(List<File> testFiles) {
     super(
         testFiles,
-        UCRTaintingChecker.class,
+        TaintTyperChecker.class,
         "ucrtainting",
         "-nowarn",
         "-Xlint:removal",

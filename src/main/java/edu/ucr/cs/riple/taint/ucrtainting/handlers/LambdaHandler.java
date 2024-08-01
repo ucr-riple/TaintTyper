@@ -28,7 +28,7 @@ import com.sun.source.tree.LambdaExpressionTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.util.Context;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,7 +50,7 @@ public class LambdaHandler extends AbstractHandler {
 
   private final Types types;
 
-  public LambdaHandler(UCRTaintingAnnotatedTypeFactory typeFactory, Context context) {
+  public LambdaHandler(TaintTyperAnnotatedTypeFactory typeFactory, Context context) {
     super(typeFactory);
     this.lambdaParameters = new HashSet<>();
     this.types = Types.instance(context);

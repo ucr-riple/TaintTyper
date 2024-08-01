@@ -30,7 +30,7 @@ import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.code.Symbol;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors.FixComputer;
 import java.util.Set;
@@ -46,10 +46,10 @@ public class AssignmentScanner extends AccumulateScanner {
   /** The target variable to find assignments to. */
   private final Symbol target;
   /** The factory to create annotated types. */
-  private final UCRTaintingAnnotatedTypeFactory factory;
+  private final TaintTyperAnnotatedTypeFactory factory;
 
   public AssignmentScanner(
-      Symbol target, FoundRequired pair, UCRTaintingAnnotatedTypeFactory factory) {
+      Symbol target, FoundRequired pair, TaintTyperAnnotatedTypeFactory factory) {
     super(pair);
     this.target = target;
     this.factory = factory;

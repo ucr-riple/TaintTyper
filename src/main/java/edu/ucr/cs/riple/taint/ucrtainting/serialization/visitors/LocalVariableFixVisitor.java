@@ -30,7 +30,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.Pair;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.scanners.AssignmentScanner;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
@@ -49,7 +49,7 @@ public class LocalVariableFixVisitor extends SpecializedFixComputer {
   private final Set<Symbol.VarSymbol> visiting;
 
   public LocalVariableFixVisitor(
-      UCRTaintingAnnotatedTypeFactory typeFactory, FixComputer fixComputer, Context context) {
+      TaintTyperAnnotatedTypeFactory typeFactory, FixComputer fixComputer, Context context) {
     super(typeFactory, fixComputer, context);
     this.cache = new HashMap<>();
     this.visiting = new HashSet<>();

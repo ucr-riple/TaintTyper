@@ -29,15 +29,15 @@ import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.VariableTree;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 
 public abstract class AbstractHandler implements Handler {
 
-  protected final UCRTaintingAnnotatedTypeFactory typeFactory;
+  protected final TaintTyperAnnotatedTypeFactory typeFactory;
 
-  public AbstractHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
+  public AbstractHandler(TaintTyperAnnotatedTypeFactory typeFactory) {
     this.typeFactory = typeFactory;
   }
 

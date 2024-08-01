@@ -59,7 +59,7 @@ import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.TreeUtils;
 import org.checkerframework.javacutil.UserError;
 
-public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFactory {
+public class TaintTyperAnnotatedTypeFactory extends AccumulationAnnotatedTypeFactory {
 
   /**
    * This option enables custom handling of validation code. By default, such handling is disabled.
@@ -93,20 +93,20 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   /** The handler for the checker. Used to handle the custom logic of the checker. */
   private final Handler handler;
 
-  public UCRTaintingAnnotatedTypeFactory(BaseTypeChecker checker) {
+  public TaintTyperAnnotatedTypeFactory(BaseTypeChecker checker) {
     super(checker, RPossiblyValidated.class, RUntainted.class, null);
     enableUnannotatedCodeHandling =
-        checker.getBooleanOption(UCRTaintingChecker.ENABLE_LIBRARY_CHECKER, true);
+        checker.getBooleanOption(TaintTyperChecker.ENABLE_LIBRARY_CHECKER, true);
     enablePolyTaintInference =
-        checker.getBooleanOption(UCRTaintingChecker.ENABLE_POLY_TAINT_INFERENCE, true);
+        checker.getBooleanOption(TaintTyperChecker.ENABLE_POLY_TAINT_INFERENCE, true);
     enableTypeArgumentInference =
-        checker.getBooleanOption(UCRTaintingChecker.ENABLE_TYPE_ARGUMENT_INFERENCE, true);
-    enableValidationCheck = checker.hasOption(UCRTaintingChecker.ENABLE_VALIDATION_CHECKER);
-    enableSideEffect = checker.hasOption(UCRTaintingChecker.ENABLE_SIDE_EFFECT);
-    String givenAnnotatedPackages = checker.getOption(UCRTaintingChecker.ANNOTATED_PACKAGES);
+        checker.getBooleanOption(TaintTyperChecker.ENABLE_TYPE_ARGUMENT_INFERENCE, true);
+    enableValidationCheck = checker.hasOption(TaintTyperChecker.ENABLE_VALIDATION_CHECKER);
+    enableSideEffect = checker.hasOption(TaintTyperChecker.ENABLE_SIDE_EFFECT);
+    String givenAnnotatedPackages = checker.getOption(TaintTyperChecker.ANNOTATED_PACKAGES);
     // make sure that annotated package names are always provided and issue error otherwise
     if (givenAnnotatedPackages == null) {
-      if (checker.hasOption(UCRTaintingChecker.ANNOTATED_PACKAGES)) {
+      if (checker.hasOption(TaintTyperChecker.ANNOTATED_PACKAGES)) {
         throw new UserError(
             "The value for the argument -AannotatedPackages"
                 + " is null. Please pass this argument in the checker config, refer checker manual");
@@ -146,7 +146,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
   @Override
   protected TreeAnnotator createTreeAnnotator() {
     return new ListTreeAnnotator(
-        super.createTreeAnnotator(), new UCRTaintingTreeAnnotator(this, handler));
+        super.createTreeAnnotator(), new TaintTyperTreeAnnotator(this, handler));
   }
 
   @Override
@@ -176,7 +176,7 @@ public class UCRTaintingAnnotatedTypeFactory extends AccumulationAnnotatedTypeFa
 
   @Override
   protected DefaultForTypeAnnotator createDefaultForTypeAnnotator() {
-    return new UCRTaintingTypeAnnotator(this);
+    return new TaintTyperTypeAnnotator(this);
   }
 
   public AnnotationMirror rPossiblyValidatedAM(List<String> calledMethods) {

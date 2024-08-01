@@ -24,7 +24,7 @@
 
 package edu.ucr.cs.riple.taint.ucrtainting.serialization.visitors;
 
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import java.util.Collections;
 import java.util.HashSet;
@@ -47,12 +47,12 @@ public class TypeMatchVisitor extends AbstractAtmComboVisitor<Set<TypeIndex>, Vo
   }
 
   public static TypeMatchVisitor createPolyTaintedMatcher(
-      UCRTaintingAnnotatedTypeFactory typeFactory) {
+      TaintTyperAnnotatedTypeFactory typeFactory) {
     return new TypeMatchVisitor(typeFactory::hasPolyTaintedAnnotation);
   }
 
   public static TypeMatchVisitor createUntaintedMatcher(
-      UCRTaintingAnnotatedTypeFactory typeFactory) {
+      TaintTyperAnnotatedTypeFactory typeFactory) {
     return new TypeMatchVisitor(typeFactory::hasUntaintedAnnotation);
   }
 

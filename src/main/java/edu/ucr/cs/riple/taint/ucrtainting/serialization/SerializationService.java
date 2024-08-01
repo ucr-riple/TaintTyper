@@ -37,9 +37,9 @@ import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingVisitor;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperChecker;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperVisitor;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
@@ -65,9 +65,9 @@ public class SerializationService {
    * The type factory of the checker. Used to get the type of the tree and generate a fix only if
    * the tree is {@link RTainted}
    */
-  private final UCRTaintingAnnotatedTypeFactory typeFactory;
+  private final TaintTyperAnnotatedTypeFactory typeFactory;
   /** Using checker instance. */
-  private final UCRTaintingChecker checker;
+  private final TaintTyperChecker checker;
   /** Javac context instance. */
   private final Context context;
   /** Fix computer to generate the required fixes for the errors. */
@@ -87,10 +87,10 @@ public class SerializationService {
   /** Javac types instance. */
   private final Types types;
 
-  public SerializationService(UCRTaintingChecker checker) {
+  public SerializationService(TaintTyperChecker checker) {
     this.checker = checker;
     this.serializer = new Serializer(checker);
-    this.typeFactory = (UCRTaintingAnnotatedTypeFactory) checker.getTypeFactory();
+    this.typeFactory = (TaintTyperAnnotatedTypeFactory) checker.getTypeFactory();
     this.context = ((JavacProcessingEnvironment) checker.getProcessingEnvironment()).getContext();
     this.types = Types.instance(context);
     this.untaintedTypeMatchVisitor = TypeMatchVisitor.createUntaintedMatcher(typeFactory);
@@ -303,7 +303,7 @@ public class SerializationService {
     ExecutableElement methodElement =
         TreeUtils.elementFromDeclaration((MethodTree) overridingMethodTree);
     AnnotatedTypeMirror.AnnotatedExecutableType overriddenType =
-        ((UCRTaintingVisitor) checker.getVisitor())
+        ((TaintTyperVisitor) checker.getVisitor())
             .getAnnotatedTypeOfOverriddenMethod(methodElement);
     Symbol.MethodSymbol overriddenMethod =
         SymbolUtils.getClosestOverriddenMethod(overridingMethod, types);

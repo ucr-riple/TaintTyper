@@ -32,7 +32,7 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
 import javax.annotation.Nullable;
@@ -51,7 +51,7 @@ public class CollectionHandler extends AbstractHandler {
   /** {@link java.util.Collection#toArray()} method name. */
   private static final String TO_ARRAY_METHOD_NAME = "toArray";
 
-  public CollectionHandler(UCRTaintingAnnotatedTypeFactory typeFactory, Context context) {
+  public CollectionHandler(TaintTyperAnnotatedTypeFactory typeFactory, Context context) {
     super(typeFactory);
     this.types = Types.instance(context);
   }

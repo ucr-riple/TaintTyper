@@ -28,7 +28,7 @@ import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.tools.javac.code.Symbol;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,7 +62,7 @@ public class StaticFinalFieldHandler extends AbstractHandler {
     TAINTED
   }
 
-  public StaticFinalFieldHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
+  public StaticFinalFieldHandler(TaintTyperAnnotatedTypeFactory typeFactory) {
     super(typeFactory);
     this.staticFinalFields = new HashSet<>();
     this.visitedInitializers = new HashMap<>();

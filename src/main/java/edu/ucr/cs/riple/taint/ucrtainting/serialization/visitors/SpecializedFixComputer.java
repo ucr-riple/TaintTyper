@@ -31,7 +31,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
@@ -50,14 +50,14 @@ public abstract class SpecializedFixComputer extends SimpleTreeVisitor<Set<Fix>,
    * The type factory of the checker. Used to get the type of the tree and generate a fix only if is
    * {@link edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted}.
    */
-  protected final UCRTaintingAnnotatedTypeFactory typeFactory;
+  protected final TaintTyperAnnotatedTypeFactory typeFactory;
 
   protected final FixComputer fixComputer;
   protected final TypeMatchVisitor untaintedTypeMatchVisitor;
   protected final Context context;
 
   public SpecializedFixComputer(
-      UCRTaintingAnnotatedTypeFactory typeFactory, FixComputer fixComputer, Context context) {
+      TaintTyperAnnotatedTypeFactory typeFactory, FixComputer fixComputer, Context context) {
     this.context = context;
     this.typeFactory = typeFactory;
     this.fixComputer = fixComputer;

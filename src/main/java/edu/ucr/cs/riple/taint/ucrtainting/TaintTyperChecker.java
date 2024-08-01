@@ -56,16 +56,16 @@ import org.checkerframework.javacutil.TreeUtils;
   "stubs/tdmljp.astub",
 })
 @SupportedOptions({
-  UCRTaintingChecker.ANNOTATED_PACKAGES,
-  UCRTaintingChecker.ENABLE_LIBRARY_CHECKER,
-  UCRTaintingChecker.ENABLE_VALIDATION_CHECKER,
-  UCRTaintingChecker.ENABLE_SIDE_EFFECT,
-  UCRTaintingChecker.ENABLE_POLY_TAINT_INFERENCE,
-  UCRTaintingChecker.ENABLE_TYPE_ARGUMENT_INFERENCE,
+  TaintTyperChecker.ANNOTATED_PACKAGES,
+  TaintTyperChecker.ENABLE_LIBRARY_CHECKER,
+  TaintTyperChecker.ENABLE_VALIDATION_CHECKER,
+  TaintTyperChecker.ENABLE_SIDE_EFFECT,
+  TaintTyperChecker.ENABLE_POLY_TAINT_INFERENCE,
+  TaintTyperChecker.ENABLE_TYPE_ARGUMENT_INFERENCE,
   Config.SERIALIZATION_CONFIG_PATH,
   Config.SERIALIZATION_ACTIVATION_FLAG,
 })
-public class UCRTaintingChecker extends AccumulationChecker {
+public class TaintTyperChecker extends AccumulationChecker {
 
   public static int index = 0;
   public static final String ENABLE_VALIDATION_CHECKER = "enableValidationCheck";
@@ -77,17 +77,17 @@ public class UCRTaintingChecker extends AccumulationChecker {
   /** Serialization service for the checker. */
   private SerializationService serializationService;
 
-  private UCRTaintingAnnotatedTypeFactory typeFactory;
+  private TaintTyperAnnotatedTypeFactory typeFactory;
   private boolean serialize = true;
   private FoundRequired pair = null;
 
-  public UCRTaintingChecker() {}
+  public TaintTyperChecker() {}
 
   @Override
   public void initChecker() {
     super.initChecker();
     this.serializationService = new SerializationService(this);
-    this.typeFactory = (UCRTaintingAnnotatedTypeFactory) getTypeFactory();
+    this.typeFactory = (TaintTyperAnnotatedTypeFactory) getTypeFactory();
   }
 
   @Override

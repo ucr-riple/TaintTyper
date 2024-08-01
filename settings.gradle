@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-rootProject.name = 'ucrtainting-checker'
-include 'ucrtainting-checker-qual'
+rootProject.name = 'TaintTyper'
+include 'TaintTyper-qual'
 include 'thirdparty'
 

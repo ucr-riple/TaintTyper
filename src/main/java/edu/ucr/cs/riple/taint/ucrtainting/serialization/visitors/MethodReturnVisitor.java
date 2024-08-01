@@ -32,7 +32,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodLocation;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.MethodParameterLocation;
@@ -74,7 +74,7 @@ public class MethodReturnVisitor extends SpecializedFixComputer {
   }
 
   public MethodReturnVisitor(
-      UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
+      TaintTyperAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
     this.store = new HashMap<>();
     this.states = new HashMap<>();

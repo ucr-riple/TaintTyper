@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperChecker;
 import java.io.File;
 import java.util.List;
 import org.checkerframework.framework.test.CheckerFrameworkPerDirectoryTest;
@@ -36,20 +36,34 @@ import org.junit.runners.Parameterized.Parameters;
  * errors and warnings; see
  * https://github.com/typetools/checker-framework/blob/master/checker/tests/README .
  */
-public class UCRTaintingValidationTest extends CheckerFrameworkPerDirectoryTest {
-  public UCRTaintingValidationTest(List<File> testFiles) {
+public class TaintingLibraryTest extends CheckerFrameworkPerDirectoryTest {
+  public TaintingLibraryTest(List<File> testFiles) {
     super(
         testFiles,
-        UCRTaintingChecker.class,
+        TaintTyperChecker.class,
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=foo.bar",
-        "-AenableValidationCheck",
+        "-AenableLibraryCheck",
+        "-AenableSideEffect",
         "-nowarn");
   }
 
   @Parameters
   public static String[] getTestDirs() {
-    return new String[] {"ucrtainting/validatorTests"};
+    return new String[] {
+      "ucrtainting/basicSubTypingTests",
+      "ucrtainting/captureTest",
+      "ucrtainting/javaUtilTest",
+      "ucrtainting/micronaut",
+      "ucrtainting/stringBuilderTests",
+      "ucrtainting/thirdPartyTests",
+      "ucrtainting/springSecOAuth",
+      "ucrtainting/crashTests",
+      "ucrtainting/esapiNullFieldTest",
+      "ucrtainting/stubMalfunc",
+      "ucrtainting/xmlStreamTest",
+      "ucrtainting/localTaint"
+    };
   }
 }

@@ -31,7 +31,7 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
 import edu.ucr.cs.riple.taint.ucrtainting.util.TypeUtils;
@@ -51,7 +51,7 @@ public class UnannotatedCodeHandler extends AbstractHandler {
   private static final ImmutableSet<MethodRef> identifiedPolyMorphicThirdPartyMethod =
       ImmutableSet.of(new MethodRef("java.lang.Class", "cast(java.lang.Object)"));
 
-  public UnannotatedCodeHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
+  public UnannotatedCodeHandler(TaintTyperAnnotatedTypeFactory typeFactory) {
     super(typeFactory);
   }
 
@@ -105,7 +105,7 @@ public class UnannotatedCodeHandler extends AbstractHandler {
    * @return true if the heuristic is applicable, false otherwise.
    */
   public static boolean isSafeTransitionToUnAnnotatedCode(
-      MethodInvocationTree tree, UCRTaintingAnnotatedTypeFactory factory) {
+      MethodInvocationTree tree, TaintTyperAnnotatedTypeFactory factory) {
     Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
     // If already untainted, it should be acknowledged
     if (TypeUtils.hasUntaintedAnnotation(calledMethod.getReturnType())) {
@@ -182,7 +182,7 @@ public class UnannotatedCodeHandler extends AbstractHandler {
    * @return true if the argument is either poly or untainted, false otherwise.
    */
   public static boolean polyOrUntaintedParameter(
-      ExpressionTree argument, UCRTaintingAnnotatedTypeFactory typeFactory) {
+      ExpressionTree argument, TaintTyperAnnotatedTypeFactory typeFactory) {
     AnnotatedTypeMirror type = typeFactory.getAnnotatedType(argument);
     if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
       // For third party heuristics, we only care about the component type of the array.

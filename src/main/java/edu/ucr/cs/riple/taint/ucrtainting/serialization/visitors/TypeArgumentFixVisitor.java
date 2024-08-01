@@ -33,7 +33,7 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
@@ -53,7 +53,7 @@ import org.checkerframework.javacutil.TreeUtils;
 public class TypeArgumentFixVisitor extends SpecializedFixComputer {
 
   public TypeArgumentFixVisitor(
-      UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
+      TaintTyperAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
   }
 

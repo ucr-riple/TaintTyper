@@ -31,7 +31,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Name;
 import edu.ucr.cs.riple.taint.ucrtainting.Config;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperChecker;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -56,7 +56,7 @@ public class Serializer {
   /** Path to write errors. */
   private final @Nullable Path errorOutputPath;
 
-  public Serializer(UCRTaintingChecker checker) {
+  public Serializer(TaintTyperChecker checker) {
     this.config = new Config(checker);
     this.errorOutputPath = config.outputDir != null ? config.outputDir.resolve(ERROR_OUTPUT) : null;
     initializeOutputFiles();
@@ -103,7 +103,7 @@ public class Serializer {
     if (json == null) {
       return;
     }
-    json.put("index", UCRTaintingChecker.index + 1);
+    json.put("index", TaintTyperChecker.index + 1);
     String entry = json + ",\n";
     try (OutputStream os = new FileOutputStream(path.toFile(), true)) {
       os.write(entry.getBytes(Charset.defaultCharset()), 0, entry.length());

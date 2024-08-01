@@ -30,7 +30,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.TypeIndex;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.location.ClassDeclarationLocation;
@@ -52,7 +52,7 @@ import org.checkerframework.javacutil.TreeUtils;
 public class GenericMethodFixVisitor extends SpecializedFixComputer {
 
   public GenericMethodFixVisitor(
-      UCRTaintingAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
+      TaintTyperAnnotatedTypeFactory factory, FixComputer fixComputer, Context context) {
     super(factory, fixComputer, context);
   }
 
@@ -236,7 +236,7 @@ public class GenericMethodFixVisitor extends SpecializedFixComputer {
 
   public static Set<Fix> computeFixesOnClassDeclarationForRawType(
       Type type,
-      UCRTaintingAnnotatedTypeFactory typeFactory,
+      TaintTyperAnnotatedTypeFactory typeFactory,
       FoundRequired pair,
       Type.TypeVar typeVar) {
     try {

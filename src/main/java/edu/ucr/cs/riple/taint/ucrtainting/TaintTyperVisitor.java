@@ -36,15 +36,15 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutab
 import org.checkerframework.framework.util.AnnotatedTypes;
 import org.checkerframework.org.plumelib.util.ArraysPlume;
 
-/** Visitor for the {@link UCRTaintingChecker}. */
-public class UCRTaintingVisitor extends AccumulationVisitor {
+/** Visitor for the {@link TaintTyperChecker}. */
+public class TaintTyperVisitor extends AccumulationVisitor {
 
   /**
-   * Creates a {@link UCRTaintingVisitor}.
+   * Creates a {@link TaintTyperVisitor}.
    *
    * @param checker the checker that uses this visitor
    */
-  public UCRTaintingVisitor(BaseTypeChecker checker) {
+  public TaintTyperVisitor(BaseTypeChecker checker) {
     super(checker);
   }
 
@@ -72,7 +72,7 @@ public class UCRTaintingVisitor extends AccumulationVisitor {
       FoundRequired pair = FoundRequired.of(valueType, varType, 0);
       String valueTypeString = pair.foundString;
       String varTypeString = pair.requiredString;
-      ((UCRTaintingChecker) checker)
+      ((TaintTyperChecker) checker)
           .detailedReportError(
               valueTree,
               errorKey,

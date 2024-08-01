@@ -24,17 +24,32 @@
 
 package edu.ucr.cs.riple.taint.ucrtainting;
 
-import org.checkerframework.common.accumulation.AccumulationAnalysis;
-import org.checkerframework.common.basetype.BaseTypeChecker;
+import org.checkerframework.framework.type.AnnotatedTypeFactory;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
+import org.checkerframework.framework.type.typeannotator.DefaultForTypeAnnotator;
 
-public class UCRTaintingAnalysis extends AccumulationAnalysis {
+public class TaintTyperTypeAnnotator extends DefaultForTypeAnnotator {
+
+  TaintTyperAnnotatedTypeFactory factory;
+
   /**
-   * Constructs an AccumulationAnalysis.
+   * Creates a new TypeAnnotator.
    *
-   * @param checker the checker
-   * @param factory the type factory
+   * @param atypeFactory the type factory
    */
-  public UCRTaintingAnalysis(BaseTypeChecker checker, UCRTaintingAnnotatedTypeFactory factory) {
-    super(checker, factory);
+  protected TaintTyperTypeAnnotator(AnnotatedTypeFactory atypeFactory) {
+    super(atypeFactory);
+    this.factory = (TaintTyperAnnotatedTypeFactory) atypeFactory;
+  }
+
+  @Override
+  public Void visitDeclared(AnnotatedTypeMirror.AnnotatedDeclaredType type, Void unused) {
+    return super.visitDeclared(type, unused);
+  }
+
+  @Override
+  public Void visitArray(AnnotatedTypeMirror.AnnotatedArrayType type, Void unused) {
+    factory.makeUntainted(type);
+    return super.visitArray(type, unused);
   }
 }

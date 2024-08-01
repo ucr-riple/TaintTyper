@@ -27,7 +27,7 @@ package edu.ucr.cs.riple.taint.ucrtainting.handlers;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import javax.lang.model.element.Element;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.TreeUtils;
@@ -35,7 +35,7 @@ import org.checkerframework.javacutil.TreeUtils;
 /** This handler is responsible for making annotation members untainted. */
 public class AnnotationMemberHandler extends AbstractHandler {
 
-  public AnnotationMemberHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
+  public AnnotationMemberHandler(TaintTyperAnnotatedTypeFactory typeFactory) {
     super(typeFactory);
   }
 

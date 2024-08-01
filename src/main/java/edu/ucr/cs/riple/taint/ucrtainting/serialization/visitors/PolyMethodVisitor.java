@@ -28,7 +28,7 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.FoundRequired;
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Fix;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,7 +38,7 @@ import org.checkerframework.javacutil.TreeUtils;
 public class PolyMethodVisitor extends SpecializedFixComputer {
 
   public PolyMethodVisitor(
-      UCRTaintingAnnotatedTypeFactory typeFactory, FixComputer fixComputer, Context context) {
+      TaintTyperAnnotatedTypeFactory typeFactory, FixComputer fixComputer, Context context) {
     super(typeFactory, fixComputer, context);
   }
 

@@ -24,7 +24,7 @@
 
 package tests;
 
-import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker;
+import edu.ucr.cs.riple.taint.ucrtainting.TaintTyperChecker;
 import java.io.File;
 import java.util.List;
 import org.junit.runners.Parameterized;
@@ -34,7 +34,7 @@ public class ReverseDirectionTypeSerializationTest extends SerializationTestHelp
   public ReverseDirectionTypeSerializationTest(List<File> testFiles) {
     super(
         testFiles,
-        UCRTaintingChecker.class,
+        TaintTyperChecker.class,
         "ucrtainting",
         "-Anomsgtext",
         "-AannotatedPackages=com.test",
