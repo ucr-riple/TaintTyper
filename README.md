@@ -12,7 +12,7 @@ the project you wish to type-check (using Maven is similar):
 ```
 checkerFramework {
     checkers = [
-            'edu.ucr.cs.riple.taint.ucrtainting.TaintTyperChecker',
+            'edu.xxx.cs.yyyyy.taint.xxxtainting.TaintTyperChecker',
     ]
 }
 
@@ -22,8 +22,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'edu.ucr.cs.riple.taint:ucrtainting-checker:0.1'
-    checkerFramework 'edu.ucr.cs.riple.taint:ucrtainting-checker:0.1'
+    implementation 'edu.xxx.cs.yyyyy.taint:xxxtainting-checker:0.1'
+    checkerFramework 'edu.xxx.cs.yyyyy.taint:xxxtainting-checker:0.1'
 }
 ```
 

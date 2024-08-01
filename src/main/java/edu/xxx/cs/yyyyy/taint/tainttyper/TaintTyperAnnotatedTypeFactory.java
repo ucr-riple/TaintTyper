@@ -171,7 +171,7 @@ public class TaintTyperAnnotatedTypeFactory extends AccumulationAnnotatedTypeFac
 
   @Override
   protected QualifierHierarchy createQualifierHierarchy() {
-    return new UCRTaintingQualifierHierarchy(this.getSupportedTypeQualifiers(), this.elements);
+    return new TaintTyperQualifierHierarchy(this.getSupportedTypeQualifiers(), this.elements);
   }
 
   @Override
@@ -633,7 +633,7 @@ public class TaintTyperAnnotatedTypeFactory extends AccumulationAnnotatedTypeFac
     return false;
   }
 
-  private class UCRTaintingQualifierHierarchy extends AccumulationQualifierHierarchy {
+  private class TaintTyperQualifierHierarchy extends AccumulationQualifierHierarchy {
 
     /**
      * Creates a ElementQualifierHierarchy from the given classes.
@@ -641,7 +641,7 @@ public class TaintTyperAnnotatedTypeFactory extends AccumulationAnnotatedTypeFac
      * @param qualifierClasses classes of annotations that are the qualifiers for this hierarchy
      * @param elements element utils
      */
-    protected UCRTaintingQualifierHierarchy(
+    protected TaintTyperQualifierHierarchy(
         Collection<Class<? extends Annotation>> qualifierClasses, Elements elements) {
       super(qualifierClasses, elements);
     }

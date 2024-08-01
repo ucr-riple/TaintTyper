@@ -207,7 +207,7 @@ public class Serializer {
   }
 
   /**
-   * Logs the given message to the log file at /tmp/ucr_checker/log.txt.
+   * Logs the given message to the log file at /tmp/xxx_checker/log.txt.
    *
    * @param message The message to log.
    */

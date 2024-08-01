@@ -35,7 +35,7 @@ public class LambdaInferenceTest extends SerializationTestHelper {
     super(
         testFiles,
         TaintTyperChecker.class,
-        "ucrtainting",
+        "xxxtainting",
         "-Anomsgtext",
         "-AannotatedPackages=foo.bar",
         "-AenableLibraryCheck",

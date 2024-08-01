@@ -46,7 +46,7 @@ task copySources(type: Copy) {
 
     from files('../src/main/java')
     // Replace the path below with your actual path.
-    include '**/edu/ucr/cs/riple/taint/ucrtainting/qual/**'
+    include '**/edu/xxx/cs/yyyyy/taint/xxxtainting/qual/**'
 
     // Make files read only.
     fileMode(0444)
@@ -68,8 +68,8 @@ compileJava {
 //publishing {
 //    publications {
 //        maven(MavenPublication) {
-//            groupId = 'edu.ucr.cs.riple.taint'
-//            artifactId = 'ucrtainting-qual'
+//            groupId = 'edu.xxx.cs.yyyyy.taint'
+//            artifactId = 'xxxtainting-qual'
 //            version = '0.1'
 //        }
 //    }
@@ -84,8 +84,8 @@ clean {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = 'edu.ucr.cs.riple.taint'
-            artifactId = 'ucrtainting-checker-qual'
+            groupId = 'edu.xxx.cs.yyyyy.taint'
+            artifactId = 'xxxtainting-checker-qual'
             version = '0.3-SNAPSHOT'
 
             from components.java

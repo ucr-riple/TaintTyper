@@ -109,8 +109,8 @@ tasks.withType(JavaCompile).all {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = 'edu.ucr.cs.riple.taint'
-            artifactId = 'ucrtainting-checker'
+            groupId = 'edu.xxx.cs.yyyyy.taint'
+            artifactId = 'xxxtainting-checker'
             version = '0.3-SNAPSHOT'
 
             from components.java
@@ -120,7 +120,7 @@ publishing {
 
 test {
     maxParallelForks = Runtime.getRuntime().availableProcessors()
-    inputs.files("tests/ucrtainting")
+    inputs.files("tests/xxxtainting")
     if (!JavaVersion.current().java9Compatible) {
         jvmArgs "-Xbootclasspath/p:${configurations.errorproneJavac.asPath}"
     } else {

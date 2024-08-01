@@ -61,7 +61,7 @@ public abstract class SerializationTestHelper extends CheckerFrameworkPerDirecto
 
   @Override
   public void run() {
-    final String root = "ucrtaint-tmp";
+    final String root = "xxxtaint-tmp";
     File outDir = null;
     try {
       // make temp dir for serialization output

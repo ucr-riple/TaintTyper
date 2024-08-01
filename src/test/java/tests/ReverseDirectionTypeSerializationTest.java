@@ -35,7 +35,7 @@ public class ReverseDirectionTypeSerializationTest extends SerializationTestHelp
     super(
         testFiles,
         TaintTyperChecker.class,
-        "ucrtainting",
+        "xxxtainting",
         "-Anomsgtext",
         "-AannotatedPackages=com.test",
         "-AenableLibraryCheck",
