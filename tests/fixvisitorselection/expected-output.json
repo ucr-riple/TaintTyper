@@ -160,7 +160,7 @@
     },
     {
       "path": "/Users/nima/Developer/UCRTaintingChecker/tests/fixvisitorselection/foo/bar/Foo.java",
-      "messageKey": "assignment",
+      "messageKey": "argument",
       "offset": 1231,
       "index": 5,
       "region": {

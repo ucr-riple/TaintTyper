@@ -42,7 +42,7 @@ public class Foo {
   }
 
   public void testWithMethodWithTypeArgs() {
-    // :: error: assignment
+    // :: error: argument
     Map<String, @RUntainted String> map = unmodifiable(getMap());
   }
 

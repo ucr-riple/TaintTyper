@@ -69,6 +69,7 @@ public class CmsUUID {
 
   protected @RUntainted CmsPair<@RUntainted String, @RUntainted String> decode(
       String content, String encoding) {
+    // :: error: argument
     // :: error: return
     return CmsPair.create(content, encoding);
   }

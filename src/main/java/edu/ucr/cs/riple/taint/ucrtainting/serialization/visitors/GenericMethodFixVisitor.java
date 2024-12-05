@@ -68,7 +68,7 @@ public class GenericMethodFixVisitor extends SpecializedFixComputer {
     if (!effectiveTypes.isEmpty()) {
       List<AnnotatedTypeMirror> paramsAnnotatedTypeMirrors =
           AnnotatedTypes.adaptParameters(
-              typeFactory, typeFactory.getAnnotatedType(calledMethod), node.getArguments());
+              typeFactory, typeFactory.getAnnotatedType(calledMethod), node.getArguments(), node);
       for (Type.TypeVar typeVar : effectiveTypes) {
         for (int i = 0; i < node.getArguments().size(); i++) {
           AnnotatedTypeMirror requiredParam = paramsAnnotatedTypeMirrors.get(i).deepCopy(true);
