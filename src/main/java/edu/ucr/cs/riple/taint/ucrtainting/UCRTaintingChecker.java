@@ -43,17 +43,17 @@ import org.checkerframework.javacutil.TreeUtils;
 
 /** This is the entry point for pluggable type-checking. */
 @StubFiles({
-  "stubs/apache.commons.io.astub",
-  "stubs/apache.commons.lang.astub",
-  "stubs/codeql.astub",
-  "stubs/Connection.astub",
-  "stubs/Files.astub",
-  "stubs/find-sec-bugs-sanitizers.astub",
-  "stubs/general.astub",
-  "stubs/httpservletreq.astub",
+//  "stubs/apache.commons.io.astub",
+//  "stubs/apache.commons.lang.astub",
+//  "stubs/codeql.astub",
+//  "stubs/Connection.astub",
+//  "stubs/Files.astub",
+//  "stubs/find-sec-bugs-sanitizers.astub",
+  "stubs/securibench.astub",
+//  "stubs/httpservletreq.astub",
   //  "stubs/StringBuffer.astub",
-  "stubs/taintedMethods.astub",
-  "stubs/tdmljp.astub",
+//  "stubs/taintedMethods.astub",
+//  "stubs/tdmljp.astub",
 })
 @SupportedOptions({
   UCRTaintingChecker.ANNOTATED_PACKAGES,
