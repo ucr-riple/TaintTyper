@@ -1,3 +1,4 @@
+import edu.ucr.cs.riple.taint.ucrtainting.qual.RTainted;
 import edu.ucr.cs.riple.taint.ucrtainting.qual.RUntainted;
 
 package javax.servlet;
@@ -132,9 +133,17 @@ public class URLEncoder {
 
 package javax.servlet.http;
 public interface HttpServletRequest {
-    public String getHeader(@RUntainted String name);
+    public @RTainted String getHeader(@RUntainted String name);
     public java.util.Enumeration<String> getHeaders(@RUntainted String name);
-    public String getParameter(@RUntainted String name);
+    public @RTainted String getParameter(@RUntainted String name);
+    public String[] getParameterValues(@RUntainted String name);
+}
+
+package javax.servlet;
+public interface ServletRequest {
+    public @RTainted String getHeader(@RUntainted String name);
+    public java.util.Enumeration<String> getHeaders(@RUntainted String name);
+    public @RTainted String getParameter(@RUntainted String name);
     public String[] getParameterValues(@RUntainted String name);
 }
 
