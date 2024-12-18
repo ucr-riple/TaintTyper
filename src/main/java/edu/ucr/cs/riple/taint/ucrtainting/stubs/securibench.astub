@@ -121,6 +121,12 @@ public class PrintWriter {
 }
 
 package java.net;
+public class Socket {
+    public Socket(@RUntainted String host, @RUntainted int port);
+    public Socket(@RUntainted String host, int port, boolean stream);
+    public Socket(@RUntainted String host, int port, InetAddress localAddr, int localPort);
+}
+
 public class URLDecoder {
     public static @RUntainted String decode(@RUntainted String s, @RUntainted String enc)
         throws java.io.UnsupportedEncodingException;
@@ -175,4 +181,18 @@ public class EntityManager {
 	public @RUntainted TypedQuery createQuery(@RUntainted String qlString, @RUntainted Class resultClass);
 	public @RUntainted Query createQuery(@RUntainted CriteriaUpdate updateQuery);
 	public @RUntainted Query createQuery(@RUntainted String qlString);
+}
+
+package java.util.logging;
+public class Logger {
+    public void warning(@RUntainted String msg);
+    public void severe(@RUntainted String msg);
+    public void finest(@RUntainted String msg);
+    public void finer(@RUntainted String msg);
+    public void fine(@RUntainted String msg);
+    public void info(@RUntainted String msg);
+    public void config(@RUntainted String msg);
+    public void log(Level level, @RUntainted String msg, Object param1);
+    public void log(Level level, @RUntainted String msg);
+    public void log(Level level, @RUntainted String msg, @RUntainted Throwable thrown);
 }
