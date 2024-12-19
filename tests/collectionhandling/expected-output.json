@@ -1,0 +1,32 @@
+{
+  "errors": [
+    {
+      "path": "/Users/nima/Developer/UCRTaintingChecker/tests/collectionhandling/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 717,
+      "index": 1,
+      "region": {
+        "symbol": "refraingFromApplyingUnannotatedCodeHandlerForToArrayMethod()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/Users/nima/Developer/UCRTaintingChecker/tests/collectionhandling/foo/bar/Foo.java",
+            "varName": "c1",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "refraingFromApplyingUnannotatedCodeHandlerForToArrayMethod()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
+    }
+  ]
+}

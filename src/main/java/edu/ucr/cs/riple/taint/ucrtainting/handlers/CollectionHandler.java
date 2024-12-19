@@ -71,7 +71,7 @@ public class CollectionHandler extends AbstractHandler {
     if (!(type instanceof AnnotatedTypeMirror.AnnotatedArrayType)) {
       return;
     }
-    if (!isGenericToArrayMethod(calledMethod, types)) {
+    if (!(isGenericToArrayMethod(calledMethod, types) || isToArrayMethod(calledMethod, types))) {
       return;
     }
     ExpressionTree receiver = TreeUtils.getReceiverTree(tree);
@@ -171,6 +171,39 @@ public class CollectionHandler extends AbstractHandler {
     // Check if the return type is T[]
     if (!(symbol.getReturnType() instanceof Type.ArrayType
         && ((ArrayType) symbol.getReturnType()).getComponentType() instanceof Type.TypeVar)) {
+      return false;
+    }
+    // Check if class is subclass of Collection interface
+    return implementsCollectionInterface(symbol.enclClass().type, types);
+  }
+
+  /**
+   * Check if the method is {@link java.util.Collection#toArray()} .
+   *
+   * @param symbol The method symbol to check.
+   * @param types The types instance.
+   * @return True if the method is {@link java.util.Collection#toArray()}.
+   */
+  public static boolean isToArrayMethod(Symbol.MethodSymbol symbol, Types types) {
+    // Check method name
+    if (!symbol.getSimpleName().toString().equals(TO_ARRAY_METHOD_NAME)) {
+      return false;
+    }
+    // Check if the method is non-generic
+    if (!symbol.getTypeParameters().isEmpty()) {
+      return false;
+    }
+    // Check if the method does not have a parameter.
+    if (!symbol.getParameters().isEmpty()) {
+      return false;
+    }
+    // Check if the return type is T[]
+    if (!(symbol.getReturnType() instanceof Type.ArrayType
+        && ((Type.ArrayType) symbol.getReturnType())
+            .getComponentType()
+            .tsym
+            .toString()
+            .equals("java.lang.Object"))) {
       return false;
     }
     // Check if class is subclass of Collection interface

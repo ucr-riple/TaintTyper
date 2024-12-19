@@ -149,7 +149,7 @@ public class FixComputer extends SimpleTreeVisitor<Set<Fix>, FoundRequired> {
         return answer(polyFixes);
       }
     }
-    if (CollectionHandler.isGenericToArrayMethod(calledMethod, types)) {
+    if (CollectionHandler.isGenericToArrayMethod(calledMethod, types) || CollectionHandler.isToArrayMethod(calledMethod, types)) {
       return answer(node.accept(collectionFixVisitor, pair));
     }
     if (isGenericMethod) {

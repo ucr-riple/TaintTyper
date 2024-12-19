@@ -45,7 +45,7 @@ public class CompositHandler implements Handler {
     handlerBuilder.add(new StaticFinalFieldHandler(typeFactory));
     handlerBuilder.add(new EnumHandler(typeFactory));
     if (typeFactory.unannotatedCodeHandlingEnabled()) {
-      handlerBuilder.add(new UnannotatedCodeHandler(typeFactory));
+      handlerBuilder.add(new UnannotatedCodeHandler(typeFactory, context));
     }
     handlerBuilder.add(new CollectionHandler(typeFactory, context));
     handlerBuilder.add(new AnnotationMemberHandler(typeFactory));

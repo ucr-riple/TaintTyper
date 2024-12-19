@@ -30,7 +30,9 @@ import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.Context;
 import edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingAnnotatedTypeFactory;
 import edu.ucr.cs.riple.taint.ucrtainting.serialization.Serializer;
 import edu.ucr.cs.riple.taint.ucrtainting.util.SymbolUtils;
@@ -43,6 +45,7 @@ import org.checkerframework.javacutil.TreeUtils;
 
 public class UnannotatedCodeHandler extends AbstractHandler {
 
+  private final Types types;
   /**
    * Set of third party {@link MethodRef} that are identified as polymorphic. These methods fail the
    * heuristic applicability check since they contain a type variable in their return type, but they
@@ -51,8 +54,9 @@ public class UnannotatedCodeHandler extends AbstractHandler {
   private static final ImmutableSet<MethodRef> identifiedPolyMorphicThirdPartyMethod =
       ImmutableSet.of(new MethodRef("java.lang.Class", "cast(java.lang.Object)"));
 
-  public UnannotatedCodeHandler(UCRTaintingAnnotatedTypeFactory typeFactory) {
+  public UnannotatedCodeHandler(UCRTaintingAnnotatedTypeFactory typeFactory, Context context) {
     super(typeFactory);
+    this.types = Types.instance(context);
   }
 
   @Override
@@ -87,6 +91,12 @@ public class UnannotatedCodeHandler extends AbstractHandler {
     }
     typeFactory.makeUntainted(type);
     if (type instanceof AnnotatedTypeMirror.AnnotatedArrayType) {
+      // if not toArray method{
+      Symbol.MethodSymbol calledMethod = (Symbol.MethodSymbol) TreeUtils.elementFromUse(tree);
+      if (CollectionHandler.isToArrayMethod(calledMethod, types)
+          || CollectionHandler.isGenericToArrayMethod(calledMethod, types)) {
+        return;
+      }
       typeFactory.makeUntainted(((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType());
     }
   }
