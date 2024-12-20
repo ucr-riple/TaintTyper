@@ -187,7 +187,7 @@ public interface ServletRequest {
 }
 
 public interface HttpSession {
-    public void setAttribute(@RUntainted String name, Object value);
+    public void setAttribute(@RUntainted String name, @RUntainted Object value);
     public void putValue(@RUntainted String name, @RUntainted Object value);
 }
 
