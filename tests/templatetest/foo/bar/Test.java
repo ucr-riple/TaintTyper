@@ -1,6 +1,7 @@
 package foo.bar;
 
 import edu.ucr.cs.riple.taint.ucrtainting.qual.*;
+import java.io.*;
 import java.lang.annotation.*;
 import java.util.*;
 import javax.servlet.http.*;

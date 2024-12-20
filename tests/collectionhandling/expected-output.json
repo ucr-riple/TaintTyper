@@ -27,6 +27,49 @@
           }
         }
       ]
+    },
+    {
+      "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/collectionhandling/foo/bar/Foo.java",
+      "messageKey": "assignment",
+      "offset": 937,
+      "index": 2,
+      "region": {
+        "symbol": "arraysAsListGenericTest()",
+        "class": "foo.bar.Foo"
+      },
+      "fixes": [
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/collectionhandling/foo/bar/Foo.java",
+            "varName": "array",
+            "type-variable-position": [
+              [
+                0
+              ]
+            ],
+            "method": "arraysAsListGenericTest()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        },
+        {
+          "annotation": "untainted",
+          "location": {
+            "path": "/home/nima/Developer/git/UCRTaintingChecker/tests/collectionhandling/foo/bar/Foo.java",
+            "varName": "c1",
+            "type-variable-position": [
+              [
+                1,
+                0
+              ]
+            ],
+            "method": "arraysAsListGenericTest()",
+            "kind": "LOCAL_VARIABLE",
+            "class": "foo.bar.Foo"
+          }
+        }
+      ]
     }
   ]
 }
