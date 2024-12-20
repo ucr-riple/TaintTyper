@@ -8,7 +8,12 @@ public class ServletResponse {
 }
 
 public class ServletConfig {
-    public String getInitParameter(String arg);
+    public @RTainted String getInitParameter(String arg);
+    public public java.util.Enumeration<@RTainted String> getInitParameterNames(String arg);
+}
+
+public class ServletContext {
+    public @RTainted String getInitParameter(String arg);
 }
 
 package javax.servlet.http;
@@ -41,12 +46,12 @@ public class InternetAddress {
 
 package java.sql;
 public interface Statement {
+    public void addBatch(@RUntainted String sql);
     public @RUntainted boolean execute(@RUntainted String sql) throws SQLException;
     public @RUntainted ResultSet executeQuery(@RUntainted String sql) throws SQLException;
     public @RUntainted int executeUpdate(@RUntainted String sql) throws SQLException;
     public @RUntainted int executeUpdate(@RUntainted String sql, int arg) throws SQLException;
     public @RUntainted int executeUpdate(@RUntainted String sql, String... args) throws SQLException;
-
 }
 
 public class Connection {
@@ -72,6 +77,7 @@ public class System {
 	public static void load(@RUntainted String filename);
 	public static void loadLibrary(@RUntainted String libname);
 	public static @RUntainted String getenv(@RUntainted String name);
+	public static @RTainted String getProperty(@RUntainted String name);
 }
 
 public class ProcessBuilder {
@@ -117,7 +123,18 @@ public class PrintStream {
     public void println(@RUntainted String x);
 }
 public class PrintWriter {
+    public void print(@RUntainted String s);
     public void println(@RUntainted String s);
+    public void println(@RUntainted Object obj);
+
+}
+
+public class FileWriter {
+    public FileWriter(@RUntainted String x);
+}
+
+public class FileInputStream {
+    public FileInputStream(@RUntainted String x);
 }
 
 package java.net;
@@ -140,17 +157,33 @@ public class URLEncoder {
 package javax.servlet.http;
 public interface HttpServletRequest {
     public @RTainted String getHeader(@RUntainted String name);
-    public java.util.Enumeration<String> getHeaders(@RUntainted String name);
+    public java.util.Enumeration<@RTainted String> getHeaders(@RUntainted String name);
+    public java.util.Enumeration<@RTainted String> getHeaderNames(@RUntainted String name);
     public @RTainted String getParameter(@RUntainted String name);
-    public String[] getParameterValues(@RUntainted String name);
+    public @RTainted String[] getParameterValues(@RUntainted String name);
+    public @RTainted Session getSession();
+    public @RTainted Session getProtocol();
+    public @RTainted Session getScheme();
+    public @RTainted Session getAuthType();
+    public @RTainted Session getQueryString();
+    public @RTainted Session getRemoteUser();
+    public @RTainted Session getRequestURL();
 }
 
 package javax.servlet;
 public interface ServletRequest {
     public @RTainted String getHeader(@RUntainted String name);
-    public java.util.Enumeration<String> getHeaders(@RUntainted String name);
+    public java.util.Enumeration<@RTainted String> getHeaders(@RUntainted String name);
+    public java.util.Enumeration<@RTainted String> getHeaders(@RUntainted String name);
     public @RTainted String getParameter(@RUntainted String name);
-    public String[] getParameterValues(@RUntainted String name);
+    public @RTainted String[] getParameterValues(@RUntainted String name);
+    public @RTainted Session getSession();
+    public @RTainted Session getProtocol();
+    public @RTainted Session getScheme();
+    public @RTainted Session getAuthType();
+    public @RTainted Session getQueryString();
+    public @RTainted Session getRemoteUser();
+    public @RTainted Session getRequestURL();
 }
 
 public interface HttpSession {
