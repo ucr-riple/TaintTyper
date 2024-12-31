@@ -119,9 +119,6 @@ public class File {
     public File(@RUntainted URI uri);
 }
 
-public class PrintStream {
-    public void println(@RUntainted String x);
-}
 public class PrintWriter {
     public void print(@RUntainted String s);
     public void println(@RUntainted String s);
@@ -138,6 +135,17 @@ public class FileInputStream {
 }
 
 package java.net;
+public class URL {
+    public URL(@RUntainted String spec);
+    public URL(URL context, @RUntainted String spec);
+    public URL(String protocol, @RUntainted String host, String file);
+    public URL(URL context, @RUntainted String spec, URLStreamHandler handler);
+    public URL(String protocol, @RUntainted String host, int port, String file);
+    public URL(String protocol, @RUntainted String host, int port, String file, URLStreamHandler ph);
+    public @RTainted URLConnection openConnection();
+    public @RTainted java.io.InputStream openStream();
+}
+
 public class Socket {
     public Socket(@RUntainted String host, @RUntainted int port);
     public Socket(@RUntainted String host, int port, boolean stream);
@@ -168,6 +176,11 @@ public interface HttpServletRequest {
     public @RTainted Session getQueryString();
     public @RTainted Session getRemoteUser();
     public @RTainted Session getRequestURL();
+}
+
+public interface HttpSession {
+    public void setAttribute(@RUntainted String name, @RUntainted Object value);
+    public void putValue(@RUntainted String name, @RUntainted Object value);
 }
 
 package javax.servlet;
