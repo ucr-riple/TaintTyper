@@ -134,6 +134,10 @@ public class FileInputStream {
     public FileInputStream(@RUntainted String x);
 }
 
+public class BufferedReader {
+    public @RTainted String readLine();
+}
+
 package java.net;
 public class URL {
     public URL(@RUntainted String spec);
