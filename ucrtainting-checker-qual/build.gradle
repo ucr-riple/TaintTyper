@@ -86,7 +86,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'edu.ucr.cs.riple.taint'
             artifactId = 'ucrtainting-checker-qual'
-            version = '0.3-SNAPSHOT'
+            version = '0.3-ENHANCE-OFF-SNAPSHOT'
 
             from components.java
         }
