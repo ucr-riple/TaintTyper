@@ -104,28 +104,3 @@ void exec(String name) {
 void sink(@Untainted String t) { ... }
 ```
 
-
-## How to specify your code
-
-
-`@RTainted`:
-TODO
-
-`@RUntainted`:
-TODO
-
-`@RPolytainted`:
-TODO
-
-## How to build the checker
-
-Run these commands from the top-level directory.
-
-`./gradlew build`: build the checker
-
-`./gradlew publishToMavenLocal`: publish the checker to your local Maven repository.
-This is useful for testing before you publish it elsewhere, such as to Maven Central.
-
-The UCR Tainting Checker is built upon the Checker Framework.  Please see
-the [Checker Framework Manual](https://checkerframework.org/manual/) for
-more information about using pluggable type-checkers, including this one.
