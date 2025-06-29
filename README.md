@@ -104,3 +104,13 @@ void exec(String name) {
 void sink(@Untainted String t) { ... }
 ```
 
+### Inference Support
+
+`TaintTyper` supports automatic annotation inference to simplify adoption on existing codebases. The inference is built on top of [Annotator](https://github.com/ucr-riple/NullAwayAnnotator), an annotation inference engine. The inference engine analyzes the code and automatically infers the appropriate `@Untainted`, and `@PolyTainted` annotations.
+
+In the example shown earlier, the inference tool can infer **all annotations** automatically.
+
+To run `Annotator` on your codebase and infer annotations for `TaintTyper`:
+
+1. Follow the setup instructions on the [Annotator](https://github.com/ucr-riple/NullAwayAnnotator).
+2. Pass the flag to specify the TaintTyper checker: `-ch UCRTaint`
