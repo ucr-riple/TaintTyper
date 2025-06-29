@@ -1,4 +1,10 @@
-# UCR Tainting Checker
+## TaintTyper: Fast Type-Based Taint Checking for Java 
+
+TaintTyper is a fast and practical static analysis tool for detecting taint-related security vulnerabilities in Java programs. It uses a type-based approach to track the flow of untrusted or sensitive data through code, identifying potential security issues such as injection attacks or data leaks. TaintTyper performs local, type-checking-based analysis to ensure that tainted data does not reach sensitive operations without proper sanitization.
+
+**TaintTyper** is fast. It avoids whole-program dataflow analysis and instead leverages a pluggable type system to perform scalable, modular checks. In our benchmarks, TaintTyper achieves up to **23×** speedup over traditional taint analyses, while maintaining high precision and recall.
+
+Designed for practicality and scalability, TaintTyper integrates easily into real-world codebases and continuous integration (CI) pipelines with minimal setup.
 
 
 ## How to run the checker
