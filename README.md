@@ -7,18 +7,25 @@ TaintTyper is a fast and practical static analysis tool for detecting taint-rela
 Designed for practicality and scalability, TaintTyper integrates easily into real-world codebases and continuous integration (CI) pipelines with minimal setup.
 
 
-## How to run the checker
-
-First, publish the checker and quals to your local Maven repository by running
-`./gradlew publishToMavenLocal` in this repository.
-
-Then, if you use Gradle, add the following to the `build.gradle` file in
-the project you wish to type-check (using Maven is similar):
-
+## Installation
+Clone and publish TaintTyper locally:
 ```
+git clone https://github.com/your-org/TaintTyper.git
+cd TaintTyper
+./gradlew publishToMavenLocal
+```
+This publishes `TaintTyper` to your local Maven repository.
+
+Configure your project to use `TaintTyper` via the `Checker Framework` plugin:
+In your `build.gradle` file, apply the Checker Framework Gradle plugin and set up the dependencies:
+```
+plugins {
+    id 'org.checkerframework' version '0.6.22'
+}
+
 checkerFramework {
     checkers = [
-            'edu.ucr.cs.riple.taint.ucrtainting.UCRTaintingChecker',
+        'edu.ucr.cs.riple.taint.ucrtainting.TaintTyper',
     ]
 }
 
@@ -28,13 +35,13 @@ repositories {
 }
 
 dependencies {
-    implementation 'edu.ucr.cs.riple.taint:ucrtainting-checker:0.1'
-    checkerFramework 'edu.ucr.cs.riple.taint:ucrtainting-checker:0.1'
+    implementation 'edu.ucr.cs.riple.taint:tainttyper:0.1'
+    checkerFramework 'edu.ucr.cs.riple.taint:tainttyper:0.1'
 }
 ```
 
-Now, when you build your project, the UCR Tainting Checker will also run,
-informing you of any potential errors related to TODO.
+This setup will run `TaintTyper` as part of your project’s Java compilation.
+
 
 
 ## How to specify your code
